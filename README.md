@@ -68,5 +68,8 @@ The `LUMA.Visual` submodule simplifies model visualization. It includes tools fo
 visualizing decision boundaries, and creating performance charts. These visualization aids help 
 users gain insights from their machine learning models and communicate results effectively.
 
-### Version:
-``alpha 1.0``
+### Latest Version:
+`alpha 1.0`
+
+### Documents
+Link - [LUMA Notion Document](https://lumerico284.notion.site/Machine-Learning-76330376b0e64cc1b95874c469aeb327?pvs=4)
