@@ -8,7 +8,7 @@ from LUMA.Interface.Super import _Transformer, _Unsupervised
 class TSNE(_Transformer, _Unsupervised):
     
     """
-    iteration-SNE, which stands for iteration-Distributed Stochastic Neighbor Embedding, 
+    t-SNE, which stands for t-distributed Stochastic Neighbor Embedding, 
     is a machine learning technique commonly used for data visualization 
     and dimensionality reduction.
     
