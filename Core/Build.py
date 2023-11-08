@@ -10,8 +10,8 @@ from LUMA.Interface.Super import _Supervised, _Unsupervised
 from LUMA.Preprocessing.Scaler import StandardScaler
 from LUMA.Preprocessing.Scaler import MinMaxScaler
 
-from LUMA.Reduction.PCA import PCA, KernelPCA
-from LUMA.Reduction.LDA import LDA
+from LUMA.Reduction.Linear import PCA, LDA
+from LUMA.Reduction.Nonlinear import KernelPCA
 from LUMA.Reduction.Manifold import TSNE, MDS, LLE
 
 from LUMA.ModelSelection.Split import TrainTestSplit
