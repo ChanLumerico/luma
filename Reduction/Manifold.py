@@ -1,6 +1,6 @@
 from typing import *
 from scipy.spatial.distance import pdist, squareform
-from scipy.linalg import eigh
+from scipy.spatial import KDTree
 import numpy as np
 
 from LUMA.Interface.Super import _Transformer, _Unsupervised
@@ -201,19 +201,16 @@ class LLE(_Transformer, _Unsupervised):
     Parameters
     ----------
     ``n_neighbors`` : Number of neighbors to be considered 'close' \n
-    ``n_components`` : Dimensionality of low-space \n
-    ``regularization`` : Regularization parameter for stability
+    ``n_components`` : Dimensionality of low-space
     
     """
     
     def __init__(self, 
                  n_neighbors: int=5, 
                  n_components: int=None, 
-                 regularization: float=1e-3,
                  verbose: bool=False) -> None:
         self.n_neighbors = n_neighbors
         self.n_components = n_components
-        self.regularization = regularization
         self.verbose = verbose
     
     def fit(self, X: np.ndarray) -> None:
@@ -228,7 +225,7 @@ class LLE(_Transformer, _Unsupervised):
         for i in range(m):
             Xi = X[neighbors[i]] - X[i]
             Z = np.dot(Xi, Xi.T)
-            Z += self.regularization * np.identity(self.n_neighbors)
+            Z += np.pi * 1e-3 * np.identity(self.n_neighbors)
             
             w = np.linalg.solve(Z, np.ones(self.n_neighbors))
             w /= np.sum(w)
@@ -251,9 +248,179 @@ class LLE(_Transformer, _Unsupervised):
 
     def set_params(self, 
                    n_neighbors: int=None, 
+                   n_components: int=None) -> None:
+        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
+        if n_components is not None: self.n_components = int(n_components)
+
+
+class ModifiedLLE(_Transformer, _Unsupervised):
+    
+    """
+    Modified Locally Linear Embedding (MLLE) is a dimensionality reduction technique 
+    that extends the LLE method by introducing regularization for improved stability. 
+    MLLE aims to find a lower-dimensional representation of data while preserving the 
+    local relationships between data points. It works by approximating each data 
+    point as a linear combination of its nearest neighbors, revealing the underlying 
+    structure of the data in a lower-dimensional space. 
+
+    Parameters
+    ----------
+    ``n_neighbors`` : Number of neighbors to be considered 'close' \n
+    ``n_components`` : Dimensionality of the lower-dimensional space \n
+    ``regularization`` : Regularization parameter for stability \n
+    
+    """
+
+    def __init__(self, 
+                 n_neighbors: int=5, 
+                 n_components: int=None, 
+                 regularization: float=1e-3, 
+                 verbose: bool=False) -> None:
+        self.n_neighbors = n_neighbors
+        self.n_components = n_components
+        self.regularization = regularization
+        self.verbose = verbose
+
+    def fit(self, X: np.ndarray) -> None:
+        m, _ = X.shape
+        distances = np.zeros((m, m))
+        for i in range(m):
+            for j in range(m):
+                distances[i, j] = np.linalg.norm(X[i] - X[j])
+
+        W = np.zeros((m, m))
+        neighbors = np.argsort(distances, axis=1)[:, 1 : self.n_neighbors + 1]
+        for i in range(m):
+            Xi = X[neighbors[i]] - X[i]
+            Z = np.dot(Xi, Xi.T)
+            Z += self.regularization * np.identity(self.n_neighbors)
+
+            w = np.linalg.solve(Z, np.ones(self.n_neighbors))
+            w /= np.sum(w)
+            W[i, neighbors[i]] = w
+
+            if self.verbose and i % 100 == 0:
+                print(f'[ModifiedLLE] Optimized weight for instance {i}/{m}', end='')
+                print(f' - weight-norm: {np.linalg.norm(w)}')
+
+        M = np.identity(m) - W
+        self.eigvals, self.eigvecs = np.linalg.eig(np.dot(M.T, M))
+
+    def transform(self) -> np.ndarray:
+        indices = np.argsort(self.eigvals)[1 : self.n_components + 1]
+        return self.eigvecs[:, indices]
+
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
+    
+    def set_params(self, 
+                   n_neighbors: int=None, 
                    n_components: int=None,
                    regularization: float=None) -> None:
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
         if n_components is not None: self.n_components = int(n_components)
         if regularization is not None: self.regularization = float(regularization)
 
+
+class HessianLLE(_Transformer, _Unsupervised):
+    
+    """
+    Hessian Locally Linear Embedding (Hessian LLE) is a dimensionality reduction 
+    technique that extends Locally Linear Embedding (LLE). It aims to reduce the 
+    dimensionality of high-dimensional data while preserving local linear relationships 
+    and capturing the curvature of these relationships using the Hessian matrix.
+    
+    Parameters
+    ----------
+    ``n_neighbors`` : Number of neighbors to be considered 'close' \n
+    ``n_components`` : Dimensionality of the lower-dimensional space \n
+    ``regularization`` : Regularization parameter for stability \n
+    
+    """
+    
+    def __init__(self, 
+                 n_neighbors: int=5, 
+                 n_components: int=None,
+                 regularization: float=1e-5,
+                 verbose: bool=False) -> None:
+        self.n_neighbors = n_neighbors
+        self.n_components = n_components
+        self.regularization = regularization
+        self.verbose = verbose
+    
+    def fit(self, X: np.ndarray) -> None:
+        m, _ = X.shape
+        dp = self.n_components * (self.n_components + 1) // 2
+        
+        if self.n_neighbors <= self.n_components + dp:
+            self.n_neighbors = self.n_components * (self.n_components + 3)
+            self.n_neighbors /= 2
+            print(f"[HessianLLE] n_neighbors set to {self.n_neighbors}",
+                  "due to Hessian condition mismatch.")
+        
+        index_mat = self._construct_graph(X)
+        W = np.zeros((dp * m, m))
+        Yi = np.empty((self.n_neighbors, self.n_components + dp + 1))
+        Yi[:, 0] = 1
+        for i in range(m):
+            neighbors = index_mat[i]
+            Gi = X[neighbors]
+            Gi -= Gi.mean(axis=0)
+            
+            U, _, _ = np.linalg.svd(Gi, full_matrices=0)
+            Yi[:, 1:self.n_components + 1] = U[:, :self.n_components]
+            j = self.n_components + 1
+            for k in range(self.n_components):
+                Yi[:, j:self.n_components + j - k] = \
+                    U[:, k:k + 1] * U[:, k:self.n_components]
+                j += self.n_components - k
+            
+            Q, R = np.linalg.qr(Yi)
+            w = np.array(Q[:, self.n_components + 1:])
+            S = w.sum(axis=0)
+            S[np.where(np.abs(S) < self.regularization)] = 1.0
+            w /= S
+            
+            xn, yn = np.meshgrid(neighbors, neighbors)
+            W[xn, yn] += w.dot(w.T)
+            
+            if self.verbose and i % 100 == 0:
+                print(f'[HessianLLE] Optimized weight for instance {i}/{m}', end='')
+                print(f' - weight-norm: {np.linalg.norm(w)}')
+        
+        _, sig, VT = np.linalg.svd(W, full_matrices=0)
+        indices = np.argsort(sig)[1:self.n_components + 1]
+        Y = VT[indices, :] * np.sqrt(m)
+        
+        _, sig, VT = np.linalg.svd(Y, full_matrices=0)
+        S = np.matrix(np.diag(sig ** (-1)))
+        R = VT.T * S * VT
+        self.Y, self.R = Y, R
+    
+    def transform(self) -> np.ndarray:
+        return np.array(self.Y * self.R).T
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
+    
+    def _construct_graph(self, X: np.ndarray) -> np.ndarray:
+        m, _ = X.shape
+        kd_tree = KDTree(X.copy())
+        index_mat = np.ones((m, self.n_neighbors), dtype=int)
+        for i in range(m):
+            _, neighbors = kd_tree.query(X[i], k=self.n_neighbors + 1, p=2)
+            neighbors = neighbors.tolist()
+            neighbors.remove(i)
+            index_mat[i] = np.array([neighbors])
+        
+        return index_mat
+
+    def set_params(self, 
+                   n_neighbors: int=None, 
+                   n_components: int=None,
+                   regularization: float=None) -> None:
+        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
+        if n_components is not None: self.n_components = int(n_components)
+        if regularization is not None: self.regularization = float(regularization)

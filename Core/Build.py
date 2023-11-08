@@ -12,7 +12,8 @@ from LUMA.Preprocessing.Scaler import MinMaxScaler
 
 from LUMA.Reduction.Linear import PCA, LDA
 from LUMA.Reduction.Nonlinear import KernelPCA
-from LUMA.Reduction.Manifold import TSNE, MDS, LLE
+from LUMA.Reduction.Manifold import TSNE, MDS
+from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE
 
 from LUMA.ModelSelection.Split import TrainTestSplit
 from LUMA.ModelSelection.Search import GridSearchCV
@@ -56,9 +57,10 @@ def init():
     StandardScaler, MinMaxScaler
     
     # LUMA.Reduction
-    PCA, KernelPCA
-    LDA
-    TSNE, MDS, LLE
+    PCA, LDA
+    KernelPCA
+    TSNE, MDS
+    LLE, ModifiedLLE, HessianLLE
     
     # LUMA.ModelSelection
     TrainTestSplit
