@@ -1,8 +1,9 @@
 from typing import *
-from scipy.spatial.distance import pdist, squareform
+from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.spatial import KDTree
 import numpy as np
 
+from LUMA.Reduction.Linear import PCA
 from LUMA.Interface.Super import _Transformer, _Unsupervised
 
 
@@ -424,3 +425,137 @@ class HessianLLE(_Transformer, _Unsupervised):
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
         if n_components is not None: self.n_components = int(n_components)
         if regularization is not None: self.regularization = float(regularization)
+
+
+class SammonMapping(_Transformer, _Unsupervised):
+    
+    """
+    Sammon mapping is a dimensionality reduction algorithm designed to transform 
+    high-dimensional data into a lower-dimensional space. Sammon mapping focuses 
+    on preserving the pairwise distances or dissimilarities between data points, 
+    making it well-suited for capturing non-linear relationships in the data.
+    
+    Parameters
+    ----------
+    ``n_components`` : Dimensionality of low-space \n
+    ``max_iter`` : Number of iteration \n
+    ``max_halves`` : Number of halving of step-size \n
+    ``tol`` : Threshold for early-stopping \n
+    ``initialize`` : Methodology for embedding-space initialization \n
+    
+    """
+    
+    def __init__(self,
+                 n_components: int=None,
+                 max_iter: int=100,
+                 max_halves: int=20,
+                 tol: float=1e-5,
+                 initialize: Literal['pca'] | None='pca',
+                 verbose: bool=False) -> None:
+        self.n_components = n_components
+        self.max_iter = max_iter
+        self.max_halves = max_halves
+        self.tol = tol
+        self.initialize = initialize
+        self.verbose = verbose
+    
+    def fit(self, X: np.ndarray) -> None:
+        m, _ = X.shape
+        X_dist = cdist(X, X)
+        scale = 0.5 / X_dist.sum()
+        
+        Y = np.random.normal(0, 1, (m, self.n_components))
+        if self.initialize == 'pca':
+            Y = PCA(n_components=self.n_components).fit_transform(X)
+            if self.verbose:
+                print('[SammonMap] Finished PCA initialization')
+        
+        ones = np.ones((m, self.n_components))
+        X_dist += np.eye(m)
+        X_dist_inv = 1 / X_dist
+        self._remove_inf(X_dist_inv, X_dist_inv)
+        
+        Y_dist = cdist(Y, Y) + np.eye(m)
+        Y_dist_inv = 1 / Y_dist
+        
+        self._fill_diagnoal(X_dist, 1)
+        self._fill_diagnoal(Y_dist, 1)
+        self._fill_diagnoal(X_dist_inv, 0)
+        self._fill_diagnoal(Y_dist_inv, 0)
+        
+        self._remove_inf(matrix=X_dist_inv, filter=X_dist_inv)
+        self._remove_inf(matrix=Y_dist_inv, filter=X_dist_inv)
+        self._remove_inf(matrix=X_dist_inv, filter=Y_dist_inv)
+        self._remove_inf(matrix=Y_dist_inv, filter=Y_dist_inv)
+        
+        E = np.sum(((X_dist - Y_dist) ** 2) * X_dist_inv)
+        for i in range(self.max_iter):
+            delta = Y_dist_inv - X_dist_inv
+            delta_one = delta.dot(ones)
+            
+            gradient = np.dot(delta, Y) - (Y * delta_one)
+            hessian = np.dot(Y_dist_inv ** 3, Y ** 2) - delta_one
+            hessian -= np.dot(2, Y) * np.dot(Y_dist_inv ** 3, Y)
+            hessian += Y ** 2 * np.dot(Y_dist_inv ** 3, ones)
+            
+            step = -gradient.flatten(order='F') / np.abs(hessian.flatten(order='F'))
+            Y_old = Y
+            
+            for j in range(self.max_halves):
+                step_reshape = step.reshape(2, round(len(step) / 2)).T
+                y = Y_old + step_reshape
+                
+                dist = cdist(Y, y) + np.eye(m)
+                dist_inv = 1 / dist
+                self._remove_inf(matrix=dist_inv, filter=dist_inv)
+                
+                delta = X_dist - dist
+                E_new = np.sum((delta ** 2) * X_dist_inv)
+                if E_new < E: break
+                else: step = np.dot(0.5, step)
+            
+            if j == self.max_halves:
+                print(f'[SammonMap] Warning: max halves reached.', end='')
+                print(' Optimization may not converge!')
+            
+            if np.abs((E - E_new) / E) < self.tol:
+                print(f'[SammonMap] Early convergence at iteration {i}/{self.max_iter}')
+                break
+            
+            if self.verbose and i % 10 == 0:
+                print(f'[SammonMap] Iteration: {i}/{self.max_iter}', end='')
+                print(f' - relative delta-error: {np.abs((E - E_new) / E)}')
+            
+            E_delta_ratio_old = np.abs((E - E_new) / E)
+            E = E_new
+        self.error = E * scale
+        self.Y = y
+        
+        if self.verbose: print(f'[SammonMap] Final error: {self.error}')
+    
+    def _fill_diagnoal(self, matrix: np.ndarray, value: float) -> None:
+        np.fill_diagonal(matrix, value)
+    
+    def _remove_inf(self, matrix: np.ndarray, filter: np.ndarray) -> None:
+        matrix[np.isinf(filter)] = 0
+    
+    def transform(self) -> np.ndarray:
+        return self.Y
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
+
+    def set_params(self,
+                   n_components: int=None,
+                   max_iter: int=None,
+                   max_halves: int=None,
+                   initialize: Literal=None,
+                   tol: float=None) -> None:
+        if n_components is not None: self.n_components = int(n_components)
+        if max_iter is not None: self.max_iter = int(max_iter)
+        if max_halves is not None: self.max_halves = int(max_halves)
+        if initialize is not None: self.initialize = str(initialize)
+        if tol is not None: self.tol = float(tol)
+
+    

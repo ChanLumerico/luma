@@ -28,7 +28,7 @@ class KernelPCA(_Transformer, _Unsupervised):
     def __init__(self, 
                  n_components: int=None,
                  degree: int=3,
-                 gamma: float=5.0,
+                 gamma: float=15.0,
                  coef: float=1.0,
                  kernel: Literal['linear', 'poly', 'rbf', 
                                  'sigmoid', 'laplacian']='linear') -> None:
