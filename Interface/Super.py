@@ -113,3 +113,14 @@ class _Unsupervised:
     
     def __init__(self, *params: Tuple[Any]) -> None: ...
 
+
+class _Distance:
+    
+    """
+    In mathematics and machine learning, distance is a measure of how much "separation" 
+    or "difference" there is between two points, objects, or distributions. Different 
+    types of distances serve various purposes, and they are used in different contexts. 
+    """
+    
+    def __init__(self, *param: Any) -> None: ...
+

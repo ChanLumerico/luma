@@ -1,10 +1,12 @@
 from typing import *
+from typing import Any, Tuple
 from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.spatial import KDTree
 import numpy as np
 
 from LUMA.Reduction.Linear import PCA
 from LUMA.Interface.Super import _Transformer, _Unsupervised
+from LUMA.Metric.Distance import *
 
 
 class TSNE(_Transformer, _Unsupervised):
@@ -138,7 +140,7 @@ class TSNE(_Transformer, _Unsupervised):
 class MDS(_Transformer, _Unsupervised):
     
     """
-    Multi-Dimensional Scaling (MDS) is a data analysis technique that visualizes 
+    Multidimensional Scaling (MDS) is a data analysis technique that visualizes 
     high-dimensional data in a lower-dimensional space while preserving the 
     relationships between data points. It uses a distance matrix to find a 
     lower-dimensional representation, making it easier to understand and 
@@ -188,6 +190,92 @@ class MDS(_Transformer, _Unsupervised):
     
     def set_params(self, n_components: int=None) -> None:
         if n_components is not None: self.n_components = int(n_components)
+
+
+class MetricMDS(_Transformer, _Unsupervised):
+    
+    """
+    Metric Multidimensional Scaling (MDS) is a data analysis method that focuses 
+    on accurately preserving the original pairwise distances or dissimilarities
+    between objects in a high-dimensional space when projecting them onto a 
+    lower-dimensional space. 
+    
+    Parameter
+    ---------
+    ``n_components`` : Dimensionality of low-space \n
+    ``metric`` : Distance metric 
+    (e.g. `euclidian`, `manhattan`, `chevychev`, `minkowski`, \n
+    `cos_similarity`, `correation`, `mahalanobis`) \n
+    ``p`` : Power factor for `minkowski`
+    
+    """
+    
+    def __init__(self,
+                 n_components: int=None,
+                 p: float | int=None,
+                 metric: Literal['euclidian', 'manhattan', 'chevyshev',
+                                 'minkowski', 'cos_similarity', 'correlation',
+                                 'mahalanobis']='euclidian') -> None:
+        self.n_components = n_components
+        self.metric = metric
+        self.p = p
+
+    def fit(self, X: np.ndarray) -> None:
+        D = self._compute_dissimilarity(X)
+        n = D.shape[0]
+        H = np.eye(n) - np.ones((n, n)) / n
+        B = -0.5 * H.dot(D).dot(H)
+        
+        eigvals, eigvecs = np.linalg.eigh(B)
+        sorted_indices = np.argsort(eigvals)[::-1]
+        self.eigvals = eigvals[sorted_indices]
+        self.eigvecs = eigvecs[:, sorted_indices]
+        
+        self.eigvals = self.eigvals[:self.n_components]
+        self.eigvecs = self.eigvecs[:, :self.n_components]
+        self.stress = self._compute_stress(D)
+    
+    def transform(self) -> np.ndarray:
+        sqrt_eigvals = np.diag(np.sqrt(np.maximum(self.eigvals, 0)))
+        return self.eigvecs.dot(sqrt_eigvals)
+    
+    def fit_transform(self, X) -> Any:
+        self.fit(X)
+        return self.transform()
+    
+    def _compute_dissimilarity(self, X: np.ndarray) -> np.ndarray:
+        m, _ = X.shape
+        cov = np.cov(X, rowvar=False)
+        D = np.ones((m, m))
+        for i in range(m):
+            for j in range(i + 1, m):
+                join = (X[i], X[j])
+                if self.metric == 'euclidian': d = Euclidian.distance(*join)
+                elif self.metric == 'manhattan': d = Manhattan.distance(*join)
+                elif self.metric == 'chevyshev': d = Chebyshev.distance(*join)
+                elif self.metric == 'minkowski': d = Minkowski.distance(*join, self.p)
+                elif self.metric == 'cos_similarity': d = CosineSimilarity.distance(*join)
+                elif self.metric == 'correlation': d = Correlation.distance(*join)
+                elif self.metric == 'mahalanobis': d = Mahalanobis.distance(*join, cov)
+                else: raise ValueError(f'[mMDS] Invalid distance metric: {self.metric}')
+                D[i, j] = D[j, i] = d
+        
+        return D
+
+    def _compute_stress(self, D: np.ndarray) -> float:
+        Z = self.transform()
+        stress = np.sum((D - self._compute_dissimilarity(Z)) ** 2)
+        stress /= np.sum(D ** 2)
+        stress = np.sqrt(stress)
+        return stress
+    
+    def set_params(self, 
+                   n_components: int=None,
+                   p: float | int=None,
+                   metric: Literal=None) -> None:
+        if n_components is not None: self.n_components = int(n_components)
+        if p is not None: self.p = float(p)
+        if metric is not None: self.metric = str(metric)
 
 
 class LLE(_Transformer, _Unsupervised):

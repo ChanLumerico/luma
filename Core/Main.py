@@ -1,4 +1,5 @@
 from typing import *
+import sys
 
 
 class LUMA:
@@ -91,4 +92,6 @@ class LUMA:
     
     def __init_subclass__(cls) -> None: ...
 
-    
+
+    if sys.version_info <= (3, 9):
+        print("LUMA requires Python 3.10 or more", file=sys.stderr)

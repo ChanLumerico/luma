@@ -11,7 +11,7 @@ from LUMA.Preprocessing.Scaler import StandardScaler
 from LUMA.Preprocessing.Scaler import MinMaxScaler
 
 from LUMA.Reduction.Linear import PCA, LDA
-from LUMA.Reduction.Nonlinear import KernelPCA
+from LUMA.Reduction.Kernel import KernelPCA
 from LUMA.Reduction.Manifold import TSNE, MDS, SammonMapping
 from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE
 
@@ -39,6 +39,8 @@ from LUMA.Metric.Classification import Accuracy, Precision, Recall, F1Score
 from LUMA.Metric.Classification import Specificity, AUCCurveROC, Complex
 from LUMA.Metric.Regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
 from LUMA.Metric.Regression import MeanAbsolutePercentageError, RSquaredScore, Complex
+from LUMA.Metric.Distance import Euclidian, Manhattan, Chebyshev, Minkowski
+from LUMA.Metric.Distance import CosineSimilarity, Correlation, Mahalanobis
 
 from LUMA.Visual.Plotter import DecisionRegion, ClusteredRegion
 # ---------------------------------------[ Build End ]------------------------------------------- #
@@ -81,6 +83,7 @@ def init():
     # LUMA.Metric
     Accuracy, Precision, Recall, F1Score, Specificity, AUCCurveROC, Complex
     MeanAbsoluteError, MeanAbsolutePercentageError, MeanSquaredError, RootMeanSquaredError, RSquaredScore, Complex
+    Euclidian, Manhattan, Chebyshev, Minkowski, CosineSimilarity, Correlation, Mahalanobis
     
     # LUMA.Visual
     DecisionRegion, ClusteredRegion

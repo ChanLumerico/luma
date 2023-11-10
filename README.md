@@ -69,7 +69,7 @@ visualizing decision boundaries, and creating performance charts. These visualiz
 users gain insights from their machine learning models and communicate results effectively.
 
 ### Latest Version:
-`alpha 1.0`
+`alpha 1.1`
 
 ### Documents
 Link - [LUMA Notion Document](https://lumerico284.notion.site/Machine-Learning-76330376b0e64cc1b95874c469aeb327?pvs=4)
