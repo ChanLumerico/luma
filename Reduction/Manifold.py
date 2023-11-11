@@ -1,5 +1,4 @@
 from typing import *
-from typing import Any, Tuple
 from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.spatial import KDTree
 import numpy as np
@@ -614,7 +613,6 @@ class SammonMapping(_Transformer, _Unsupervised):
                 print(f'[SammonMap] Iteration: {i}/{self.max_iter}', end='')
                 print(f' - relative delta-error: {np.abs((E - E_new) / E)}')
             
-            E_delta_ratio_old = np.abs((E - E_new) / E)
             E = E_new
         self.error = E * scale
         self.Y = y
@@ -646,4 +644,58 @@ class SammonMapping(_Transformer, _Unsupervised):
         if initialize is not None: self.initialize = str(initialize)
         if tol is not None: self.tol = float(tol)
 
+
+class LaplacianEigenmap(_Transformer, _Unsupervised):
     
+    """
+    Laplacian Eigenmap is a dimensionality reduction technique that 
+    transforms high-dimensional data into a lower-dimensional space while 
+    preserving local relationships. It constructs a weighted graph based 
+    on pairwise similarities between data points, computes the Laplacian 
+    matrix from the graph, and performs eigenvalue decomposition to 
+    obtain eigenvectors.
+    
+    Parameters
+    ----------
+    ``n_components`` : Dimensionality of the lower-dimensional space \n
+    ``sigma`` : Width parameter for Gaussian kernel in affinity calculation
+    
+    """
+
+    def __init__(self, n_components: int=2, sigma: float=1.0) -> None:
+        self.n_components = n_components
+        self.sigma = sigma
+        self.embedding = None
+    
+    def fit(self, X: np.ndarray) -> None:
+        pairwise = cdist(X, X)
+        weights = np.exp(-pairwise / (2 * self.sigma ** 2))
+        np.fill_diagonal(weights, 0)
+        
+        laplacian = self._compute_laplacian(weights)
+        normalized_laplacian = self._normalize_laplacian(weights, laplacian)
+        
+        eigvals, eigvecs = np.linalg.eigh(normalized_laplacian)
+        sorted_indices = np.argsort(eigvals)
+        eigvals = eigvals[sorted_indices]
+        eigvecs = eigvecs[:, sorted_indices]
+        self.embedding = eigvecs[:, :self.n_components]
+
+    def _compute_laplacian(self, W: np.ndarray) -> np.ndarray:
+        return np.diag(np.sum(W, axis=1)) - W
+    
+    def _normalize_laplacian(self, W: np.ndarray, L: np.ndarray) -> np.ndarray:
+        D_sqrt_inv = np.linalg.inv(np.sqrt(np.diag(np.sum(W, axis=1))))
+        return D_sqrt_inv.dot(L).dot(D_sqrt_inv)
+    
+    def transform(self) -> np.ndarray:
+        return self.embedding
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
+
+    def set_params(self, n_components: int=None, sigma: float=None) -> None:
+        if n_components is not None: self.n_components = int(n_components)
+        if sigma is not None: self.sigma = float(sigma)
+
