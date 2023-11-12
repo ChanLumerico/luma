@@ -1,4 +1,5 @@
 from typing import *
+from typing import Any, Tuple
 import numpy as np
 
 from LUMA.Interface.Super import _Transformer, _Unsupervised, _Supervised
@@ -106,3 +107,44 @@ class LDA(_Transformer, _Supervised):
     def set_params(self, n_components: int=None) -> None:
         if n_components is not None: self.n_components = int(n_components)
 
+
+class TruncatedSVD(_Transformer, _Unsupervised):
+    
+    """
+    runcated Singular Value Decomposition (TruncatedSVD) is a linear dimensionality 
+    reduction method that simplifies large datasets by preserving the most relevant 
+    information. It achieves this by decomposing a matrix into three components 
+    using singular value decomposition (SVD) and retaining only a specified number 
+    of important components.
+    
+    Parameters
+    ----------
+    ``n_components`` : Dimensionality of low-space
+    
+    """
+    
+    def __init__(self, n_components: int=None) -> None:
+        self.n_components = n_components
+    
+    def fit(self, X: np.ndarray) -> None:
+        mean = np.mean(X, axis=0)
+        X_centered = X - mean
+        U, S, VT = np.linalg.svd(X_centered, full_matrices=False)
+        
+        self.U = U[:, :self.n_components]
+        self.S = np.diag(S[:self.n_components])
+        self.VT = VT[:self.n_components, :]
+    
+    def transform(self, X: np.ndarray) -> np.ndarray:
+        mean = np.mean(X, axis=0)
+        X_centered = X - mean
+        return np.dot(X_centered, self.VT.T)
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform(X)
+
+    def set_params(self, n_components: int=None) -> None:
+        if n_components is not None: self.n_components = int(n_components)
+
+    
