@@ -4,7 +4,7 @@ import numpy as np
 from LUMA.Interface.Super import _Distance
 
 
-class Euclidian(_Distance):
+class Euclidean(_Distance):
     
     """
     Suitable for continuous data. \n

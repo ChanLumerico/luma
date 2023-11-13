@@ -1,7 +1,8 @@
 from typing import *
-from typing import Any, Tuple
 from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.spatial import KDTree
+from scipy.sparse.csgraph import shortest_path
+from scipy.linalg import eigh
 import numpy as np
 
 from LUMA.Reduction.Linear import PCA
@@ -204,7 +205,7 @@ class MetricMDS(_Transformer, _Unsupervised):
     ---------
     ``n_components`` : Dimensionality of low-space \n
     ``metric`` : Distance metric 
-    (e.g. `euclidian`, `manhattan`, `chevychev`, `minkowski`, \n
+    (e.g. `euclidean`, `manhattan`, `chebyshev`, `minkowski`, \n
     `cos_similarity`, `correation`, `mahalanobis`) \n
     ``p`` : Power factor for `minkowski`
     
@@ -213,9 +214,9 @@ class MetricMDS(_Transformer, _Unsupervised):
     def __init__(self,
                  n_components: int=None,
                  p: float | int=None,
-                 metric: Literal['euclidian', 'manhattan', 'chevyshev',
+                 metric: Literal['euclidean', 'manhattan', 'chebyshev',
                                  'minkowski', 'cos_similarity', 'correlation',
-                                 'mahalanobis']='euclidian') -> None:
+                                 'mahalanobis']='euclidean') -> None:
         self.n_components = n_components
         self.metric = metric
         self.p = p
@@ -250,9 +251,9 @@ class MetricMDS(_Transformer, _Unsupervised):
         for i in range(m):
             for j in range(i + 1, m):
                 join = (X[i], X[j])
-                if self.metric == 'euclidian': d = Euclidian.distance(*join)
+                if self.metric == 'euclidean': d = Euclidean.distance(*join)
                 elif self.metric == 'manhattan': d = Manhattan.distance(*join)
-                elif self.metric == 'chevyshev': d = Chebyshev.distance(*join)
+                elif self.metric == 'chebyshev': d = Chebyshev.distance(*join)
                 elif self.metric == 'minkowski': d = Minkowski.distance(*join, self.p)
                 elif self.metric == 'cos_similarity': d = CosineSimilarity.distance(*join)
                 elif self.metric == 'correlation': d = Correlation.distance(*join)
@@ -699,4 +700,84 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
     def set_params(self, n_components: int=None, sigma: float=None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if sigma is not None: self.sigma = float(sigma)
+
+
+class IsometricMapping(_Transformer, _Unsupervised):
+    
+    """
+    Isomap, or Isometric Mapping, is a nonlinear dimensionality reduction technique 
+    employed in machine learning. It focuses on preserving the geodesic distances 
+    between data points in high-dimensional datasets. By constructing a neighborhood 
+    graph and calculating pairwise geodesic distances, Isomap transforms the data 
+    into a lower-dimensional space, offering insights into complex, nonlinear 
+    relationships within the dataset.
+    
+    Parameters
+    ----------
+    ``n_components`` : Dimensionality of low-space \n
+    ``epsilon`` : Boundary radius of the neighbor hypersphere \n
+    ``algorithm`` : Shortest path finding algorithm
+    (e.g. `dijkstra`, `floyd`) \n
+    ``metric`` : Distance metric
+    (e.g. `euclidean`, `cityblock`, `chebyshev`, `cosine`, `correlation`)
+    
+    """
+    
+    def __init__(self, 
+                 n_components: int=None, 
+                 epsilon: float=5.0,
+                 algorithm: Literal['dijkstra', 'floyd']='dijkstra',
+                 metric: Literal['euclidean', 'cityblock', 'chebyshev',
+                                 'cosine', 'correlation']='euclidean') -> None:
+        self.n_components = n_components
+        self.epsilon = epsilon
+        self.algorithm = algorithm
+        self.metric = metric
+    
+    def fit(self, X: np.ndarray) -> None:
+        self.adj = self._make_adjacency(X)
+        if np.isinf(self.adj).any(): 
+            print(f'[Isomap] Too narrow bin size with epsilon of {self.epsilon}')
+            return
+        
+        m, _ = self.adj.shape
+        H = np.eye(m) - (1 / m) * np.ones((m, m))
+        C = -0.5 / m * H.dot(self.adj ** 2).dot(H)
+        
+        eigvals, eigvecs = eigh(C)
+        indices = eigvals.argsort()[::-1]
+        eigvals, eigvecs = eigvals[indices], eigvecs[:, indices]
+        self.eigvals = eigvals[:self.n_components]
+        self.eigvecs = eigvecs[:, :self.n_components]
+
+    def _make_adjacency(self, X: np.ndarray) -> np.ndarray:
+        m, _ = X.shape
+        distance = cdist(X, X, metric=self.metric)
+        adjacency = np.zeros((m, m)) + np.inf
+        bin = distance < self.epsilon
+        adjacency[bin] = distance[bin]
+        
+        if self.algorithm == 'dijkstra':
+            path_mat = shortest_path(adjacency, directed=False, method='D')
+        elif self.algorithm == 'floyd':
+            path_mat = shortest_path(adjacency, directed=False, method='FW')
+        else: raise ValueError('[Isomap] Unsupported path algorithm!')
+        return path_mat
+
+    def transform(self) -> np.ndarray:
+        return self.eigvecs.dot(np.diag(np.sqrt(self.eigvals)))
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
+    
+    def set_params(self, 
+                   n_components: int=None, 
+                   epsilon: float=None,
+                   algorithm: Literal=None,
+                   metric: Literal=None) -> None:
+        if n_components is not None: self.n_components = int(n_components)
+        if epsilon is not None: self.epsilon = float(epsilon)
+        if algorithm is not None: self.algorithm = str(algorithm)
+        if metric is not None: self.method = str(metric)
 

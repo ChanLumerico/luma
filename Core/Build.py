@@ -5,14 +5,14 @@ build_start = time.time()
 # ----------------------------------------[ Build Start ]---------------------------------------- #
 from LUMA.Core.Main import LUMA
 from LUMA.Interface.Super import _Estimator, _Transformer, _Evaluator, _Visualizer
-from LUMA.Interface.Super import _Supervised, _Unsupervised
+from LUMA.Interface.Super import _Supervised, _Unsupervised, _Distance
 
 from LUMA.Preprocessing.Scaler import StandardScaler
 from LUMA.Preprocessing.Scaler import MinMaxScaler
 
 from LUMA.Reduction.Linear import PCA, LDA, TruncatedSVD
 from LUMA.Reduction.Nonlinear import KernelPCA
-from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap
+from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap, IsometricMapping
 from LUMA.Reduction.Manifold import MDS, MetricMDS
 from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE
 
@@ -40,7 +40,7 @@ from LUMA.Metric.Classification import Accuracy, Precision, Recall, F1Score
 from LUMA.Metric.Classification import Specificity, AUCCurveROC, Complex
 from LUMA.Metric.Regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
 from LUMA.Metric.Regression import MeanAbsolutePercentageError, RSquaredScore, Complex
-from LUMA.Metric.Distance import Euclidian, Manhattan, Chebyshev, Minkowski
+from LUMA.Metric.Distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from LUMA.Metric.Distance import CosineSimilarity, Correlation, Mahalanobis
 
 from LUMA.Visual.Plotter import DecisionRegion, ClusteredRegion
@@ -54,7 +54,7 @@ def init():
     
     # LUMA.Interface.Super
     _Estimator, _Transformer, _Evaluator, _Visualizer
-    _Supervised, _Unsupervised
+    _Supervised, _Unsupervised, _Distance
     
     # LUMA.Preprocessing.Scaler
     StandardScaler, MinMaxScaler
@@ -62,7 +62,8 @@ def init():
     # LUMA.Reduction
     PCA, LDA, TruncatedSVD
     KernelPCA
-    TSNE, MDS, MetricMDS, SammonMapping, LaplacianEigenmap
+    TSNE, SammonMapping, LaplacianEigenmap, IsometricMapping
+    MDS, MetricMDS
     LLE, ModifiedLLE, HessianLLE
     
     # LUMA.ModelSelection
@@ -84,7 +85,7 @@ def init():
     # LUMA.Metric
     Accuracy, Precision, Recall, F1Score, Specificity, AUCCurveROC, Complex
     MeanAbsoluteError, MeanAbsolutePercentageError, MeanSquaredError, RootMeanSquaredError, RSquaredScore, Complex
-    Euclidian, Manhattan, Chebyshev, Minkowski, CosineSimilarity, Correlation, Mahalanobis
+    Euclidean, Manhattan, Chebyshev, Minkowski, CosineSimilarity, Correlation, Mahalanobis
     
     # LUMA.Visual
     DecisionRegion, ClusteredRegion

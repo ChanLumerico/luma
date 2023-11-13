@@ -147,4 +147,3 @@ class TruncatedSVD(_Transformer, _Unsupervised):
     def set_params(self, n_components: int=None) -> None:
         if n_components is not None: self.n_components = int(n_components)
 
-    
