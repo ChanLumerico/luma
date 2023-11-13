@@ -702,7 +702,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         if sigma is not None: self.sigma = float(sigma)
 
 
-class IsometricMapping(_Transformer, _Unsupervised):
+class Isomap(_Transformer, _Unsupervised):
     
     """
     Isomap, or Isometric Mapping, is a nonlinear dimensionality reduction technique 

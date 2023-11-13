@@ -12,7 +12,7 @@ from LUMA.Preprocessing.Scaler import MinMaxScaler
 
 from LUMA.Reduction.Linear import PCA, LDA, TruncatedSVD
 from LUMA.Reduction.Nonlinear import KernelPCA
-from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap, IsometricMapping
+from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap, Isomap
 from LUMA.Reduction.Manifold import MDS, MetricMDS
 from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE
 
@@ -62,7 +62,7 @@ def init():
     # LUMA.Reduction
     PCA, LDA, TruncatedSVD
     KernelPCA
-    TSNE, SammonMapping, LaplacianEigenmap, IsometricMapping
+    TSNE, SammonMapping, LaplacianEigenmap, Isomap
     MDS, MetricMDS
     LLE, ModifiedLLE, HessianLLE
     
