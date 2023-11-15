@@ -43,7 +43,8 @@ from LUMA.Metric.Regression import MeanAbsolutePercentageError, RSquaredScore, C
 from LUMA.Metric.Distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from LUMA.Metric.Distance import CosineSimilarity, Correlation, Mahalanobis
 
-from LUMA.Visual.Plotter import DecisionRegion, ClusteredRegion
+from LUMA.Visual.EDA import CorrelationHeatMap, CorrelationBar, JointPlot
+from LUMA.Visual.Result import DecisionRegion, ClusteredRegion
 # ---------------------------------------[ Build End ]------------------------------------------- #
 
 
@@ -89,6 +90,7 @@ def init():
     
     # LUMA.Visual
     DecisionRegion, ClusteredRegion
+    CorrelationHeatMap, CorrelationBar, JointPlot
 
 
 init()

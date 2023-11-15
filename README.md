@@ -67,9 +67,15 @@ accuracy and performance.
 The `LUMA.Visual` submodule simplifies model visualization. It includes tools for plotting data,
 visualizing decision boundaries, and creating performance charts. These visualization aids help 
 users gain insights from their machine learning models and communicate results effectively.
+##
 
-### Latest Version:
+### Latest Version
 `alpha 1.1`
 
-### Documents
-Link - [LUMA Notion Document](https://lumerico284.notion.site/Machine-Learning-76330376b0e64cc1b95874c469aeb327?pvs=4)
+### Dependencies
+Necessary – `NumPy`, `SciPy`, `Matplotlib`, `Seaborn`
+
+Optional – `Pandas`
+
+### Document
+[LUMA Notion Document](https://lumerico284.notion.site/Machine-Learning-76330376b0e64cc1b95874c469aeb327?pvs=4)
