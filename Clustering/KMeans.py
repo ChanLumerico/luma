@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator, _Unsupervised
 
 
@@ -27,6 +28,7 @@ class KMeansClustering(_Estimator, _Unsupervised):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         init_indices = np.random.choice(X.shape[0], self.n_clusters, replace=False)
@@ -48,17 +50,17 @@ class KMeansClustering(_Estimator, _Unsupervised):
             self.centroids = new_centroids
             
         self.centroids = np.array(self.centroids)
+        self._fitted = True
     
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         labels = np.argmin(distances, axis=1)
         return labels
 
     def set_params(self, n_clusters: int=None, max_iter: int=None) -> None:
-        if n_clusters is not None:
-            self.n_clusters = int(n_clusters)
-        if max_iter is not None:
-            self.max_iter = int(max_iter)
+        if n_clusters is not None: self.n_clusters = int(n_clusters)
+        if max_iter is not None: self.max_iter = int(max_iter)
 
 
 class KMeansClusteringPlus(_Estimator, _Unsupervised):
@@ -84,6 +86,7 @@ class KMeansClusteringPlus(_Estimator, _Unsupervised):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
+        self._fitted = False
 
     def _initialize_centroids(self, X: np.ndarray) -> None:
         self.centroids = [X[np.random.choice(X.shape[0])]]
@@ -110,18 +113,17 @@ class KMeansClusteringPlus(_Estimator, _Unsupervised):
                 print(f'[K-Means++] iteration: {i}/{self.max_iter}', end='')
         
         self.centroids = np.array(self.centroids)
-        
+        self._fitted = True
     
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         labels = np.argmin(distances, axis=1)
         return labels
 
     def set_params(self, n_clusters: int=None, max_iter: int=None) -> None:
-        if n_clusters is not None:
-            self.n_clusters = int(n_clusters)
-        if max_iter is not None:
-            self.max_iter = int(max_iter)
+        if n_clusters is not None: self.n_clusters = int(n_clusters)
+        if max_iter is not None: self.max_iter = int(max_iter)
 
 
 class KMediansClustering(_Estimator, _Unsupervised):
@@ -147,6 +149,7 @@ class KMediansClustering(_Estimator, _Unsupervised):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
+        self._fitted = False
         
     def fit(self, X: np.ndarray) -> None:
         self.medians = X[np.random.choice(X.shape[0], self.n_clusters, replace=False)]
@@ -167,16 +170,15 @@ class KMediansClustering(_Estimator, _Unsupervised):
                 print(f' - delta-centroid norm: {diff_norm}')
             
             self.medians = new_medians
-            
+        self._fitted = True
     
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         distances = np.abs(X[:, np.newaxis] - self.medians)
         labels = np.argmin(distances.sum(axis=2), axis=1)
         return labels
     
     def set_params(self, n_clusters: int=None, max_iter: int=None) -> None:
-        if n_clusters is not None:
-            self.n_clusters = int(n_clusters)
-        if max_iter is not None:
-            self.max_iter = int(max_iter)
+        if n_clusters is not None: self.n_clusters = int(n_clusters)
+        if max_iter is not None: self.max_iter = int(max_iter)
 

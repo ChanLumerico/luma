@@ -3,7 +3,7 @@ import numpy as np
 
 
 class TrainTestSplit:
-    @staticmethod
+    @classmethod
     def split(X: np.ndarray, y: np.ndarray, 
               test_size: float = 0.2, 
               random_state: int = None) -> Tuple[np.ndarray]:

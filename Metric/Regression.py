@@ -5,31 +5,31 @@ from LUMA.Interface.Super import _Evaluator
 
 
 class MeanAbsoluteError(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean(np.abs(y_true - y_pred))
 
 
 class MeanSquaredError(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean((y_true - y_pred) ** 2)
 
 
 class RootMeanSquaredError(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.sqrt(np.mean((y_true - y_pred) ** 2))
 
 
 class MeanAbsolutePercentageError(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
 
 class RSquaredScore(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         y_bar = np.mean(y_true)
         total_sum_of_squares = np.sum((y_true - y_bar) ** 2)
@@ -39,7 +39,7 @@ class RSquaredScore(_Evaluator):
 
 
 class Complex:
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
         scores = dict()
         scores['mae'] = MeanAbsoluteError.compute(y_true, y_pred)

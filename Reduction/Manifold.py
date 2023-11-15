@@ -1,4 +1,4 @@
-from typing import *
+from typing import Any, Literal
 from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.spatial import KDTree
 from scipy.sparse.csgraph import shortest_path
@@ -7,6 +7,8 @@ import numpy as np
 
 from LUMA.Reduction.Linear import PCA
 from LUMA.Interface.Super import _Transformer, _Unsupervised
+from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
+from LUMA.Clustering.KMeans import *
 from LUMA.Metric.Distance import *
 
 
@@ -38,8 +40,9 @@ class TSNE(_Transformer, _Unsupervised):
         self.learning_rate = learning_rate
         self.perplexity = perplexity
         self.verbose = verbose
+        self._fitted = False
         
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit(self, X: np.ndarray) -> np.ndarray:
         size = X.shape[0]
         P = self._P_joint_probabilities(X)
         y = np.random.normal(0.0, 1e-4, (size, self.n_components))
@@ -57,7 +60,16 @@ class TSNE(_Transformer, _Unsupervised):
                 print(f'[t-SNE] main iteration: {i}/{self.max_iter}', end='')
                 print(f' - gradient-norm: {np.linalg.norm(gradient)}')
             
-        return y
+        self.y = y
+        self._fitted = True
+    
+    def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
+        return self.y
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
     
     def _P_conditional(self, distances: np.ndarray, sigmas: np.ndarray) -> np.ndarray:
         exponent = np.exp(-distances / (2 * np.square(sigmas.reshape((-1,1)))))
@@ -155,6 +167,7 @@ class MDS(_Transformer, _Unsupervised):
     
     def __init__(self, n_components: int=None) -> None:
         self.n_components = n_components
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         D = self._compute_dissimilarity(X)
@@ -169,9 +182,11 @@ class MDS(_Transformer, _Unsupervised):
         
         self.eigvals = self.eigvals[:self.n_components]
         self.eigvecs = self.eigvecs[:, :self.n_components]
+        self._fitted = True
         self.stress = self._compute_stress(D)
     
     def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         sqrt_eigvals = np.diag(np.sqrt(np.maximum(self.eigvals, 0)))
         return self.eigvecs.dot(sqrt_eigvals)
     
@@ -220,6 +235,7 @@ class MetricMDS(_Transformer, _Unsupervised):
         self.n_components = n_components
         self.metric = metric
         self.p = p
+        self._fitted = False
 
     def fit(self, X: np.ndarray) -> None:
         D = self._compute_dissimilarity(X)
@@ -234,9 +250,11 @@ class MetricMDS(_Transformer, _Unsupervised):
         
         self.eigvals = self.eigvals[:self.n_components]
         self.eigvecs = self.eigvecs[:, :self.n_components]
+        self._fitted = True
         self.stress = self._compute_stress(D)
     
     def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         sqrt_eigvals = np.diag(np.sqrt(np.maximum(self.eigvals, 0)))
         return self.eigvecs.dot(sqrt_eigvals)
     
@@ -279,6 +297,103 @@ class MetricMDS(_Transformer, _Unsupervised):
         if metric is not None: self.metric = str(metric)
 
 
+class LandmarkMDS(_Transformer, _Unsupervised):
+    
+    """
+    Landmark Multi-Dimensional Scaling (LMDS) is a dimensionality reduction method 
+    that selects a subset of "landmark" points to efficiently approximate the 
+    lower-dimensional representation of a dataset while preserving pairwise distances. 
+    It simplifies the computation by focusing on distances between data points and 
+    landmarks, making it suitable for large datasets.
+    
+    Parameters
+    ----------
+    ``n_components`` : Dimensionality of low-space \n
+    ``n_landmarks`` : Number of landmarks \n
+    ``method`` : Algorithm for landmark initialization
+    (e.g. `random`, `kmeans`, `kmeans++`, `kmedians`)
+    
+    """
+    
+    def __init__(self, 
+                 n_components: int=None, 
+                 n_landmarks: int=10,
+                 method: Literal['random', 'kmeans', 'kmeans++', 'kmedians']='random',
+                 verbose: bool=False) -> None:
+        self.n_components = n_components
+        self.n_landmarks = n_landmarks
+        self.method = method
+        self.verbose = verbose
+        self._fitted = False
+    
+    def fit(self, X: np.random) -> None:
+        self.landmarks = self._initialize_landmarks(X)
+        D = self._compute_dissimilarity(self.landmarks)
+        n = D.shape[0]
+        H = np.eye(n) - np.ones((n, n)) / n
+        B = -0.5 * H.dot(D).dot(H)
+        
+        eigvals, eigvecs = np.linalg.eigh(B)
+        sorted_indices = np.argsort(eigvals)[::-1]
+        self.eigvals = eigvals[sorted_indices]
+        self.eigvecs = eigvecs[:, sorted_indices]
+        
+        self.eigvals = self.eigvals[self.n_components]
+        self.eigvecs = self.eigvecs[:, :self.n_components]
+        
+        D_mean = np.mean(D, axis=1)
+        D_xland = np.sum((X[:, np.newaxis, :] - self.landmarks) ** 2, axis=2)
+        self.mean_diff = D_mean - D_xland
+        self._fitted = True
+    
+    def _initialize_landmarks(self, X: np.ndarray) -> np.ndarray:
+        m, _ = X.shape
+        if self.method == 'random':
+            if self.verbose: print(f'[LMDS] Initializing landmarks with random choice')
+            landmark = X[np.random.choice(m, self.n_landmarks, replace=False)]
+            
+        elif self.method == 'kmeans':
+            if self.verbose: print(f'[LMDS] Initializing landmarks with K-Means centroids')
+            kmeans = KMeansClustering(n_clusters=self.n_landmarks, verbose=self.verbose)
+            kmeans.fit(X)
+            landmark = kmeans.centroids
+        
+        elif self.method == 'kmeans++':
+            if self.verbose: print(f'[LMDS] Initializing landmarks with K-Means++ centroids')
+            kmeanspp = KMeansClusteringPlus(n_clusters=self.n_landmarks, verbose=self.verbose)
+            kmeanspp.fit(X)
+            landmark = kmeanspp.centroids
+        
+        elif self.method == 'kmedians':
+            if self.verbose: print(f'[LMDS] Initializing landmarks with K-Medians medians')
+            kmedians = KMediansClustering(n_clusters=self.n_landmarks, verbose=self.verbose)
+            kmedians.fit(X)
+            landmark = kmedians.medians
+            
+        else: raise UnsupportedParameterError(self.method)
+        return landmark
+    
+    def _compute_dissimilarity(self, X: np.ndarray) -> np.ndarray:
+        return squareform(pdist(X, metric='euclidean'))
+    
+    def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
+        L_sharp = self.eigvecs / np.sqrt(self.eigvals)
+        return 0.5 * self.mean_diff.dot(L_sharp)
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
+    
+    def set_params(self,
+                   n_components: int=None,
+                   n_landmarks: int=None,
+                   method: Literal=None) -> None:
+        if n_components is not None: self.n_components = int(n_components)
+        if n_landmarks is not None: self.n_landmarks = int(n_landmarks)
+        if method is not None: self.method = str(method)
+
+
 class LLE(_Transformer, _Unsupervised):
     
     """
@@ -302,6 +417,7 @@ class LLE(_Transformer, _Unsupervised):
         self.n_neighbors = n_neighbors
         self.n_components = n_components
         self.verbose = verbose
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         m, _ = X.shape
@@ -327,8 +443,10 @@ class LLE(_Transformer, _Unsupervised):
             
         M = np.identity(m) - W
         self.eigvals, self.eigvecs = np.linalg.eig(np.dot(M.T, M))
+        self._fitted = True
         
     def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         indices = np.argsort(self.eigvals)[1:self.n_components + 1]
         return self.eigvecs[:, indices]
     
@@ -370,6 +488,7 @@ class ModifiedLLE(_Transformer, _Unsupervised):
         self.n_components = n_components
         self.regularization = regularization
         self.verbose = verbose
+        self._fitted = False
 
     def fit(self, X: np.ndarray) -> None:
         m, _ = X.shape
@@ -395,8 +514,10 @@ class ModifiedLLE(_Transformer, _Unsupervised):
 
         M = np.identity(m) - W
         self.eigvals, self.eigvecs = np.linalg.eig(np.dot(M.T, M))
+        self._fitted = True
 
     def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         indices = np.argsort(self.eigvals)[1 : self.n_components + 1]
         return self.eigvecs[:, indices]
 
@@ -438,6 +559,7 @@ class HessianLLE(_Transformer, _Unsupervised):
         self.n_components = n_components
         self.regularization = regularization
         self.verbose = verbose
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         m, _ = X.shape
@@ -487,8 +609,10 @@ class HessianLLE(_Transformer, _Unsupervised):
         S = np.matrix(np.diag(sig ** (-1)))
         R = VT.T * S * VT
         self.Y, self.R = Y, R
+        self._fitted = True
     
     def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         return np.array(self.Y * self.R).T
     
     def fit_transform(self, X: np.ndarray) -> np.ndarray:
@@ -547,6 +671,7 @@ class SammonMapping(_Transformer, _Unsupervised):
         self.tol = tol
         self.initialize = initialize
         self.verbose = verbose
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         m, _ = X.shape
@@ -620,6 +745,7 @@ class SammonMapping(_Transformer, _Unsupervised):
         self.Y = y
         
         if self.verbose: print(f'[SammonMap] Final error: {self.error}')
+        self._fitted = True
     
     def _fill_diagnoal(self, matrix: np.ndarray, value: float) -> None:
         np.fill_diagonal(matrix, value)
@@ -628,6 +754,7 @@ class SammonMapping(_Transformer, _Unsupervised):
         matrix[np.isinf(filter)] = 0
     
     def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         return self.Y
     
     def fit_transform(self, X: np.ndarray) -> np.ndarray:
@@ -668,6 +795,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         self.n_components = n_components
         self.sigma = sigma
         self.embedding = None
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         pairwise = cdist(X, X)
@@ -682,6 +810,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         eigvals = eigvals[sorted_indices]
         eigvecs = eigvecs[:, sorted_indices]
         self.embedding = eigvecs[:, :self.n_components]
+        self._fitted = True
 
     def _compute_laplacian(self, W: np.ndarray) -> np.ndarray:
         return np.diag(np.sum(W, axis=1)) - W
@@ -691,6 +820,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         return D_sqrt_inv.dot(L).dot(D_sqrt_inv)
     
     def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         return self.embedding
     
     def fit_transform(self, X: np.ndarray) -> np.ndarray:
@@ -733,6 +863,7 @@ class Isomap(_Transformer, _Unsupervised):
         self.epsilon = epsilon
         self.algorithm = algorithm
         self.metric = metric
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         self.adj = self._make_adjacency(X)
@@ -749,6 +880,7 @@ class Isomap(_Transformer, _Unsupervised):
         eigvals, eigvecs = eigvals[indices], eigvecs[:, indices]
         self.eigvals = eigvals[:self.n_components]
         self.eigvecs = eigvecs[:, :self.n_components]
+        self._fitted = True
 
     def _make_adjacency(self, X: np.ndarray) -> np.ndarray:
         m, _ = X.shape
@@ -765,6 +897,7 @@ class Isomap(_Transformer, _Unsupervised):
         return path_mat
 
     def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         return self.eigvecs.dot(np.diag(np.sqrt(self.eigvals)))
     
     def fit_transform(self, X: np.ndarray) -> np.ndarray:

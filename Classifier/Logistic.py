@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 from LUMA.Interface.Super import _Estimator, _Supervised
 
 
@@ -35,6 +36,7 @@ class LogisticRegressor(_Estimator, _Supervised):
         self.regularization = regularization
         self.alpha = alpha
         self.verbose = verbose
+        self._fitted = False
 
     def sigmoid(self, z: np.ndarray) -> np.ndarray:
         return 1 / (1 + np.exp(-z))
@@ -55,6 +57,8 @@ class LogisticRegressor(_Estimator, _Supervised):
             if self.verbose and i % 10 == 0: 
                 print(f'[LogisticReg] iteration: {i}/{self.max_iter}', end='')
                 print(f' - gradient-norm: {np.linalg.norm(gradient)}')
+        
+        self._fitted = True
 
     def _regularization_term(self) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(self.theta)
@@ -63,9 +67,11 @@ class LogisticRegressor(_Estimator, _Supervised):
             l1_term = np.sign(self.theta)
             l2_term = 2 * self.theta
             return (1 - self.rho) * l2_term + self.rho * l1_term
-        else: return np.zeros_like(self.theta)
+        elif self.regularization is None: return np.zeros_like(self.theta)
+        else: raise UnsupportedParameterError(self.regularization)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X = np.insert(X, 0, 1, axis=1)
         z = np.dot(X, self.theta)
         h = self.sigmoid(z)
@@ -122,6 +128,7 @@ class SoftmaxRegressor(_Estimator, _Supervised):
         self.alpha = alpha
         self.regularization = regularization
         self.verbose = verbose
+        self._fitted = False
     
     def softmax(self, z: np.ndarray) -> np.ndarray:
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
@@ -145,6 +152,8 @@ class SoftmaxRegressor(_Estimator, _Supervised):
             if self.verbose and i % 10 == 0: 
                 print(f'[SoftmaxReg] iteration: {i}/{self.max_iter}', end='')
                 print(f' - gradient-norm: {np.linalg.norm(gradient)}')
+        
+        self._fitted = True
     
     def _one_hot_encode(self, y: np.ndarray) -> np.ndarray:
         num_classes = self.theta.shape[1]
@@ -154,18 +163,17 @@ class SoftmaxRegressor(_Estimator, _Supervised):
         return one_hot
     
     def _regularization_term(self) -> np.ndarray:
-        if self.regularization == 'l1':
-            return np.sign(self.theta)
-        elif self.regularization == 'l2':
-            return self.theta
-        elif self.regularization == 'elastic-net':
+        if self.regularization == 'l1': return np.sign(self.theta)
+        elif self.regularization == 'l2': return self.theta
+        elif self.regularization == 'elastic_net':
             l1_term = np.sign(self.theta)
             l2_term = 2 * self.theta
             return (1 - self.rho) * l2_term + self.rho * l1_term
-        else:
-            return np.zeros_like(self.theta)
+        elif self.regularization is None: return np.zeros_like(self.theta)
+        else: raise UnsupportedParameterError(self.regularization)
     
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X = np.insert(X, 0, 1, axis=1)
         z = np.dot(X, self.theta)
         h = self.softmax(z)

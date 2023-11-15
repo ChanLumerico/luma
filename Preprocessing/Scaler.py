@@ -2,6 +2,7 @@ from typing import *
 import numpy as np
 
 from LUMA.Interface.Super import _Transformer
+from LUMA.Interface.Exception import NotFittedError
 
 
 class StandardScaler(_Transformer):
@@ -14,13 +15,15 @@ class StandardScaler(_Transformer):
     def __init__(self) -> None:
         self.mean = None
         self.std = None
+        self._fitted = False
 
     def fit(self, X: np.ndarray) -> None:
         self.mean = np.mean(X, axis=0)
         self.std = np.std(X, axis=0)
+        self._fitted = True
 
     def transform(self, X: np.ndarray) -> np.ndarray:
-        if self.mean is None or self.std is None: raise ValueError()
+        if not self._fitted: raise NotFittedError(self)
         return (X - self.mean) / self.std
 
     def fit_transform(self, X: np.ndarray) -> np.ndarray:
@@ -28,8 +31,7 @@ class StandardScaler(_Transformer):
         return self.transform(X)
 
     def inverse_transform(self, X: np.ndarray) -> np.ndarray:
-        if self.mean is None or self.std is None: raise ValueError()
-        
+        if not self._fitted: raise NotFittedError(self)
         return (X * self.std) + self.mean
 
 
@@ -46,13 +48,15 @@ class MinMaxScaler(_Transformer):
         self.feature_range = feature_range
         self.min = None
         self.max = None
+        self._fitted = False
 
     def fit(self, X: np.ndarray) -> None:
         self.min = np.min(X, axis=0)
         self.max = np.max(X, axis=0)
+        self._fitted = True
 
     def transform(self, X: np.ndarray) -> np.ndarray:
-        if self.min is None or self.max is None: raise ValueError()
+        if not self._fitted: raise NotFittedError(self)
         min_val, max_val = self.feature_range
         scaled = (X - self.min) / (self.max - self.min) * (max_val - min_val)
         return scaled + min_val
@@ -62,7 +66,7 @@ class MinMaxScaler(_Transformer):
         return self.transform(X)
 
     def inverse_transform(self, X: np.ndarray) -> np.ndarray:
-        if self.min is None or self.max is None: raise ValueError()
+        if not self._fitted: raise NotFittedError(self)
         min_val, max_val = self.feature_range
         original = (X - min_val) / (max_val - min_val) * (self.max - self.min)
         return original + self.min

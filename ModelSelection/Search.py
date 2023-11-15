@@ -1,7 +1,7 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Types import Estimator, Evaluator
+from LUMA.Interface.Type import Estimator, Evaluator
 
 
 class GridSearchCV:

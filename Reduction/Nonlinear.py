@@ -3,6 +3,7 @@ from scipy.linalg import eigh
 import numpy as np
 
 from LUMA.Interface.Super import _Transformer, _Unsupervised
+from LUMA.Interface.Exception import NotFittedError
     
 
 class KernelPCA(_Transformer, _Unsupervised):
@@ -38,6 +39,7 @@ class KernelPCA(_Transformer, _Unsupervised):
         self.coef = coef
         self.kernel = kernel
         self.X = None
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         self.X = X
@@ -61,8 +63,10 @@ class KernelPCA(_Transformer, _Unsupervised):
         self.K += one_n.dot(self.K).dot(one_n)
         self.eigvals, self.eigvecs = eigh(self.K)
         self.eigvals, self.eigvecs = self.eigvals[::-1], self.eigvecs[:, ::-1]
+        self._fitted =  True
 
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         return np.column_stack([self.eigvecs[:, i] for i in range(self.n_components)])
         
     def fit_transform(self, X: np.ndarray) -> np.ndarray:

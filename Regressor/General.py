@@ -2,6 +2,7 @@ from typing import *
 from scipy.special import psi
 import numpy as np
 
+from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 from LUMA.Interface.Super import _Estimator, _Supervised
 
 
@@ -37,6 +38,7 @@ class PoissonRegressor(_Estimator, _Supervised):
         self.rho = rho
         self.alpha = alpha
         self.verbose = verbose
+        self._fitted = False
     
     def link_funciton(self, X: np.ndarray) -> np.ndarray:
         return np.exp(np.dot(X, self.weights))
@@ -60,6 +62,7 @@ class PoissonRegressor(_Estimator, _Supervised):
                 print(f' - gradient-norm: {np.linalg.norm(gradient)}')
             
             self.weights += gradient
+        self._fitted = True
     
     def _regularization_term(self) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(self.weights)
@@ -68,10 +71,11 @@ class PoissonRegressor(_Estimator, _Supervised):
             l1_term = np.sign(self.weights)
             l2_term = 2 * self.weights
             return (1 - self.rho) * l2_term + self.rho * l1_term
-        else:
-            return np.zeros_like(self.weights)
+        elif self.regularization is None: return np.zeros_like(self.weights)
+        else: raise UnsupportedParameterError(self.regularization)
     
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         predictions = self.link_funciton(X)
         return predictions
@@ -124,6 +128,7 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
         self.phi = phi
         self.regularization = regularization
         self.verbose = verbose
+        self._fitted = False
     
     def link_function(self, X: np.ndarray) -> np.ndarray:
         return np.log(1 + np.exp(np.dot(X, self.weights)))
@@ -148,6 +153,7 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
                 print(f' - gradient-norm: {np.linalg.norm(gradient)}')
             
             self.weights += gradient
+        self._fitted = True
     
     def _regularization_term(self) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(self.weights)
@@ -156,10 +162,11 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
             l1_term = np.sign(self.weights)
             l2_term = 2 * self.weights
             return (1 - self.rho) * l2_term + self.rho * l1_term
-        else:
-            return np.zeros_like(self.weights)
+        elif self.regularization is None: return np.zeros_like(self.weights)
+        else: raise UnsupportedParameterError(self.regularization)
     
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         mu = self.link_function(X)
         return mu
@@ -218,6 +225,7 @@ class GammaRegressor(_Estimator, _Supervised):
         self.rho = rho
         self.regularization = regularization
         self.verbose = verbose
+        self._fitted = False
     
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         X = np.column_stack((np.ones(X.shape[0]), X))
@@ -240,16 +248,21 @@ class GammaRegressor(_Estimator, _Supervised):
             if self.verbose and i % 10 == 0:
                 print(f'[GammaReg] iteration: {i}/{self.max_iter}', end='')
                 print(f' - gradient-norm: {np.linalg.norm(gradient)}')
+        
+        self._fitted = True
     
     def _regularization_term(self, weights: np.ndarray) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(weights)
-        elif self.regularization == 'l2': return 2 * weights
+        elif self.regularization == 'l2': return self.weights
         elif self.regularization == 'elastic-net':
             l1_term = np.sign(weights)
             l2_term = 2 * weights
             return (1 - self.rho) * l2_term + self.rho * l1_term
+        elif self.regularization is None: return np.zeros_like(weights)
+        else: raise UnsupportedParameterError(self.regularization)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return np.dot(X, self.alpha / self.beta)
     
@@ -307,6 +320,7 @@ class BetaRegressor(_Estimator, _Supervised):
         self.rho = rho
         self.regularization = regularization
         self.verbose = verbose
+        self._fitted = False
     
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         X = np.column_stack((np.ones(X.shape[0]), X))
@@ -331,16 +345,21 @@ class BetaRegressor(_Estimator, _Supervised):
                 gradient_norm = np.linalg.norm(gradient_alpha + gradient_beta)
                 print(f'[BetaReg] iteration: {i}/{self.max_iter}', end='')
                 print(f' - gradient-norm: {gradient_norm}')
+        
+        self._fitted = True
     
     def _regularization_term(self, weights: np.ndarray) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(weights)
-        elif self.regularization == 'l2': return 2 * weights
+        elif self.regularization == 'l2': return self.weights
         elif self.regularization == 'elastic-net':
             l1_term = np.sign(weights)
             l2_term = 2 * weights
             return (1 - self.rho) * l2_term + self.rho * l1_term
+        elif self.regularization is None: return np.zeros_like(weights)
+        else: raise UnsupportedParameterError(self.regularization)
     
     def predict(self, X: np.ndarray) -> float:
+        if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return np.dot(X, self.alpha / (self.alpha + self.beta))
     
@@ -395,6 +414,7 @@ class InverseGaussianRegressor(_Estimator, _Supervised):
         self.alpha = alpha
         self.regularization = regularization
         self.verbose = verbose
+        self._fitted = False
     
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         X = np.column_stack((np.ones(X.shape[0]), X))
@@ -418,16 +438,20 @@ class InverseGaussianRegressor(_Estimator, _Supervised):
                 print(f' - gradient-norm: {np.linalg.norm(gradient)}')
             
             self.weights -= gradient
+        self._fitted = True
     
     def _regularization_term(self):
         if self.regularization == 'l1': return np.sign(self.weights)
-        elif self.regularization == 'l2': return 2 * self.weights
+        elif self.regularization == 'l2': return self.weights
         elif self.regularization == 'elastic-net':
             l1_term = np.sign(self.weights)
             l2_term = 2 * self.weights
             return (1 - self.rho) * l2_term + self.rho * l1_term
+        elif self.regularization is None: return np.zeros_like(self.weights)
+        else: raise UnsupportedParameterError(self.regularization)
     
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return 1 / (self.phi * X) * np.dot(X, self.weights)
 

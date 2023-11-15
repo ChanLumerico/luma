@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator
 
 
@@ -12,6 +13,7 @@ class PolynomialRegressor(_Estimator):
     
     def __init__(self, degree: int=1):
         self.degree = degree
+        self._fitted = False
 
     def _generate_polynomial_features(self, X):
         X_poly = X.copy()
@@ -22,8 +24,10 @@ class PolynomialRegressor(_Estimator):
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         X_poly = self._generate_polynomial_features(X)
         self.coefficients = np.linalg.lstsq(X_poly, y, rcond=None)[0]
+        self._fitted = True
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X_poly = self._generate_polynomial_features(X)
         return np.dot(X_poly, self.coefficients)
 

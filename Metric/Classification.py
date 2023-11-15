@@ -5,13 +5,13 @@ from LUMA.Interface.Super import _Evaluator
 
 
 class Accuracy(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean(y_true == y_pred)
 
 
 class Precision(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         true_positives = np.sum((y_true == 1) & (y_pred == 1))
         false_positives = np.sum((y_true == 0) & (y_pred == 1))
@@ -19,7 +19,7 @@ class Precision(_Evaluator):
 
 
 class Recall(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         true_positives = np.sum((y_true == 1) & (y_pred == 1))
         false_negatives = np.sum((y_true == 1) & (y_pred == 0))
@@ -27,7 +27,7 @@ class Recall(_Evaluator):
 
 
 class F1Score(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         precision = Precision.compute(y_true, y_pred)
         recall = Recall.compute(y_true, y_pred)
@@ -35,7 +35,7 @@ class F1Score(_Evaluator):
 
 
 class Specificity(_Evaluator):
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         true_negatives = np.sum((y_true == 0) & (y_pred == 0))
         false_positives = np.sum((y_true == 0) & (y_pred == 1))
@@ -43,7 +43,7 @@ class Specificity(_Evaluator):
 
 
 class AUCCurveROC(_Evaluator):
-    @classmethod
+    @staticmethod
     def roc_curve(y_true: np.ndarray, y_scores: np.ndarray) -> float:
         thresholds = np.sort(y_scores)
         tpr, fpr = [], []
@@ -53,7 +53,7 @@ class AUCCurveROC(_Evaluator):
             fpr.append(1 - Specificity.compute(y_true, y_pred))
         return fpr, tpr
     
-    @classmethod
+    @staticmethod
     def auc_roc(fpr: float, tpr: float) -> float:
         n = len(fpr)
         auc = 0
@@ -63,7 +63,7 @@ class AUCCurveROC(_Evaluator):
 
 
 class Complex:
-    @classmethod
+    @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
         scores = dict()
         scores['accuracy'] = Accuracy.compute(y_true, y_pred)

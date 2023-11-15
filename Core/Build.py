@@ -6,6 +6,7 @@ build_start = time.time()
 from LUMA.Core.Main import LUMA
 from LUMA.Interface.Super import _Estimator, _Transformer, _Evaluator, _Visualizer
 from LUMA.Interface.Super import _Supervised, _Unsupervised, _Distance
+from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 
 from LUMA.Preprocessing.Scaler import StandardScaler
 from LUMA.Preprocessing.Scaler import MinMaxScaler
@@ -13,7 +14,7 @@ from LUMA.Preprocessing.Scaler import MinMaxScaler
 from LUMA.Reduction.Linear import PCA, LDA, TruncatedSVD
 from LUMA.Reduction.Nonlinear import KernelPCA
 from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap, Isomap
-from LUMA.Reduction.Manifold import MDS, MetricMDS
+from LUMA.Reduction.Manifold import MDS, MetricMDS, LandmarkMDS
 from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE
 
 from LUMA.ModelSelection.Split import TrainTestSplit
@@ -57,6 +58,9 @@ def init():
     _Estimator, _Transformer, _Evaluator, _Visualizer
     _Supervised, _Unsupervised, _Distance
     
+    # LUMA.Interface.Exception
+    NotFittedError, UnsupportedParameterError
+    
     # LUMA.Preprocessing.Scaler
     StandardScaler, MinMaxScaler
     
@@ -64,7 +68,7 @@ def init():
     PCA, LDA, TruncatedSVD
     KernelPCA
     TSNE, SammonMapping, LaplacianEigenmap, Isomap
-    MDS, MetricMDS
+    MDS, MetricMDS, LandmarkMDS
     LLE, ModifiedLLE, HessianLLE
     
     # LUMA.ModelSelection

@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator
 
 
@@ -21,14 +22,17 @@ class RidgeRegressor(_Estimator):
     
     def __init__(self, alpha: float=1.0) -> None:
         self.alpha = alpha
+        self._fitted = False
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         X = np.column_stack((np.ones(X.shape[0]), X))
         identity_matrix = np.identity(X.shape[1])
         self.coefficients = np.linalg.inv(X.T.dot(X) + self.alpha * identity_matrix)
         self.coefficients = self.coefficients.dot(X.T).dot(y)
+        self._fitted = True
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return X.dot(self.coefficients)
 
@@ -60,6 +64,7 @@ class LassoRegressor(_Estimator):
         self.max_iter = max_iter
         self.learning_rate = learning_rate
         self.verbose = verbose
+        self._fitted = False
 
     def _soft_threshold(self, x: np.ndarray, threshold: float) -> np.ndarray:
         return np.sign(x) * np.maximum(0, np.abs(x) - threshold)
@@ -78,8 +83,11 @@ class LassoRegressor(_Estimator):
             if self.verbose and i % 10 == 0:
                 print(f'[LassoReg] iteration: {i}/{self.max_iter}', end='')
                 print(f' - delta-coeff norm: {np.linalg.norm(self.coefficients - coefficients_prev)}')
+        
+        self._fitted = True
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return X.dot(self.coefficients)
     
@@ -119,6 +127,7 @@ class ElasticNetRegressor(_Estimator):
         self.learning_rate = learning_rate
         self.verbose = verbose
         self.coef_ = None
+        self._fitted = False
         
     def _soft_threshold(self, x: np.ndarray, alpha: float) -> np.ndarray:
         return np.sign(x) * np.maximum(np.abs(x) - alpha, 0)
@@ -138,8 +147,11 @@ class ElasticNetRegressor(_Estimator):
             
             if self.verbose and i % 10 == 0: 
                 print(f'[ElasticReg] iteration: {i}/{self.max_iter}')
+        
+        self._fitted = True
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         if self.coef_ is None: raise ValueError()
         return X.dot(self.coef_)
     

@@ -1,6 +1,7 @@
-from typing import *
+from typing import Any
 import numpy as np
 
+from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator, _Supervised
 
 
@@ -11,6 +12,9 @@ class GaussianNaiveBayes(_Estimator, _Supervised):
     It's based on Bayes' theorem and makes an assumption 
     that the features follow a Gaussian distribution.
     """
+
+    def __init__(self) -> None:
+        self._fitted = False
     
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         self.classes = np.unique(y)
@@ -28,6 +32,8 @@ class GaussianNaiveBayes(_Estimator, _Supervised):
         
         for params in self.parameters:
             params[1] = shared_cov_matrix / len(self.classes)
+        
+        self._fitted = True
         
     def _calculate_likelihood(self, x: np.ndarray, mean: np.ndarray, cov: np.ndarray) -> float:
         dim = len(mean)
@@ -50,9 +56,11 @@ class GaussianNaiveBayes(_Estimator, _Supervised):
         return self.classes[np.argmax(posteriors)]
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         return np.array([self._classify_sample(x) for x in X])
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         probabilities = []
         for x in X:
             posteriors = []
@@ -75,6 +83,9 @@ class BernoulliNaiveBayes(_Estimator, _Supervised):
     conditionally independent given the class label.
     """
     
+    def __init__(self) -> None:
+        self._fitted = False
+    
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         self.classes = np.unique(y)
         self.class_probs = np.zeros(len(self.classes))
@@ -84,8 +95,11 @@ class BernoulliNaiveBayes(_Estimator, _Supervised):
             X_cls = X[y == c]
             self.class_probs[i] = len(X_cls) / len(y)
             self.feature_probs[i] = (X_cls.sum(axis=0) + 1) / (len(X_cls) + 2)
+        
+        self._fitted = True
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         predictions = []
         for x in X:
             class_scores = np.zeros(len(self.classes))
@@ -100,6 +114,7 @@ class BernoulliNaiveBayes(_Estimator, _Supervised):
         return np.array(predictions)
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         probas = []
         for x in X:
             class_probs = np.zeros(len(self.classes))

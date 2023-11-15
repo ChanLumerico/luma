@@ -1,10 +1,9 @@
 from typing import *
-from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import numpy as np
 
 from LUMA.Interface.Super import _Visualizer
-from LUMA.Interface.Types import Estimator
+from LUMA.Interface.Type import Estimator
 
 
 class DecisionRegion(_Visualizer):

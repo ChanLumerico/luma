@@ -14,6 +14,7 @@ class CorrelationHeatMap(_Visualizer):
         n_features = self.data.shape[1]
         size = n_features / 2 if n_features < 20 else 10
         plt.figure(figsize=(size + 1, size))
+        
         sns.heatmap(self.corr, cmap=colorMap, annot=annotate, cbar=colorBar, fmt='0.2f')
         plt.title('Correlation Heat Map')
         plt.tight_layout()

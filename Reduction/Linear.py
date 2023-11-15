@@ -2,6 +2,7 @@ from typing import *
 import numpy as np
 
 from LUMA.Interface.Super import _Transformer, _Unsupervised, _Supervised
+from LUMA.Interface.Exception import NotFittedError
 
 
 class PCA(_Transformer, _Unsupervised):
@@ -19,6 +20,7 @@ class PCA(_Transformer, _Unsupervised):
     
     def __init__(self, n_components: int=None) -> None:
         self.n_components = n_components
+        self._fitted = False
 
     def fit(self, X: np.ndarray) -> None:
         self.mean = np.mean(X, axis=0)
@@ -36,8 +38,11 @@ class PCA(_Transformer, _Unsupervised):
         else:
             self.eigenvalues = eigenvalues
             self.eigenvectors = eigenvectors
+        
+        self._fitted = True
 
     def transform(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         X_centered = X - self.mean
         return np.dot(X_centered, self.eigenvectors)
 
@@ -65,6 +70,7 @@ class LDA(_Transformer, _Supervised):
     
     def __init__(self, n_components: int=None) -> None:
         self.n_components = n_components
+        self._fitted = False
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         self.classes = np.unique(y)
@@ -95,8 +101,11 @@ class LDA(_Transformer, _Supervised):
         else:
             self.eigenvalues = eigenvalues
             self.eigenvectors = eigenvectors
+        
+        self._fitted = True
 
     def transform(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         return np.dot(X, self.eigenvectors)
 
     def fit_transform(self, X: np.ndarray, y: np.ndarray) -> np.ndarray:
@@ -124,6 +133,7 @@ class TruncatedSVD(_Transformer, _Unsupervised):
     
     def __init__(self, n_components: int=None) -> None:
         self.n_components = n_components
+        self._fitted = False
     
     def fit(self, X: np.ndarray) -> None:
         mean = np.mean(X, axis=0)
@@ -133,8 +143,10 @@ class TruncatedSVD(_Transformer, _Unsupervised):
         self.U = U[:, :self.n_components]
         self.S = np.diag(S[:self.n_components])
         self.VT = VT[:self.n_components, :]
+        self._fitted = True
     
     def transform(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
         mean = np.mean(X, axis=0)
         X_centered = X - mean
         return np.dot(X_centered, self.VT.T)
