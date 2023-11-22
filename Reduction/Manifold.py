@@ -1,5 +1,6 @@
 from typing import Any, Literal, Tuple
 from typing_extensions import Self
+
 from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.spatial import KDTree
 from scipy.sparse.csgraph import shortest_path
@@ -960,6 +961,8 @@ class ConformalIsomap(_Transformer, _Unsupervised):
         self.eigvecs = eigvecs[:, :self.n_components]
         self._fitted = True
         return self
+    
+    # TODO: Make all fit() to return `self`
     
     def _make_adjacency(self, X: np.ndarray) -> np.ndarray:
         m, _ = X.shape
