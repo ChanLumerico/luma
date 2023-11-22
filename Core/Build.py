@@ -13,9 +13,10 @@ from LUMA.Preprocessing.Scaler import MinMaxScaler
 
 from LUMA.Reduction.Linear import PCA, LDA, TruncatedSVD
 from LUMA.Reduction.Nonlinear import KernelPCA
-from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap, Isomap
+from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap
 from LUMA.Reduction.Manifold import MDS, MetricMDS, LandmarkMDS
 from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE
+from LUMA.Reduction.Manifold import Isomap, ConformalIsomap
 
 from LUMA.ModelSelection.Split import TrainTestSplit
 from LUMA.ModelSelection.Search import GridSearchCV
@@ -67,9 +68,10 @@ def init():
     # LUMA.Reduction
     PCA, LDA, TruncatedSVD
     KernelPCA
-    TSNE, SammonMapping, LaplacianEigenmap, Isomap
+    TSNE, SammonMapping, LaplacianEigenmap
     MDS, MetricMDS, LandmarkMDS
     LLE, ModifiedLLE, HessianLLE
+    Isomap, ConformalIsomap
     
     # LUMA.ModelSelection
     TrainTestSplit

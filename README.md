@@ -72,10 +72,8 @@ users gain insights from their machine learning models and communicate results e
 ### Latest Version
 `alpha 1.1`
 
-### Dependencies
-Necessary – `NumPy`, `SciPy`, `Matplotlib`, `Seaborn`
-
-Optional – `Pandas`
+### Dependenciess
+`NumPy`, `SciPy`, `Matplotlib`, `Seaborn`, `typing_extensions`
 
 ### Document
 [LUMA Notion Document](https://lumerico284.notion.site/Machine-Learning-76330376b0e64cc1b95874c469aeb327?pvs=4)

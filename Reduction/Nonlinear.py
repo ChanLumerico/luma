@@ -71,7 +71,7 @@ class KernelPCA(_Transformer, _Unsupervised):
         
     def fit_transform(self, X: np.ndarray) -> np.ndarray:
         self.fit(X)
-        return self.transform(X)
+        return self.transform()
     
     def _linear(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         return np.dot(x, y)

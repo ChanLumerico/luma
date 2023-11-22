@@ -1,4 +1,5 @@
-from typing import Any, Literal
+from typing import Any, Literal, Tuple
+from typing_extensions import Self
 from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.spatial import KDTree
 from scipy.sparse.csgraph import shortest_path
@@ -326,7 +327,7 @@ class LandmarkMDS(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.random) -> None:
+    def fit(self, X: np.ndarray) -> None:
         self.landmarks = self._initialize_landmarks(X)
         D = self._compute_dissimilarity(self.landmarks)
         n = D.shape[0]
@@ -341,7 +342,7 @@ class LandmarkMDS(_Transformer, _Unsupervised):
         self.eigvals = self.eigvals[self.n_components]
         self.eigvecs = self.eigvecs[:, :self.n_components]
         
-        D_mean = np.mean(D, axis=1)
+        D_mean = np.mean(D, axis=0)
         D_xland = np.sum((X[:, np.newaxis, :] - self.landmarks) ** 2, axis=2)
         self.mean_diff = D_mean - D_xland
         self._fitted = True
@@ -868,7 +869,7 @@ class Isomap(_Transformer, _Unsupervised):
     def fit(self, X: np.ndarray) -> None:
         self.adj = self._make_adjacency(X)
         if np.isinf(self.adj).any(): 
-            print(f'[Isomap] Too narrow bin size with epsilon of {self.epsilon}')
+            print(f'[Isomap] Too narrow bin size with epsilon of {self.epsilon}!')
             return
         
         m, _ = self.adj.shape
@@ -893,7 +894,7 @@ class Isomap(_Transformer, _Unsupervised):
             path_mat = shortest_path(adjacency, directed=False, method='D')
         elif self.algorithm == 'floyd':
             path_mat = shortest_path(adjacency, directed=False, method='FW')
-        else: raise ValueError('[Isomap] Unsupported path algorithm!')
+        else: raise UnsupportedParameterError(self.algorithm)
         return path_mat
 
     def transform(self) -> np.ndarray:
@@ -913,4 +914,86 @@ class Isomap(_Transformer, _Unsupervised):
         if epsilon is not None: self.epsilon = float(epsilon)
         if algorithm is not None: self.algorithm = str(algorithm)
         if metric is not None: self.method = str(metric)
+
+
+class ConformalIsomap(_Transformer, _Unsupervised):
+    
+    """
+    Conformal Isomap (C-Isomap) is a variation of the Isomap algorithm that 
+    prioritizes preserving infinitesimal angles (conformality) by adjusting 
+    geodesic distances to reflect scale information. Unlike traditional Isomap, 
+    which focuses on preserving full isometry, C-Isomap is well-suited for 
+    datasets with varying local scales or non-uniform structures.
+    
+    Parameters
+    ----------
+    ``n_components`` : Dimensionality of low-space \n
+    ``epsilon`` : Boundary radius of the neighbor hypersphere \n
+    ``algorithm`` : Shortest path finding algorithm
+    (e.g. `dijkstra`, `floyd`)
+    
+    """
+    
+    def __init__(self,
+                 n_components: int=None,
+                 epsilon: float=5.0,
+                 algorithm: Literal['dijkstra', 'floyd']='dijkstra') -> None:
+        self.n_components = n_components
+        self.epsilon = epsilon
+        self.algorithm = algorithm
+        self._fitted = False
+    
+    def fit(self, X: np.ndarray) -> Self:
+        self.adj = self._make_adjacency(X)
+        if np.isinf(self.adj).any():
+            print(f'[C-Isomap] Too narrow bin size with epsilon of {self.epsilon}!')
+            return
+        
+        m, _ = self.adj.shape
+        H = np.eye(m) - (1 / m) * np.ones((m, m))
+        C = -0.5 / m * H.dot(self.adj ** 2).dot(H)
+        
+        eigvals, eigvecs = eigh(C)
+        indices = eigvals.argsort()[::-1]
+        eigvals, eigvecs = eigvals[indices], eigvecs[:, indices]
+        self.eigvals = eigvals[:self.n_components]
+        self.eigvecs = eigvecs[:, :self.n_components]
+        self._fitted = True
+        return self
+    
+    def _make_adjacency(self, X: np.ndarray) -> np.ndarray:
+        m, _ = X.shape
+        distance = cdist(X, X, metric='euclidean')
+        adjacency = np.zeros((m, m)) + np.inf
+        bin = distance < self.epsilon
+        adjacency[bin] = distance[bin]
+        
+        masked = np.ma.masked_array(adjacency, mask=np.isinf(adjacency))
+        masked_mean = np.ma.mean(masked, axis=0)
+        for i in range(m):
+            for j in range(m):
+                adjacency[i, j] /= np.sqrt(masked_mean[i] * masked_mean[j])
+
+        if self.algorithm == 'dijkstra':
+            path_mat = shortest_path(adjacency, directed=False, method='D')
+        elif self.algorithm == 'floyd':
+            path_mat = shortest_path(adjacency, directed=False, method='FW')
+        else: raise UnsupportedParameterError(self.algorithm)
+        return path_mat
+    
+    def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
+        return self.eigvecs.dot(np.diag(np.sqrt(self.eigvals)))
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
+
+    def set_params(self,
+                   n_components: int=None,
+                   epsilon: float=None,
+                   algorithm: Literal=None) -> None:
+        if n_components is not None: self.n_components = int(n_components)
+        if epsilon is not None: self.epsilon = float(epsilon)
+        if algorithm is not None: self.algorithm = str(algorithm)
 
