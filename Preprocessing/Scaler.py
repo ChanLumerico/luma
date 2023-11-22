@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Super import _Transformer
@@ -17,10 +18,11 @@ class StandardScaler(_Transformer):
         self.std = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         self.mean = np.mean(X, axis=0)
         self.std = np.std(X, axis=0)
         self._fitted = True
+        return self
 
     def transform(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -50,10 +52,11 @@ class MinMaxScaler(_Transformer):
         self.max = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         self.min = np.min(X, axis=0)
         self.max = np.max(X, axis=0)
         self._fitted = True
+        return self
 
     def transform(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)

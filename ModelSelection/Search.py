@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Type import Estimator, Evaluator
@@ -15,7 +16,7 @@ class GridSearchCV:
         self.refit = refit
         self.verbose = verbose
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         best_score = None
         best_params = None
         param_combinations = self._get_param_combinations()
@@ -46,6 +47,8 @@ class GridSearchCV:
         if self.refit:
             self.model.set_params(**best_params)
             self.model.fit(X, y)
+        
+        return self
 
     def _cross_validation(self, X: np.ndarray, y: np.ndarray) -> list:
         num_samples = X.shape[0]

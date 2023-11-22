@@ -44,7 +44,7 @@ class TSNE(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
         
-    def fit(self, X: np.ndarray) -> np.ndarray:
+    def fit(self, X: np.ndarray) -> Self:
         size = X.shape[0]
         P = self._P_joint_probabilities(X)
         y = np.random.normal(0.0, 1e-4, (size, self.n_components))
@@ -64,6 +64,7 @@ class TSNE(_Transformer, _Unsupervised):
             
         self.y = y
         self._fitted = True
+        return self
     
     def transform(self) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -171,7 +172,7 @@ class MDS(_Transformer, _Unsupervised):
         self.n_components = n_components
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
         H = np.eye(n) - np.ones((n, n)) / n
@@ -186,6 +187,7 @@ class MDS(_Transformer, _Unsupervised):
         self.eigvecs = self.eigvecs[:, :self.n_components]
         self._fitted = True
         self.stress = self._compute_stress(D)
+        return self
     
     def transform(self) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -239,7 +241,7 @@ class MetricMDS(_Transformer, _Unsupervised):
         self.p = p
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
         H = np.eye(n) - np.ones((n, n)) / n
@@ -254,6 +256,7 @@ class MetricMDS(_Transformer, _Unsupervised):
         self.eigvecs = self.eigvecs[:, :self.n_components]
         self._fitted = True
         self.stress = self._compute_stress(D)
+        return self
     
     def transform(self) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -328,7 +331,7 @@ class LandmarkMDS(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         self.landmarks = self._initialize_landmarks(X)
         D = self._compute_dissimilarity(self.landmarks)
         n = D.shape[0]
@@ -347,6 +350,7 @@ class LandmarkMDS(_Transformer, _Unsupervised):
         D_xland = np.sum((X[:, np.newaxis, :] - self.landmarks) ** 2, axis=2)
         self.mean_diff = D_mean - D_xland
         self._fitted = True
+        return self
     
     def _initialize_landmarks(self, X: np.ndarray) -> np.ndarray:
         m, _ = X.shape
@@ -421,7 +425,7 @@ class LLE(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         m, _ = X.shape
         distances = np.zeros((m, m))
         for i in range(m):
@@ -446,6 +450,7 @@ class LLE(_Transformer, _Unsupervised):
         M = np.identity(m) - W
         self.eigvals, self.eigvecs = np.linalg.eig(np.dot(M.T, M))
         self._fitted = True
+        return self
         
     def transform(self) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -492,7 +497,7 @@ class ModifiedLLE(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         m, _ = X.shape
         distances = np.zeros((m, m))
         for i in range(m):
@@ -517,6 +522,7 @@ class ModifiedLLE(_Transformer, _Unsupervised):
         M = np.identity(m) - W
         self.eigvals, self.eigvecs = np.linalg.eig(np.dot(M.T, M))
         self._fitted = True
+        return self
 
     def transform(self) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -563,7 +569,7 @@ class HessianLLE(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         m, _ = X.shape
         dp = self.n_components * (self.n_components + 1) // 2
         
@@ -612,6 +618,7 @@ class HessianLLE(_Transformer, _Unsupervised):
         R = VT.T * S * VT
         self.Y, self.R = Y, R
         self._fitted = True
+        return self
     
     def transform(self) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -675,7 +682,7 @@ class SammonMapping(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         m, _ = X.shape
         X_dist = cdist(X, X)
         scale = 0.5 / X_dist.sum()
@@ -748,6 +755,7 @@ class SammonMapping(_Transformer, _Unsupervised):
         
         if self.verbose: print(f'[SammonMap] Final error: {self.error}')
         self._fitted = True
+        return self
     
     def _fill_diagnoal(self, matrix: np.ndarray, value: float) -> None:
         np.fill_diagonal(matrix, value)
@@ -799,7 +807,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         self.embedding = None
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         pairwise = cdist(X, X)
         weights = np.exp(-pairwise / (2 * self.sigma ** 2))
         np.fill_diagonal(weights, 0)
@@ -813,6 +821,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         eigvecs = eigvecs[:, sorted_indices]
         self.embedding = eigvecs[:, :self.n_components]
         self._fitted = True
+        return self
 
     def _compute_laplacian(self, W: np.ndarray) -> np.ndarray:
         return np.diag(np.sum(W, axis=1)) - W
@@ -867,7 +876,7 @@ class Isomap(_Transformer, _Unsupervised):
         self.metric = metric
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         self.adj = self._make_adjacency(X)
         if np.isinf(self.adj).any(): 
             print(f'[Isomap] Too narrow bin size with epsilon of {self.epsilon}!')
@@ -883,6 +892,7 @@ class Isomap(_Transformer, _Unsupervised):
         self.eigvals = eigvals[:self.n_components]
         self.eigvecs = eigvecs[:, :self.n_components]
         self._fitted = True
+        return self
 
     def _make_adjacency(self, X: np.ndarray) -> np.ndarray:
         m, _ = X.shape
@@ -961,8 +971,6 @@ class ConformalIsomap(_Transformer, _Unsupervised):
         self.eigvecs = eigvecs[:, :self.n_components]
         self._fitted = True
         return self
-    
-    # TODO: Make all fit() to return `self`
     
     def _make_adjacency(self, X: np.ndarray) -> np.ndarray:
         m, _ = X.shape

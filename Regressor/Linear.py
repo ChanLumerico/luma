@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
@@ -24,12 +25,13 @@ class RidgeRegressor(_Estimator):
         self.alpha = alpha
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         identity_matrix = np.identity(X.shape[1])
         self.coefficients = np.linalg.inv(X.T.dot(X) + self.alpha * identity_matrix)
         self.coefficients = self.coefficients.dot(X.T).dot(y)
         self._fitted = True
+        return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -69,7 +71,7 @@ class LassoRegressor(_Estimator):
     def _soft_threshold(self, x: np.ndarray, threshold: float) -> np.ndarray:
         return np.sign(x) * np.maximum(0, np.abs(x) - threshold)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         self.coefficients = np.zeros(X.shape[1])
         
@@ -85,6 +87,7 @@ class LassoRegressor(_Estimator):
                 print(f' - delta-coeff norm: {np.linalg.norm(self.coefficients - coefficients_prev)}')
         
         self._fitted = True
+        return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -132,7 +135,7 @@ class ElasticNetRegressor(_Estimator):
     def _soft_threshold(self, x: np.ndarray, alpha: float) -> np.ndarray:
         return np.sign(x) * np.maximum(np.abs(x) - alpha, 0)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         N, p = X.shape
         self.coef_ = np.zeros(p)
 
@@ -149,6 +152,7 @@ class ElasticNetRegressor(_Estimator):
                 print(f'[ElasticReg] iteration: {i}/{self.max_iter}')
         
         self._fitted = True
+        return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)

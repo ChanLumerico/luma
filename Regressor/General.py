@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 from scipy.special import psi
 import numpy as np
 
@@ -43,7 +44,7 @@ class PoissonRegressor(_Estimator, _Supervised):
     def link_funciton(self, X: np.ndarray) -> np.ndarray:
         return np.exp(np.dot(X, self.weights))
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.zeros(n)
@@ -63,6 +64,7 @@ class PoissonRegressor(_Estimator, _Supervised):
             
             self.weights += gradient
         self._fitted = True
+        return self
     
     def _regularization_term(self) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(self.weights)
@@ -133,7 +135,7 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
     def link_function(self, X: np.ndarray) -> np.ndarray:
         return np.log(1 + np.exp(np.dot(X, self.weights)))
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         X = np.column_stack((np.ones(X.shape[0]),  X))
         m, n = X.shape
         self.weights = np.zeros(n)
@@ -154,6 +156,7 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
             
             self.weights += gradient
         self._fitted = True
+        return self
     
     def _regularization_term(self) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(self.weights)
@@ -227,7 +230,7 @@ class GammaRegressor(_Estimator, _Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.alpha = np.ones(n) * self.alpha
@@ -250,6 +253,7 @@ class GammaRegressor(_Estimator, _Supervised):
                 print(f' - gradient-norm: {np.linalg.norm(gradient)}')
         
         self._fitted = True
+        return self
     
     def _regularization_term(self, weights: np.ndarray) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(weights)
@@ -322,7 +326,7 @@ class BetaRegressor(_Estimator, _Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.alpha = np.ones(n) * self.alpha
@@ -347,6 +351,7 @@ class BetaRegressor(_Estimator, _Supervised):
                 print(f' - gradient-norm: {gradient_norm}')
         
         self._fitted = True
+        return self
     
     def _regularization_term(self, weights: np.ndarray) -> np.ndarray:
         if self.regularization == 'l1': return np.sign(weights)
@@ -416,7 +421,7 @@ class InverseGaussianRegressor(_Estimator, _Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.ones(n)
@@ -439,6 +444,7 @@ class InverseGaussianRegressor(_Estimator, _Supervised):
             
             self.weights -= gradient
         self._fitted = True
+        return self
     
     def _regularization_term(self):
         if self.regularization == 'l1': return np.sign(self.weights)

@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
@@ -30,7 +31,7 @@ class KMeansClustering(_Estimator, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         init_indices = np.random.choice(X.shape[0], self.n_clusters, replace=False)
         self.centroids = X[init_indices]
 
@@ -51,6 +52,7 @@ class KMeansClustering(_Estimator, _Unsupervised):
             
         self.centroids = np.array(self.centroids)
         self._fitted = True
+        return self
     
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -98,7 +100,7 @@ class KMeansClusteringPlus(_Estimator, _Unsupervised):
             next_centroid = np.random.choice(X.shape[0], p=probs)
             self.centroids.append(X[next_centroid])
         
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         self._initialize_centroids(X)
         for _ in range(self.max_iter):
             distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
@@ -114,6 +116,7 @@ class KMeansClusteringPlus(_Estimator, _Unsupervised):
         
         self.centroids = np.array(self.centroids)
         self._fitted = True
+        return self
     
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -151,7 +154,7 @@ class KMediansClustering(_Estimator, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
         
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         self.medians = X[np.random.choice(X.shape[0], self.n_clusters, replace=False)]
         for i in range(self.max_iter):
             distances = np.abs(X[:, np.newaxis] - self.medians)
@@ -170,7 +173,9 @@ class KMediansClustering(_Estimator, _Unsupervised):
                 print(f' - delta-centroid norm: {diff_norm}')
             
             self.medians = new_medians
+        
         self._fitted = True
+        return self
     
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)

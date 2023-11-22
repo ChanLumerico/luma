@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 
 
 class _Estimator(Protocol):
@@ -20,7 +21,7 @@ class _Estimator(Protocol):
     
     """
     
-    def fit(self, *data: Tuple[Any]) -> None: ...
+    def fit(self, *data: Tuple[Any]) -> Self: ...
     
     def predict(self, *data: Tuple[Any]) -> Any: ...
 
@@ -47,7 +48,7 @@ class _Transformer(Protocol):
     
     """
     
-    def fit(self, *data: Tuple[Any]) -> None: ...
+    def fit(self, *data: Tuple[Any]) -> Self: ...
     
     def transform(self, *data: Tuple[Any]) -> Any: ...
     

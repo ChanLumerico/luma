@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
@@ -21,10 +22,11 @@ class PolynomialRegressor(_Estimator):
             X_poly = np.hstack((X_poly, X ** d))
         return X_poly
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         X_poly = self._generate_polynomial_features(X)
         self.coefficients = np.linalg.lstsq(X_poly, y, rcond=None)[0]
         self._fitted = True
+        return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)

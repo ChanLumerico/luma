@@ -1,4 +1,5 @@
 from typing import Any
+from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
@@ -16,7 +17,7 @@ class GaussianNaiveBayes(_Estimator, _Supervised):
     def __init__(self) -> None:
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         self.classes = np.unique(y)
         self.parameters = []
         self.priors = []
@@ -34,6 +35,7 @@ class GaussianNaiveBayes(_Estimator, _Supervised):
             params[1] = shared_cov_matrix / len(self.classes)
         
         self._fitted = True
+        return self
         
     def _calculate_likelihood(self, x: np.ndarray, mean: np.ndarray, cov: np.ndarray) -> float:
         dim = len(mean)
@@ -86,7 +88,7 @@ class BernoulliNaiveBayes(_Estimator, _Supervised):
     def __init__(self) -> None:
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         self.classes = np.unique(y)
         self.class_probs = np.zeros(len(self.classes))
         self.feature_probs = np.zeros((len(self.classes), X.shape[1]))
@@ -97,6 +99,7 @@ class BernoulliNaiveBayes(_Estimator, _Supervised):
             self.feature_probs[i] = (X_cls.sum(axis=0) + 1) / (len(X_cls) + 2)
         
         self._fitted = True
+        return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)

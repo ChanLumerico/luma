@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Super import _Transformer, _Unsupervised, _Supervised
@@ -22,7 +23,7 @@ class PCA(_Transformer, _Unsupervised):
         self.n_components = n_components
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         self.mean = np.mean(X, axis=0)
         X_centered = X - self.mean
         covariance_matrix = np.cov(X_centered, rowvar=False)
@@ -40,6 +41,7 @@ class PCA(_Transformer, _Unsupervised):
             self.eigenvectors = eigenvectors
         
         self._fitted = True
+        return self
 
     def transform(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -72,7 +74,7 @@ class LDA(_Transformer, _Supervised):
         self.n_components = n_components
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
         self.classes = np.unique(y)
         self.class_means = [np.mean(X[y == c], axis=0) for c in self.classes]
 
@@ -103,6 +105,7 @@ class LDA(_Transformer, _Supervised):
             self.eigenvectors = eigenvectors
         
         self._fitted = True
+        return self
 
     def transform(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
@@ -135,7 +138,7 @@ class TruncatedSVD(_Transformer, _Unsupervised):
         self.n_components = n_components
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         mean = np.mean(X, axis=0)
         X_centered = X - mean
         U, S, VT = np.linalg.svd(X_centered, full_matrices=False)
@@ -144,6 +147,7 @@ class TruncatedSVD(_Transformer, _Unsupervised):
         self.S = np.diag(S[:self.n_components])
         self.VT = VT[:self.n_components, :]
         self._fitted = True
+        return self
     
     def transform(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)

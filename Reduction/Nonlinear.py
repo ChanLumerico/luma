@@ -1,4 +1,5 @@
 from typing import *
+from typing_extensions import Self
 from scipy.linalg import eigh
 import numpy as np
 
@@ -41,7 +42,7 @@ class KernelPCA(_Transformer, _Unsupervised):
         self.X = None
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> None:
+    def fit(self, X: np.ndarray) -> Self:
         self.X = X
         if self.kernel == 'linear': self.kernel_func = self._linear
         elif self.kernel == 'poly': self.kernel_func = self._poly
@@ -64,6 +65,7 @@ class KernelPCA(_Transformer, _Unsupervised):
         self.eigvals, self.eigvecs = eigh(self.K)
         self.eigvals, self.eigvecs = self.eigvals[::-1], self.eigvecs[:, ::-1]
         self._fitted =  True
+        return self
 
     def transform(self) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
