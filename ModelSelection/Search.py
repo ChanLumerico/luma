@@ -5,6 +5,9 @@ import numpy as np
 from LUMA.Interface.Type import Estimator, Evaluator
 
 
+__all__ = ['GridSearchCV']
+
+
 class GridSearchCV:
     def __init__(self, model: Estimator, param_grid: dict, 
                  metric: Evaluator, cv: int=5, 

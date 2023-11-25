@@ -5,6 +5,9 @@ import pandas as pd
 from LUMA.Interface.Super import _Visualizer
 
 
+__all__ = ['CorrelationHeatMap', 'CorrelationBar', 'JointPlot']
+
+
 class CorrelationHeatMap(_Visualizer):
     def __init__(self, data: pd.DataFrame) -> None:
         self.data = data

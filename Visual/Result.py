@@ -6,6 +6,9 @@ from LUMA.Interface.Super import _Visualizer
 from LUMA.Interface.Type import Estimator
 
 
+__all__ = ['DecisionRegion', 'ClusteredRegion']
+
+
 class DecisionRegion(_Visualizer):
     def __init__(self, 
                  estimator: Estimator, 

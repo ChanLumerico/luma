@@ -6,6 +6,9 @@ from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator, _Unsupervised
 
 
+__all__ = ['KMeansClustering', 'KMeansClusteringPlus', 'KMediansClustering']
+
+
 class KMeansClustering(_Estimator, _Unsupervised):
     
     """

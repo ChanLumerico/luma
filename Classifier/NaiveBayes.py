@@ -6,6 +6,9 @@ from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator, _Supervised
 
 
+__all__ = ['GaussianNaiveBayes', 'BernoulliNaiveBayes']
+
+
 class GaussianNaiveBayes(_Estimator, _Supervised):
     
     """

@@ -6,6 +6,9 @@ from LUMA.Interface.Super import _Transformer, _Unsupervised, _Supervised
 from LUMA.Interface.Exception import NotFittedError
 
 
+__all__ = ['PCA', 'LDA', 'TruncatedSVD', 'FactorAnalysis']
+
+
 class PCA(_Transformer, _Unsupervised):
     
     """
@@ -162,3 +165,6 @@ class TruncatedSVD(_Transformer, _Unsupervised):
     def set_params(self, n_components: int=None) -> None:
         if n_components is not None: self.n_components = int(n_components)
 
+
+class FactorAnalysis(_Transformer, _Unsupervised):
+    ...

@@ -11,7 +11,7 @@ from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 from LUMA.Preprocessing.Scaler import StandardScaler
 from LUMA.Preprocessing.Scaler import MinMaxScaler
 
-from LUMA.Reduction.Linear import PCA, LDA, TruncatedSVD
+from LUMA.Reduction.Linear import PCA, LDA, TruncatedSVD, FactorAnalysis
 from LUMA.Reduction.Nonlinear import KernelPCA
 from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap
 from LUMA.Reduction.Manifold import MDS, MetricMDS, LandmarkMDS
@@ -66,7 +66,7 @@ def init():
     StandardScaler, MinMaxScaler
     
     # LUMA.Reduction
-    PCA, LDA, TruncatedSVD
+    PCA, LDA, TruncatedSVD, FactorAnalysis
     KernelPCA
     TSNE, SammonMapping, LaplacianEigenmap
     MDS, MetricMDS, LandmarkMDS

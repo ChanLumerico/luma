@@ -2,6 +2,10 @@ from typing import *
 from typing_extensions import Self
 
 
+__all__ = ['_Estimator', '_Transformer', '_Evaluator', '_Visualizer',
+           '_Supervised', '_Unsupervised', '_Distance']
+
+
 class _Estimator(Protocol):
     
     """
@@ -21,9 +25,11 @@ class _Estimator(Protocol):
     
     """
     
-    def fit(self, *data: Tuple[Any]) -> Self: ...
+    def fit(self, *data) -> Self: ...
     
-    def predict(self, *data: Tuple[Any]) -> Any: ...
+    def predict(self, *data) -> Any: ...
+    
+    def set_params(self, *params) -> None: ...
 
 
 class _Transformer(Protocol):
@@ -48,11 +54,13 @@ class _Transformer(Protocol):
     
     """
     
-    def fit(self, *data: Tuple[Any]) -> Self: ...
+    def fit(self, *data) -> Self: ...
     
-    def transform(self, *data: Tuple[Any]) -> Any: ...
+    def transform(self, *data) -> Any: ...
     
-    def fit_transform(self, *data: Tuple[Any]) -> Any: ...
+    def fit_transform(self, *data) -> Any: ...
+    
+    def set_params(self, *params) -> None: ...
 
 
 class _Evaluator(Protocol):
@@ -70,7 +78,8 @@ class _Evaluator(Protocol):
     
     """
     
-    def compute(self, *data: Tuple[Any]) -> float: ...
+    @staticmethod
+    def compute(*data) -> float: ...
 
 
 class _Visualizer(Protocol):
@@ -88,7 +97,7 @@ class _Visualizer(Protocol):
     
     """
     
-    def plot(self, *params: Tuple[Any]) -> None: ...
+    def plot(self, *params) -> None: ...
 
 
 class _Supervised:
@@ -100,7 +109,7 @@ class _Supervised:
     target labels, and it learns to map the inputs to the correct outputs. 
     """
     
-    def __init__(self, *params: Tuple[Any]) -> None: ...
+    def __init__(self, *params) -> None: ...
 
 
 class _Unsupervised:
@@ -112,7 +121,7 @@ class _Unsupervised:
     or relationships within the data.
     """
     
-    def __init__(self, *params: Tuple[Any]) -> None: ...
+    def __init__(self, *params) -> None: ...
 
 
 class _Distance:
@@ -123,5 +132,6 @@ class _Distance:
     types of distances serve various purposes, and they are used in different contexts. 
     """
     
-    def __init__(self, *param: Any) -> None: ...
+    @staticmethod
+    def distance(*params) -> float: ...
 

@@ -2,6 +2,9 @@ from typing import Tuple
 import numpy as np
 
 
+__all__ = ['TrainTestSplit']
+
+
 class TrainTestSplit:
     @classmethod
     def split(X: np.ndarray, y: np.ndarray, 

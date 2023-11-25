@@ -6,6 +6,9 @@ from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator
 
 
+__all__ = ['PolynomialRegressor']
+
+
 class PolynomialRegressor(_Estimator):
     
     """Polynomial regression is a type of regression analysis used

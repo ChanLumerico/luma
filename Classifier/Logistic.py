@@ -6,6 +6,9 @@ from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 from LUMA.Interface.Super import _Estimator, _Supervised
 
 
+__all__ = ['LogisticRegressor', 'SoftmaxRegressor']
+
+
 class LogisticRegressor(_Estimator, _Supervised):
     
     """

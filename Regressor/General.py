@@ -7,6 +7,10 @@ from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 from LUMA.Interface.Super import _Estimator, _Supervised
 
 
+__all__ = ['PoissonRegressor', 'NegativeBinomialRegressor', 'GammaRegressor',
+           'BetaRegressor', 'InverseGaussianRegressor']
+
+
 class PoissonRegressor(_Estimator, _Supervised):
     
     """

@@ -4,6 +4,10 @@ import numpy as np
 from LUMA.Interface.Super import _Distance
 
 
+__all__ = ['Euclidean', 'Manhattan', 'Chebyshev', 'Minkowski', 
+           'CosineSimilarity', 'Correlation', 'Mahalanobis']
+
+
 class Euclidean(_Distance):
     @staticmethod
     def distance(x: np.ndarray, y: np.ndarray) -> float:

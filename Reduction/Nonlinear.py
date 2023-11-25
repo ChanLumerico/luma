@@ -5,6 +5,9 @@ import numpy as np
 
 from LUMA.Interface.Super import _Transformer, _Unsupervised
 from LUMA.Interface.Exception import NotFittedError
+
+
+__all__ = ['KernelPCA']
     
 
 class KernelPCA(_Transformer, _Unsupervised):

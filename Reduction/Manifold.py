@@ -1,4 +1,4 @@
-from typing import Any, Literal, Tuple
+from typing import Any, Callable, Literal, Tuple
 from typing_extensions import Self
 
 from scipy.spatial.distance import pdist, cdist, squareform
@@ -12,6 +12,11 @@ from LUMA.Interface.Super import _Transformer, _Unsupervised
 from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 from LUMA.Clustering.KMeans import *
 from LUMA.Metric.Distance import *
+
+
+__all__ = ['TSNE', 'MDS', 'MetricMDS', 'LandmarkMDS', 'LLE',
+           'ModifiedLLE', 'HessianLLE', 'SammonMapping', 'LaplacianEigenmap',
+           'Isomap', 'ConformalIsomap', 'LTSA']
 
 
 class TSNE(_Transformer, _Unsupervised):
