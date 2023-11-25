@@ -15,7 +15,7 @@ from LUMA.Reduction.Linear import PCA, LDA, TruncatedSVD
 from LUMA.Reduction.Nonlinear import KernelPCA
 from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap
 from LUMA.Reduction.Manifold import MDS, MetricMDS, LandmarkMDS
-from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE
+from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE, LTSA
 from LUMA.Reduction.Manifold import Isomap, ConformalIsomap
 
 from LUMA.ModelSelection.Split import TrainTestSplit
@@ -70,7 +70,7 @@ def init():
     KernelPCA
     TSNE, SammonMapping, LaplacianEigenmap
     MDS, MetricMDS, LandmarkMDS
-    LLE, ModifiedLLE, HessianLLE
+    LLE, ModifiedLLE, HessianLLE, LTSA
     Isomap, ConformalIsomap
     
     # LUMA.ModelSelection
