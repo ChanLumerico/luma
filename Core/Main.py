@@ -81,7 +81,7 @@ class LUMA:
     
     Version:
     --------
-    ``alpha 1.1``
+    ``alpha 1.2``
     
     """
 

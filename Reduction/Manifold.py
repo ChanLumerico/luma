@@ -1086,4 +1086,3 @@ class LTSA(_Transformer, _Unsupervised):
         if n_components is not None: self.n_components = int(n_components)
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
 
-    

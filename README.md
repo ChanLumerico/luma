@@ -70,7 +70,7 @@ users gain insights from their machine learning models and communicate results e
 ##
 
 ### Latest Version
-`alpha 1.1`
+`alpha 1.2`
 
 ### Dependenciess
 `NumPy`, `SciPy`, `Matplotlib`, `Seaborn`, `typing_extensions`
