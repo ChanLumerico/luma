@@ -2,9 +2,9 @@ from typing import Any, Literal, Tuple
 from typing_extensions import Self
 
 from scipy.spatial.distance import pdist, cdist, squareform
-from scipy.spatial import KDTree
 from scipy.sparse.csgraph import shortest_path
-from scipy.linalg import eigh
+from scipy.spatial import KDTree
+from scipy.linalg import eigh, svd
 import numpy as np
 
 from LUMA.Reduction.Linear import PCA
@@ -1008,3 +1008,82 @@ class ConformalIsomap(_Transformer, _Unsupervised):
         if epsilon is not None: self.epsilon = float(epsilon)
         if algorithm is not None: self.algorithm = str(algorithm)
 
+
+class LTSA(_Transformer, _Unsupervised):
+    
+    """
+    Local Tangent Space Alignment (LTSA) is a dimensionality reduction technique 
+    that aims to preserve the local geometry of data points in a manifold. 
+    It works by approximating the tangent space at each data point and aligning 
+    these local tangent spaces. This helps to capture the intrinsic structure 
+    of the data, particularly in cases where the global geometry might be 
+    complex or non-linear. 
+    
+    Parameters
+    ----------
+    ``n_components`` : Dimensionality of low-space \n
+    ``n_neighbors`` : Number of neighbors
+    
+    """
+    
+    def __init__(self,
+                 n_components: int=None,
+                 n_neighbors: int=10) -> None:
+        self.n_components = n_components
+        self.n_neighbors = n_neighbors
+        self._fitted = False
+    
+    def fit(self, X: np.ndarray) -> np.ndarray:
+        m, n = X.shape
+        self.neighbors, self.neighbor_indices = self._compute_neighborhood(X)
+        M = np.zeros((m, m))
+        use_svd = self.n_neighbors > n
+        
+        for i in range(m):
+            Xi = self.neighbors[i]
+            Xi -= np.mean(self.neighbors[i], axis=0)
+            if use_svd:
+                v = svd(Xi, full_matrices=True)[0]
+            else:
+                Ci = Xi.dot(Xi.T)
+                v = eigh(Ci)[1][:, ::-1]
+            
+            Gi = np.zeros((self.n_neighbors, self.n_components + 1))
+            Gi[:, 1:] = v[:, :self.n_components]
+            Gi[:, 0] = 1 / np.sqrt(self.n_neighbors)
+            
+            neighbors_x, neighbors_y = np.meshgrid(self.neighbor_indices[i], 
+                                                   self.neighbor_indices[i])
+            M[neighbors_x, neighbors_y] -= Gi.dot(Gi.T)
+            M[self.neighbor_indices[i], self.neighbor_indices[i]] += 1
+        
+        self._M = M
+        self._fitted = True
+        return self
+    
+    def _compute_neighborhood(self, X: np.ndarray) -> np.ndarray:
+        distances = cdist(X, X, metric='euclidean')
+        indices = np.argsort(distances, axis=1)[:, :self.n_neighbors]
+        return X[indices], indices
+    
+    def _find_null_space(self, M: np.ndarray) -> np.ndarray:
+        eigvals, eigvecs = eigh(M, subset_by_index=(1, self.n_components), 
+                                overwrite_a=True)
+        indices = np.argsort(np.abs(eigvals))
+        return eigvecs[:, indices]
+    
+    def transform(self) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
+        return self._find_null_space(self._M)
+    
+    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+        self.fit(X)
+        return self.transform()
+
+    def set_params(self,
+                   n_components: int=None,
+                   n_neighbors: int=None) -> None:
+        if n_components is not None: self.n_components = int(n_components)
+        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
+
+    
