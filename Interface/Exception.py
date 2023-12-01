@@ -2,7 +2,7 @@ from typing import Any
 from LUMA.Interface.Type import Transformer, Estimator
 
 
-__all__ = ['NotFittedError', 'UnsupportedParameterError']
+__all__ = ['NotFittedError', 'UnsupportedParameterError', 'NotConvergedError']
 
 
 class NotFittedError(Exception):
@@ -14,4 +14,10 @@ class NotFittedError(Exception):
 class UnsupportedParameterError(Exception):
     def __init__(self, param: Any) -> None:
         super().__init__(f'{param} is unsupported!')
+
+
+class NotConvergedError(Exception):
+    def __init__(self, model: Transformer | Estimator | Any) -> None:
+        super().__init__(f'{model.__class__.__name__} did not converged!' + 
+                         f' Try setting {model.__class__.__name__}.tol to bigger value.')
 
