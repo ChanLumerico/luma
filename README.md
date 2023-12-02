@@ -10,7 +10,7 @@ customization options for data scientists and developers.
 <!-- ------------------- -->
 The `LUMA.Classifier` submodule is a comprehensive toolkit for building, training,
 and evaluating classification models. It provides a wide range of classification algorithms, 
-including decision trees, support vector machines, random forests, and neural networks.
+including naive bayes, decision trees, and support vector machines.
 
 ## LUMA.Clustering
 <!-- ------------------- -->
