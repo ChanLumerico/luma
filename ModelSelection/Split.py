@@ -6,7 +6,7 @@ __all__ = ['TrainTestSplit']
 
 
 class TrainTestSplit:
-    @classmethod
+    @staticmethod
     def split(X: np.ndarray, y: np.ndarray, 
               test_size: float = 0.2, 
               random_state: int = None) -> Tuple[np.ndarray]:

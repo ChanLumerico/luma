@@ -4,6 +4,8 @@ import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator, _Unsupervised
+from LUMA.Interface.Type import Evaluator
+from LUMA.Metric.Classification import Accuracy
 
 
 __all__ = ['KMeansClustering', 'KMeansClusteringPlus', 'KMediansClustering']
@@ -26,9 +28,9 @@ class KMeansClustering(_Estimator, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_clusters: int=None, 
-                 max_iter: int=100, 
-                 verbose: bool=False) -> None:
+                 n_clusters: int = None, 
+                 max_iter: int = 100, 
+                 verbose: bool = False) -> None:
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
@@ -62,8 +64,13 @@ class KMeansClustering(_Estimator, _Unsupervised):
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         labels = np.argmin(distances, axis=1)
         return labels
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
 
-    def set_params(self, n_clusters: int=None, max_iter: int=None) -> None:
+    def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
         if max_iter is not None: self.max_iter = int(max_iter)
 
@@ -85,9 +92,9 @@ class KMeansClusteringPlus(_Estimator, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_clusters: int=None, 
-                 max_iter: int=100,
-                 verbose: bool=False) -> None:
+                 n_clusters: int = None, 
+                 max_iter: int = 100,
+                 verbose: bool = False) -> None:
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
@@ -126,8 +133,13 @@ class KMeansClusteringPlus(_Estimator, _Unsupervised):
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         labels = np.argmin(distances, axis=1)
         return labels
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
 
-    def set_params(self, n_clusters: int=None, max_iter: int=None) -> None:
+    def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
         if max_iter is not None: self.max_iter = int(max_iter)
 
@@ -149,9 +161,9 @@ class KMediansClustering(_Estimator, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_clusters: int=None, 
-                 max_iter: int=100,
-                 verbose: bool=False) -> None:
+                 n_clusters: int = None, 
+                 max_iter: int = 100,
+                 verbose: bool = False) -> None:
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
@@ -186,7 +198,12 @@ class KMediansClustering(_Estimator, _Unsupervised):
         labels = np.argmin(distances.sum(axis=2), axis=1)
         return labels
     
-    def set_params(self, n_clusters: int=None, max_iter: int=None) -> None:
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
+    def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
         if max_iter is not None: self.max_iter = int(max_iter)
 

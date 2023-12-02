@@ -14,11 +14,11 @@ class DecisionRegion(_Visualizer):
                  estimator: Estimator, 
                  X: np.ndarray, 
                  y: np.ndarray, 
-                 title: str='', 
-                 xlabel: str=r'$x_2$', 
-                 ylabel: str=r'$x_2$',
-                 cmap: str='Spectral',
-                 alpha: float=0.7) -> None:
+                 title: str = '', 
+                 xlabel: str = r'$x_2$', 
+                 ylabel: str = r'$x_2$',
+                 cmap: str = 'Spectral',
+                 alpha: float = 0.7) -> None:
         self.estimator = estimator
         self.X = X
         self.y = y
@@ -28,12 +28,12 @@ class DecisionRegion(_Visualizer):
         self.cmap = cmap
         self.alpha = alpha
 
-    def plot(self, resolution: float=0.025) -> None:
+    def plot(self, size: float=250) -> None:
         if self.X.shape[1] > 2: return
         x1_min, x1_max = self.X[:, 0].min() - 1, self.X[:, 0].max() + 1
         x2_min, x2_max = self.X[:, 1].min() - 1, self.X[:, 1].max() + 1
-        xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution), 
-                               np.arange(x2_min, x2_max, resolution))
+        xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, (x1_max - x1_min) / size), 
+                               np.arange(x2_min, x2_max, (x2_max - x2_min) / size))
         
         Z = self.estimator.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
         Z = Z.reshape(xx1.shape)
@@ -59,10 +59,10 @@ class ClusteredRegion(_Visualizer):
     def __init__(self, 
                  estimator: Estimator, 
                  X: np.ndarray, 
-                 title: str='', 
-                 xlabel: str=r'$x_2$', 
-                 ylabel: str=r'$x_2$',
-                 cmap: str='Spectral',
+                 title: str = '', 
+                 xlabel: str = r'$x_2$', 
+                 ylabel: str = r'$x_2$',
+                 cmap: str = 'Spectral',
                  alpha: float=0.7) -> None:
         self.estimator = estimator
         self.X = X
@@ -72,12 +72,12 @@ class ClusteredRegion(_Visualizer):
         self.cmap = cmap
         self.alpha = alpha
     
-    def plot(self, resolution: float=0.025) -> None:
+    def plot(self, size: float=250) -> None:
         if self.X.shape[1] > 2: return
         x1_min, x1_max = self.X[:, 0].min() - 1, self.X[:, 0].max() + 1
         x2_min, x2_max = self.X[:, 1].min() - 1, self.X[:, 1].max() + 1
-        xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution), 
-                               np.arange(x2_min, x2_max, resolution))
+        xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, (x1_max - x1_min) / size), 
+                               np.arange(x2_min, x2_max, (x2_max - x2_min) / size))
         
         X_pred = self.estimator.predict(self.X)
         Z = self.estimator.predict(np.array([xx1.ravel(), xx2.ravel()]).T)

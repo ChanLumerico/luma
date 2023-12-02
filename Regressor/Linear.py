@@ -4,6 +4,8 @@ import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator
+from LUMA.Interface.Type import Evaluator
+from LUMA.Metric.Regression import RootMeanSquaredError
 
 
 __all__ = ['RidgeRegressor', 'LassoRegressor', 'ElasticNetRegressor']
@@ -24,7 +26,7 @@ class RidgeRegressor(_Estimator):
     
     """
     
-    def __init__(self, alpha: float=1.0) -> None:
+    def __init__(self, alpha: float = 1.0) -> None:
         self.alpha = alpha
         self._fitted = False
 
@@ -40,8 +42,13 @@ class RidgeRegressor(_Estimator):
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return X.dot(self.coefficients)
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
 
-    def set_params(self, alpha: float=None) -> None:
+    def set_params(self, alpha: float = None) -> None:
         if alpha is not None: self.alpha = float(alpha)
 
 
@@ -63,8 +70,11 @@ class LassoRegressor(_Estimator):
     
     """
     
-    def __init__(self, alpha: float=1.0, max_iter: int=100, 
-                 learning_rate: float=0.01, verbose: bool=False) -> None:
+    def __init__(self, 
+                 alpha: float = 1.0, 
+                 max_iter: int = 100, 
+                 learning_rate: float = 0.01, 
+                 verbose: bool = False) -> None:
         self.alpha = alpha
         self.max_iter = max_iter
         self.learning_rate = learning_rate
@@ -97,10 +107,15 @@ class LassoRegressor(_Estimator):
         X = np.column_stack((np.ones(X.shape[0]), X))
         return X.dot(self.coefficients)
     
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
     def set_params(self, 
-                   alpha: float=None, 
-                   max_iter: int=None,
-                   learning_rate: float=None) -> None:
+                   alpha: float = None, 
+                   max_iter: int = None,
+                   learning_rate: float = None) -> None:
         if alpha is not None: self.alpha = float(alpha)
         if max_iter is not None: self.max_iter = int(max_iter)
         if learning_rate is not None: self.learning_rate = float(learning_rate)
@@ -123,10 +138,12 @@ class ElasticNetRegressor(_Estimator):
     
     """
     
-    def __init__(self, alpha: float=1.0, rho: float=0.5, 
-                 max_iter: int=100, 
-                 learning_rate: float=0.01,
-                 verbose: bool=False) -> None:
+    def __init__(self, 
+                 alpha: float = 1.0, 
+                 rho: float = 0.5, 
+                 max_iter: int = 100, 
+                 learning_rate: float = 0.01,
+                 verbose: bool = False) -> None:
         self.alpha = alpha
         self.rho = rho
         self.max_iter = max_iter
@@ -162,11 +179,16 @@ class ElasticNetRegressor(_Estimator):
         if self.coef_ is None: raise ValueError()
         return X.dot(self.coef_)
     
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
     def set_params(self,
-                   alpha: float=None,
-                   rho: float=None,
-                   max_iter: int=None,
-                   learning_rate: float=None) -> None:
+                   alpha: float = None,
+                   rho: float = None,
+                   max_iter: int = None,
+                   learning_rate: float = None) -> None:
         if alpha is not None: self.alpha = float(alpha)
         if rho is not None: self.rho = float(rho)
         if max_iter is not None: self.max_iter = int(max_iter)

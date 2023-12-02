@@ -13,7 +13,10 @@ class CorrelationHeatMap(_Visualizer):
         self.data = data
         self.corr = data.corr()
     
-    def plot(self, colorMap: str='rocket', annotate: bool=True, colorBar: bool=True) -> None:
+    def plot(self, 
+             colorMap: str = 'rocket', 
+             annotate: bool = True, 
+             colorBar: bool = True) -> None:
         n_features = self.data.shape[1]
         size = n_features / 2 if n_features < 20 else 10
         plt.figure(figsize=(size + 1, size))
@@ -49,7 +52,7 @@ class JointPlot(_Visualizer):
         self.x = x
         self.y = y
 
-    def plot(self, color: str='tab:blue') -> None:    
+    def plot(self, color: str = 'tab:blue') -> None:    
         sns.jointplot(data=self.data, x=self.x, y=self.y, kind='reg', color=color)
         plt.title(f'{self.x} vs. {self.y}')
         plt.tight_layout()

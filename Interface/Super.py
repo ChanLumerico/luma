@@ -29,6 +29,8 @@ class _Estimator(Protocol):
     
     def predict(self, *data) -> Any: ...
     
+    def score(self, *data) -> float: ...
+    
     def set_params(self, *params) -> None: ...
 
 
@@ -130,6 +132,12 @@ class _Distance:
     In mathematics and machine learning, distance is a measure of how much "separation" 
     or "difference" there is between two points, objects, or distributions. Different 
     types of distances serve various purposes, and they are used in different contexts. 
+    
+    Example
+    -------
+    >>> metric = AnyDistance()
+    >>> dist = metric.distance(x, y)
+    
     """
     
     @staticmethod

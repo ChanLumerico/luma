@@ -3,30 +3,36 @@ from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Type import Estimator, Evaluator
+from LUMA.Interface.Exception import NotFittedError
 
 
 __all__ = ['GridSearchCV']
 
 
 class GridSearchCV:
-    def __init__(self, model: Estimator, param_grid: dict, 
-                 metric: Evaluator, cv: int=5, 
-                 refit: bool=True, verbose: bool=False) -> None:
+    def __init__(self, 
+                 model: Estimator, 
+                 param_grid: dict, 
+                 metric: Evaluator, 
+                 cv: int = 5, 
+                 refit: bool = True, 
+                 verbose: bool = False) -> None:
         self.model = model
         self.param_grid = param_grid
         self.metric = metric
         self.cv = cv
         self.refit = refit
         self.verbose = verbose
+        self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Estimator:
         best_score = None
         best_params = None
         param_combinations = self._get_param_combinations()
         max_iter = len(param_combinations)
 
         if self.verbose:
-            print(f'[GridSearchCV] Fitting {self.cv} folds for {max_iter} candidates,',
+            print(f'Fitting {self.cv} folds for {max_iter} candidates,',
                   f'totalling {self.cv * max_iter} fits.\n')
         
         for i, params in enumerate(param_combinations, start=1):
@@ -41,17 +47,19 @@ class GridSearchCV:
                 best_score = mean_score
                 best_params = params
 
-        self.best_score_ = best_score
-        self.best_params_ = best_params
+        self.best_score = best_score
+        self.best_params = best_params
         
         if self.verbose:
-            print(f'\n[GridSearchCV] Best params: {self.best_params_}')
-            print(f'[GridSearchCV] Best score: {self.best_score_}')
+            print(f'\n[GridSearchCV] Best params: {self.best_params}')
+            print(f'[GridSearchCV] Best score: {self.best_score}')
+        
         if self.refit:
             self.model.set_params(**best_params)
             self.model.fit(X, y)
         
-        return self
+        self._fitted = True
+        return self.best_model
 
     def _cross_validation(self, X: np.ndarray, y: np.ndarray) -> list:
         num_samples = X.shape[0]
@@ -77,7 +85,7 @@ class GridSearchCV:
             scores.append(score)
         
             if self.verbose:
-                print(f'[GridSearchCV] cv={i} - {self.metric.__name__}: {score:.3f}')
+                print(f'[GridSearchCV] cv={i + 1} - {self.metric.__name__}: {score:.3f}')
 
         return scores
 
@@ -86,4 +94,9 @@ class GridSearchCV:
         param_combinations = np.array(np.meshgrid(*values)).T.reshape(-1, len(keys))
         param_combinations = [dict(zip(keys, v)) for v in param_combinations]
         return param_combinations
+    
+    @property
+    def best_model(self) -> Estimator:
+        if not self._fitted: raise NotFittedError(self)
+        return self.model
 

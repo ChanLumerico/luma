@@ -49,7 +49,7 @@ class MinMaxScaler(_Transformer):
     that they fall within a specific interval.
     """
     
-    def __init__(self, feature_range: tuple=(0, 1)) -> None:
+    def __init__(self, feature_range: tuple = (0, 1)) -> None:
         self.feature_range = feature_range
         self.min = None
         self.max = None
@@ -76,4 +76,7 @@ class MinMaxScaler(_Transformer):
         min_val, max_val = self.feature_range
         original = (X - min_val) / (max_val - min_val) * (self.max - self.min)
         return original + self.min
+    
+    def set_params(self, feature_range: tuple = None) -> None:
+        if feature_range is not None: self.feature_range = tuple(feature_range)
 

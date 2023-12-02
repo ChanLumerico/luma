@@ -5,6 +5,8 @@ import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 from LUMA.Interface.Super import _Estimator, _Supervised
+from LUMA.Interface.Type import Evaluator
+from LUMA.Metric.Regression import RootMeanSquaredError
 
 
 __all__ = ['PoissonRegressor', 'NegativeBinomialRegressor', 'GammaRegressor',
@@ -31,12 +33,12 @@ class PoissonRegressor(_Estimator, _Supervised):
     """
     
     def __init__(self,
-                 learning_rate: float=0.01,
-                 max_iter: int=100,
-                 rho: float=0.5,
-                 alpha: float=0.01,
-                 regularization: Literal['l1', 'l2','elastic-net']=None,
-                 verbose: bool=False) -> None:
+                 learning_rate: float = 0.01,
+                 max_iter: int = 100,
+                 rho: float = 0.5,
+                 alpha: float = 0.01,
+                 regularization: Literal['l1', 'l2','elastic-net'] = None,
+                 verbose: bool = False) -> None:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.regularization = regularization
@@ -85,13 +87,18 @@ class PoissonRegressor(_Estimator, _Supervised):
         X = np.column_stack((np.ones(X.shape[0]), X))
         predictions = self.link_funciton(X)
         return predictions
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
 
     def set_params(self,
-                   learning_rate: float=None,
-                   max_iter: int=None,
-                   alpha: float=None,
-                   rho: float=None,
-                   regularization: Literal=None) -> None:
+                   learning_rate: float = None,
+                   max_iter: int = None,
+                   alpha: float = None,
+                   rho: float = None,
+                   regularization: Literal = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
         if alpha is not None: self.alpha = float(alpha)
@@ -120,13 +127,13 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
     """
     
     def __init__(self,
-                 learning_rate: float=0.01,
-                 max_iter: int=100,
-                 alpha: float=0.01,
-                 rho: float=0.5,
-                 phi: float=1.0,
-                 regularization: Literal['l1', 'l2', 'elastic-net']=None,
-                 verbose: bool=False) -> None:
+                 learning_rate: float = 0.01,
+                 max_iter: int = 100,
+                 alpha: float = 0.01,
+                 rho: float = 0.5,
+                 phi: float = 1.0,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
+                 verbose: bool = False) -> None:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.alpha = alpha
@@ -178,13 +185,18 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
         mu = self.link_function(X)
         return mu
     
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
     def set_params(self,
-                   learning_rate: float=None,
-                   max_iter: int=None,
-                   alpha: float=None,
-                   rho: float=None,
-                   phi: float=None,
-                   regularization: Literal=None) -> None:
+                   learning_rate: float = None,
+                   max_iter: int = None,
+                   alpha: float = None,
+                   rho: float = None,
+                   phi: float = None,
+                   regularization: Literal = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
         if alpha is not None: self.alpha = float(alpha)
@@ -216,14 +228,14 @@ class GammaRegressor(_Estimator, _Supervised):
     """
     
     def __init__(self,
-                 alpha: float=1.0,
-                 beta: float=1.0,
-                 learning_rate: float=0.01,
-                 max_iter: int=100,
-                 reg_strength: float=0.01,
-                 rho: float=0.5,
-                 regularization: Literal['l1', 'l2', 'elastic-net']=None,
-                 verbose: bool=False) -> None:
+                 alpha: float = 1.0,
+                 beta: float = 1.0,
+                 learning_rate: float = 0.01,
+                 max_iter: int = 100,
+                 reg_strength: float = 0.01,
+                 rho: float = 0.5,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
+                 verbose: bool = False) -> None:
         self.alpha = alpha
         self.beta = beta
         self.learning_rate = learning_rate
@@ -274,14 +286,19 @@ class GammaRegressor(_Estimator, _Supervised):
         X = np.column_stack((np.ones(X.shape[0]), X))
         return np.dot(X, self.alpha / self.beta)
     
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
     def set_param(self,
-                  alpha: float=None,
-                  beta: float=None,
-                  learning_rate: float=None,
-                  max_iter: int=None,
-                  reg_strength: float=None,
-                  rho: float=None,
-                  regularization: Literal=None) -> None:
+                  alpha: float = None,
+                  beta: float = None,
+                  learning_rate: float = None,
+                  max_iter: int = None,
+                  reg_strength: float = None,
+                  rho: float = None,
+                  regularization: Literal = None) -> None:
         if alpha is not None: self.alpha = float(alpha)
         if beta is not None: self.beta = float(beta)
         if learning_rate is not None: self.learning_rate = float(learning_rate)
@@ -312,14 +329,14 @@ class BetaRegressor(_Estimator, _Supervised):
     """
 
     def __init__(self,
-                 alpha: float=1.0,
-                 beta: float=1.0,
-                 learning_rate: float=0.01,
-                 max_iter: int=100,
-                 reg_strength: float=0.01,
-                 rho: float=0.5,
-                 regularization: Literal['l1', 'l2', 'elastic-net']=None,
-                 verbose: bool=False) -> None:
+                 alpha: float = 1.0,
+                 beta: float = 1.0,
+                 learning_rate: float = 0.01,
+                 max_iter: int = 100,
+                 reg_strength: float = 0.01,
+                 rho: float = 0.5,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
+                 verbose: bool = False) -> None:
         self.alpha = alpha
         self.beta = beta
         self.learning_rate = learning_rate
@@ -372,14 +389,19 @@ class BetaRegressor(_Estimator, _Supervised):
         X = np.column_stack((np.ones(X.shape[0]), X))
         return np.dot(X, self.alpha / (self.alpha + self.beta))
     
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
     def set_params(self, 
-                   alpha: float=None, 
-                   beta: float=None, 
-                   learning_rate: float=None, 
-                   max_iter: int=None, 
-                   reg_strength: float=None, 
-                   rho: float=None, 
-                   regularization: Literal=None) -> None:
+                   alpha: float = None, 
+                   beta: float = None, 
+                   learning_rate: float = None, 
+                   max_iter: int = None, 
+                   reg_strength: float = None, 
+                   rho: float = None, 
+                   regularization: Literal = None) -> None:
         if alpha is not None: self.alpha = float(alpha)
         if beta is not None: self.beta = float(beta)
         if learning_rate is not None: self.learning_rate = float(learning_rate)
@@ -409,13 +431,13 @@ class InverseGaussianRegressor(_Estimator, _Supervised):
     """
     
     def __init__(self,
-                 learning_rate: float=0.01,
-                 max_iter: int=100,
-                 phi: float=1.0,
-                 rho: float=0.5,
-                 alpha: float=0.01,
-                 regularization: Literal['l1', 'l2', 'elastic-net']=None,
-                 verbose: bool=False) -> None:
+                 learning_rate: float = 0.01,
+                 max_iter: int = 100,
+                 phi: float = 1.0,
+                 rho: float = 0.5,
+                 alpha: float = 0.01,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
+                 verbose: bool = False) -> None:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.phi = phi
@@ -464,14 +486,19 @@ class InverseGaussianRegressor(_Estimator, _Supervised):
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return 1 / (self.phi * X) * np.dot(X, self.weights)
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
 
     def set_params(self, 
-                   learning_rate: float=None, 
-                   max_iter: int=None, 
-                   phi: float=None,
-                   rho: float=None,
-                   alpha: float=None, 
-                   regularization: Literal=None) -> None:
+                   learning_rate: float = None, 
+                   max_iter: int = None, 
+                   phi: float = None,
+                   rho: float = None,
+                   alpha: float = None, 
+                   regularization: Literal = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
         if phi is not None: self.phi = float(phi)

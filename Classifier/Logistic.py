@@ -2,8 +2,10 @@ from typing import *
 from typing_extensions import Self
 import numpy as np
 
+from LUMA.Metric.Classification import Accuracy
 from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
 from LUMA.Interface.Super import _Estimator, _Supervised
+from LUMA.Interface.Type import Evaluator
 
 
 __all__ = ['LogisticRegressor', 'SoftmaxRegressor']
@@ -28,12 +30,12 @@ class LogisticRegressor(_Estimator, _Supervised):
     """
     
     def __init__(self, 
-                 learning_rate : float=0.01, 
-                 max_iter: int=100, 
-                 rho: float=0.5, 
-                 alpha: float=0.01, 
-                 regularization: Literal['l1', 'l2', 'elastic_net']=None,
-                 verbose: bool=False):
+                 learning_rate : float = 0.01, 
+                 max_iter: int = 100, 
+                 rho: float = 0.5, 
+                 alpha: float = 0.01, 
+                 regularization: Literal['l1', 'l2', 'elastic_net'] = None,
+                 verbose: bool = False):
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.rho = rho
@@ -89,12 +91,17 @@ class LogisticRegressor(_Estimator, _Supervised):
         h = self.sigmoid(z)
         return h
     
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
     def set_params(self, 
-                   learning_rate: float=None, 
-                   max_iter: int=None, 
-                   rho: float=None, 
-                   alpha: float=None, 
-                   regularization: Literal=None) -> None:
+                   learning_rate: float = None, 
+                   max_iter: int = None, 
+                   rho: float = None, 
+                   alpha: float = None, 
+                   regularization: Literal = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
         if rho is not None: self.rho = float(rho)
@@ -121,12 +128,12 @@ class SoftmaxRegressor(_Estimator, _Supervised):
     """
     
     def __init__(self,
-                 learning_rate: float=0.01,
-                 max_iter: int=100,
-                 rho: float=0.5,
-                 alpha: float=0.01,
-                 regularization: Literal['l1', 'l2', 'elastic-net']=None,
-                 verbose: bool=False) -> None:
+                 learning_rate: float = 0.01,
+                 max_iter: int = 100,
+                 rho: float = 0.5,
+                 alpha: float = 0.01,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
+                 verbose: bool = False) -> None:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.rho = rho
@@ -192,12 +199,17 @@ class SoftmaxRegressor(_Estimator, _Supervised):
         h = self.softmax(z)
         return h
     
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
     def set_params(self,
-                   learning_rate: float=None,
-                   max_iter: int=None,
-                   rho: float=None,
-                   alpha: float=None,
-                   regularization: Literal=None) -> None:
+                   learning_rate: float = None,
+                   max_iter: int = None,
+                   rho: float = None,
+                   alpha: float = None,
+                   regularization: Literal = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
         if rho is not None: self.rho = float(rho)

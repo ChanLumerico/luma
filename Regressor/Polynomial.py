@@ -4,6 +4,8 @@ import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator
+from LUMA.Interface.Type import Evaluator
+from LUMA.Metric.Regression import RootMeanSquaredError
 
 
 __all__ = ['PolynomialRegressor']
@@ -15,7 +17,7 @@ class PolynomialRegressor(_Estimator):
     in statistics and machine learning to model the relationship between 
     a dependent variable and one or more independent variables."""
     
-    def __init__(self, degree: int=1):
+    def __init__(self, degree: int = 1):
         self.degree = degree
         self._fitted = False
 
@@ -36,6 +38,11 @@ class PolynomialRegressor(_Estimator):
         X_poly = self._generate_polynomial_features(X)
         return np.dot(X_poly, self.coefficients)
 
-    def set_params(self, degree: int=None) -> None:
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = RootMeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+
+    def set_params(self, degree: int = None) -> None:
         self.degree = int(degree)
 

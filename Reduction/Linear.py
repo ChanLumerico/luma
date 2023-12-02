@@ -25,7 +25,7 @@ class PCA(_Transformer, _Unsupervised):
     
     """
     
-    def __init__(self, n_components: int=None) -> None:
+    def __init__(self, n_components: int = None) -> None:
         self.n_components = n_components
         self._fitted = False
 
@@ -58,7 +58,7 @@ class PCA(_Transformer, _Unsupervised):
         self.fit(X)
         return self.transform(X)
 
-    def set_params(self, n_components: int=None) -> None:
+    def set_params(self, n_components: int = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
 
 
@@ -76,7 +76,7 @@ class LDA(_Transformer, _Supervised):
     
     """
     
-    def __init__(self, n_components: int=None) -> None:
+    def __init__(self, n_components: int = None) -> None:
         self.n_components = n_components
         self._fitted = False
 
@@ -121,7 +121,7 @@ class LDA(_Transformer, _Supervised):
         self.fit(X, y)
         return self.transform(X)
 
-    def set_params(self, n_components: int=None) -> None:
+    def set_params(self, n_components: int = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
 
 
@@ -140,7 +140,7 @@ class TruncatedSVD(_Transformer, _Unsupervised):
     
     """
     
-    def __init__(self, n_components: int=None) -> None:
+    def __init__(self, n_components: int = None) -> None:
         self.n_components = n_components
         self._fitted = False
     
@@ -165,7 +165,7 @@ class TruncatedSVD(_Transformer, _Unsupervised):
         self.fit(X)
         return self.transform(X)
 
-    def set_params(self, n_components: int=None) -> None:
+    def set_params(self, n_components: int = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
 
 
@@ -188,11 +188,11 @@ class FactorAnalysis(_Transformer, _Unsupervised):
     """
     
     def __init__(self,
-                 n_components: int=None,
-                 max_iter: int=1000,
-                 tol: float=1e-5,
-                 noise_variance: np.ndarray | list=None,
-                 verbose: bool=False) -> None:
+                 n_components: int = None,
+                 max_iter: int = 1000,
+                 tol: float = 1e-5,
+                 noise_variance: np.ndarray | list = None,
+                 verbose: bool = False) -> None:
         self.n_components = n_components
         self.max_iter = max_iter
         self.tol = tol
@@ -260,10 +260,10 @@ class FactorAnalysis(_Transformer, _Unsupervised):
         return self.transform(X)
     
     def set_params(self,
-                   n_components: int=None,
-                   max_iter: int=None,
-                   tol: float=None,
-                   noise_variance: np.ndarray | list=None) -> None:
+                   n_components: int = None,
+                   max_iter: int = None,
+                   tol: float = None,
+                   noise_variance: np.ndarray | list = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if max_iter is not None: self.max_iter = int(max_iter)
         if tol is not None: self.tol = float(tol)

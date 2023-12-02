@@ -4,6 +4,8 @@ import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
 from LUMA.Interface.Super import _Estimator, _Supervised
+from LUMA.Interface.Type import Evaluator
+from LUMA.Metric.Classification import Accuracy
 
 
 __all__ = ['GaussianNaiveBayes', 'BernoulliNaiveBayes']
@@ -77,6 +79,11 @@ class GaussianNaiveBayes(_Estimator, _Supervised):
             posteriors = np.array(posteriors)
             probabilities.append(posteriors / np.sum(posteriors))          
         return np.array(probabilities)
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
 
 
 class BernoulliNaiveBayes(_Estimator, _Supervised):
@@ -133,4 +140,9 @@ class BernoulliNaiveBayes(_Estimator, _Supervised):
             exp_class_probs = np.exp(class_probs - np.max(class_probs))
             probas.append(exp_class_probs / exp_class_probs.sum())
         return np.array(probas)
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
 

@@ -31,12 +31,12 @@ class KernelPCA(_Transformer, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_components: int=None,
-                 degree: int=3,
-                 gamma: float=15.0,
-                 coef: float=1.0,
+                 n_components: int = None,
+                 degree: int = 3,
+                 gamma: float = 15.0,
+                 coef: float = 1.0,
                  kernel: Literal['linear', 'poly', 'rbf', 
-                                 'sigmoid', 'laplacian']='linear') -> None:
+                                 'sigmoid', 'laplacian'] = 'linear') -> None:
         self.n_components = n_components
         self.degree = degree
         self.gamma = gamma
@@ -95,11 +95,11 @@ class KernelPCA(_Transformer, _Unsupervised):
         return np.exp(-self.gamma * np.linalg.norm(x - y))
     
     def set_params(self,
-                   n_components: int=None,
-                   degree: int=None,
-                   gamma: float=None,
-                   coef: float=None,
-                   kernel: Literal=None) -> None:
+                   n_components: int = None,
+                   degree: int = None,
+                   gamma: float = None,
+                   coef: float = None,
+                   kernel: Literal = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if degree is not None: self.degree = int(degree)
         if gamma is not None: self.gamma = float(gamma)

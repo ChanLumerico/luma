@@ -37,11 +37,11 @@ class TSNE(_Transformer, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_components: int=None, 
-                 max_iter: int=1000, 
-                 learning_rate: int=300, 
-                 perplexity: int=30,
-                 verbose: bool=False) -> None:
+                 n_components: int = None, 
+                 max_iter: int = 1000, 
+                 learning_rate: int = 300, 
+                 perplexity: int = 30,
+                 verbose: bool = False) -> None:
         self.n_components = n_components
         self.max_iter = max_iter
         self.learning_rate = learning_rate
@@ -118,8 +118,8 @@ class TSNE(_Transformer, _Unsupervised):
         return opt_sigmas
     
     def _binary_search(self, func: Callable, 
-                       tol: float=1e-10, max_iter: int=1000, 
-                       low: float=1e-10, high: float=1e3) -> np.ndarray:
+                       tol: float = 1e-10, max_iter: int = 1000, 
+                       low: float = 1e-10, high: float = 1e3) -> np.ndarray:
         for _ in range(max_iter):
             guess = (high + low) / 2.0
             val = func(guess)
@@ -148,10 +148,10 @@ class TSNE(_Transformer, _Unsupervised):
         return 0.5 if iteration < 250 else 0.8
     
     def set_params(self,
-                   n_components: int=None,
-                   perplexity: float=None,
-                   learning_rate: float=None,
-                   max_iter: int=None) -> None:
+                   n_components: int = None,
+                   perplexity: float = None,
+                   learning_rate: float = None,
+                   max_iter: int = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if perplexity is not None: self.perplexity = float(perplexity)
         if learning_rate is not None: self.learning_rate = float(learning_rate)
@@ -173,7 +173,7 @@ class MDS(_Transformer, _Unsupervised):
     
     """
     
-    def __init__(self, n_components: int=None) -> None:
+    def __init__(self, n_components: int = None) -> None:
         self.n_components = n_components
         self._fitted = False
     
@@ -213,7 +213,7 @@ class MDS(_Transformer, _Unsupervised):
         stress = np.sqrt(stress)
         return stress
     
-    def set_params(self, n_components: int=None) -> None:
+    def set_params(self, n_components: int = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
 
 
@@ -236,11 +236,11 @@ class MetricMDS(_Transformer, _Unsupervised):
     """
     
     def __init__(self,
-                 n_components: int=None,
-                 p: float | int=None,
+                 n_components: int = None,
+                 p: float | int = None,
                  metric: Literal['euclidean', 'manhattan', 'chebyshev',
                                  'minkowski', 'cos_similarity', 'correlation',
-                                 'mahalanobis']='euclidean') -> None:
+                                 'mahalanobis'] = 'euclidean') -> None:
         self.n_components = n_components
         self.metric = metric
         self.p = p
@@ -299,9 +299,9 @@ class MetricMDS(_Transformer, _Unsupervised):
         return stress
     
     def set_params(self, 
-                   n_components: int=None,
-                   p: float | int=None,
-                   metric: Literal=None) -> None:
+                   n_components: int = None,
+                   p: float | int = None,
+                   metric: Literal = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if p is not None: self.p = float(p)
         if metric is not None: self.metric = str(metric)
@@ -326,10 +326,10 @@ class LandmarkMDS(_Transformer, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_components: int=None, 
-                 n_landmarks: int=10,
-                 method: Literal['random', 'kmeans', 'kmeans++', 'kmedians']='random',
-                 verbose: bool=False) -> None:
+                 n_components: int = None, 
+                 n_landmarks: int = 10,
+                 method: Literal['random', 'kmeans', 'kmeans++', 'kmedians'] = 'random',
+                 verbose: bool = False) -> None:
         self.n_components = n_components
         self.n_landmarks = n_landmarks
         self.method = method
@@ -397,9 +397,9 @@ class LandmarkMDS(_Transformer, _Unsupervised):
         return self.transform()
     
     def set_params(self,
-                   n_components: int=None,
-                   n_landmarks: int=None,
-                   method: Literal=None) -> None:
+                   n_components: int = None,
+                   n_landmarks: int = None,
+                   method: Literal = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if n_landmarks is not None: self.n_landmarks = int(n_landmarks)
         if method is not None: self.method = str(method)
@@ -422,9 +422,9 @@ class LLE(_Transformer, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_neighbors: int=5, 
-                 n_components: int=None, 
-                 verbose: bool=False) -> None:
+                 n_components: int = None, 
+                 n_neighbors: int = 5, 
+                 verbose: bool = False) -> None:
         self.n_neighbors = n_neighbors
         self.n_components = n_components
         self.verbose = verbose
@@ -467,8 +467,8 @@ class LLE(_Transformer, _Unsupervised):
         return self.transform()
 
     def set_params(self, 
-                   n_neighbors: int=None, 
-                   n_components: int=None) -> None:
+                   n_neighbors: int = None, 
+                   n_components: int = None) -> None:
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
         if n_components is not None: self.n_components = int(n_components)
 
@@ -492,10 +492,10 @@ class ModifiedLLE(_Transformer, _Unsupervised):
     """
 
     def __init__(self, 
-                 n_neighbors: int=5, 
-                 n_components: int=None, 
-                 regularization: float=1e-3, 
-                 verbose: bool=False) -> None:
+                 n_neighbors: int = 5, 
+                 n_components: int = None, 
+                 regularization: float = 1e-3, 
+                 verbose: bool = False) -> None:
         self.n_neighbors = n_neighbors
         self.n_components = n_components
         self.regularization = regularization
@@ -539,9 +539,9 @@ class ModifiedLLE(_Transformer, _Unsupervised):
         return self.transform()
     
     def set_params(self, 
-                   n_neighbors: int=None, 
-                   n_components: int=None,
-                   regularization: float=None) -> None:
+                   n_neighbors: int = None, 
+                   n_components: int = None,
+                   regularization: float = None) -> None:
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
         if n_components is not None: self.n_components = int(n_components)
         if regularization is not None: self.regularization = float(regularization)
@@ -564,10 +564,10 @@ class HessianLLE(_Transformer, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_neighbors: int=5, 
-                 n_components: int=None,
-                 regularization: float=1e-5,
-                 verbose: bool=False) -> None:
+                 n_neighbors: int = 5, 
+                 n_components: int = None,
+                 regularization: float = 1e-5,
+                 verbose: bool = False) -> None:
         self.n_neighbors = n_neighbors
         self.n_components = n_components
         self.regularization = regularization
@@ -646,9 +646,9 @@ class HessianLLE(_Transformer, _Unsupervised):
         return index_mat
 
     def set_params(self, 
-                   n_neighbors: int=None, 
-                   n_components: int=None,
-                   regularization: float=None) -> None:
+                   n_neighbors: int = None, 
+                   n_components: int = None,
+                   regularization: float = None) -> None:
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
         if n_components is not None: self.n_components = int(n_components)
         if regularization is not None: self.regularization = float(regularization)
@@ -673,12 +673,12 @@ class SammonMapping(_Transformer, _Unsupervised):
     """
     
     def __init__(self,
-                 n_components: int=None,
-                 max_iter: int=100,
-                 max_halves: int=20,
-                 tol: float=1e-5,
-                 initialize: Literal['pca'] | None='pca',
-                 verbose: bool=False) -> None:
+                 n_components: int = None,
+                 max_iter: int = 100,
+                 max_halves: int = 20,
+                 tol: float = 1e-5,
+                 initialize: Literal['pca'] | None = 'pca',
+                 verbose: bool = False) -> None:
         self.n_components = n_components
         self.max_iter = max_iter
         self.max_halves = max_halves
@@ -777,11 +777,11 @@ class SammonMapping(_Transformer, _Unsupervised):
         return self.transform()
 
     def set_params(self,
-                   n_components: int=None,
-                   max_iter: int=None,
-                   max_halves: int=None,
-                   initialize: Literal=None,
-                   tol: float=None) -> None:
+                   n_components: int = None,
+                   max_iter: int = None,
+                   max_halves: int = None,
+                   initialize: Literal = None,
+                   tol: float = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if max_iter is not None: self.max_iter = int(max_iter)
         if max_halves is not None: self.max_halves = int(max_halves)
@@ -806,7 +806,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
     
     """
 
-    def __init__(self, n_components: int=2, sigma: float=1.0) -> None:
+    def __init__(self, n_components: int = None, sigma: float = 1.0) -> None:
         self.n_components = n_components
         self.sigma = sigma
         self.embedding = None
@@ -843,7 +843,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         self.fit(X)
         return self.transform()
 
-    def set_params(self, n_components: int=None, sigma: float=None) -> None:
+    def set_params(self, n_components: int = None, sigma: float = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if sigma is not None: self.sigma = float(sigma)
 
@@ -870,11 +870,11 @@ class Isomap(_Transformer, _Unsupervised):
     """
     
     def __init__(self, 
-                 n_components: int=None, 
-                 epsilon: float=5.0,
-                 algorithm: Literal['dijkstra', 'floyd']='dijkstra',
+                 n_components: int = None, 
+                 epsilon: float = 5.0,
+                 algorithm: Literal['dijkstra', 'floyd'] = 'dijkstra',
                  metric: Literal['euclidean', 'cityblock', 'chebyshev',
-                                 'cosine', 'correlation']='euclidean') -> None:
+                                 'cosine', 'correlation'] = 'euclidean') -> None:
         self.n_components = n_components
         self.epsilon = epsilon
         self.algorithm = algorithm
@@ -922,10 +922,10 @@ class Isomap(_Transformer, _Unsupervised):
         return self.transform()
     
     def set_params(self, 
-                   n_components: int=None, 
-                   epsilon: float=None,
-                   algorithm: Literal=None,
-                   metric: Literal=None) -> None:
+                   n_components: int = None, 
+                   epsilon: float = None,
+                   algorithm: Literal = None,
+                   metric: Literal = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if epsilon is not None: self.epsilon = float(epsilon)
         if algorithm is not None: self.algorithm = str(algorithm)
@@ -951,9 +951,9 @@ class ConformalIsomap(_Transformer, _Unsupervised):
     """
     
     def __init__(self,
-                 n_components: int=None,
-                 epsilon: float=5.0,
-                 algorithm: Literal['dijkstra', 'floyd']='dijkstra') -> None:
+                 n_components: int = None,
+                 epsilon: float = 5.0,
+                 algorithm: Literal['dijkstra', 'floyd'] = 'dijkstra') -> None:
         self.n_components = n_components
         self.epsilon = epsilon
         self.algorithm = algorithm
@@ -1006,9 +1006,9 @@ class ConformalIsomap(_Transformer, _Unsupervised):
         return self.transform()
 
     def set_params(self,
-                   n_components: int=None,
-                   epsilon: float=None,
-                   algorithm: Literal=None) -> None:
+                   n_components: int = None,
+                   epsilon: float = None,
+                   algorithm: Literal = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if epsilon is not None: self.epsilon = float(epsilon)
         if algorithm is not None: self.algorithm = str(algorithm)
@@ -1032,8 +1032,8 @@ class LTSA(_Transformer, _Unsupervised):
     """
     
     def __init__(self,
-                 n_components: int=None,
-                 n_neighbors: int=10) -> None:
+                 n_components: int = None,
+                 n_neighbors: int = 10) -> None:
         self.n_components = n_components
         self.n_neighbors = n_neighbors
         self._fitted = False
@@ -1086,8 +1086,8 @@ class LTSA(_Transformer, _Unsupervised):
         return self.transform()
 
     def set_params(self,
-                   n_components: int=None,
-                   n_neighbors: int=None) -> None:
+                   n_components: int = None,
+                   n_neighbors: int = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
 
