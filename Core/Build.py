@@ -35,7 +35,7 @@ from LUMA.Classifier.NaiveBayes import GaussianNaiveBayes
 from LUMA.Classifier.NaiveBayes import BernoulliNaiveBayes
 from LUMA.Classifier.Logistic import LogisticRegressor
 from LUMA.Classifier.Logistic import SoftmaxRegressor
-from LUMA.Classifier.SVM import LinearSVC
+from LUMA.Classifier.SVM import SVC, KernelSVC
 
 from LUMA.Clustering.KMeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 
@@ -86,7 +86,7 @@ def init():
     # LUMA.Classifier
     GaussianNaiveBayes, BernoulliNaiveBayes
     LogisticRegressor, SoftmaxRegressor
-    LinearSVC
+    SVC, KernelSVC
     
     # LUMA.Clustering
     KMeansClustering, KMeansClusteringPlus, KMediansClustering

@@ -2,7 +2,7 @@ from typing import *
 from typing_extensions import Self
 import numpy as np
 
-from LUMA.Interface.Type import Estimator, Evaluator
+from LUMA.Interface.Type import Estimator
 from LUMA.Interface.Exception import NotFittedError
 
 
@@ -13,13 +13,11 @@ class GridSearchCV:
     def __init__(self, 
                  model: Estimator, 
                  param_grid: dict, 
-                 metric: Evaluator, 
                  cv: int = 5, 
                  refit: bool = True, 
                  verbose: bool = False) -> None:
         self.model = model
         self.param_grid = param_grid
-        self.metric = metric
         self.cv = cv
         self.refit = refit
         self.verbose = verbose
@@ -41,7 +39,7 @@ class GridSearchCV:
 
             mean_score = np.mean(scores)
             if self.verbose:
-                print(f'[{i}/{max_iter}] {params} {self.metric.__name__}',
+                print(f'[{i}/{max_iter}] {params} - score:',
                       f'{mean_score:.3f}')
             if best_score is None or mean_score > best_score:
                 best_score = mean_score
@@ -80,12 +78,11 @@ class GridSearchCV:
             y_train, y_test = y[train_indices], y[test_indices]
 
             self.model.fit(X_train, y_train)
-            y_pred = self.model.predict(X_test)
-            score = self.metric.compute(y_test, y_pred)
+            score = self.model.score(X_test, y_test)
             scores.append(score)
         
             if self.verbose:
-                print(f'[GridSearchCV] cv={i + 1} - {self.metric.__name__}: {score:.3f}')
+                print(f'[GridSearchCV] fold {i + 1} - score: {score:.3f}')
 
         return scores
 
