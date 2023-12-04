@@ -1,0 +1,185 @@
+from typing import Tuple, TypeVar
+from typing_extensions import Self
+from collections import Counter
+import numpy as np
+
+from LUMA.Interface.Exception import NotFittedError
+from LUMA.Interface.Super import _Estimator, _Supervised
+from LUMA.Interface.Type import Evaluator
+from LUMA.Metric.Classification import Accuracy
+
+
+__all__ = ['DecisionTreeClassifier']
+
+
+class _Node:
+    
+    """
+    Internal class for node used in tree-based models.
+    
+    Parameters
+    ----------
+    ``feature`` : Feature of node \n
+    ``threshold`` : Threshold for split point \n
+    ``left`` : Left-child node \n
+    ``right`` : Right-child node \n
+    ``value`` : Most popular label of leaf node
+    
+    """
+    
+    def __init__(self, 
+                 feature: int = None, 
+                 threshold: float = None, 
+                 left: Self = None, 
+                 right: Self = None, 
+                 value: int = None) -> None:
+        self.feature = feature
+        self.threshold = threshold
+        self.left = left
+        self.right = right
+        self.value = value
+
+    @property
+    def isLeaf(self) -> bool:
+        return self.value is not None
+
+Node = TypeVar('Node', bound=_Node)
+
+
+class DecisionTreeClassifier(_Estimator, _Supervised):
+    
+    """
+    A Decision Tree Classifier is a supervised machine learning algorithm 
+    used for classification tasks. It works by recursively partitioning 
+    the input data into subsets based on the values of different features. 
+    At each node of the tree, a decision is made based on a specific feature, 
+    and the data is split into branches accordingly.
+    
+    Parameters
+    ----------
+    ``max_depth`` : Maximum depth of tree \n
+    ``min_samples_split`` : Minimum samples of data to be split \n
+    
+    """
+
+    def __init__(self, 
+                 max_depth: int = 100,
+                 min_samples_split: int = 2,
+                 verbose: bool = False) -> None:
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
+        self.verbose = verbose
+        self.root = None
+        self._fitted = False
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+        _, self.n_features = X.shape
+        self.root = self._grow_tree(X, y)
+        
+        self._fitted = True
+        return self
+
+    def _grow_tree(self, 
+                   X: np.ndarray, 
+                   y: np.ndarray, 
+                   depth: int = 0) -> Node:
+        _, n = X.shape
+        if self._stopping_criteria(X, y, depth):
+            leaf_value = self._most_common_label(y)
+            return _Node(value=leaf_value)
+
+        feature_indices = np.random.choice(n, self.n_features, replace=False)
+        
+        best_feature, best_thresh = self._best_criteria(X, y, feature_indices)
+        left_indices, right_indices = self._split(X[:, best_feature], best_thresh)
+        
+        left = self._grow_tree(X[left_indices], y[left_indices], depth + 1)
+        right = self._grow_tree(X[right_indices], y[right_indices], depth + 1)
+        
+        if self.verbose:
+            print(f'[DecisionTree] Depth {depth} reached -', end=' ')
+            print(f'best_feature: {best_feature}, best_threshold: {best_thresh}')
+        
+        return _Node(best_feature, best_thresh, left, right)
+    
+    def _stopping_criteria(self, 
+                           X: np.ndarray, 
+                           y: np.ndarray, 
+                           depth: int) -> bool:
+        if depth >= self.max_depth: return True
+        if len(np.unique(y)) == 1: return True
+        if X.shape[0] < self.min_samples_split: return True
+        return False
+
+    def _best_criteria(self, 
+                       X: np.ndarray, 
+                       y: np.ndarray, 
+                       indices: np.ndarray) -> Tuple[int, float]:
+        best_gain = -1
+        split_idx, split_thresh = None, None
+        for idx in indices:
+            X_col = X[:, idx]
+            thresholds = np.unique(X_col)
+            for threshold in thresholds:
+                gain = self._information_gain(X_col, y, threshold)
+
+                if gain > best_gain:
+                    best_gain = gain
+                    split_idx = idx
+                    split_thresh = threshold
+
+        return split_idx, split_thresh
+
+    def _information_gain(self, 
+                          X_col: np.ndarray, 
+                          y: np.ndarray, 
+                          thresh: float) -> float:
+        parent_entropy = self._entropy(y)
+        left_indices, right_indices = self._split(X_col, thresh)
+        if not len(left_indices) or not len(right_indices): return 0
+
+        n = len(y)
+        n_l, n_r = len(left_indices), len(right_indices)
+        e_l, e_r = self._entropy(y[left_indices]), self._entropy(y[right_indices])
+        child_entropy = (n_l / n) * e_l + (n_r / n) * e_r
+
+        ig = parent_entropy - child_entropy
+        return ig
+
+    def _split(self, X_col: np.nditer, thresh: float) -> Tuple[np.ndarray]:
+        left_indices = np.argwhere(X_col <= thresh).flatten()
+        right_indices = np.argwhere(X_col > thresh).flatten()
+        return left_indices, right_indices
+
+    def _traverse_tree(self, x: np.ndarray, node: _Node) -> float | None:
+        if node.isLeaf: return node.value
+        if x[node.feature] <= node.threshold:
+            return self._traverse_tree(x, node.left)
+        return self._traverse_tree(x, node.right)
+
+    def _most_common_label(self, y: np.ndarray) -> int:
+        counter = Counter(y)
+        most_common = counter.most_common(1)[0][0]
+        return most_common
+    
+    def _entropy(self, y: np.ndarray) -> float:
+        hist = np.bincount(y)
+        ps = hist / len(y)
+        return -np.sum([p * np.log2(p) for p in ps if p])
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
+        return np.array([self._traverse_tree(x, self.root) for x in X])
+
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+
+    def set_params(self,
+                   max_depth: int = None,
+                   min_samples_split: int = None) -> None:
+        if max_depth is not None: self.max_depth = int(max_depth)
+        if min_samples_split is not None: 
+            self.min_samples_split = int(min_samples_split)
+

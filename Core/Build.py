@@ -37,6 +37,7 @@ from LUMA.Classifier.NaiveBayes import BernoulliNaiveBayes
 from LUMA.Classifier.Logistic import LogisticRegressor
 from LUMA.Classifier.Logistic import SoftmaxRegressor
 from LUMA.Classifier.SVM import SVC, KernelSVC
+from LUMA.Classifier.Tree import DecisionTreeClassifier
 
 from LUMA.Clustering.KMeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 
@@ -48,7 +49,7 @@ from LUMA.Metric.Distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from LUMA.Metric.Distance import CosineSimilarity, Correlation, Mahalanobis
 
 from LUMA.Visual.EDA import CorrelationHeatMap, CorrelationBar, JointPlot
-from LUMA.Visual.Result import DecisionRegion, ClusteredRegion
+from LUMA.Visual.Region import DecisionRegion, ClusteredRegion
 # ---------------------------------------[ Build End ]------------------------------------------- #
 
 
@@ -90,6 +91,7 @@ def init():
     GaussianNaiveBayes, BernoulliNaiveBayes
     LogisticRegressor, SoftmaxRegressor
     SVC, KernelSVC
+    DecisionTreeClassifier
     
     # LUMA.Clustering
     KMeansClustering, KMeansClusteringPlus, KMediansClustering

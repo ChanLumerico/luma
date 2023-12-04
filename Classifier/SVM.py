@@ -1,5 +1,4 @@
 from typing import *
-from typing import Any
 from typing_extensions import Self
 import numpy as np
 
