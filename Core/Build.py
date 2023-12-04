@@ -30,6 +30,7 @@ from LUMA.Regressor.General import NegativeBinomialRegressor
 from LUMA.Regressor.General import GammaRegressor
 from LUMA.Regressor.General import BetaRegressor
 from LUMA.Regressor.General import InverseGaussianRegressor
+from LUMA.Regressor.SVM import SVR, KernelSVR
 
 from LUMA.Classifier.NaiveBayes import GaussianNaiveBayes
 from LUMA.Classifier.NaiveBayes import BernoulliNaiveBayes
@@ -81,7 +82,9 @@ def init():
     # LUMA.Regression
     RidgeRegressor, LassoRegressor, ElasticNetRegressor
     PolynomialRegressor
-    PoissonRegressor, NegativeBinomialRegressor, GammaRegressor, BetaRegressor, InverseGaussianRegressor
+    PoissonRegressor, NegativeBinomialRegressor, GammaRegressor, 
+    BetaRegressor, InverseGaussianRegressor
+    SVR, KernelSVR
     
     # LUMA.Classifier
     GaussianNaiveBayes, BernoulliNaiveBayes
@@ -93,8 +96,10 @@ def init():
     
     # LUMA.Metric
     Accuracy, Precision, Recall, F1Score, Specificity, AUCCurveROC, Complex
-    MeanAbsoluteError, MeanAbsolutePercentageError, MeanSquaredError, RootMeanSquaredError, RSquaredScore, Complex
-    Euclidean, Manhattan, Chebyshev, Minkowski, CosineSimilarity, Correlation, Mahalanobis
+    MeanAbsoluteError, MeanAbsolutePercentageError, MeanSquaredError, 
+    RootMeanSquaredError, RSquaredScore, Complex
+    Euclidean, Manhattan, Chebyshev, Minkowski, 
+    CosineSimilarity, Correlation, Mahalanobis
     
     # LUMA.Visual
     DecisionRegion, ClusteredRegion
