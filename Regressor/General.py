@@ -1,5 +1,4 @@
 from typing import *
-from typing_extensions import Self
 from scipy.special import psi
 import numpy as np
 
@@ -50,7 +49,7 @@ class PoissonRegressor(_Estimator, _Supervised):
     def link_funciton(self, X: np.ndarray) -> np.ndarray:
         return np.exp(np.dot(X, self.weights))
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'PoissonRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.zeros(n)
@@ -146,7 +145,7 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
     def link_function(self, X: np.ndarray) -> np.ndarray:
         return np.log(1 + np.exp(np.dot(X, self.weights)))
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'NegativeBinomialRegressor':
         X = np.column_stack((np.ones(X.shape[0]),  X))
         m, n = X.shape
         self.weights = np.zeros(n)
@@ -246,7 +245,7 @@ class GammaRegressor(_Estimator, _Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'GammaRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.alpha = np.ones(n) * self.alpha
@@ -347,7 +346,7 @@ class BetaRegressor(_Estimator, _Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'BetaRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.alpha = np.ones(n) * self.alpha
@@ -447,7 +446,7 @@ class InverseGaussianRegressor(_Estimator, _Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'InverseGaussianRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.ones(n)

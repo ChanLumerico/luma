@@ -1,5 +1,4 @@
-from typing import Any, Callable, Literal, Tuple
-from typing_extensions import Self
+from typing import Any, Callable, Literal
 
 from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.sparse.csgraph import shortest_path
@@ -49,7 +48,7 @@ class TSNE(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
         
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'TSNE':
         size = X.shape[0]
         P = self._P_joint_probabilities(X)
         y = np.random.normal(0.0, 1e-4, (size, self.n_components))
@@ -177,7 +176,7 @@ class MDS(_Transformer, _Unsupervised):
         self.n_components = n_components
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'MDS':
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
         H = np.eye(n) - np.ones((n, n)) / n
@@ -246,7 +245,7 @@ class MetricMDS(_Transformer, _Unsupervised):
         self.p = p
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'MetricMDS':
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
         H = np.eye(n) - np.ones((n, n)) / n
@@ -336,7 +335,7 @@ class LandmarkMDS(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'LandmarkMDS':
         self.landmarks = self._initialize_landmarks(X)
         D = self._compute_dissimilarity(self.landmarks)
         n = D.shape[0]
@@ -430,7 +429,7 @@ class LLE(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'LLE':
         m, _ = X.shape
         distances = np.zeros((m, m))
         for i in range(m):
@@ -502,7 +501,7 @@ class ModifiedLLE(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'ModifiedLLE':
         m, _ = X.shape
         distances = np.zeros((m, m))
         for i in range(m):
@@ -574,7 +573,7 @@ class HessianLLE(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'HessianLLE':
         m, _ = X.shape
         dp = self.n_components * (self.n_components + 1) // 2
         
@@ -687,7 +686,7 @@ class SammonMapping(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'SammonMapping':
         m, _ = X.shape
         X_dist = cdist(X, X)
         scale = 0.5 / X_dist.sum()
@@ -812,7 +811,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         self.embedding = None
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'LaplacianEigenmap':
         pairwise = cdist(X, X)
         weights = np.exp(-pairwise / (2 * self.sigma ** 2))
         np.fill_diagonal(weights, 0)
@@ -881,7 +880,7 @@ class Isomap(_Transformer, _Unsupervised):
         self.metric = metric
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'Isomap':
         self.adj = self._make_adjacency(X)
         if np.isinf(self.adj).any(): 
             print(f'[Isomap] Too narrow bin size with epsilon of {self.epsilon}!')
@@ -959,7 +958,7 @@ class ConformalIsomap(_Transformer, _Unsupervised):
         self.algorithm = algorithm
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'ConformalIsomap':
         self.adj = self._make_adjacency(X)
         if np.isinf(self.adj).any():
             print(f'[C-Isomap] Too narrow bin size with epsilon of {self.epsilon}!')
@@ -1038,7 +1037,7 @@ class LTSA(_Transformer, _Unsupervised):
         self.n_neighbors = n_neighbors
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> np.ndarray:
+    def fit(self, X: np.ndarray) -> 'LTSA':
         m, n = X.shape
         self.neighbors, self.neighbor_indices = self._compute_neighborhood(X)
         M = np.zeros((m, m))

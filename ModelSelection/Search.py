@@ -1,8 +1,7 @@
 from typing import *
-from typing_extensions import Self
 import numpy as np
 
-from LUMA.Interface.Type import Estimator
+from LUMA.Interface.Type import Estimator, Evaluator
 from LUMA.Interface.Exception import NotFittedError
 
 
@@ -14,11 +13,13 @@ class GridSearchCV:
                  model: Estimator, 
                  param_grid: dict, 
                  cv: int = 5, 
+                 metric: Evaluator = None,
                  refit: bool = True, 
                  verbose: bool = False) -> None:
         self.model = model
         self.param_grid = param_grid
         self.cv = cv
+        self.metric = metric
         self.refit = refit
         self.verbose = verbose
         self._fitted = False
@@ -78,7 +79,8 @@ class GridSearchCV:
             y_train, y_test = y[train_indices], y[test_indices]
 
             self.model.fit(X_train, y_train)
-            score = self.model.score(X_test, y_test)
+            if self.metric: score = self.model.score(X_test, y_test, metric=self.metric)
+            else: score = self.model.score(X_test, y_test)
             scores.append(score)
         
             if self.verbose:

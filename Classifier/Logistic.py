@@ -1,5 +1,4 @@
 from typing import *
-from typing_extensions import Self
 import numpy as np
 
 from LUMA.Metric.Classification import Accuracy
@@ -47,7 +46,7 @@ class LogisticRegressor(_Estimator, _Supervised):
     def sigmoid(self, z: np.ndarray) -> np.ndarray:
         return 1 / (1 + np.exp(-z))
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'LogisticRegressor':
         X = np.insert(X, 0, 1, axis=1)
         m, n = X.shape
         self.theta = np.zeros(n)
@@ -146,7 +145,7 @@ class SoftmaxRegressor(_Estimator, _Supervised):
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
         return exp_z / exp_z.sum(axis=1, keepdims=True)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'SoftmaxRegressor':
         X = np.insert(X, 0, 1, axis=1)
         m, n = X.shape
         num_classes = len(np.unique(y))

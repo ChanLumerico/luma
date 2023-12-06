@@ -1,6 +1,4 @@
 from typing import *
-from typing import Any
-from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
@@ -45,7 +43,7 @@ class SVR(_Estimator, _Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'SVR':
         m, n = X.shape
         id = np.arange(m)
         np.random.shuffle(id)
@@ -140,7 +138,7 @@ class KernelSVR(_Estimator, _Supervised):
         self._kernel_func = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'KernelSVR':
         m, _ = X.shape
         self._set_kernel_func()
         self.alpha = np.random.random(m)

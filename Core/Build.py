@@ -7,6 +7,7 @@ from LUMA.Core.Main import LUMA
 from LUMA.Interface.Super import _Estimator, _Transformer, _Evaluator, _Visualizer
 from LUMA.Interface.Super import _Supervised, _Unsupervised, _Distance
 from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
+from LUMA.Interface.Util import TreeNode
 
 from LUMA.Preprocessing.Scaler import StandardScaler
 from LUMA.Preprocessing.Scaler import MinMaxScaler
@@ -31,6 +32,7 @@ from LUMA.Regressor.General import GammaRegressor
 from LUMA.Regressor.General import BetaRegressor
 from LUMA.Regressor.General import InverseGaussianRegressor
 from LUMA.Regressor.SVM import SVR, KernelSVR
+from LUMA.Regressor.Tree import DecisionTreeRegressor
 
 from LUMA.Classifier.NaiveBayes import GaussianNaiveBayes
 from LUMA.Classifier.NaiveBayes import BernoulliNaiveBayes
@@ -65,6 +67,9 @@ def init():
     # LUMA.Interface.Exception
     NotFittedError, UnsupportedParameterError
     
+    # LUMA.Interface.Util
+    TreeNode
+    
     # LUMA.Preprocessing.Scaler
     StandardScaler, MinMaxScaler
     
@@ -86,6 +91,7 @@ def init():
     PoissonRegressor, NegativeBinomialRegressor, GammaRegressor, 
     BetaRegressor, InverseGaussianRegressor
     SVR, KernelSVR
+    DecisionTreeRegressor
     
     # LUMA.Classifier
     GaussianNaiveBayes, BernoulliNaiveBayes

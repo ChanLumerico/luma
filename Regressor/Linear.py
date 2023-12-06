@@ -1,5 +1,4 @@
 from typing import *
-from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError
@@ -30,7 +29,7 @@ class RidgeRegressor(_Estimator):
         self.alpha = alpha
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'RidgeRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         identity_matrix = np.identity(X.shape[1])
         self.coefficients = np.linalg.inv(X.T.dot(X) + self.alpha * identity_matrix)
@@ -84,7 +83,7 @@ class LassoRegressor(_Estimator):
     def _soft_threshold(self, x: np.ndarray, threshold: float) -> np.ndarray:
         return np.sign(x) * np.maximum(0, np.abs(x) - threshold)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'LassoRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         self.coefficients = np.zeros(X.shape[1])
         
@@ -155,7 +154,7 @@ class ElasticNetRegressor(_Estimator):
     def _soft_threshold(self, x: np.ndarray, alpha: float) -> np.ndarray:
         return np.sign(x) * np.maximum(np.abs(x) - alpha, 0)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'ElasticNetRegressor':
         N, p = X.shape
         self.coef_ = np.zeros(p)
 

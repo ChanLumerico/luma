@@ -1,6 +1,3 @@
-from typing import *
-from typing import Any
-from typing_extensions import Self
 from math import log
 from scipy.linalg import svd
 import numpy as np
@@ -29,7 +26,7 @@ class PCA(_Transformer, _Unsupervised):
         self.n_components = n_components
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'PCA':
         self.mean = np.mean(X, axis=0)
         X_centered = X - self.mean
         covariance_matrix = np.cov(X_centered, rowvar=False)
@@ -80,7 +77,7 @@ class LDA(_Transformer, _Supervised):
         self.n_components = n_components
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'LDA':
         self.classes = np.unique(y)
         self.class_means = [np.mean(X[y == c], axis=0) for c in self.classes]
 
@@ -144,7 +141,7 @@ class TruncatedSVD(_Transformer, _Unsupervised):
         self.n_components = n_components
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'TruncatedSVD':
         mean = np.mean(X, axis=0)
         X_centered = X - mean
         U, S, VT = np.linalg.svd(X_centered, full_matrices=False)
@@ -200,7 +197,7 @@ class FactorAnalysis(_Transformer, _Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray) -> 'FactorAnalysis':
         m, n = X.shape
         self.mean = X.mean(axis=0)
         X -= self.mean

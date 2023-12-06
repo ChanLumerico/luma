@@ -1,5 +1,4 @@
 from typing import *
-from typing_extensions import Self
 
 
 __all__ = ['_Estimator', '_Transformer', '_Evaluator', '_Visualizer',
@@ -25,7 +24,7 @@ class _Estimator(Protocol):
     
     """
     
-    def fit(self, *data) -> Self: ...
+    def fit(self, *data) -> '_Estimator': ...
     
     def predict(self, *data) -> Any: ...
     
@@ -56,7 +55,7 @@ class _Transformer(Protocol):
     
     """
     
-    def fit(self, *data) -> Self: ...
+    def fit(self, *data) -> '_Transformer': ...
     
     def transform(self, *data) -> Any: ...
     

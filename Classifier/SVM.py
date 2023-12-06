@@ -1,5 +1,4 @@
 from typing import *
-from typing_extensions import Self
 import numpy as np
 
 from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
@@ -42,7 +41,7 @@ class SVC(_Estimator, _Supervised):
         self.verbose = verbose
         self._fitted = False
         
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'SVC':
         classes = np.unique(y)
         self.models = []
         for cl in classes:
@@ -151,7 +150,7 @@ class KernelSVC(_Estimator, _Supervised):
         self._kernel_func = None
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Self:
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'KernelSVC':
         classes = np.unique(y)
         self.models = []
         self._set_kernel_func()
