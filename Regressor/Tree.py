@@ -107,6 +107,17 @@ class DecisionTreeRegressor(_Estimator, _Supervised):
         if x[node.feature] <= node.threshold:
             return self._traverse_tree(x, node.left)
         return self._traverse_tree(x, node.right)
+    
+    def print_tree(self) -> None:
+        if not self._fitted: raise NotFittedError(self)
+        self._print_tree_recursive(self.root, depth=0)
+    
+    def _print_tree_recursive(self, node: TreeNode, depth: int) -> None:
+        if node.isLeaf: print(f"{'    |' * depth}--- Leaf: {node.value}")
+        else:
+            print(f"{'    |' * depth}--- Feature {node.feature} <= {node.threshold}")
+            self._print_tree_recursive(node.left, depth + 1)
+            self._print_tree_recursive(node.right, depth + 1)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)

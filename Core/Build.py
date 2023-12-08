@@ -43,6 +43,8 @@ from LUMA.Classifier.Tree import DecisionTreeClassifier
 
 from LUMA.Clustering.KMeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 
+from LUMA.Ensemble.Forest import RandomForestClassifier, RandomForestRegressor
+
 from LUMA.Metric.Classification import Accuracy, Precision, Recall, F1Score
 from LUMA.Metric.Classification import Specificity, AUCCurveROC, Complex
 from LUMA.Metric.Regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
@@ -101,6 +103,9 @@ def init():
     
     # LUMA.Clustering
     KMeansClustering, KMeansClusteringPlus, KMediansClustering
+    
+    # LUMA.Ensemble
+    RandomForestClassifier, RandomForestRegressor
     
     # LUMA.Metric
     Accuracy, Precision, Recall, F1Score, Specificity, AUCCurveROC, Complex

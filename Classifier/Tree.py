@@ -132,6 +132,17 @@ class DecisionTreeClassifier(_Estimator, _Supervised):
         hist = np.bincount(y)
         ps = hist / len(y)
         return -np.sum([p * np.log2(p) for p in ps if p])
+    
+    def print_tree(self) -> None:
+        if not self._fitted: raise NotFittedError(self)
+        self._print_tree_recursive(self.root, depth=0)
+    
+    def _print_tree_recursive(self, node: TreeNode, depth: int) -> None:
+        if node.isLeaf: print(f"{'    |' * depth}--- Leaf: {node.value}")
+        else:
+            print(f"{'    |' * depth}--- Feature {node.feature} <= {node.threshold}")
+            self._print_tree_recursive(node.left, depth + 1)
+            self._print_tree_recursive(node.right, depth + 1)
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         if not self._fitted: raise NotFittedError(self)
