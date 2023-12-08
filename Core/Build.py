@@ -7,7 +7,7 @@ from LUMA.Core.Main import LUMA
 from LUMA.Interface.Super import _Estimator, _Transformer, _Evaluator, _Visualizer
 from LUMA.Interface.Super import _Supervised, _Unsupervised, _Distance
 from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
-from LUMA.Interface.Util import TreeNode
+from LUMA.Interface.Util import TreeNode, NearestNeighbors
 
 from LUMA.Preprocessing.Scaler import StandardScaler
 from LUMA.Preprocessing.Scaler import MinMaxScaler
@@ -68,7 +68,7 @@ def init():
     NotFittedError, UnsupportedParameterError
     
     # LUMA.Interface.Util
-    TreeNode
+    TreeNode, NearestNeighbors
     
     # LUMA.Preprocessing.Scaler
     StandardScaler, MinMaxScaler

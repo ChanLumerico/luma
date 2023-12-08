@@ -47,7 +47,7 @@ class DecisionTreeRegressor(_Estimator, _Supervised):
     def _grow_tree(self, X: np.ndarray, y: np.ndarray, 
                    depth: int = 0) -> TreeNode:
         _, n = X.shape
-        if self._stopping_criteria(X, y, depth):
+        if self._stopping_criteria(X, depth):
             leaf_value = np.mean(y)
             return TreeNode(value=leaf_value)
 
@@ -74,7 +74,7 @@ class DecisionTreeRegressor(_Estimator, _Supervised):
     def _best_criteria(self, X: np.ndarray, y: np.ndarray, 
                        indices: np.ndarray) -> Tuple[int, float]:
         best_var = np.var(y)
-        split_idx, split_thresh = None, None
+        split_idx, split_thresh = 0, 0.0
         for idx in indices:
             X_col = X[:, idx]
             thresholds = np.unique(X_col)
@@ -98,7 +98,7 @@ class DecisionTreeRegressor(_Estimator, _Supervised):
 
     def _split(self, X_col: np.ndarray, thresh: float) -> Tuple[np.ndarray]:
         left_indices = np.argwhere(X_col <= thresh).flatten()
-        right_indices = np.argwhere(X_col > thresh).flatten()
+        right_indices = np.argwhere(X_col > thresh).flatten()    
         return left_indices, right_indices
 
     def _traverse_tree(self, x: np.ndarray, node: TreeNode) -> float:
