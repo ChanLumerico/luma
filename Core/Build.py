@@ -6,7 +6,7 @@ build_start = time.time()
 from LUMA.Core.Main import LUMA
 from LUMA.Interface.Super import _Estimator, _Transformer, _Evaluator, _Visualizer
 from LUMA.Interface.Super import _Supervised, _Unsupervised, _Distance
-from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
+from LUMA.Interface.Exception import NotFittedError, NotConvergedError, UnsupportedParameterError
 from LUMA.Interface.Util import TreeNode, NearestNeighbors
 
 from LUMA.Preprocessing.Scaler import StandardScaler
@@ -67,7 +67,7 @@ def init():
     _Supervised, _Unsupervised, _Distance
     
     # LUMA.Interface.Exception
-    NotFittedError, UnsupportedParameterError
+    NotFittedError, NotConvergedError, UnsupportedParameterError
     
     # LUMA.Interface.Util
     TreeNode, NearestNeighbors
