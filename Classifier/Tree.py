@@ -45,9 +45,7 @@ class DecisionTreeClassifier(_Estimator, _Supervised):
         self._fitted = True
         return self
 
-    def _grow_tree(self, 
-                   X: np.ndarray, 
-                   y: np.ndarray, 
+    def _grow_tree(self, X: np.ndarray, y: np.ndarray, 
                    depth: int = 0) -> TreeNode:
         _, n = X.shape
         if self._stopping_criteria(X, y, depth):
@@ -68,18 +66,14 @@ class DecisionTreeClassifier(_Estimator, _Supervised):
         
         return TreeNode(best_feature, best_thresh, left, right)
     
-    def _stopping_criteria(self, 
-                           X: np.ndarray, 
-                           y: np.ndarray, 
+    def _stopping_criteria(self, X: np.ndarray, y: np.ndarray, 
                            depth: int) -> bool:
         if depth >= self.max_depth: return True
         if len(np.unique(y)) == 1: return True
         if X.shape[0] < self.min_samples_split: return True
         return False
 
-    def _best_criteria(self, 
-                       X: np.ndarray, 
-                       y: np.ndarray, 
+    def _best_criteria(self, X: np.ndarray, y: np.ndarray, 
                        indices: np.ndarray) -> Tuple[int, float]:
         best_gain = -1
         split_idx, split_thresh = 0, 0.0
@@ -96,9 +90,7 @@ class DecisionTreeClassifier(_Estimator, _Supervised):
 
         return split_idx, split_thresh
 
-    def _information_gain(self, 
-                          X_col: np.ndarray, 
-                          y: np.ndarray, 
+    def _information_gain(self, X_col: np.ndarray, y: np.ndarray, 
                           thresh: float) -> float:
         parent_entropy = self._entropy(y)
         left_indices, right_indices = self._split(X_col, thresh)
@@ -112,7 +104,7 @@ class DecisionTreeClassifier(_Estimator, _Supervised):
         ig = parent_entropy - child_entropy
         return ig
 
-    def _split(self, X_col: np.nditer, thresh: float) -> Tuple[np.ndarray]:
+    def _split(self, X_col: np.ndarray, thresh: float) -> Tuple[np.ndarray]:
         left_indices = np.argwhere(X_col <= thresh).flatten()
         right_indices = np.argwhere(X_col > thresh).flatten()
         return left_indices, right_indices
@@ -138,9 +130,10 @@ class DecisionTreeClassifier(_Estimator, _Supervised):
         self._print_tree_recursive(self.root, depth=0)
     
     def _print_tree_recursive(self, node: TreeNode, depth: int) -> None:
-        if node.isLeaf: print(f"{'    |' * depth}--- Leaf: {node.value}")
+        if node.isLeaf: print(f"{(' ' * 4 + '|') * depth}--- Leaf: {node.value}")
         else:
-            print(f"{'    |' * depth}--- Feature {node.feature} <= {node.threshold}")
+            print(f"{(' ' * 4 + '|') * depth}---", 
+                  f"Feature {node.feature} <= {node.threshold}")
             self._print_tree_recursive(node.left, depth + 1)
             self._print_tree_recursive(node.right, depth + 1)
 

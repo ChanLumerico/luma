@@ -113,9 +113,10 @@ class DecisionTreeRegressor(_Estimator, _Supervised):
         self._print_tree_recursive(self.root, depth=0)
     
     def _print_tree_recursive(self, node: TreeNode, depth: int) -> None:
-        if node.isLeaf: print(f"{'    |' * depth}--- Leaf: {node.value}")
+        if node.isLeaf: print(f"{(' ' * 4 + '|') * depth}--- Leaf: {node.value}")
         else:
-            print(f"{'    |' * depth}--- Feature {node.feature} <= {node.threshold}")
+            print(f"{(' ' * 4 + '|') * depth}---", 
+                  f"Feature {node.feature} <= {node.threshold}")
             self._print_tree_recursive(node.left, depth + 1)
             self._print_tree_recursive(node.right, depth + 1)
 
