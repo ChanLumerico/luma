@@ -82,7 +82,7 @@ class DecisionTreeClassifier(_Estimator, _Supervised):
                        y: np.ndarray, 
                        indices: np.ndarray) -> Tuple[int, float]:
         best_gain = -1
-        split_idx, split_thresh = None, None
+        split_idx, split_thresh = 0, 0.0
         for idx in indices:
             X_col = X[:, idx]
             thresholds = np.unique(X_col)

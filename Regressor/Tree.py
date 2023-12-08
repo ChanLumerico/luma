@@ -98,7 +98,7 @@ class DecisionTreeRegressor(_Estimator, _Supervised):
 
     def _split(self, X_col: np.ndarray, thresh: float) -> Tuple[np.ndarray]:
         left_indices = np.argwhere(X_col <= thresh).flatten()
-        right_indices = np.argwhere(X_col > thresh).flatten()    
+        right_indices = np.argwhere(X_col > thresh).flatten()
         return left_indices, right_indices
 
     def _traverse_tree(self, x: np.ndarray, node: TreeNode) -> float:
