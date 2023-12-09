@@ -1,16 +1,15 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError
-from LUMA.Interface.Super import _Estimator
-from LUMA.Interface.Type import Evaluator
-from LUMA.Metric.Regression import RootMeanSquaredError
+from luma.interface.exception import NotFittedError
+from luma.interface.super import Estimator, Evaluator
+from luma.metric.regression import MeanSquaredError
 
 
 __all__ = ['PolynomialRegressor']
 
 
-class PolynomialRegressor(_Estimator):
+class PolynomialRegressor(Estimator):
     
     """Polynomial regression is a type of regression analysis used
     in statistics and machine learning to model the relationship between 
@@ -38,7 +37,7 @@ class PolynomialRegressor(_Estimator):
         return np.dot(X_poly, self.coefficients)
 
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
 

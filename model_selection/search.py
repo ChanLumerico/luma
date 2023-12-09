@@ -1,8 +1,8 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Type import Estimator, Evaluator
-from LUMA.Interface.Exception import NotFittedError
+from luma.interface.super import Estimator, Evaluator
+from luma.interface.exception import NotFittedError
 
 
 __all__ = ['GridSearchCV']

@@ -3,79 +3,79 @@ build_start = time.time()
 
 
 # ----------------------------------------[ Build Start ]---------------------------------------- #
-from LUMA.Core.Main import LUMA
-from LUMA.Interface.Super import _Estimator, _Transformer, _Evaluator, _Visualizer
-from LUMA.Interface.Super import _Supervised, _Unsupervised, _Distance
-from LUMA.Interface.Exception import NotFittedError, NotConvergedError, UnsupportedParameterError
-from LUMA.Interface.Util import TreeNode, NearestNeighbors
+from luma.core.main import LUMA
+from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
+from luma.interface.super import Supervised, Unsupervised, Distance
+from luma.interface.exception import NotFittedError, NotConvergedError, UnsupportedParameterError
+from luma.interface.util import TreeNode, NearestNeighbors
 
-from LUMA.Preprocessing.Scaler import StandardScaler
-from LUMA.Preprocessing.Scaler import MinMaxScaler
+from luma.preprocessing.scaler import StandardScaler
+from luma.preprocessing.scaler import MinMaxScaler
 
-from LUMA.Reduction.Linear import PCA, LDA, TruncatedSVD, FactorAnalysis
-from LUMA.Reduction.Nonlinear import KernelPCA
-from LUMA.Reduction.Manifold import TSNE, SammonMapping, LaplacianEigenmap
-from LUMA.Reduction.Manifold import MDS, MetricMDS, LandmarkMDS
-from LUMA.Reduction.Manifold import LLE, ModifiedLLE, HessianLLE, LTSA
-from LUMA.Reduction.Manifold import Isomap, ConformalIsomap
+from luma.reduction.linear import PCA, LDA, TruncatedSVD, FactorAnalysis
+from luma.reduction.nonlinear import KernelPCA
+from luma.reduction.manifold import TSNE, SammonMapping, LaplacianEigenmap
+from luma.reduction.manifold import MDS, MetricMDS, LandmarkMDS
+from luma.reduction.manifold import LLE, ModifiedLLE, HessianLLE, LTSA
+from luma.reduction.manifold import Isomap, ConformalIsomap
 
-from LUMA.ModelSelection.Split import TrainTestSplit
-from LUMA.ModelSelection.Search import GridSearchCV
+from luma.model_selection.split import TrainTestSplit
+from luma.model_selection.search import GridSearchCV
 
-from LUMA.Regressor.Linear import RidgeRegressor
-from LUMA.Regressor.Linear import LassoRegressor
-from LUMA.Regressor.Linear import ElasticNetRegressor
-from LUMA.Regressor.Polynomial import PolynomialRegressor
-from LUMA.Regressor.General import PoissonRegressor
-from LUMA.Regressor.General import NegativeBinomialRegressor
-from LUMA.Regressor.General import GammaRegressor
-from LUMA.Regressor.General import BetaRegressor
-from LUMA.Regressor.General import InverseGaussianRegressor
-from LUMA.Regressor.SVM import SVR, KernelSVR
-from LUMA.Regressor.Tree import DecisionTreeRegressor
+from luma.regressor.linear import RidgeRegressor
+from luma.regressor.linear import LassoRegressor
+from luma.regressor.linear import ElasticNetRegressor
+from luma.regressor.polynomial import PolynomialRegressor
+from luma.regressor.general import PoissonRegressor
+from luma.regressor.general import NegativeBinomialRegressor
+from luma.regressor.general import GammaRegressor
+from luma.regressor.general import BetaRegressor
+from luma.regressor.general import InverseGaussianRegressor
+from luma.regressor.svm import SVR, KernelSVR
+from luma.regressor.tree import DecisionTreeRegressor
 
-from LUMA.Classifier.NaiveBayes import GaussianNaiveBayes
-from LUMA.Classifier.NaiveBayes import BernoulliNaiveBayes
-from LUMA.Classifier.Logistic import LogisticRegressor
-from LUMA.Classifier.Logistic import SoftmaxRegressor
-from LUMA.Classifier.SVM import SVC, KernelSVC
-from LUMA.Classifier.Tree import DecisionTreeClassifier
+from luma.classifier.naive_bayes import GaussianNaiveBayes
+from luma.classifier.naive_bayes import BernoulliNaiveBayes
+from luma.classifier.logistic import LogisticRegressor
+from luma.classifier.logistic import SoftmaxRegressor
+from luma.classifier.svm import SVC, KernelSVC
+from luma.classifier.tree import DecisionTreeClassifier
 
-from LUMA.Clustering.KMeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
+from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 
-from LUMA.Ensemble.Forest import RandomForestClassifier, RandomForestRegressor
+from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
-from LUMA.Metric.Classification import Accuracy, Precision, Recall, F1Score
-from LUMA.Metric.Classification import Specificity, AUCCurveROC, Complex
-from LUMA.Metric.Regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
-from LUMA.Metric.Regression import MeanAbsolutePercentageError, RSquaredScore, Complex
-from LUMA.Metric.Distance import Euclidean, Manhattan, Chebyshev, Minkowski
-from LUMA.Metric.Distance import CosineSimilarity, Correlation, Mahalanobis
+from luma.metric.classification import Accuracy, Precision, Recall, F1Score
+from luma.metric.classification import Specificity, AUCCurveROC, Complex
+from luma.metric.regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
+from luma.metric.regression import MeanAbsolutePercentageError, RSquaredScore, Complex
+from luma.metric.distance import Euclidean, Manhattan, Chebyshev, Minkowski
+from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 
-from LUMA.Visual.EDA import CorrelationHeatMap, CorrelationBar, JointPlot
-from LUMA.Visual.Region import DecisionRegion, ClusteredRegion
+from luma.visual.eda import CorrelationHeatMap, CorrelationBar, JointPlot
+from luma.visual.region import DecisionRegion, ClusteredRegion
 # ---------------------------------------[ Build End ]------------------------------------------- #
 
 
 def init():
     
-    # LUMA.Core.Main
+    # core.main
     LUMA
+
+    # interface.super
+    Estimator, Transformer, Evaluator, Visualizer
+    Supervised, Unsupervised, Distance
     
-    # LUMA.Interface.Super
-    _Estimator, _Transformer, _Evaluator, _Visualizer
-    _Supervised, _Unsupervised, _Distance
-    
-    # LUMA.Interface.Exception
+    # interface.exception
     NotFittedError, NotConvergedError, UnsupportedParameterError
     
-    # LUMA.Interface.Util
+    # interface.util
     TreeNode, NearestNeighbors
     
-    # LUMA.Preprocessing.Scaler
+    # preprocessing.scaler
     StandardScaler, MinMaxScaler
     
-    # LUMA.Reduction
+    # reduction
     PCA, LDA, TruncatedSVD, FactorAnalysis
     KernelPCA
     TSNE, SammonMapping, LaplacianEigenmap
@@ -83,11 +83,11 @@ def init():
     LLE, ModifiedLLE, HessianLLE, LTSA
     Isomap, ConformalIsomap
     
-    # LUMA.ModelSelection
+    # model_selection
     TrainTestSplit
     GridSearchCV
     
-    # LUMA.Regression
+    # regression
     RidgeRegressor, LassoRegressor, ElasticNetRegressor
     PolynomialRegressor
     PoissonRegressor, NegativeBinomialRegressor, GammaRegressor, 
@@ -95,26 +95,26 @@ def init():
     SVR, KernelSVR
     DecisionTreeRegressor
     
-    # LUMA.Classifier
+    # classifier
     GaussianNaiveBayes, BernoulliNaiveBayes
     LogisticRegressor, SoftmaxRegressor
     SVC, KernelSVC
     DecisionTreeClassifier
     
-    # LUMA.Clustering
+    # clustering
     KMeansClustering, KMeansClusteringPlus, KMediansClustering
     
-    # LUMA.Ensemble
+    # ensemble
     RandomForestClassifier, RandomForestRegressor
     
-    # LUMA.Metric
+    # metric
     Accuracy, Precision, Recall, F1Score, Specificity, AUCCurveROC, Complex
     MeanAbsoluteError, MeanAbsolutePercentageError, MeanSquaredError, 
     RootMeanSquaredError, RSquaredScore, Complex
     Euclidean, Manhattan, Chebyshev, Minkowski, 
     CosineSimilarity, Correlation, Mahalanobis
     
-    # LUMA.Visual
+    # visual
     DecisionRegion, ClusteredRegion
     CorrelationHeatMap, CorrelationBar, JointPlot
 

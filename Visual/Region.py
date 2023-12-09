@@ -2,14 +2,13 @@ from typing import *
 import matplotlib.pyplot as plt
 import numpy as np
 
-from LUMA.Interface.Super import _Visualizer
-from LUMA.Interface.Type import Estimator
+from luma.interface.super import Visualizer, Estimator
 
 
 __all__ = ['DecisionRegion', 'ClusteredRegion']
 
 
-class DecisionRegion(_Visualizer):
+class DecisionRegion(Visualizer):
     def __init__(self, 
                  estimator: Estimator, 
                  X: np.ndarray, 
@@ -59,7 +58,7 @@ class DecisionRegion(_Visualizer):
         plt.show()
 
 
-class ClusteredRegion(_Visualizer):
+class ClusteredRegion(Visualizer):
     def __init__(self, 
                  estimator: Estimator, 
                  X: np.ndarray, 

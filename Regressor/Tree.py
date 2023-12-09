@@ -1,17 +1,16 @@
 from typing import Tuple
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError
-from LUMA.Interface.Super import _Estimator, _Supervised
-from LUMA.Interface.Type import Evaluator
-from LUMA.Interface.Util import TreeNode
-from LUMA.Metric.Regression import MeanSquaredError
+from luma.interface.exception import NotFittedError
+from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.interface.util import TreeNode
+from luma.metric.regression import MeanSquaredError
 
 
 __all__ = ['DecisionTreeRegressor']
 
 
-class DecisionTreeRegressor(_Estimator, _Supervised):
+class DecisionTreeRegressor(Estimator, Supervised):
     
     """
     A Decision Tree Regressor is a supervised machine learning algorithm 

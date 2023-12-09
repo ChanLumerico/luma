@@ -2,14 +2,14 @@ from typing import *
 from scipy.linalg import eigh
 import numpy as np
 
-from LUMA.Interface.Super import _Transformer, _Unsupervised
-from LUMA.Interface.Exception import NotFittedError
+from luma.interface.super import Transformer, Unsupervised
+from luma.interface.exception import NotFittedError
 
 
 __all__ = ['KernelPCA']
     
 
-class KernelPCA(_Transformer, _Unsupervised):
+class KernelPCA(Transformer, Unsupervised):
     
     """
     Kernel PCA is a dimensionality reduction technique that extends 

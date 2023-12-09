@@ -2,19 +2,18 @@ from typing import *
 from scipy.stats import mode
 import numpy as np
 
-from LUMA.Classifier.Tree import DecisionTreeClassifier
-from LUMA.Regressor.Tree import DecisionTreeRegressor
-from LUMA.Interface.Type import Evaluator
-from LUMA.Interface.Super import _Estimator, _Supervised
-from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
-from LUMA.Metric.Classification import Accuracy
-from LUMA.Metric.Regression import MeanSquaredError
+from luma.classifier.tree import DecisionTreeClassifier
+from luma.regressor.tree import DecisionTreeRegressor
+from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.metric.classification import Accuracy
+from luma.metric.regression import MeanSquaredError
 
 
 __all__ = ['RandomForestClassifier', 'RandomForestRegressor']
 
 
-class RandomForestClassifier(_Estimator, _Supervised):
+class RandomForestClassifier(Estimator, Supervised):
     
     """
     A Random Forest Classifier is an ensemble learning method in machine learning, 
@@ -120,7 +119,7 @@ class RandomForestClassifier(_Estimator, _Supervised):
                 self.n_features = str(n_features)
 
 
-class RandomForestRegressor(_Estimator, _Supervised):
+class RandomForestRegressor(Estimator, Supervised):
     
     """
     A Random Forest Regressor is an ensemble learning algorithm for regression 

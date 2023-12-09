@@ -1,14 +1,14 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Super import _Transformer
-from LUMA.Interface.Exception import NotFittedError
+from luma.interface.super import Transformer
+from luma.interface.exception import NotFittedError
 
 
 __all__ = ['StandardScaler', 'MinMaxScaler']
 
 
-class StandardScaler(_Transformer):
+class StandardScaler(Transformer):
     
     """
     Standard scaling is a data preprocessing technique to transform 
@@ -39,7 +39,7 @@ class StandardScaler(_Transformer):
         return (X * self.std) + self.mean
 
 
-class MinMaxScaler(_Transformer):
+class MinMaxScaler(Transformer):
     
     """
     MinMax scaling (also known as Min-Max normalization)

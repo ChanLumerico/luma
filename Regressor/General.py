@@ -2,17 +2,16 @@ from typing import *
 from scipy.special import psi
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
-from LUMA.Interface.Super import _Estimator, _Supervised
-from LUMA.Interface.Type import Evaluator
-from LUMA.Metric.Regression import RootMeanSquaredError
+from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.metric.regression import MeanSquaredError
 
 
 __all__ = ['PoissonRegressor', 'NegativeBinomialRegressor', 'GammaRegressor',
            'BetaRegressor', 'InverseGaussianRegressor']
 
 
-class PoissonRegressor(_Estimator, _Supervised):
+class PoissonRegressor(Estimator, Supervised):
     
     """
     Poisson regression is a model for predicting count or frequency data. 
@@ -88,7 +87,7 @@ class PoissonRegressor(_Estimator, _Supervised):
         return predictions
     
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
 
@@ -105,7 +104,7 @@ class PoissonRegressor(_Estimator, _Supervised):
         if regularization is not None: self.regularization = str(regularization)
 
 
-class NegativeBinomialRegressor(_Estimator, _Supervised):
+class NegativeBinomialRegressor(Estimator, Supervised):
     
     """
     Negative Binomial Regression is a statistical method used to 
@@ -185,7 +184,7 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
         return mu
     
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
     
@@ -204,7 +203,7 @@ class NegativeBinomialRegressor(_Estimator, _Supervised):
         if regularization is not None: self.regularization = str(regularization)
 
 
-class GammaRegressor(_Estimator, _Supervised):
+class GammaRegressor(Estimator, Supervised):
     
     """
     Gamma regression is a statistical method for analyzing 
@@ -286,7 +285,7 @@ class GammaRegressor(_Estimator, _Supervised):
         return np.dot(X, self.alpha / self.beta)
     
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
     
@@ -307,7 +306,7 @@ class GammaRegressor(_Estimator, _Supervised):
         if regularization is not None: self.regularization = str(regularization)
 
 
-class BetaRegressor(_Estimator, _Supervised):
+class BetaRegressor(Estimator, Supervised):
     
     """
     Beta regression is a statistical model used in machine learning to 
@@ -389,7 +388,7 @@ class BetaRegressor(_Estimator, _Supervised):
         return np.dot(X, self.alpha / (self.alpha + self.beta))
     
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
     
@@ -410,7 +409,7 @@ class BetaRegressor(_Estimator, _Supervised):
         if regularization is not None: self.regularization = str(regularization)
 
 
-class InverseGaussianRegressor(_Estimator, _Supervised):
+class InverseGaussianRegressor(Estimator, Supervised):
     
     """
     Inverse Gaussian regression is a statistical technique applied in 
@@ -487,7 +486,7 @@ class InverseGaussianRegressor(_Estimator, _Supervised):
         return 1 / (self.phi * X) * np.dot(X, self.weights)
     
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
 

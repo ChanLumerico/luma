@@ -1,20 +1,20 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Super import _Evaluator
+from luma.interface.super import Evaluator
 
 
 __all__ = ['Accuracy', 'Precision', 'Recall', 'F1Score', 'Specificity',
            'AUCCurveROC', 'Complex']
 
 
-class Accuracy(_Evaluator):
+class Accuracy(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean(y_true == y_pred)
 
 
-class Precision(_Evaluator):
+class Precision(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         true_positives = np.sum((y_true == 1) & (y_pred == 1))
@@ -22,7 +22,7 @@ class Precision(_Evaluator):
         return true_positives / (true_positives + false_positives)
 
 
-class Recall(_Evaluator):
+class Recall(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         true_positives = np.sum((y_true == 1) & (y_pred == 1))
@@ -30,7 +30,7 @@ class Recall(_Evaluator):
         return true_positives / (true_positives + false_negatives)
 
 
-class F1Score(_Evaluator):
+class F1Score(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         precision = Precision.compute(y_true, y_pred)
@@ -38,7 +38,7 @@ class F1Score(_Evaluator):
         return 2 * (precision * recall) / (precision + recall)
 
 
-class Specificity(_Evaluator):
+class Specificity(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         true_negatives = np.sum((y_true == 0) & (y_pred == 0))
@@ -46,7 +46,7 @@ class Specificity(_Evaluator):
         return true_negatives / (true_negatives + false_positives)
 
 
-class AUCCurveROC(_Evaluator):
+class AUCCurveROC(Evaluator):
     @staticmethod
     def roc_curve(y_true: np.ndarray, y_scores: np.ndarray) -> float:
         thresholds = np.sort(y_scores)

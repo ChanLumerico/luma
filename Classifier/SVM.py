@@ -1,16 +1,15 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
-from LUMA.Interface.Super import _Estimator, _Supervised
-from LUMA.Interface.Type import Evaluator
-from LUMA.Metric.Classification import Accuracy
+from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.metric.classification import Accuracy
 
 
 __all__ = ['SVC', 'KernelSVC']
 
 
-class SVC(_Estimator, _Supervised):
+class SVC(Estimator, Supervised):
     
     """
     Support Vector Classifier (SVC) is a supervised machine learning 
@@ -108,7 +107,7 @@ class SVC(_Estimator, _Supervised):
         if max_iter is not None: self.max_iter = int(max_iter)
 
 
-class KernelSVC(_Estimator, _Supervised):
+class KernelSVC(Estimator, Supervised):
     
     """
     Kernel Support Vector Classification (SVC) is an extension of the 

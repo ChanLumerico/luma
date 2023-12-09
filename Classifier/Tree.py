@@ -2,17 +2,16 @@ from typing import Tuple
 from collections import Counter
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError
-from LUMA.Interface.Super import _Estimator, _Supervised
-from LUMA.Interface.Type import Evaluator
-from LUMA.Interface.Util import TreeNode
-from LUMA.Metric.Classification import Accuracy
+from luma.interface.exception import NotFittedError
+from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.interface.util import TreeNode
+from luma.metric.classification import Accuracy
 
 
 __all__ = ['DecisionTreeClassifier']
 
 
-class DecisionTreeClassifier(_Estimator, _Supervised):
+class DecisionTreeClassifier(Estimator, Supervised):
     
     """
     A Decision Tree Classifier is a supervised machine learning algorithm 

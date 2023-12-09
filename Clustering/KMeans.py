@@ -1,16 +1,15 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError
-from LUMA.Interface.Super import _Estimator, _Unsupervised
-from LUMA.Interface.Type import Evaluator
-from LUMA.Metric.Classification import Accuracy
+from luma.interface.exception import NotFittedError
+from luma.interface.super import Estimator, Evaluator, Unsupervised
+from luma.metric.classification import Accuracy
 
 
 __all__ = ['KMeansClustering', 'KMeansClusteringPlus', 'KMediansClustering']
 
 
-class KMeansClustering(_Estimator, _Unsupervised):
+class KMeansClustering(Estimator, Unsupervised):
     
     """
     K-means clustering is a machine learning algorithm that  groups similar data 
@@ -74,7 +73,7 @@ class KMeansClustering(_Estimator, _Unsupervised):
         if max_iter is not None: self.max_iter = int(max_iter)
 
 
-class KMeansClusteringPlus(_Estimator, _Unsupervised):
+class KMeansClusteringPlus(Estimator, Unsupervised):
     
     """
     K-means++ is an improved version of the original K-means clustering algorithm, 
@@ -143,7 +142,7 @@ class KMeansClusteringPlus(_Estimator, _Unsupervised):
         if max_iter is not None: self.max_iter = int(max_iter)
 
 
-class KMediansClustering(_Estimator, _Unsupervised):
+class KMediansClustering(Estimator, Unsupervised):
     
     """
     K-median clustering is a data clustering method that divides a dataset into 

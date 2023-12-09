@@ -6,11 +6,11 @@ from scipy.spatial import KDTree
 from scipy.linalg import eigh, svd
 import numpy as np
 
-from LUMA.Reduction.Linear import PCA
-from LUMA.Interface.Super import _Transformer, _Unsupervised
-from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
-from LUMA.Clustering.KMeans import *
-from LUMA.Metric.Distance import *
+from luma.reduction.linear import PCA
+from luma.interface.super import Transformer, Unsupervised
+from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.clustering.kmeans import *
+from luma.metric.distance import *
 
 
 __all__ = ['TSNE', 'MDS', 'MetricMDS', 'LandmarkMDS', 'LLE',
@@ -18,7 +18,7 @@ __all__ = ['TSNE', 'MDS', 'MetricMDS', 'LandmarkMDS', 'LLE',
            'Isomap', 'ConformalIsomap', 'LTSA']
 
 
-class TSNE(_Transformer, _Unsupervised):
+class TSNE(Transformer, Unsupervised):
     
     """
     t-SNE, which stands for t-distributed Stochastic Neighbor Embedding, 
@@ -157,7 +157,7 @@ class TSNE(_Transformer, _Unsupervised):
         if max_iter is not None: self.max_iter = int(max_iter)
 
 
-class MDS(_Transformer, _Unsupervised):
+class MDS(Transformer, Unsupervised):
     
     """
     Multidimensional Scaling (MDS) is a data analysis technique that visualizes 
@@ -216,7 +216,7 @@ class MDS(_Transformer, _Unsupervised):
         if n_components is not None: self.n_components = int(n_components)
 
 
-class MetricMDS(_Transformer, _Unsupervised):
+class MetricMDS(Transformer, Unsupervised):
     
     """
     Metric Multidimensional Scaling (MDS) is a data analysis method that focuses 
@@ -306,7 +306,7 @@ class MetricMDS(_Transformer, _Unsupervised):
         if metric is not None: self.metric = str(metric)
 
 
-class LandmarkMDS(_Transformer, _Unsupervised):
+class LandmarkMDS(Transformer, Unsupervised):
     
     """
     Landmark Multi-Dimensional Scaling (LMDS) is a dimensionality reduction method 
@@ -404,7 +404,7 @@ class LandmarkMDS(_Transformer, _Unsupervised):
         if method is not None: self.method = str(method)
 
 
-class LLE(_Transformer, _Unsupervised):
+class LLE(Transformer, Unsupervised):
     
     """
     Locally Linear Embedding (LLE) is a dimensionality reduction technique that aims 
@@ -472,7 +472,7 @@ class LLE(_Transformer, _Unsupervised):
         if n_components is not None: self.n_components = int(n_components)
 
 
-class ModifiedLLE(_Transformer, _Unsupervised):
+class ModifiedLLE(Transformer, Unsupervised):
     
     """
     Modified Locally Linear Embedding (MLLE) is a dimensionality reduction technique 
@@ -546,7 +546,7 @@ class ModifiedLLE(_Transformer, _Unsupervised):
         if regularization is not None: self.regularization = float(regularization)
 
 
-class HessianLLE(_Transformer, _Unsupervised):
+class HessianLLE(Transformer, Unsupervised):
     
     """
     Hessian Locally Linear Embedding (Hessian LLE) is a dimensionality reduction 
@@ -653,7 +653,7 @@ class HessianLLE(_Transformer, _Unsupervised):
         if regularization is not None: self.regularization = float(regularization)
 
 
-class SammonMapping(_Transformer, _Unsupervised):
+class SammonMapping(Transformer, Unsupervised):
     
     """
     Sammon mapping is a dimensionality reduction algorithm designed to transform 
@@ -788,7 +788,7 @@ class SammonMapping(_Transformer, _Unsupervised):
         if tol is not None: self.tol = float(tol)
 
 
-class LaplacianEigenmap(_Transformer, _Unsupervised):
+class LaplacianEigenmap(Transformer, Unsupervised):
     
     """
     Laplacian Eigenmap is a dimensionality reduction technique that 
@@ -847,7 +847,7 @@ class LaplacianEigenmap(_Transformer, _Unsupervised):
         if sigma is not None: self.sigma = float(sigma)
 
 
-class Isomap(_Transformer, _Unsupervised):
+class Isomap(Transformer, Unsupervised):
     
     """
     Isomap, or Isometric Mapping, is a nonlinear dimensionality reduction technique 
@@ -931,7 +931,7 @@ class Isomap(_Transformer, _Unsupervised):
         if metric is not None: self.method = str(metric)
 
 
-class ConformalIsomap(_Transformer, _Unsupervised):
+class ConformalIsomap(Transformer, Unsupervised):
     
     """
     Conformal Isomap (C-Isomap) is a variation of the Isomap algorithm that 
@@ -1013,7 +1013,7 @@ class ConformalIsomap(_Transformer, _Unsupervised):
         if algorithm is not None: self.algorithm = str(algorithm)
 
 
-class LTSA(_Transformer, _Unsupervised):
+class LTSA(Transformer, Unsupervised):
     
     """
     Local Tangent Space Alignment (LTSA) is a dimensionality reduction technique 

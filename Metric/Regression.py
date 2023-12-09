@@ -1,38 +1,38 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Super import _Evaluator
+from luma.interface.super import Evaluator
 
 
 __all__ = ['MeanAbsoluteError', 'MeanSquaredError', 'RootMeanSquaredError',
            'MeanAbsolutePercentageError', 'RSquaredScore', 'Complex']
 
 
-class MeanAbsoluteError(_Evaluator):
+class MeanAbsoluteError(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean(np.abs(y_true - y_pred))
 
 
-class MeanSquaredError(_Evaluator):
+class MeanSquaredError(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean((y_true - y_pred) ** 2)
 
 
-class RootMeanSquaredError(_Evaluator):
+class RootMeanSquaredError(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.sqrt(np.mean((y_true - y_pred) ** 2))
 
 
-class MeanAbsolutePercentageError(_Evaluator):
+class MeanAbsolutePercentageError(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
 
-class RSquaredScore(_Evaluator):
+class RSquaredScore(Evaluator):
     @staticmethod
     def compute(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         y_bar = np.mean(y_true)

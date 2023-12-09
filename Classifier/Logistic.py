@@ -1,16 +1,15 @@
 from typing import *
 import numpy as np
 
-from LUMA.Metric.Classification import Accuracy
-from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
-from LUMA.Interface.Super import _Estimator, _Supervised
-from LUMA.Interface.Type import Evaluator
+from luma.metric.classification import Accuracy
+from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.interface.super import Estimator, Evaluator, Supervised
 
 
 __all__ = ['LogisticRegressor', 'SoftmaxRegressor']
 
 
-class LogisticRegressor(_Estimator, _Supervised):
+class LogisticRegressor(Estimator, Supervised):
     
     """
     Logistic regression is a statistical model used for binary classification, 
@@ -108,7 +107,7 @@ class LogisticRegressor(_Estimator, _Supervised):
         if regularization is not None: self.regularization = str(regularization)
 
 
-class SoftmaxRegressor(_Estimator, _Supervised):
+class SoftmaxRegressor(Estimator, Supervised):
     
     """
     Softmax regression, also known as multinomial logistic regression, 

@@ -1,16 +1,15 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError
-from LUMA.Interface.Super import _Estimator
-from LUMA.Interface.Type import Evaluator
-from LUMA.Metric.Regression import RootMeanSquaredError
+from luma.interface.exception import NotFittedError
+from luma.interface.super import Estimator, Evaluator
+from luma.metric.regression import MeanSquaredError
 
 
 __all__ = ['RidgeRegressor', 'LassoRegressor', 'ElasticNetRegressor']
 
 
-class RidgeRegressor(_Estimator):
+class RidgeRegressor(Estimator):
     
     """
     Ridge regression is a linear regression technique used to 
@@ -43,7 +42,7 @@ class RidgeRegressor(_Estimator):
         return X.dot(self.coefficients)
     
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
 
@@ -51,7 +50,7 @@ class RidgeRegressor(_Estimator):
         if alpha is not None: self.alpha = float(alpha)
 
 
-class LassoRegressor(_Estimator):
+class LassoRegressor(Estimator):
     
     """
     Lasso regression is a linear regression technique used for 
@@ -107,7 +106,7 @@ class LassoRegressor(_Estimator):
         return X.dot(self.coefficients)
     
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
     
@@ -120,7 +119,7 @@ class LassoRegressor(_Estimator):
         if learning_rate is not None: self.learning_rate = float(learning_rate)
 
 
-class ElasticNetRegressor(_Estimator):
+class ElasticNetRegressor(Estimator):
     
     """
     Elastic-Net regression is a linear regression technique 
@@ -179,7 +178,7 @@ class ElasticNetRegressor(_Estimator):
         return X.dot(self.coef_)
     
     def score(self, X: np.ndarray, y: np.ndarray, 
-              metric: Evaluator = RootMeanSquaredError) -> float:
+              metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
     

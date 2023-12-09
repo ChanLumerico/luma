@@ -2,13 +2,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-from LUMA.Interface.Super import _Visualizer
+from luma.interface.super import Visualizer
 
 
 __all__ = ['CorrelationHeatMap', 'CorrelationBar', 'JointPlot']
 
 
-class CorrelationHeatMap(_Visualizer):
+class CorrelationHeatMap(Visualizer):
     def __init__(self, data: pd.DataFrame) -> None:
         self.data = data
         self.corr = data.corr()
@@ -27,7 +27,7 @@ class CorrelationHeatMap(_Visualizer):
         plt.show()
 
 
-class CorrelationBar(_Visualizer):
+class CorrelationBar(Visualizer):
     def __init__(self, data: pd.DataFrame, target: str) -> None:
         self.data = data
         self.target = target
@@ -46,7 +46,7 @@ class CorrelationBar(_Visualizer):
         plt.show()
 
 
-class JointPlot(_Visualizer):
+class JointPlot(Visualizer):
     def __init__(self, data: pd.DataFrame, x: str, y: str) -> None:
         self.data = data
         self.x = x

@@ -1,11 +1,11 @@
 from typing import *
 
 
-__all__ = ['_Estimator', '_Transformer', '_Evaluator', '_Visualizer',
-           '_Supervised', '_Unsupervised', '_Distance']
+__all__ = ['Estimator', 'Transformer', 'Evaluator', 'Visualizer',
+           'Supervised', 'Unsupervised', 'Distance']
 
 
-class _Estimator(Protocol):
+class Estimator(Protocol):
     
     """
     An estimator is a mathematical model or algorithm 
@@ -24,7 +24,7 @@ class _Estimator(Protocol):
     
     """
     
-    def fit(self, *data) -> '_Estimator': ...
+    def fit(self, *data) -> 'Estimator': ...
     
     def predict(self, *data) -> Any: ...
     
@@ -33,7 +33,7 @@ class _Estimator(Protocol):
     def set_params(self, *params) -> None: ...
 
 
-class _Transformer(Protocol):
+class Transformer(Protocol):
     
     """
     A transformer (preprocessor) is a component or set of operations used to prepare and 
@@ -55,7 +55,7 @@ class _Transformer(Protocol):
     
     """
     
-    def fit(self, *data) -> '_Transformer': ...
+    def fit(self, *data) -> 'Transformer': ...
     
     def transform(self, *data) -> Any: ...
     
@@ -64,7 +64,7 @@ class _Transformer(Protocol):
     def set_params(self, *params) -> None: ...
 
 
-class _Evaluator(Protocol):
+class Evaluator(Protocol):
     
     """
     Evaluators, a.k.a. metrics are quantitative measures used to assess the performance 
@@ -83,7 +83,7 @@ class _Evaluator(Protocol):
     def compute(*data) -> float: ...
 
 
-class _Visualizer(Protocol):
+class Visualizer(Protocol):
     
     """
     A visualizer is a tool that helps visualize and understand various aspects 
@@ -101,7 +101,7 @@ class _Visualizer(Protocol):
     def plot(self, *params) -> None: ...
 
 
-class _Supervised:
+class Supervised:
     
     """
     Supervised learning is a type of machine learning where the algorithm learns 
@@ -113,7 +113,7 @@ class _Supervised:
     def __init__(self, *params) -> None: ...
 
 
-class _Unsupervised:
+class Unsupervised:
     
     """
     Unsupervised learning is a machine learning paradigm where the algorithm 
@@ -125,7 +125,7 @@ class _Unsupervised:
     def __init__(self, *params) -> None: ...
 
 
-class _Distance:
+class Distance:
     
     """
     In mathematics and machine learning, distance is a measure of how much "separation" 

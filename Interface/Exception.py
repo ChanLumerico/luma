@@ -1,5 +1,5 @@
 from typing import Any
-from LUMA.Interface.Type import Transformer, Estimator
+from luma.interface.super import Transformer, Estimator
 
 
 __all__ = ['NotFittedError', 'UnsupportedParameterError', 'NotConvergedError']

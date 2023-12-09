@@ -1,16 +1,15 @@
 from typing import *
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError, UnsupportedParameterError
-from LUMA.Interface.Super import _Estimator, _Supervised
-from LUMA.Interface.Type import Evaluator
-from LUMA.Metric.Regression import MeanSquaredError
+from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.metric.regression import MeanSquaredError
 
 
 __all__ = ['SVR', 'KernelSVR']
 
 
-class SVR(_Estimator, _Supervised):
+class SVR(Estimator, Supervised):
     
     """
     Support Vector Regressor (SVR) is a supervised machine learning 
@@ -97,7 +96,7 @@ class SVR(_Estimator, _Supervised):
         if max_iter is not None: self.max_iter = int(max_iter)
 
 
-class KernelSVR(_Estimator, _Supervised):
+class KernelSVR(Estimator, Supervised):
     
     """
     Kernel Support Vector Regression (KernelSVR) is an extension of the 

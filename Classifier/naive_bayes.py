@@ -1,16 +1,15 @@
 from typing import Any
 import numpy as np
 
-from LUMA.Interface.Exception import NotFittedError
-from LUMA.Interface.Super import _Estimator, _Supervised
-from LUMA.Interface.Type import Evaluator
-from LUMA.Metric.Classification import Accuracy
+from luma.interface.exception import NotFittedError
+from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.metric.classification import Accuracy
 
 
 __all__ = ['GaussianNaiveBayes', 'BernoulliNaiveBayes']
 
 
-class GaussianNaiveBayes(_Estimator, _Supervised):
+class GaussianNaiveBayes(Estimator, Supervised):
     
     """
     Gaussian Naive Bayes is a probabilistic classification algorithm. 
@@ -86,7 +85,7 @@ class GaussianNaiveBayes(_Estimator, _Supervised):
         return metric.compute(y_true=y, y_pred=X_pred)
 
 
-class BernoulliNaiveBayes(_Estimator, _Supervised):
+class BernoulliNaiveBayes(Estimator, Supervised):
     
     """
     Bernoulli Naive Bayes is a classification algorithm based on 
