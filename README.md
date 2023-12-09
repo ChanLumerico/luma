@@ -1,3 +1,5 @@
+<img src="others/luma.png" alt="logo" width="75" height="75">
+
 # LUMA
 <!-- ------------------ -->
 LUMA is a powerful and flexible Python module designed to simplify and streamline 
@@ -76,7 +78,7 @@ users gain insights from their machine learning models and communicate results e
 ##
 
 ### Latest Version
-`alpha 1.3`
+`alpha 1.4 (WIP)`
 
 ### Dependencies
 `NumPy`, `SciPy`, `Matplotlib`, `Seaborn`
@@ -85,4 +87,4 @@ users gain insights from their machine learning models and communicate results e
 `Python 3.10` or later
 
 ### Document
-[LUMA Notion Document](https://lumerico284.notion.site/Machine-Learning-76330376b0e64cc1b95874c469aeb327?pvs=4)
+[LUMA Notion Document](https://lumerico284.notion.site/LUMA-76330376b0e64cc1b95874c469aeb327?pvs=4)
