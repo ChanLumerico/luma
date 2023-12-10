@@ -78,7 +78,7 @@ users gain insights from their machine learning models and communicate results e
 ##
 
 ### Latest Version
-`alpha 1.4 (WIP)`
+`0.1.1`
 
 ### Dependencies
 `NumPy`, `SciPy`, `Matplotlib`, `Seaborn`
