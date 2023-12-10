@@ -1,0 +1,216 @@
+from typing import *
+import numpy as np
+
+from luma.metric.classification import Accuracy
+from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.interface.super import Estimator, Evaluator, Supervised
+
+
+__all__ = ['LogisticRegressor', 'SoftmaxRegressor']
+
+
+class LogisticRegressor(Estimator, Supervised):
+    
+    """
+    Logistic regression is a statistical model used for binary classification, 
+    which means it's employed to predict one of two possible outcomes.
+    It does this by modeling the relationship between one or more 
+    input variables and the probability of the binary outcome.
+    
+    Parameters
+    ----------
+    ``learning_rate`` : Step size of the gradient descent update \n
+    ``max_iter`` : Number of iteration \n
+    ``rho`` : Balancing parameter of ``elastic-net`` \n 
+    ``alpha`` : Regularization strength \n
+    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    
+    """
+    
+    def __init__(self, 
+                 learning_rate : float = 0.01, 
+                 max_iter: int = 100, 
+                 rho: float = 0.5, 
+                 alpha: float = 0.01, 
+                 regularization: Literal['l1', 'l2', 'elastic_net'] = None,
+                 verbose: bool = False):
+        self.learning_rate = learning_rate
+        self.max_iter = max_iter
+        self.rho = rho
+        self.regularization = regularization
+        self.alpha = alpha
+        self.verbose = verbose
+        self._fitted = False
+
+    def sigmoid(self, z: np.ndarray) -> np.ndarray:
+        return 1 / (1 + np.exp(-z))
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'LogisticRegressor':
+        X = np.insert(X, 0, 1, axis=1)
+        m, n = X.shape
+        self.theta = np.zeros(n)
+
+        for i in range(self.max_iter):
+            z = np.dot(X, self.theta)
+            h = self.sigmoid(z)
+            gradient = np.dot(X.T, (h - y)) * self.learning_rate
+            gradient += self.alpha * self._regularization_term() / m
+            gradient[0] -= self.alpha * self._regularization_term()[0]
+            self.theta -= gradient
+            
+            if self.verbose and i % 10 == 0: 
+                print(f'[LogisticReg] iteration: {i}/{self.max_iter}', end='')
+                print(f' - gradient-norm: {np.linalg.norm(gradient)}')
+        
+        self._fitted = True
+        return self
+
+    def _regularization_term(self) -> np.ndarray:
+        if self.regularization == 'l1': return np.sign(self.theta)
+        elif self.regularization == 'l2': return self.theta
+        elif self.regularization == 'elastic_net':
+            l1_term = np.sign(self.theta)
+            l2_term = 2 * self.theta
+            return (1 - self.rho) * l2_term + self.rho * l1_term
+        elif self.regularization is None: return np.zeros_like(self.theta)
+        else: raise UnsupportedParameterError(self.regularization)
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
+        X = np.insert(X, 0, 1, axis=1)
+        z = np.dot(X, self.theta)
+        h = self.sigmoid(z)
+        predictions = (h >= 0.5).astype(int)
+        return predictions
+    
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        X = np.insert(X, 0, 1, axis=1)
+        z = np.dot(X, self.theta)
+        h = self.sigmoid(z)
+        return h
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
+    def set_params(self, 
+                   learning_rate: float = None, 
+                   max_iter: int = None, 
+                   rho: float = None, 
+                   alpha: float = None, 
+                   regularization: Literal = None) -> None:
+        if learning_rate is not None: self.learning_rate = float(learning_rate)
+        if max_iter is not None: self.max_iter = int(max_iter)
+        if rho is not None: self.rho = float(rho)
+        if alpha is not None: self.alpha = float(alpha)
+        if regularization is not None: self.regularization = str(regularization)
+
+
+class SoftmaxRegressor(Estimator, Supervised):
+    
+    """
+    Softmax regression, also known as multinomial logistic regression, 
+    is a supervised machine learning technique used for classification tasks. 
+    It's an extension of logistic regression, 
+    but it can handle multiple classes (more than two).
+    
+    Parameters
+    ----------
+    ``learning_rate`` : Step size of the gradient descent update \n
+    ``max_iter`` : Number of iteration \n
+    ``rho`` : Balancing parameter of ``elastic-net`` \n 
+    ``alpha`` : Regularization strength \n
+    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    
+    """
+    
+    def __init__(self,
+                 learning_rate: float = 0.01,
+                 max_iter: int = 100,
+                 rho: float = 0.5,
+                 alpha: float = 0.01,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
+                 verbose: bool = False) -> None:
+        self.learning_rate = learning_rate
+        self.max_iter = max_iter
+        self.rho = rho
+        self.alpha = alpha
+        self.regularization = regularization
+        self.verbose = verbose
+        self._fitted = False
+    
+    def softmax(self, z: np.ndarray) -> np.ndarray:
+        exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
+        return exp_z / exp_z.sum(axis=1, keepdims=True)
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'SoftmaxRegressor':
+        X = np.insert(X, 0, 1, axis=1)
+        m, n = X.shape
+        num_classes = len(np.unique(y))
+        self.theta = np.zeros((n, num_classes))
+        
+        for i in range(self.max_iter):
+            z = np.dot(X, self.theta)
+            h = self.softmax(z)
+            gradient = np.dot(X.T, (h - self._one_hot_encode(y)))
+            gradient *= self.learning_rate
+            gradient += self.alpha * self._regularization_term() / m
+            gradient[0] -= self.alpha * self._regularization_term()[0]
+            self.theta -= gradient
+            
+            if self.verbose and i % 10 == 0: 
+                print(f'[SoftmaxReg] iteration: {i}/{self.max_iter}', end='')
+                print(f' - gradient-norm: {np.linalg.norm(gradient)}')
+        
+        self._fitted = True
+        return self
+    
+    def _one_hot_encode(self, y: np.ndarray) -> np.ndarray:
+        num_classes = self.theta.shape[1]
+        one_hot = np.zeros((len(y), num_classes))
+        for i in range(len(y)):
+            one_hot[i, y[i]] = 1
+        return one_hot
+    
+    def _regularization_term(self) -> np.ndarray:
+        if self.regularization == 'l1': return np.sign(self.theta)
+        elif self.regularization == 'l2': return self.theta
+        elif self.regularization == 'elastic_net':
+            l1_term = np.sign(self.theta)
+            l2_term = 2 * self.theta
+            return (1 - self.rho) * l2_term + self.rho * l1_term
+        elif self.regularization is None: return np.zeros_like(self.theta)
+        else: raise UnsupportedParameterError(self.regularization)
+    
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
+        X = np.insert(X, 0, 1, axis=1)
+        z = np.dot(X, self.theta)
+        h = self.softmax(z)
+        predictions = np.argmax(h, axis=1)
+        return predictions
+    
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        X = np.insert(X, 0, 1, axis=1)
+        z = np.dot(X, self.theta)
+        h = self.softmax(z)
+        return h
+    
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
+    def set_params(self,
+                   learning_rate: float = None,
+                   max_iter: int = None,
+                   rho: float = None,
+                   alpha: float = None,
+                   regularization: Literal = None) -> None:
+        if learning_rate is not None: self.learning_rate = float(learning_rate)
+        if max_iter is not None: self.max_iter = int(max_iter)
+        if rho is not None: self.rho = float(rho)
+        if alpha is not None: self.alpha = float(alpha)
+        if regularization is not None: self.regularization = str(regularization)
+
