@@ -1,12 +1,12 @@
 LICENSE
 README.md
 setup.py
+luma/__init__.py
 luma/classifier/logistic.py
 luma/classifier/naive_bayes.py
 luma/classifier/svm.py
 luma/classifier/tree.py
 luma/clustering/kmeans.py
-luma/core/build.py
 luma/core/main.py
 luma/ensemble/forest.py
 luma/interface/exception.py

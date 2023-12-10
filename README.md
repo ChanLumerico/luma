@@ -1,4 +1,4 @@
-<img src="luma/others/luma.png" alt="logo" width="75" height="75">
+<img src="others/luma.png" alt="logo" width="75" height="75">
 
 # LUMA
 <!-- ------------------ -->
