@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="luma-ml",
-    version='0.2.0',
+    version='0.2.1',
     author="ChanLumerico",
     author_email="greensox284@gmail.com",
     description="Custom-made powerful and light Python machine learning module",
@@ -26,3 +26,8 @@ setuptools.setup(
         'seaborn'
     ]
 )
+
+"""
+>>> python setup.py sdist bdist_wheel
+>>> python -m twine upload dist/*
+"""

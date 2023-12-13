@@ -23,6 +23,7 @@ luma/reduction/linear.py
 luma/reduction/manifold.py
 luma/reduction/nonlinear.py
 luma/regressor/general.py
+luma/regressor/knn.py
 luma/regressor/linear.py
 luma/regressor/polynomial.py
 luma/regressor/svm.py
