@@ -46,6 +46,7 @@ from luma.regressor.general import BetaRegressor
 from luma.regressor.general import InverseGaussianRegressor
 from luma.regressor.svm import SVR, KernelSVR
 from luma.regressor.tree import DecisionTreeRegressor
+from luma.regressor.knn import KNNRegressor
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot
 from luma.visual.region import DecisionRegion, ClusteredRegion
@@ -103,6 +104,7 @@ if __name__ == '__main__':
     BetaRegressor, InverseGaussianRegressor
     SVR, KernelSVR
     DecisionTreeRegressor
+    KNNRegressor
     
     # luma.visual
     CorrelationBar, CorrelationHeatMap, JointPlot
