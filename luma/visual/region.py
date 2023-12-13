@@ -16,7 +16,7 @@ class DecisionRegion(Visualizer):
                  title: str = '', 
                  xlabel: str = r'$x_2$', 
                  ylabel: str = r'$x_2$',
-                 cmap: str = 'Spectral',
+                 cmap: str = 'rainbow',
                  alpha: float = 0.7) -> None:
         self.estimator = estimator
         self.X = X
@@ -65,7 +65,7 @@ class ClusteredRegion(Visualizer):
                  title: str = '', 
                  xlabel: str = r'$x_2$', 
                  ylabel: str = r'$x_2$',
-                 cmap: str = 'Spectral',
+                 cmap: str = 'rainbow',
                  alpha: float = 0.7) -> None:
         self.estimator = estimator
         self.X = X
