@@ -9,7 +9,7 @@ from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
 from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
 from luma.classifier.svm import SVC, KernelSVC
 from luma.classifier.tree import DecisionTreeClassifier
-from luma.classifier.knn import KNNClassifier
+from luma.classifier.knn import KNNClassifier, AdaptiveKNNClassifier
 
 from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     GaussianNaiveBayes, BernoulliNaiveBayes
     SVC, KernelSVC
     DecisionTreeClassifier
-    KNNClassifier
+    KNNClassifier, AdaptiveKNNClassifier
     
     # luma.clustering
     KMeansClustering, KMeansClusteringPlus, KMediansClustering

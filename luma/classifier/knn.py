@@ -1,3 +1,4 @@
+from scipy.spatial import distance_matrix
 import numpy as np
 
 from luma.interface.super import Estimator, Supervised, Evaluator
@@ -6,7 +7,7 @@ from luma.interface.exception import NotFittedError
 from luma.metric.classification import Accuracy
 
 
-__all__ = ['KNNClassifier']
+__all__ = ['KNNClassifier', 'AdaptiveKNNClassifier']
 
 
 class KNNClassifier(Estimator, Supervised):
@@ -58,4 +59,63 @@ class KNNClassifier(Estimator, Supervised):
     
     def set_params(self, n_neighbors: int = None) -> None:
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
+
+
+class AdaptiveKNNClassifier(Estimator, Supervised):
+    
+    def __init__(self, 
+                 n_density: int = 10, 
+                 min_neighbors: int = 5, 
+                 max_neighbors: int = 20):
+        self.n_density = n_density
+        self.min_neighbors = min_neighbors
+        self.max_neighbors = max_neighbors
+        self._X = None
+        self._y = None
+        self._fitted = False
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> 'AdaptiveKNNClassifier':
+        self._X = X
+        self._y = y
+        
+        self.dist_matrix = distance_matrix(X, X)
+        self.local_density = np.sort(self.dist_matrix, axis=1)
+        self.local_density = self.local_density[:, self.n_density]
+        
+        self.k_values = np.clip(np.ceil(self.max_neighbors / self.local_density), 
+                           self.min_neighbors, self.max_neighbors).astype(int)
+        
+        self._fitted = True
+        return self
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        if not self._fitted: raise NotFittedError(self)
+        dist_matrix = distance_matrix(X, self._X)
+        
+        predictions = []
+        for point_distances in dist_matrix:
+            nearest_indices = np.argsort(point_distances)
+            votes = np.zeros(len(np.unique(self._y)))
+
+            for idx, _ in enumerate(point_distances[nearest_indices]):
+                if idx >= self.k_values[nearest_indices[idx]]: break
+                votes[self._y[nearest_indices[idx]]] += 1
+
+            most_common = np.argmax(votes)
+            predictions.append(most_common)
+
+        return np.array(predictions)
+
+    def score(self, X: np.ndarray, y: np.ndarray, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
+    def set_params(self, 
+                   n_density: int = None,
+                   min_neighbors: int = None,
+                   max_neighbors: int = None) -> None:
+        if n_density is not None: self.n_density = int(n_density)
+        if min_neighbors is not None: self.min_neighbors = int(min_neighbors)
+        if max_neighbors is not None: self.max_neighbors = int(max_neighbors)
 
