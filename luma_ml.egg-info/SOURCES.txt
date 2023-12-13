@@ -2,6 +2,7 @@ LICENSE
 README.md
 setup.py
 luma/__init__.py
+luma/classifier/knn.py
 luma/classifier/logistic.py
 luma/classifier/naive_bayes.py
 luma/classifier/svm.py

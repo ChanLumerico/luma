@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: luma-ml
-Version: 0.1.1
+Version: 0.2.0
 Summary: Custom-made powerful and light Python machine learning module
 Home-page: https://github.com/ChanLumerico/LUMA
 Author: ChanLumerico
@@ -12,7 +12,7 @@ Requires-Python: >=3.10
 Description-Content-Type: text/markdown
 License-File: LICENSE
 
-<img src="luma/others/luma.png" alt="logo" width="75" height="75">
+<img src="others/luma.png" alt="logo" width="75" height="75">
 
 # LUMA
 <!-- ------------------ -->
