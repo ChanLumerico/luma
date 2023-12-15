@@ -2,6 +2,7 @@ from typing import *
 from scipy.linalg import eigh
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.super import Transformer, Unsupervised
 from luma.interface.exception import NotFittedError
 
@@ -44,7 +45,7 @@ class KernelPCA(Transformer, Unsupervised):
         self.X = None
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'KernelPCA':
+    def fit(self, X: Matrix) -> 'KernelPCA':
         self.X = X
         if self.kernel == 'linear': self.kernel_func = self._linear
         elif self.kernel == 'poly': self.kernel_func = self._poly
@@ -69,28 +70,28 @@ class KernelPCA(Transformer, Unsupervised):
         self._fitted =  True
         return self
 
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return np.column_stack([self.eigvecs[:, i] for i in range(self.n_components)])
         
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
     
-    def _linear(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def _linear(self, x: Matrix, y: Matrix) -> Matrix:
         return np.dot(x, y)
     
-    def _poly(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def _poly(self, x: Matrix, y: Matrix) -> Matrix:
         return (np.dot(x, y) + self.coef) ** self.degree
     
-    def _rbf(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def _rbf(self, x: Matrix, y: Matrix) -> Matrix:
         if self.gamma is None: self.gamma = 1 / self.X.shape[1]
         return np.exp(-self.gamma * np.linalg.norm(x - y) ** 2)
     
-    def _sigmoid(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def _sigmoid(self, x: Matrix, y: Matrix) -> Matrix:
         return np.tanh(self.gamma * np.dot(x, y) + self.coef)
     
-    def _laplacian(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def _laplacian(self, x: Matrix, y: Matrix) -> Matrix:
         return np.exp(-self.gamma * np.linalg.norm(x - y))
     
     def set_params(self,

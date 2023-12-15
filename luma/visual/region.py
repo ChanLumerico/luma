@@ -2,6 +2,7 @@ from typing import *
 import matplotlib.pyplot as plt
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.super import Visualizer, Estimator
 
 
@@ -11,8 +12,8 @@ __all__ = ['DecisionRegion', 'ClusteredRegion']
 class DecisionRegion(Visualizer):
     def __init__(self, 
                  estimator: Estimator, 
-                 X: np.ndarray, 
-                 y: np.ndarray, 
+                 X: Matrix, 
+                 y: Matrix, 
                  title: str = '', 
                  xlabel: str = r'$x_2$', 
                  ylabel: str = r'$x_2$',
@@ -61,7 +62,7 @@ class DecisionRegion(Visualizer):
 class ClusteredRegion(Visualizer):
     def __init__(self, 
                  estimator: Estimator, 
-                 X: np.ndarray, 
+                 X: Matrix, 
                  title: str = '', 
                  xlabel: str = r'$x_2$', 
                  ylabel: str = r'$x_2$',

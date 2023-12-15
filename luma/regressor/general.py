@@ -2,6 +2,7 @@ from typing import *
 from scipy.special import psi
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
@@ -45,10 +46,10 @@ class PoissonRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def link_funciton(self, X: np.ndarray) -> np.ndarray:
+    def link_funciton(self, X: Matrix) -> Matrix:
         return np.exp(np.dot(X, self.weights))
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'PoissonRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'PoissonRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.zeros(n)
@@ -70,7 +71,7 @@ class PoissonRegressor(Estimator, Supervised):
         self._fitted = True
         return self
     
-    def _regularization_term(self) -> np.ndarray:
+    def _regularization_term(self) -> Matrix:
         if self.regularization == 'l1': return np.sign(self.weights)
         elif self.regularization == 'l2': return self.weights
         elif self.regularization == 'elastic-net':
@@ -80,13 +81,13 @@ class PoissonRegressor(Estimator, Supervised):
         elif self.regularization is None: return np.zeros_like(self.weights)
         else: raise UnsupportedParameterError(self.regularization)
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         predictions = self.link_funciton(X)
         return predictions
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -141,10 +142,10 @@ class NegativeBinomialRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def link_function(self, X: np.ndarray) -> np.ndarray:
+    def link_function(self, X: Matrix) -> Matrix:
         return np.log(1 + np.exp(np.dot(X, self.weights)))
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'NegativeBinomialRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'NegativeBinomialRegressor':
         X = np.column_stack((np.ones(X.shape[0]),  X))
         m, n = X.shape
         self.weights = np.zeros(n)
@@ -167,7 +168,7 @@ class NegativeBinomialRegressor(Estimator, Supervised):
         self._fitted = True
         return self
     
-    def _regularization_term(self) -> np.ndarray:
+    def _regularization_term(self) -> Matrix:
         if self.regularization == 'l1': return np.sign(self.weights)
         elif self.regularization == 'l2': return self.weights
         elif self.regularization == 'elastic-net':
@@ -177,13 +178,13 @@ class NegativeBinomialRegressor(Estimator, Supervised):
         elif self.regularization is None: return np.zeros_like(self.weights)
         else: raise UnsupportedParameterError(self.regularization)
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         mu = self.link_function(X)
         return mu
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -244,7 +245,7 @@ class GammaRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'GammaRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'GammaRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.alpha = np.ones(n) * self.alpha
@@ -269,7 +270,7 @@ class GammaRegressor(Estimator, Supervised):
         self._fitted = True
         return self
     
-    def _regularization_term(self, weights: np.ndarray) -> np.ndarray:
+    def _regularization_term(self, weights: Matrix) -> Matrix:
         if self.regularization == 'l1': return np.sign(weights)
         elif self.regularization == 'l2': return self.weights
         elif self.regularization == 'elastic-net':
@@ -279,12 +280,12 @@ class GammaRegressor(Estimator, Supervised):
         elif self.regularization is None: return np.zeros_like(weights)
         else: raise UnsupportedParameterError(self.regularization)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return np.dot(X, self.alpha / self.beta)
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -345,7 +346,7 @@ class BetaRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'BetaRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'BetaRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.alpha = np.ones(n) * self.alpha
@@ -372,7 +373,7 @@ class BetaRegressor(Estimator, Supervised):
         self._fitted = True
         return self
     
-    def _regularization_term(self, weights: np.ndarray) -> np.ndarray:
+    def _regularization_term(self, weights: Matrix) -> Matrix:
         if self.regularization == 'l1': return np.sign(weights)
         elif self.regularization == 'l2': return self.weights
         elif self.regularization == 'elastic-net':
@@ -382,12 +383,12 @@ class BetaRegressor(Estimator, Supervised):
         elif self.regularization is None: return np.zeros_like(weights)
         else: raise UnsupportedParameterError(self.regularization)
     
-    def predict(self, X: np.ndarray) -> float:
+    def predict(self, X: Matrix) -> float:
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return np.dot(X, self.alpha / (self.alpha + self.beta))
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -445,7 +446,7 @@ class InverseGaussianRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'InverseGaussianRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'InverseGaussianRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.ones(n)
@@ -480,12 +481,12 @@ class InverseGaussianRegressor(Estimator, Supervised):
         elif self.regularization is None: return np.zeros_like(self.weights)
         else: raise UnsupportedParameterError(self.regularization)
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return 1 / (self.phi * X) * np.dot(X, self.weights)
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)

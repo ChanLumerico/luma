@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.metric.classification import Accuracy
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.interface.super import Estimator, Evaluator, Supervised
@@ -42,10 +43,10 @@ class LogisticRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def sigmoid(self, z: np.ndarray) -> np.ndarray:
+    def sigmoid(self, z: Matrix) -> Matrix:
         return 1 / (1 + np.exp(-z))
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'LogisticRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'LogisticRegressor':
         X = np.insert(X, 0, 1, axis=1)
         m, n = X.shape
         self.theta = np.zeros(n)
@@ -65,7 +66,7 @@ class LogisticRegressor(Estimator, Supervised):
         self._fitted = True
         return self
 
-    def _regularization_term(self) -> np.ndarray:
+    def _regularization_term(self) -> Matrix:
         if self.regularization == 'l1': return np.sign(self.theta)
         elif self.regularization == 'l2': return self.theta
         elif self.regularization == 'elastic_net':
@@ -75,7 +76,7 @@ class LogisticRegressor(Estimator, Supervised):
         elif self.regularization is None: return np.zeros_like(self.theta)
         else: raise UnsupportedParameterError(self.regularization)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X = np.insert(X, 0, 1, axis=1)
         z = np.dot(X, self.theta)
@@ -83,13 +84,13 @@ class LogisticRegressor(Estimator, Supervised):
         predictions = (h >= 0.5).astype(int)
         return predictions
     
-    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+    def predict_proba(self, X: Matrix) -> Matrix:
         X = np.insert(X, 0, 1, axis=1)
         z = np.dot(X, self.theta)
         h = self.sigmoid(z)
         return h
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -140,11 +141,11 @@ class SoftmaxRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
     
-    def softmax(self, z: np.ndarray) -> np.ndarray:
+    def softmax(self, z: Matrix) -> Matrix:
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
         return exp_z / exp_z.sum(axis=1, keepdims=True)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'SoftmaxRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'SoftmaxRegressor':
         X = np.insert(X, 0, 1, axis=1)
         m, n = X.shape
         num_classes = len(np.unique(y))
@@ -166,14 +167,14 @@ class SoftmaxRegressor(Estimator, Supervised):
         self._fitted = True
         return self
     
-    def _one_hot_encode(self, y: np.ndarray) -> np.ndarray:
+    def _one_hot_encode(self, y: Matrix) -> Matrix:
         num_classes = self.theta.shape[1]
         one_hot = np.zeros((len(y), num_classes))
         for i in range(len(y)):
             one_hot[i, y[i]] = 1
         return one_hot
     
-    def _regularization_term(self) -> np.ndarray:
+    def _regularization_term(self) -> Matrix:
         if self.regularization == 'l1': return np.sign(self.theta)
         elif self.regularization == 'l2': return self.theta
         elif self.regularization == 'elastic_net':
@@ -183,7 +184,7 @@ class SoftmaxRegressor(Estimator, Supervised):
         elif self.regularization is None: return np.zeros_like(self.theta)
         else: raise UnsupportedParameterError(self.regularization)
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X = np.insert(X, 0, 1, axis=1)
         z = np.dot(X, self.theta)
@@ -191,13 +192,13 @@ class SoftmaxRegressor(Estimator, Supervised):
         predictions = np.argmax(h, axis=1)
         return predictions
     
-    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+    def predict_proba(self, X: Matrix) -> Matrix:
         X = np.insert(X, 0, 1, axis=1)
         z = np.dot(X, self.theta)
         h = self.softmax(z)
         return h
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)

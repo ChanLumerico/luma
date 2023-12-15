@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Evaluator, Unsupervised
 from luma.metric.classification import Accuracy
@@ -34,7 +35,7 @@ class KMeansClustering(Estimator, Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'KMeansClustering':
+    def fit(self, X: Matrix) -> 'KMeansClustering':
         init_indices = np.random.choice(X.shape[0], self.n_clusters, replace=False)
         self.centroids = X[init_indices]
 
@@ -57,13 +58,13 @@ class KMeansClustering(Estimator, Unsupervised):
         self._fitted = True
         return self
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         labels = np.argmin(distances, axis=1)
         return labels
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -98,7 +99,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
-    def _initialize_centroids(self, X: np.ndarray) -> None:
+    def _initialize_centroids(self, X: Matrix) -> None:
         self.centroids = [X[np.random.choice(X.shape[0])]]
         for _ in range(1, self.n_clusters):
             distances = [min([np.linalg.norm(x - c) ** 2 for c in self.centroids]) for x in X]
@@ -108,7 +109,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
             next_centroid = np.random.choice(X.shape[0], p=probs)
             self.centroids.append(X[next_centroid])
         
-    def fit(self, X: np.ndarray) -> 'KMeansClusteringPlus':
+    def fit(self, X: Matrix) -> 'KMeansClusteringPlus':
         self._initialize_centroids(X)
         for _ in range(self.max_iter):
             distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
@@ -126,13 +127,13 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
         self._fitted = True
         return self
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         labels = np.argmin(distances, axis=1)
         return labels
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -167,7 +168,7 @@ class KMediansClustering(Estimator, Unsupervised):
         self.verbose = verbose
         self._fitted = False
         
-    def fit(self, X: np.ndarray) -> 'KMediansClustering':
+    def fit(self, X: Matrix) -> 'KMediansClustering':
         self.medians = X[np.random.choice(X.shape[0], self.n_clusters, replace=False)]
         for i in range(self.max_iter):
             distances = np.abs(X[:, np.newaxis] - self.medians)
@@ -190,13 +191,13 @@ class KMediansClustering(Estimator, Unsupervised):
         self._fitted = True
         return self
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         distances = np.abs(X[:, np.newaxis] - self.medians)
         labels = np.argmin(distances.sum(axis=2), axis=1)
         return labels
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)

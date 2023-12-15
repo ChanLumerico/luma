@@ -1,4 +1,5 @@
 from typing import *
+import numpy as np
 
 
 __all__ = ['Estimator', 'Transformer', 'Evaluator', 'Visualizer',
@@ -18,19 +19,19 @@ class Estimator(Protocol):
     
     Example
     -------
-    >>> model = AnyEstimator(**params)
+    >>> model = AnyEstimator(*args)
     >>> model.fit(X_train, y_train)
     >>> prediction = model.predict(X_test)
     
     """
     
-    def fit(self, *data) -> 'Estimator': ...
+    def fit(self, *args) -> 'Estimator': ...
     
-    def predict(self, *data) -> Any: ...
+    def predict(self, *args) -> Any: ...
     
-    def score(self, *data) -> float: ...
+    def score(self, *args) -> float: ...
     
-    def set_params(self, *params) -> None: ...
+    def set_params(self, *args) -> None: ...
 
 
 class Transformer(Protocol):
@@ -55,13 +56,13 @@ class Transformer(Protocol):
     
     """
     
-    def fit(self, *data) -> 'Transformer': ...
+    def fit(self, *args) -> 'Transformer': ...
     
-    def transform(self, *data) -> Any: ...
+    def transform(self, *args) -> Any: ...
     
-    def fit_transform(self, *data) -> Any: ...
+    def fit_transform(self, *args) -> Any: ...
     
-    def set_params(self, *params) -> None: ...
+    def set_params(self, *args) -> None: ...
 
 
 class Evaluator(Protocol):
@@ -80,7 +81,7 @@ class Evaluator(Protocol):
     """
     
     @staticmethod
-    def compute(*data) -> float: ...
+    def compute(*args) -> float: ...
 
 
 class Visualizer(Protocol):
@@ -98,7 +99,7 @@ class Visualizer(Protocol):
     
     """
     
-    def plot(self, *params) -> None: ...
+    def plot(self, *args) -> None: ...
 
 
 class Supervised:
@@ -110,7 +111,7 @@ class Supervised:
     target labels, and it learns to map the inputs to the correct outputs. 
     """
     
-    def __init__(self, *params) -> None: ...
+    def __init__(self, *args) -> None: ...
 
 
 class Unsupervised:
@@ -122,7 +123,7 @@ class Unsupervised:
     or relationships within the data.
     """
     
-    def __init__(self, *params) -> None: ...
+    def __init__(self, *args) -> None: ...
 
 
 class Distance:
@@ -130,7 +131,7 @@ class Distance:
     """
     In mathematics and machine learning, distance is a measure of how much "separation" 
     or "difference" there is between two points, objects, or distributions. Different 
-    types of distances serve various purposes, and they are used in different contexts. 
+    types of distances serve various purposes, and they are used in different contexts.
     
     Example
     -------
@@ -140,5 +141,29 @@ class Distance:
     """
     
     @staticmethod
-    def distance(*params) -> float: ...
+    def distance(*args) -> float: ...
+
+
+class Matrix(np.ndarray):
+
+    """
+    Matrix class that extends numpy.ndarray.
+
+    This class provides a way to create matrix objects that have all the capabilities 
+    of numpy arrays with the potential for additional functionalities and readability.
+    
+    Example
+    -------
+    >>> m = Matrix([1, 2, 3])
+    >>> isinstance(m, numpy.ndarray) # True
+    
+    """
+    
+    def __new__(cls, array_like: Any) -> 'Matrix':
+        if isinstance(array_like, list): obj = np.array(array_like)
+        else: obj = array_like    
+        return obj
+
+    def __array_finalize__(self, obj: Optional[np.ndarray]) -> None:
+        if obj is None: return
 

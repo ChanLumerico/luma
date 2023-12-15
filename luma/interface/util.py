@@ -1,6 +1,8 @@
 from typing import *
 import numpy as np
 
+from luma.interface.super import Matrix
+
 
 class TreeNode:
     
@@ -47,21 +49,21 @@ class NearestNeighbors:
     """
     
     def __init__(self,
-                 data: np.ndarray,
+                 data: Matrix,
                  n_neighbors: int) -> None:
         self.data = data
         self.n_neighbors = n_neighbors
         self._size = data.shape[0]
     
     @property
-    def index_matrix(self) -> np.ndarray:
+    def index_matrix(self) -> Matrix:
         data = self.data
         dist = np.linalg.norm(data[:, np.newaxis, :] - data, axis=2)
         sorted_indices = np.argsort(dist, axis=1)
         return sorted_indices[:, 1:self.n_neighbors + 1]
     
     @property
-    def adjacent_matrix(self) -> np.ndarray:
+    def adjacent_matrix(self) -> Matrix:
         indices = self.index_matrix
         adj_mat = np.zeros((self._size, self._size))
         for i in range(self._size):

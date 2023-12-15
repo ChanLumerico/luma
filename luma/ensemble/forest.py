@@ -2,6 +2,7 @@ from typing import *
 from scipy.stats import mode
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.classifier.tree import DecisionTreeClassifier
 from luma.regressor.tree import DecisionTreeRegressor
 from luma.interface.super import Estimator, Evaluator, Supervised
@@ -50,7 +51,7 @@ class RandomForestClassifier(Estimator, Supervised):
         self.trees = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'RandomForestClassifier':
+    def fit(self, X: Matrix, y: Matrix) -> 'RandomForestClassifier':
         m, n = X.shape
         if self.n_features == 'auto': 
             self.n_features = int(n ** 0.5)
@@ -85,14 +86,14 @@ class RandomForestClassifier(Estimator, Supervised):
             print(f'[Tree {i}/{self.n_trees}]')
             tree.print_tree()
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         preds = np.array([tree.predict(X) for tree in self.trees])
         majority, _ = mode(preds, axis=0)
         
         return majority.flatten()
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -156,7 +157,7 @@ class RandomForestRegressor(Estimator, Supervised):
         self.trees = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'RandomForestRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'RandomForestRegressor':
         m, n = X.shape
         if self.n_features == 'auto': 
             self.n_features = int(n ** 0.5)
@@ -191,14 +192,14 @@ class RandomForestRegressor(Estimator, Supervised):
             print(f'[Tree {i}/{self.n_trees}]')
             tree.print_tree()
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         preds = np.array([tree.predict(X) for tree in self.trees])
         average_predictions = np.mean(preds, axis=0)
         
         return average_predictions
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)

@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.super import Estimator, Evaluator
 from luma.interface.exception import NotFittedError
 
@@ -24,7 +25,7 @@ class GridSearchCV:
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> Estimator:
+    def fit(self, X: Matrix, y: Matrix) -> Estimator:
         best_score = None
         best_params = None
         param_combinations = self._get_param_combinations()
@@ -60,14 +61,14 @@ class GridSearchCV:
         self._fitted = True
         return self.best_model
 
-    def _cross_validation(self, X: np.ndarray, y: np.ndarray) -> list:
+    def _cross_validation(self, X: Matrix, y: Matrix) -> list:
         num_samples = X.shape[0]
         fold_size = num_samples // self.cv
         scores = []
 
         indices = np.arange(num_samples)
         np.random.shuffle(indices)
-
+        
         for i in range(self.cv):
             start = i * fold_size
             end = start + fold_size if i < self.cv - 1 else num_samples

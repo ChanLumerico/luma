@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Evaluator
 from luma.metric.regression import MeanSquaredError
@@ -28,7 +29,7 @@ class RidgeRegressor(Estimator):
         self.alpha = alpha
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'RidgeRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'RidgeRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         identity_matrix = np.identity(X.shape[1])
         self.coefficients = np.linalg.inv(X.T.dot(X) + self.alpha * identity_matrix)
@@ -36,12 +37,12 @@ class RidgeRegressor(Estimator):
         self._fitted = True
         return self
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return X.dot(self.coefficients)
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -79,10 +80,10 @@ class LassoRegressor(Estimator):
         self.verbose = verbose
         self._fitted = False
 
-    def _soft_threshold(self, x: np.ndarray, threshold: float) -> np.ndarray:
+    def _soft_threshold(self, x: Matrix, threshold: float) -> Matrix:
         return np.sign(x) * np.maximum(0, np.abs(x) - threshold)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'LassoRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'LassoRegressor':
         X = np.column_stack((np.ones(X.shape[0]), X))
         self.coefficients = np.zeros(X.shape[1])
         
@@ -100,12 +101,12 @@ class LassoRegressor(Estimator):
         self._fitted = True
         return self
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X = np.column_stack((np.ones(X.shape[0]), X))
         return X.dot(self.coefficients)
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -150,10 +151,10 @@ class ElasticNetRegressor(Estimator):
         self.coef_ = None
         self._fitted = False
         
-    def _soft_threshold(self, x: np.ndarray, alpha: float) -> np.ndarray:
+    def _soft_threshold(self, x: Matrix, alpha: float) -> Matrix:
         return np.sign(x) * np.maximum(np.abs(x) - alpha, 0)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'ElasticNetRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'ElasticNetRegressor':
         N, p = X.shape
         self.coef_ = np.zeros(p)
 
@@ -172,12 +173,12 @@ class ElasticNetRegressor(Estimator):
         self._fitted = True
         return self
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         if self.coef_ is None: raise ValueError()
         return X.dot(self.coef_)
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)

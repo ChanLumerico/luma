@@ -6,6 +6,7 @@ from scipy.spatial import KDTree
 from scipy.linalg import eigh, svd
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.reduction.linear import PCA
 from luma.interface.super import Transformer, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
@@ -48,7 +49,7 @@ class TSNE(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
         
-    def fit(self, X: np.ndarray) -> 'TSNE':
+    def fit(self, X: Matrix) -> 'TSNE':
         size = X.shape[0]
         P = self._P_joint_probabilities(X)
         y = np.random.normal(0.0, 1e-4, (size, self.n_components))
@@ -70,22 +71,22 @@ class TSNE(Transformer, Unsupervised):
         self._fitted = True
         return self
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return self.y
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
     
-    def _P_conditional(self, distances: np.ndarray, sigmas: np.ndarray) -> np.ndarray:
+    def _P_conditional(self, distances: Matrix, sigmas: Matrix) -> Matrix:
         exponent = np.exp(-distances / (2 * np.square(sigmas.reshape((-1,1)))))
         np.fill_diagonal(exponent, 0.0)
         exponent += 1e-8
         
         return exponent / exponent.sum(axis=1).reshape([-1,1])
     
-    def _P_joint_probabilities(self, X: np.ndarray) -> np.ndarray:
+    def _P_joint_probabilities(self, X: Matrix) -> Matrix:
         size = X.shape[0]
         distances = self._compute_pairwise_dist(X)
         sigmas = self._find_sigma_vector(distances)
@@ -93,14 +94,14 @@ class TSNE(Transformer, Unsupervised):
         
         return (conditional_prob + conditional_prob.T) / (2.0 * size)
     
-    def _Q_joint_probabilities(self, y: np.ndarray) -> np.ndarray:
+    def _Q_joint_probabilities(self, y: Matrix) -> Matrix:
         distances = self._compute_pairwise_dist(y)
         nominator = 1 / (1 + distances)
         np.fill_diagonal(nominator, 0.0)
         
         return nominator / np.sum(np.sum(nominator))
     
-    def _find_sigma_vector(self, distances: np.ndarray) -> np.ndarray:
+    def _find_sigma_vector(self, distances: Matrix) -> Matrix:
         N = distances.shape[0]
         opt_sigmas = np.zeros(N)
         
@@ -118,7 +119,7 @@ class TSNE(Transformer, Unsupervised):
     
     def _binary_search(self, func: Callable, 
                        tol: float = 1e-10, max_iter: int = 1000, 
-                       low: float = 1e-10, high: float = 1e3) -> np.ndarray:
+                       low: float = 1e-10, high: float = 1e3) -> Matrix:
         for _ in range(max_iter):
             guess = (high + low) / 2.0
             val = func(guess)
@@ -128,10 +129,10 @@ class TSNE(Transformer, Unsupervised):
                 return guess
         return guess
     
-    def _compute_pairwise_dist(self, X: np.ndarray) -> np.ndarray:
+    def _compute_pairwise_dist(self, X: Matrix) -> Matrix:
         return np.sum((X[None, :] - X[:, None]) ** 2, axis=2)
     
-    def _compute_gradient(self, P: np.ndarray, Q: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def _compute_gradient(self, P: Matrix, Q: Matrix, y: Matrix) -> Matrix:
         pq_diff = P - Q
         y_diff = np.expand_dims(y, axis=1) - np.expand_dims(y, axis=0)
         distances = self._compute_pairwise_dist(y)
@@ -139,7 +140,7 @@ class TSNE(Transformer, Unsupervised):
         
         return 4 * (np.expand_dims(pq_diff, 2) * y_diff * np.expand_dims(aux, 2)).sum(axis=1)
     
-    def _compute_perplexity(self, cond_matrix: np.ndarray) -> np.ndarray:
+    def _compute_perplexity(self, cond_matrix: Matrix) -> Matrix:
         entropy = -np.sum(cond_matrix * np.log2(cond_matrix), axis=1)
         return 2 ** entropy
     
@@ -176,7 +177,7 @@ class MDS(Transformer, Unsupervised):
         self.n_components = n_components
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'MDS':
+    def fit(self, X: Matrix) -> 'MDS':
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
         H = np.eye(n) - np.ones((n, n)) / n
@@ -193,7 +194,7 @@ class MDS(Transformer, Unsupervised):
         self.stress = self._compute_stress(D)
         return self
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         sqrt_eigvals = np.diag(np.sqrt(np.maximum(self.eigvals, 0)))
         return self.eigvecs.dot(sqrt_eigvals)
@@ -202,10 +203,10 @@ class MDS(Transformer, Unsupervised):
         self.fit(X)
         return self.transform()
     
-    def _compute_dissimilarity(self, X: np.ndarray) -> np.ndarray:
+    def _compute_dissimilarity(self, X: Matrix) -> Matrix:
         return squareform(pdist(X, metric='euclidean'))
 
-    def _compute_stress(self, D: np.ndarray) -> float:
+    def _compute_stress(self, D: Matrix) -> float:
         Z = self.transform()
         stress = np.sum((D - self._compute_dissimilarity(Z)) ** 2)
         stress /= np.sum(D ** 2)
@@ -245,7 +246,7 @@ class MetricMDS(Transformer, Unsupervised):
         self.p = p
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> 'MetricMDS':
+    def fit(self, X: Matrix) -> 'MetricMDS':
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
         H = np.eye(n) - np.ones((n, n)) / n
@@ -262,7 +263,7 @@ class MetricMDS(Transformer, Unsupervised):
         self.stress = self._compute_stress(D)
         return self
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         sqrt_eigvals = np.diag(np.sqrt(np.maximum(self.eigvals, 0)))
         return self.eigvecs.dot(sqrt_eigvals)
@@ -271,7 +272,7 @@ class MetricMDS(Transformer, Unsupervised):
         self.fit(X)
         return self.transform()
     
-    def _compute_dissimilarity(self, X: np.ndarray) -> np.ndarray:
+    def _compute_dissimilarity(self, X: Matrix) -> Matrix:
         m, _ = X.shape
         cov = np.cov(X, rowvar=False)
         D = np.ones((m, m))
@@ -290,7 +291,7 @@ class MetricMDS(Transformer, Unsupervised):
         
         return D
 
-    def _compute_stress(self, D: np.ndarray) -> float:
+    def _compute_stress(self, D: Matrix) -> float:
         Z = self.transform()
         stress = np.sum((D - self._compute_dissimilarity(Z)) ** 2)
         stress /= np.sum(D ** 2)
@@ -335,7 +336,7 @@ class LandmarkMDS(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'LandmarkMDS':
+    def fit(self, X: Matrix) -> 'LandmarkMDS':
         self.landmarks = self._initialize_landmarks(X)
         D = self._compute_dissimilarity(self.landmarks)
         n = D.shape[0]
@@ -356,7 +357,7 @@ class LandmarkMDS(Transformer, Unsupervised):
         self._fitted = True
         return self
     
-    def _initialize_landmarks(self, X: np.ndarray) -> np.ndarray:
+    def _initialize_landmarks(self, X: Matrix) -> Matrix:
         m, _ = X.shape
         if self.method == 'random':
             if self.verbose: print(f'[LMDS] Initializing landmarks with random choice')
@@ -383,15 +384,15 @@ class LandmarkMDS(Transformer, Unsupervised):
         else: raise UnsupportedParameterError(self.method)
         return landmark
     
-    def _compute_dissimilarity(self, X: np.ndarray) -> np.ndarray:
+    def _compute_dissimilarity(self, X: Matrix) -> Matrix:
         return squareform(pdist(X, metric='euclidean'))
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         L_sharp = self.eigvecs / np.sqrt(self.eigvals)
         return 0.5 * self.mean_diff.dot(L_sharp)
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
     
@@ -429,7 +430,7 @@ class LLE(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'LLE':
+    def fit(self, X: Matrix) -> 'LLE':
         m, _ = X.shape
         distances = np.zeros((m, m))
         for i in range(m):
@@ -456,12 +457,12 @@ class LLE(Transformer, Unsupervised):
         self._fitted = True
         return self
         
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         indices = np.argsort(self.eigvals)[1:self.n_components + 1]
         return self.eigvecs[:, indices]
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
 
@@ -501,7 +502,7 @@ class ModifiedLLE(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> 'ModifiedLLE':
+    def fit(self, X: Matrix) -> 'ModifiedLLE':
         m, _ = X.shape
         distances = np.zeros((m, m))
         for i in range(m):
@@ -528,12 +529,12 @@ class ModifiedLLE(Transformer, Unsupervised):
         self._fitted = True
         return self
 
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         indices = np.argsort(self.eigvals)[1 : self.n_components + 1]
         return self.eigvecs[:, indices]
 
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
     
@@ -573,7 +574,7 @@ class HessianLLE(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'HessianLLE':
+    def fit(self, X: Matrix) -> 'HessianLLE':
         m, _ = X.shape
         dp = self.n_components * (self.n_components + 1) // 2
         
@@ -624,15 +625,15 @@ class HessianLLE(Transformer, Unsupervised):
         self._fitted = True
         return self
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return np.array(self.Y * self.R).T
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
     
-    def _construct_graph(self, X: np.ndarray) -> np.ndarray:
+    def _construct_graph(self, X: Matrix) -> Matrix:
         m, _ = X.shape
         kd_tree = KDTree(X.copy())
         index_mat = np.ones((m, self.n_neighbors), dtype=int)
@@ -686,7 +687,7 @@ class SammonMapping(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'SammonMapping':
+    def fit(self, X: Matrix) -> 'SammonMapping':
         m, _ = X.shape
         X_dist = cdist(X, X)
         scale = 0.5 / X_dist.sum()
@@ -761,17 +762,17 @@ class SammonMapping(Transformer, Unsupervised):
         self._fitted = True
         return self
     
-    def _fill_diagnoal(self, matrix: np.ndarray, value: float) -> None:
+    def _fill_diagnoal(self, matrix: Matrix, value: float) -> None:
         np.fill_diagonal(matrix, value)
     
-    def _remove_inf(self, matrix: np.ndarray, filter: np.ndarray) -> None:
+    def _remove_inf(self, matrix: Matrix, filter: Matrix) -> None:
         matrix[np.isinf(filter)] = 0
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return self.Y
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
 
@@ -811,7 +812,7 @@ class LaplacianEigenmap(Transformer, Unsupervised):
         self.embedding = None
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'LaplacianEigenmap':
+    def fit(self, X: Matrix) -> 'LaplacianEigenmap':
         pairwise = cdist(X, X)
         weights = np.exp(-pairwise / (2 * self.sigma ** 2))
         np.fill_diagonal(weights, 0)
@@ -827,18 +828,18 @@ class LaplacianEigenmap(Transformer, Unsupervised):
         self._fitted = True
         return self
 
-    def _compute_laplacian(self, W: np.ndarray) -> np.ndarray:
+    def _compute_laplacian(self, W: Matrix) -> Matrix:
         return np.diag(np.sum(W, axis=1)) - W
     
-    def _normalize_laplacian(self, W: np.ndarray, L: np.ndarray) -> np.ndarray:
+    def _normalize_laplacian(self, W: Matrix, L: Matrix) -> Matrix:
         D_sqrt_inv = np.linalg.inv(np.sqrt(np.diag(np.sum(W, axis=1))))
         return D_sqrt_inv.dot(L).dot(D_sqrt_inv)
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return self.embedding
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
 
@@ -880,7 +881,7 @@ class Isomap(Transformer, Unsupervised):
         self.metric = metric
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'Isomap':
+    def fit(self, X: Matrix) -> 'Isomap':
         self.adj = self._make_adjacency(X)
         if np.isinf(self.adj).any(): 
             print(f'[Isomap] Too narrow bin size with epsilon of {self.epsilon}!')
@@ -898,7 +899,7 @@ class Isomap(Transformer, Unsupervised):
         self._fitted = True
         return self
 
-    def _make_adjacency(self, X: np.ndarray) -> np.ndarray:
+    def _make_adjacency(self, X: Matrix) -> Matrix:
         m, _ = X.shape
         distance = cdist(X, X, metric=self.metric)
         adjacency = np.zeros((m, m)) + np.inf
@@ -912,11 +913,11 @@ class Isomap(Transformer, Unsupervised):
         else: raise UnsupportedParameterError(self.algorithm)
         return path_mat
 
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return self.eigvecs.dot(np.diag(np.sqrt(self.eigvals)))
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
     
@@ -958,7 +959,7 @@ class ConformalIsomap(Transformer, Unsupervised):
         self.algorithm = algorithm
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'ConformalIsomap':
+    def fit(self, X: Matrix) -> 'ConformalIsomap':
         self.adj = self._make_adjacency(X)
         if np.isinf(self.adj).any():
             print(f'[C-Isomap] Too narrow bin size with epsilon of {self.epsilon}!')
@@ -976,7 +977,7 @@ class ConformalIsomap(Transformer, Unsupervised):
         self._fitted = True
         return self
     
-    def _make_adjacency(self, X: np.ndarray) -> np.ndarray:
+    def _make_adjacency(self, X: Matrix) -> Matrix:
         m, _ = X.shape
         distance = cdist(X, X, metric='euclidean')
         adjacency = np.zeros((m, m)) + np.inf
@@ -996,11 +997,11 @@ class ConformalIsomap(Transformer, Unsupervised):
         else: raise UnsupportedParameterError(self.algorithm)
         return path_mat
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return self.eigvecs.dot(np.diag(np.sqrt(self.eigvals)))
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
 
@@ -1037,7 +1038,7 @@ class LTSA(Transformer, Unsupervised):
         self.n_neighbors = n_neighbors
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'LTSA':
+    def fit(self, X: Matrix) -> 'LTSA':
         m, n = X.shape
         self.neighbors, self.neighbor_indices = self._compute_neighborhood(X)
         M = np.zeros((m, m))
@@ -1065,22 +1066,22 @@ class LTSA(Transformer, Unsupervised):
         self._fitted = True
         return self
     
-    def _compute_neighborhood(self, X: np.ndarray) -> np.ndarray:
+    def _compute_neighborhood(self, X: Matrix) -> Matrix:
         distances = cdist(X, X, metric='euclidean')
         indices = np.argsort(distances, axis=1)[:, :self.n_neighbors]
         return X[indices], indices
     
-    def _find_null_space(self, M: np.ndarray) -> np.ndarray:
+    def _find_null_space(self, M: Matrix) -> Matrix:
         eigvals, eigvecs = eigh(M, subset_by_index=(1, self.n_components), 
                                 overwrite_a=True)
         indices = np.argsort(np.abs(eigvals))
         return eigvecs[:, indices]
     
-    def transform(self) -> np.ndarray:
+    def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return self._find_null_space(self._M)
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
 

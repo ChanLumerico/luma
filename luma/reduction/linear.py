@@ -2,6 +2,7 @@ from math import log
 from scipy.linalg import svd
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.super import Transformer, Unsupervised, Supervised
 from luma.interface.exception import NotFittedError, NotConvergedError
 
@@ -26,7 +27,7 @@ class PCA(Transformer, Unsupervised):
         self.n_components = n_components
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> 'PCA':
+    def fit(self, X: Matrix) -> 'PCA':
         self.mean = np.mean(X, axis=0)
         X_centered = X - self.mean
         covariance_matrix = np.cov(X_centered, rowvar=False)
@@ -46,12 +47,12 @@ class PCA(Transformer, Unsupervised):
         self._fitted = True
         return self
 
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X_centered = X - self.mean
         return np.dot(X_centered, self.eigenvectors)
 
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform(X)
 
@@ -77,7 +78,7 @@ class LDA(Transformer, Supervised):
         self.n_components = n_components
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'LDA':
+    def fit(self, X: Matrix, y: Matrix) -> 'LDA':
         self.classes = np.unique(y)
         self.class_means = [np.mean(X[y == c], axis=0) for c in self.classes]
 
@@ -110,11 +111,11 @@ class LDA(Transformer, Supervised):
         self._fitted = True
         return self
 
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return np.dot(X, self.eigenvectors)
 
-    def fit_transform(self, X: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix, y: Matrix) -> Matrix:
         self.fit(X, y)
         return self.transform(X)
 
@@ -141,7 +142,7 @@ class TruncatedSVD(Transformer, Unsupervised):
         self.n_components = n_components
         self._fitted = False
     
-    def fit(self, X: np.ndarray) -> 'TruncatedSVD':
+    def fit(self, X: Matrix) -> 'TruncatedSVD':
         mean = np.mean(X, axis=0)
         X_centered = X - mean
         U, S, VT = np.linalg.svd(X_centered, full_matrices=False)
@@ -152,13 +153,13 @@ class TruncatedSVD(Transformer, Unsupervised):
         self._fitted = True
         return self
     
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         mean = np.mean(X, axis=0)
         X_centered = X - mean
         return np.dot(X_centered, self.VT.T)
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform(X)
 
@@ -188,7 +189,7 @@ class FactorAnalysis(Transformer, Unsupervised):
                  n_components: int = None,
                  max_iter: int = 1000,
                  tol: float = 1e-5,
-                 noise_variance: np.ndarray | list = None,
+                 noise_variance: Matrix | list = None,
                  verbose: bool = False) -> None:
         self.n_components = n_components
         self.max_iter = max_iter
@@ -197,7 +198,7 @@ class FactorAnalysis(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> 'FactorAnalysis':
+    def fit(self, X: Matrix) -> 'FactorAnalysis':
         m, n = X.shape
         self.mean = X.mean(axis=0)
         X -= self.mean
@@ -245,14 +246,14 @@ class FactorAnalysis(Transformer, Unsupervised):
         return self
 
     
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         Ih = np.eye(len(self.W))
         W_psi = self.W / self.noise_variance if self.noise_variance else self.W
         cov = np.linalg.inv(Ih + W_psi.dot(self.W.T))
         return np.dot((X - self.mean).dot(W_psi.T), cov)
     
-    def fit_transform(self, X: np.ndarray) -> np.ndarray:
+    def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform(X)
     
@@ -260,7 +261,7 @@ class FactorAnalysis(Transformer, Unsupervised):
                    n_components: int = None,
                    max_iter: int = None,
                    tol: float = None,
-                   noise_variance: np.ndarray | list = None) -> None:
+                   noise_variance: Matrix | list = None) -> None:
         if n_components is not None: self.n_components = int(n_components)
         if max_iter is not None: self.max_iter = int(max_iter)
         if tol is not None: self.tol = float(tol)

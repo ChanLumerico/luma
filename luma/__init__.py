@@ -2,7 +2,7 @@ from luma.core.main import LUMA
 
 from luma.interface.exception import NotFittedError, NotConvergedError, UnsupportedParameterError
 from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
-from luma.interface.super import Supervised, Unsupervised, Distance
+from luma.interface.super import Supervised, Unsupervised, Distance, Matrix
 from luma.interface.util import TreeNode, NearestNeighbors
 
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
@@ -46,7 +46,7 @@ from luma.regressor.general import BetaRegressor
 from luma.regressor.general import InverseGaussianRegressor
 from luma.regressor.svm import SVR, KernelSVR
 from luma.regressor.tree import DecisionTreeRegressor
-from luma.regressor.knn import KNNRegressor
+from luma.regressor.knn import KNNRegressor, AdaptiveKNNRegressor
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot
 from luma.visual.region import DecisionRegion, ClusteredRegion
@@ -60,7 +60,7 @@ if __name__ == '__main__':
     # luma.interface
     NotFittedError, NotConvergedError, UnsupportedParameterError
     Estimator, Transformer, Evaluator, Visualizer
-    Supervised, Unsupervised, Distance
+    Supervised, Unsupervised, Distance, Matrix
     TreeNode, NearestNeighbors
     
     # luma.classifier
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     BetaRegressor, InverseGaussianRegressor
     SVR, KernelSVR
     DecisionTreeRegressor
-    KNNRegressor
+    KNNRegressor, AdaptiveKNNRegressor
     
     # luma.visual
     CorrelationBar, CorrelationHeatMap, JointPlot

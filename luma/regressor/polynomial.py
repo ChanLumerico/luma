@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Evaluator
 from luma.metric.regression import MeanSquaredError
@@ -25,18 +26,18 @@ class PolynomialRegressor(Estimator):
             X_poly = np.hstack((X_poly, X ** d))
         return X_poly
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'PolynomialRegressor':
+    def fit(self, X: Matrix, y: Matrix) -> 'PolynomialRegressor':
         X_poly = self._generate_polynomial_features(X)
         self.coefficients = np.linalg.lstsq(X_poly, y, rcond=None)[0]
         self._fitted = True
         return self
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X_poly = self._generate_polynomial_features(X)
         return np.dot(X_poly, self.coefficients)
 
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)

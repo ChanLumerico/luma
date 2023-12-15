@@ -2,6 +2,7 @@ from typing import Tuple
 from collections import Counter
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.interface.util import TreeNode
@@ -37,14 +38,14 @@ class DecisionTreeClassifier(Estimator, Supervised):
         self.root = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'DecisionTreeClassifier':
+    def fit(self, X: Matrix, y: Matrix) -> 'DecisionTreeClassifier':
         _, self.n_features = X.shape
         self.root = self._grow_tree(X, y)
         
         self._fitted = True
         return self
 
-    def _grow_tree(self, X: np.ndarray, y: np.ndarray, 
+    def _grow_tree(self, X: Matrix, y: Matrix, 
                    depth: int = 0) -> TreeNode:
         _, n = X.shape
         if self._stopping_criteria(X, y, depth):
@@ -65,15 +66,15 @@ class DecisionTreeClassifier(Estimator, Supervised):
         
         return TreeNode(best_feature, best_thresh, left, right)
     
-    def _stopping_criteria(self, X: np.ndarray, y: np.ndarray, 
+    def _stopping_criteria(self, X: Matrix, y: Matrix, 
                            depth: int) -> bool:
         if depth >= self.max_depth: return True
         if len(np.unique(y)) == 1: return True
         if X.shape[0] < self.min_samples_split: return True
         return False
 
-    def _best_criteria(self, X: np.ndarray, y: np.ndarray, 
-                       indices: np.ndarray) -> Tuple[int, float]:
+    def _best_criteria(self, X: Matrix, y: Matrix, 
+                       indices: Matrix) -> Tuple[int, float]:
         best_gain = -1
         split_idx, split_thresh = 0, 0.0
         for idx in indices:
@@ -89,7 +90,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
 
         return split_idx, split_thresh
 
-    def _information_gain(self, X_col: np.ndarray, y: np.ndarray, 
+    def _information_gain(self, X_col: Matrix, y: Matrix, 
                           thresh: float) -> float:
         parent_entropy = self._entropy(y)
         left_indices, right_indices = self._split(X_col, thresh)
@@ -103,23 +104,23 @@ class DecisionTreeClassifier(Estimator, Supervised):
         ig = parent_entropy - child_entropy
         return ig
 
-    def _split(self, X_col: np.ndarray, thresh: float) -> Tuple[np.ndarray]:
+    def _split(self, X_col: Matrix, thresh: float) -> Tuple[Matrix]:
         left_indices = np.argwhere(X_col <= thresh).flatten()
         right_indices = np.argwhere(X_col > thresh).flatten()
         return left_indices, right_indices
 
-    def _traverse_tree(self, x: np.ndarray, node: TreeNode) -> float | None:
+    def _traverse_tree(self, x: Matrix, node: TreeNode) -> float | None:
         if node.isLeaf: return node.value
         if x[node.feature] <= node.threshold:
             return self._traverse_tree(x, node.left)
         return self._traverse_tree(x, node.right)
 
-    def _most_common_label(self, y: np.ndarray) -> int:
+    def _most_common_label(self, y: Matrix) -> int:
         counter = Counter(y)
         most_common = counter.most_common(1)[0][0]
         return most_common
     
-    def _entropy(self, y: np.ndarray) -> float:
+    def _entropy(self, y: Matrix) -> float:
         hist = np.bincount(y)
         ps = hist / len(y)
         return -np.sum([p * np.log2(p) for p in ps if p])
@@ -136,11 +137,11 @@ class DecisionTreeClassifier(Estimator, Supervised):
             self._print_tree_recursive(node.left, depth + 1)
             self._print_tree_recursive(node.right, depth + 1)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return np.array([self._traverse_tree(x, self.root) for x in X])
 
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)

@@ -1,6 +1,7 @@
 from scipy.spatial import distance_matrix
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.super import Estimator, Supervised, Evaluator
 from luma.interface.util import NearestNeighbors
 from luma.interface.exception import NotFittedError
@@ -33,13 +34,13 @@ class KNNClassifier(Estimator, Supervised):
         self._y = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'KNNClassifier':
+    def fit(self, X: Matrix, y: Matrix) -> 'KNNClassifier':
         self._neighbors = NearestNeighbors(X, self.n_neighbors)
         self._y = y
         self._fitted = True
         return self
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         predictions = []
         
@@ -52,7 +53,7 @@ class KNNClassifier(Estimator, Supervised):
 
         return np.array(predictions)
 
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -62,6 +63,23 @@ class KNNClassifier(Estimator, Supervised):
 
 
 class AdaptiveKNNClassifier(Estimator, Supervised):
+    
+    """
+    The Adaptive K-Nearest Neighbors (AdaKNN) Classifier is an extension 
+    of the conventional KNN algorithm for classification. It classifies a 
+    new data point based on the majority class among its neighbors, where 
+    the number of neighbors (k) is adaptively determined based on the local 
+    density of the training data. This adaptive approach allows the algorithm 
+    to be more flexible and effective, especially in datasets with varying 
+    densities.
+    
+    Parameters
+    ----------
+    ``n_density`` : Number of nearest neighbors to estimate the local density \n
+    ``min_neighbors`` : Minimum number of neighbors to be considered for averaging \n
+    ``max_neighbors`` : Maximum number of neighbors to be considered
+    
+    """
     
     def __init__(self, 
                  n_density: int = 10, 
@@ -74,7 +92,7 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
         self._y = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'AdaptiveKNNClassifier':
+    def fit(self, X: Matrix, y: Matrix) -> 'AdaptiveKNNClassifier':
         self._X = X
         self._y = y
         
@@ -88,7 +106,7 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
         self._fitted = True
         return self
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         dist_matrix = distance_matrix(X, self._X)
         
@@ -106,7 +124,7 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
 
         return np.array(predictions)
 
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)

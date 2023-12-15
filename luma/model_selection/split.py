@@ -1,15 +1,17 @@
 from typing import Tuple
 import numpy as np
 
+from luma.interface.super import Matrix
+
 
 __all__ = ['TrainTestSplit']
 
 
 class TrainTestSplit:
     @staticmethod
-    def split(X: np.ndarray, y: np.ndarray, 
+    def split(X: Matrix, y: Matrix, 
               test_size: float = 0.2, 
-              random_state: int = None) -> Tuple[np.ndarray]:
+              random_state: int = None) -> Tuple[Matrix]:
         if X.shape[0] != y.shape[0]:
             raise ValueError()
         

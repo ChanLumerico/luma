@@ -1,6 +1,7 @@
 from typing import *
 import numpy as np
 
+from luma.interface.super import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
@@ -42,7 +43,7 @@ class SVR(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'SVR':
+    def fit(self, X: Matrix, y: Matrix) -> 'SVR':
         m, n = X.shape
         id = np.arange(m)
         np.random.shuffle(id)
@@ -74,11 +75,11 @@ class SVR(Estimator, Supervised):
         self._fitted = True
         return self
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return np.dot(X, self.weight) + self.bias
 
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
@@ -137,7 +138,7 @@ class KernelSVR(Estimator, Supervised):
         self._kernel_func = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> 'KernelSVR':
+    def fit(self, X: Matrix, y: Matrix) -> 'KernelSVR':
         m, _ = X.shape
         self._set_kernel_func()
         self.alpha = np.random.random(m)
@@ -165,17 +166,17 @@ class KernelSVR(Estimator, Supervised):
         self._fitted = True
         return self
     
-    def _linear_kernel(self, xi: np.ndarray, xj: np.ndarray) -> np.ndarray:
+    def _linear_kernel(self, xi: Matrix, xj: Matrix) -> Matrix:
         return xi.dot(xj.T)
 
-    def _poly_kernel(self, xi: np.ndarray, xj: np.ndarray) -> np.ndarray:
+    def _poly_kernel(self, xi: Matrix, xj: Matrix) -> Matrix:
         return (self.coef + xi.dot(xj.T)) ** self.deg
 
-    def _rbf_kernel(self, xi: np.ndarray, xj: np.ndarray) -> np.ndarray:
+    def _rbf_kernel(self, xi: Matrix, xj: Matrix) -> Matrix:
         norm = np.linalg.norm(xi[:, np.newaxis] - xj[np.newaxis, :], axis=2)
         return np.exp(-self.gamma * norm ** 2)
 
-    def _sigmoid_kernel(self, xi: np.ndarray, xj: np.ndarray) -> np.ndarray:
+    def _sigmoid_kernel(self, xi: Matrix, xj: Matrix) -> Matrix:
         return np.tanh(2 * xi.dot(xj.T) + self.coef)
 
     def _set_kernel_func(self) -> None:
@@ -185,11 +186,11 @@ class KernelSVR(Estimator, Supervised):
         elif self.kernel == 'sigmoid': self._kernel_func = self._sigmoid_kernel
         else: raise UnsupportedParameterError(self.kernel)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return (self.alpha * self._y).dot(self._kernel_func(self._X, X)) + self.bias
     
-    def score(self, X: np.ndarray, y: np.ndarray, 
+    def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
