@@ -1,11 +1,10 @@
-from typing import *
+from typing import Any
 import sys
 
 
 __all__ = ['LUMA']
 
 
-@final
 class LUMA:
 
     def __init__(self) -> None: ...

@@ -3,7 +3,7 @@ import pickle
 import os
 
 from luma.interface.super import Estimator, Transformer
-from luma.interface.exception import ModelExtensionError
+from luma.interface.exception import ModelExtensionError, UnsupportedParameterError
 
 MODEL_EXTENSION = '.luma'
 
@@ -23,7 +23,10 @@ class ModelPorter:
              path: str,
              filename: str | Literal['auto'] = 'auto',
              replace: bool = False) -> str:
+        if not isinstance(model, (Estimator, Transformer)):
+            raise UnsupportedParameterError(model)
         self._model_out = model
+        
         if not self._model_out._fitted:
             print(f"[ModelPorter] {type(self._model_out).__name__}",
                   "is not fitted! Saving unfitted model.")

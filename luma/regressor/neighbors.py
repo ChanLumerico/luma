@@ -7,6 +7,7 @@ from luma.interface.util import NearestNeighbors
 from luma.interface.exception import NotFittedError
 from luma.metric.regression import MeanSquaredError
 
+
 __all__ = ['KNNRegressor', 'AdaptiveKNNRegressor']
 
 

@@ -15,7 +15,7 @@ class DecisionRegion(Visualizer):
                  X: Matrix, 
                  y: Matrix, 
                  title: str = '', 
-                 xlabel: str = r'$x_2$', 
+                 xlabel: str = r'$x_1$', 
                  ylabel: str = r'$x_2$',
                  cmap: str = 'rainbow',
                  alpha: float = 0.7) -> None:
@@ -64,7 +64,7 @@ class ClusteredRegion(Visualizer):
                  estimator: Estimator, 
                  X: Matrix, 
                  title: str = '', 
-                 xlabel: str = r'$x_2$', 
+                 xlabel: str = r'$x_1$', 
                  ylabel: str = r'$x_2$',
                  cmap: str = 'rainbow',
                  alpha: float = 0.7) -> None:

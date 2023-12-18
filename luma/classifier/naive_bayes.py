@@ -85,6 +85,8 @@ class GaussianNaiveBayes(Estimator, Supervised):
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
 
+    def set_params(self) -> None: ...
+
 
 class BernoulliNaiveBayes(Estimator, Supervised):
     
@@ -145,4 +147,6 @@ class BernoulliNaiveBayes(Estimator, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
+    
+    def set_params(self) -> None: ...
 

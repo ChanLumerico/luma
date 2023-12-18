@@ -1,4 +1,3 @@
-from typing import *
 import numpy as np
 
 from luma.interface.util import Matrix
@@ -38,6 +37,8 @@ class StandardScaler(Transformer):
     def inverse_transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return (X * self.std) + self.mean
+    
+    def set_params(self) -> None: ...
 
 
 class MinMaxScaler(Transformer):
@@ -47,6 +48,11 @@ class MinMaxScaler(Transformer):
     to rescale features to a specific range, typically between 0 and 1. 
     The purpose of MinMax scaling is to transform the features in a way 
     that they fall within a specific interval.
+    
+    Parameters
+    ----------
+    ``feature_range`` : Range to be scaled
+    
     """
     
     def __init__(self, feature_range: tuple = (0, 1)) -> None:

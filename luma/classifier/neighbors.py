@@ -8,7 +8,8 @@ from luma.interface.exception import NotFittedError
 from luma.metric.classification import Accuracy
 
 
-__all__ = ['KNNClassifier', 'AdaptiveKNNClassifier']
+__all__ = ['KNNClassifier', 'AdaptiveKNNClassifier', 
+           'WeightedKNNClassifier']
 
 
 class KNNClassifier(Estimator, Supervised):
@@ -137,3 +138,6 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
         if min_neighbors is not None: self.min_neighbors = int(min_neighbors)
         if max_neighbors is not None: self.max_neighbors = int(max_neighbors)
 
+
+class WeightedKNNClassifier(Estimator, Supervised):
+    ...

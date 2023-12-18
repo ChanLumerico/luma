@@ -1,11 +1,14 @@
-from typing import *
+from abc import *
+from typing import Any
+
+from luma.core.main import LUMA
 
 
 __all__ = ['Estimator', 'Transformer', 'Evaluator', 'Visualizer', 
            'Supervised', 'Unsupervised', 'Distance']
 
 
-class Estimator(Protocol):
+class Estimator(LUMA, metaclass=ABCMeta):
     
     """
     An estimator is a mathematical model or algorithm 
@@ -24,16 +27,20 @@ class Estimator(Protocol):
     
     """
     
+    @abstractmethod
     def fit(self, *args) -> 'Estimator': ...
     
+    @abstractmethod
     def predict(self, *args) -> Any: ...
     
+    @abstractmethod
     def score(self, *args) -> float: ...
     
+    @abstractmethod
     def set_params(self, *args) -> None: ...
 
 
-class Transformer(Protocol):
+class Transformer(LUMA, metaclass=ABCMeta):
     
     """
     A transformer (preprocessor) is a component or set of operations used to prepare and 
@@ -55,16 +62,20 @@ class Transformer(Protocol):
     
     """
     
+    @abstractmethod
     def fit(self, *args) -> 'Transformer': ...
     
+    @abstractmethod
     def transform(self, *args) -> Any: ...
     
+    @abstractmethod
     def fit_transform(self, *args) -> Any: ...
     
+    @abstractmethod
     def set_params(self, *args) -> None: ...
 
 
-class Evaluator(Protocol):
+class Evaluator(LUMA, metaclass=ABCMeta):
     
     """
     Evaluators, a.k.a. metrics are quantitative measures used to assess the performance 
@@ -79,11 +90,11 @@ class Evaluator(Protocol):
     
     """
     
-    @staticmethod
+    @abstractstaticmethod
     def compute(*args) -> float: ...
 
 
-class Visualizer(Protocol):
+class Visualizer(LUMA, metaclass=ABCMeta):
     
     """
     A visualizer is a tool that helps visualize and understand various aspects 
@@ -98,10 +109,11 @@ class Visualizer(Protocol):
     
     """
     
+    @abstractmethod
     def plot(self, *args) -> None: ...
 
 
-class Supervised:
+class Supervised(LUMA):
     
     """
     Supervised learning is a type of machine learning where the algorithm learns 
@@ -113,7 +125,7 @@ class Supervised:
     def __init__(self, *args) -> None: ...
 
 
-class Unsupervised:
+class Unsupervised(LUMA):
     
     """
     Unsupervised learning is a machine learning paradigm where the algorithm 
@@ -125,7 +137,7 @@ class Unsupervised:
     def __init__(self, *args) -> None: ...
 
 
-class Distance:
+class Distance(LUMA, metaclass=ABCMeta):
     
     """
     In mathematics and machine learning, distance is a measure of how much "separation" 
@@ -139,6 +151,6 @@ class Distance:
     
     """
     
-    @staticmethod
+    @abstractstaticmethod
     def distance(*args) -> float: ...
 
