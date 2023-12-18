@@ -1,8 +1,10 @@
 .DS_Store
 *.pyc
+*.luma
 setup.py
 build/
 dist/
 example/
 luma_ml.egg-info/
 version_ico/
+__pycache__/
