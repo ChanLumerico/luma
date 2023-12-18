@@ -1,7 +1,5 @@
 from typing import *
 
-from luma.interface.util import Matrix
-
 
 __all__ = ['Estimator', 'Transformer', 'Evaluator', 'Visualizer', 
            'Supervised', 'Unsupervised', 'Distance']
