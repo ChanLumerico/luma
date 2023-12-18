@@ -2,7 +2,7 @@ from math import log
 from scipy.linalg import svd
 import numpy as np
 
-from luma.interface.super import Matrix
+from luma.interface.util import Matrix
 from luma.interface.super import Transformer, Unsupervised, Supervised
 from luma.interface.exception import NotFittedError, NotConvergedError
 

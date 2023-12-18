@@ -2,7 +2,7 @@ from typing import *
 import matplotlib.pyplot as plt
 import numpy as np
 
-from luma.interface.super import Matrix
+from luma.interface.util import Matrix
 from luma.interface.super import Visualizer, Estimator
 
 

@@ -5,6 +5,7 @@ import sys
 __all__ = ['LUMA']
 
 
+@final
 class LUMA:
 
     def __init__(self) -> None: ...

@@ -6,7 +6,7 @@ from scipy.spatial import KDTree
 from scipy.linalg import eigh, svd
 import numpy as np
 
-from luma.interface.super import Matrix
+from luma.interface.util import Matrix
 from luma.reduction.linear import PCA
 from luma.interface.super import Transformer, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError

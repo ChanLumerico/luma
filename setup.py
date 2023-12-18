@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="luma-ml",
-    version='0.2.2',
+    version='0.2.3',
     author="ChanLumerico",
     author_email="greensox284@gmail.com",
     description="Custom-made powerful and light Python machine learning module",

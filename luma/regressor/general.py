@@ -2,7 +2,7 @@ from typing import *
 from scipy.special import psi
 import numpy as np
 
-from luma.interface.super import Matrix
+from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError

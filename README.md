@@ -7,7 +7,6 @@ various machine learning tasks. It is specifically created to enhance the ease o
 building, training, and deploying machine learning models while offering extensive 
 customization options for data scientists and developers.
 
-
 ## LUMA.classifier
 <!-- ------------------- -->
 The `LUMA.classifier` submodule is a comprehensive toolkit for building, training,
@@ -78,7 +77,7 @@ users gain insights from their machine learning models and communicate results e
 ##
 
 ### Latest Version
-`0.2.2`
+`0.2.3`
 
 ### Dependencies
 `NumPy`, `SciPy`, `Matplotlib`, `Seaborn`

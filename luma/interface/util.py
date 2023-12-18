@@ -1,7 +1,32 @@
 from typing import *
 import numpy as np
 
-from luma.interface.super import Matrix
+
+__all__ = ['Matrix', 'TreeNode', 'NearestNeighbors']
+
+
+class Matrix(np.ndarray):
+
+    """
+    Internal class that extends numpy.ndarray.
+
+    This class provides a way to create matrix objects that have all the capabilities 
+    of numpy arrays with the potential for additional functionalities and readability.
+    
+    Example
+    -------
+    >>> m = Matrix([1, 2, 3])
+    >>> isinstance(m, numpy.ndarray) # True
+    
+    """
+    
+    def __new__(cls, array_like: Any) -> 'Matrix':
+        if isinstance(array_like, list): obj = np.array(array_like)
+        else: obj = array_like    
+        return obj
+
+    def __array_finalize__(self, obj: Optional[np.ndarray]) -> None:
+        if obj is None: return
 
 
 class TreeNode:

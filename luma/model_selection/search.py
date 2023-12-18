@@ -1,15 +1,15 @@
 from typing import *
 import numpy as np
 
-from luma.interface.super import Matrix
-from luma.interface.super import Estimator, Evaluator
+from luma.interface.util import Matrix
+from luma.interface.super import Estimator, Evaluator, Optimizer
 from luma.interface.exception import NotFittedError
 
 
 __all__ = ['GridSearchCV']
 
 
-class GridSearchCV:
+class GridSearchCV(Optimizer):
     def __init__(self, 
                  model: Estimator, 
                  param_grid: dict, 

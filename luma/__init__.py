@@ -1,15 +1,16 @@
 from luma.core.main import LUMA
 
-from luma.interface.exception import NotFittedError, NotConvergedError, UnsupportedParameterError
+from luma.interface.exception import NotFittedError, NotConvergedError
+from luma.interface.exception import UnsupportedParameterError, ModelExtensionError
 from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
-from luma.interface.super import Supervised, Unsupervised, Distance, Matrix
-from luma.interface.util import TreeNode, NearestNeighbors
+from luma.interface.super import Supervised, Unsupervised, Distance
+from luma.interface.util import Matrix, TreeNode, NearestNeighbors
 
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
 from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
 from luma.classifier.svm import SVC, KernelSVC
 from luma.classifier.tree import DecisionTreeClassifier
-from luma.classifier.knn import KNNClassifier, AdaptiveKNNClassifier
+from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier
 
 from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 
@@ -46,67 +47,89 @@ from luma.regressor.general import BetaRegressor
 from luma.regressor.general import InverseGaussianRegressor
 from luma.regressor.svm import SVR, KernelSVR
 from luma.regressor.tree import DecisionTreeRegressor
-from luma.regressor.knn import KNNRegressor, AdaptiveKNNRegressor
+from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot
 from luma.visual.region import DecisionRegion, ClusteredRegion
 
+from luma.migrate.port import ModelPorter
+
 
 if __name__ == '__main__':
     
-    # luma.core
+    # ------------------- [ luma.core ] ------------------------
     LUMA
     
-    # luma.interface
-    NotFittedError, NotConvergedError, UnsupportedParameterError
-    Estimator, Transformer, Evaluator, Visualizer
-    Supervised, Unsupervised, Distance, Matrix
-    TreeNode, NearestNeighbors
+    # ----------------- [ luma.interface ] ---------------------
+    NotFittedError, NotConvergedError
+    UnsupportedParameterError, ModelExtensionError
     
-    # luma.classifier
+    Estimator, Transformer, Evaluator, Visualizer
+    Supervised, Unsupervised, Distance
+    
+    Matrix, TreeNode, NearestNeighbors
+    
+    # ---------------- [ luma.classifier ] ---------------------
     LogisticRegressor, SoftmaxRegressor
+    
     GaussianNaiveBayes, BernoulliNaiveBayes
+    
     SVC, KernelSVC
+    
     DecisionTreeClassifier
+    
     KNNClassifier, AdaptiveKNNClassifier
     
-    # luma.clustering
+    # ----------------- [ luma.clustering ] --------------------
     KMeansClustering, KMeansClusteringPlus, KMediansClustering
     
-    # luma.ensemble
+    # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor
     
-    # luma.metric
-    Accuracy, Precision, Recall, F1Score, Specificity, AUCCurveROC, Complex
+    # ------------------ [ luma.metric ] -----------------------
+    Accuracy, Precision, Recall, F1Score, Specificity, 
+    AUCCurveROC, Complex
+    
     MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
     MeanAbsolutePercentageError, RSquaredScore, Complex
+    
     Euclidean, Manhattan, Chebyshev, Minkowski
     CosineSimilarity, Correlation, Mahalanobis
     
-    # luma.module_selection
+    # -------------- [ luma.module_selection ] -----------------
     TrainTestSplit, GridSearchCV
     
-    # luma.preprocessing
+    # ---------------- [ luma.preprocessing ] ------------------
     StandardScaler, MinMaxScaler
     
-    # luma.reduction
+    # ----------------- [ luma.reduction ] ---------------------
     PCA, LDA, TruncatedSVD, FactorAnalysis
+    
     KernelPCA
+    
     TSNE, SammonMapping, LaplacianEigenmap
     MDS, MetricMDS, LandmarkMDS
     LLE, ModifiedLLE, HessianLLE, LTSA
     Isomap, ConformalIsomap
     
-    # luma.regression
+    # ---------------- [ luma.regression ] ---------------------
     RidgeRegressor, LassoRegressor, ElasticNetRegressor
+    
     PolynomialRegressor
+    
     PoissonRegressor, NegativeBinomialRegressor, GammaRegressor
     BetaRegressor, InverseGaussianRegressor
+    
     SVR, KernelSVR
+    
     DecisionTreeRegressor
+    
     KNNRegressor, AdaptiveKNNRegressor
     
-    # luma.visual
+    # ------------------- [ luma.visual ] ----------------------
     CorrelationBar, CorrelationHeatMap, JointPlot
+    
     DecisionRegion, ClusteredRegion
-
+    
+    # ------------------ [ luma.migrate ] ----------------------
+    ModelPorter

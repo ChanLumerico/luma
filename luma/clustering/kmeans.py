@@ -1,7 +1,7 @@
 from typing import *
 import numpy as np
 
-from luma.interface.super import Matrix
+from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Evaluator, Unsupervised
 from luma.metric.classification import Accuracy

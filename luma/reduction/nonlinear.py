@@ -2,7 +2,7 @@ from typing import *
 from scipy.linalg import eigh
 import numpy as np
 
-from luma.interface.super import Matrix
+from luma.interface.util import Matrix
 from luma.interface.super import Transformer, Unsupervised
 from luma.interface.exception import NotFittedError
 
