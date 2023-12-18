@@ -1,6 +1,6 @@
 .DS_Store
 *.pyc
-__setup__.py
+setup.py
 build/
 dist/
 example/
