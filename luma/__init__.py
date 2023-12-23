@@ -10,7 +10,7 @@ from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
 from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
 from luma.classifier.svm import SVC, KernelSVC
 from luma.classifier.tree import DecisionTreeClassifier
-from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier
+from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier, WeightedKNNClassifier
 
 from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 
@@ -47,7 +47,7 @@ from luma.regressor.general import BetaRegressor
 from luma.regressor.general import InverseGaussianRegressor
 from luma.regressor.svm import SVR, KernelSVR
 from luma.regressor.tree import DecisionTreeRegressor
-from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor
+from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor, WeightedKNNRegressor
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot
 from luma.visual.region import DecisionRegion, ClusteredRegion
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     
     DecisionTreeClassifier
     
-    KNNClassifier, AdaptiveKNNClassifier
+    KNNClassifier, AdaptiveKNNClassifier, WeightedKNNClassifier
     
     # ----------------- [ luma.clustering ] --------------------
     KMeansClustering, KMeansClusteringPlus, KMediansClustering
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     
     DecisionTreeRegressor
     
-    KNNRegressor, AdaptiveKNNRegressor
+    KNNRegressor, AdaptiveKNNRegressor, WeightedKNNRegressor
     
     # ------------------- [ luma.visual ] ----------------------
     CorrelationBar, CorrelationHeatMap, JointPlot

@@ -8,7 +8,8 @@ from luma.interface.exception import NotFittedError
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['KNNRegressor', 'AdaptiveKNNRegressor']
+__all__ = ['KNNRegressor', 'AdaptiveKNNRegressor', 
+           'WeightedKNNRegressor']
 
 
 class KNNRegressor(Estimator, Supervised):
@@ -131,4 +132,56 @@ class AdaptiveKNNRegressor(Estimator, Supervised):
         if n_density is not None: self.n_density = int(n_density)
         if min_neighbors is not None: self.min_neighbors = int(min_neighbors)
         if max_neighbors is not None: self.max_neighbors = int(max_neighbors)
+
+
+class WeightedKNNRegressor(Estimator, Supervised):
+    
+    """
+    The Weighted KNN Regressor is an adaptation of the k-Nearest Neighbors algorithm
+    tailored for regression tasks, where neighbors influence the predicted value
+    based on their distance from the query point. Closer neighbors exert greater
+    influence due to higher weights, commonly calculated using inverse distance weighting.
+    This method improves prediction precision, particularly in datasets with
+    irregular distributions.
+    
+    Parameters
+    ----------
+    ``n_neighbors`` : Number of neighbors to be considered close
+    
+    """
+    
+    def __init__(self, n_neighbors: int = 5):
+        self.n_neighbors = n_neighbors
+        self._X = None
+        self._y = None
+        self._fitted = False
+
+    def fit(self, X: Matrix, y: Matrix) -> 'WeightedKNNRegressor':
+        self._X = X
+        self._y = y
+        
+        self._fitted = True
+        return self
+
+    def predict(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise not NotFittedError(self)
+        predictions = np.zeros(X.shape[0])
+        for i, x in enumerate(X):
+            distances = np.linalg.norm(self._X - x, axis=1)
+            nearest_neighbors = np.argsort(distances)[:self.n_neighbors]
+
+            weights = 1 / (distances[nearest_neighbors] + 1e-5)
+            weighted_sum = np.dot(weights, self._y[nearest_neighbors])
+            total_weight = np.sum(weights)
+            predictions[i] = weighted_sum / total_weight
+
+        return predictions
+
+    def score(self, X: Matrix, y: Matrix, 
+              metric: Evaluator = MeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
+    
+    def set_params(self, n_neighbors: int = None) -> None:
+        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
 
