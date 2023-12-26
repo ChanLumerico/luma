@@ -56,6 +56,13 @@ The `luma.model_selection` submodule streamlines the process of selecting the be
 model and optimizing hyperparameters. It offers tools for hyperparameter tuning, cross-validation, 
 and model selection, enabling users to find the optimal model configuration for their specific task.
 
+## luma.pipe
+<!-- --------------- -->
+The `luma.pipe` submodule is dedicated to creating and managing machine learning pipelines, streamlining 
+the process from data preprocessing to model evaluation. It offers a seamless interface for combining 
+different stages of machine learning workflows into a coherent and efficient pipeline. 
+This includes integrating preprocessing steps, model fitting, and post-processing tasks into a unified workflow.
+
 ## luma.preprocessing
 <!-- ---------------------- -->
 The `luma.preprocessing` submodule includes a variety of data preprocessing functions to ensure data 
