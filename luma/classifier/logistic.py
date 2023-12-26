@@ -33,7 +33,7 @@ class LogisticRegressor(Estimator, Supervised):
                  max_iter: int = 100, 
                  rho: float = 0.5, 
                  alpha: float = 0.01, 
-                 regularization: Literal['l1', 'l2', 'elastic_net'] = None,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
                  verbose: bool = False):
         self.learning_rate = learning_rate
         self.max_iter = max_iter
@@ -69,7 +69,7 @@ class LogisticRegressor(Estimator, Supervised):
     def _regularization_term(self) -> Matrix:
         if self.regularization == 'l1': return np.sign(self.theta)
         elif self.regularization == 'l2': return self.theta
-        elif self.regularization == 'elastic_net':
+        elif self.regularization == 'elastic-net':
             l1_term = np.sign(self.theta)
             l2_term = 2 * self.theta
             return (1 - self.rho) * l2_term + self.rho * l1_term
@@ -177,7 +177,7 @@ class SoftmaxRegressor(Estimator, Supervised):
     def _regularization_term(self) -> Matrix:
         if self.regularization == 'l1': return np.sign(self.theta)
         elif self.regularization == 'l2': return self.theta
-        elif self.regularization == 'elastic_net':
+        elif self.regularization == 'elastic-net':
             l1_term = np.sign(self.theta)
             l2_term = 2 * self.theta
             return (1 - self.rho) * l2_term + self.rho * l1_term

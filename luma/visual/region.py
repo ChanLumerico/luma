@@ -1,4 +1,4 @@
-from typing import *
+from typing import Literal
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -11,10 +11,10 @@ __all__ = ['DecisionRegion', 'ClusteredRegion']
 
 class DecisionRegion(Visualizer):
     def __init__(self, 
-                 estimator: Estimator, 
+                 estimator: Estimator,
                  X: Matrix, 
                  y: Matrix, 
-                 title: str = '', 
+                 title: str | Literal['auto'] = 'auto', 
                  xlabel: str = r'$x_1$', 
                  ylabel: str = r'$x_2$',
                  cmap: str = 'rainbow',
@@ -27,9 +27,11 @@ class DecisionRegion(Visualizer):
         self.ylabel = ylabel
         self.cmap = cmap
         self.alpha = alpha
+        
+        if self.title == 'auto':
+            self.title = type(self.estimator).__name__
 
     def plot(self, size: float = 250, scale: float = 10.0) -> None:
-        if self.X.shape[1] > 2: return
         x1_min, x1_max = self.X[:, 0].min(), self.X[:, 0].max()
         x2_min, x2_max = self.X[:, 1].min(), self.X[:, 1].max()
         delta_1, delta_2 = (x1_max - x1_min) / size, (x2_max - x2_min) / size
@@ -61,9 +63,9 @@ class DecisionRegion(Visualizer):
 
 class ClusteredRegion(Visualizer):
     def __init__(self, 
-                 estimator: Estimator, 
+                 estimator: Estimator,
                  X: Matrix, 
-                 title: str = '', 
+                 title: str | Literal['auto'] = 'auto', 
                  xlabel: str = r'$x_1$', 
                  ylabel: str = r'$x_2$',
                  cmap: str = 'rainbow',
@@ -75,9 +77,11 @@ class ClusteredRegion(Visualizer):
         self.ylabel = ylabel
         self.cmap = cmap
         self.alpha = alpha
+        
+        if self.title == 'auto':
+            self.title = type(self.estimator).__name__
     
     def plot(self, size: float = 250, scale: float = 10.0) -> None:
-        if self.X.shape[1] > 2: return
         x1_min, x1_max = self.X[:, 0].min() - 1, self.X[:, 0].max() + 1
         x2_min, x2_max = self.X[:, 1].min() - 1, self.X[:, 1].max() + 1
         delta_1, delta_2 = (x1_max - x1_min) / size, (x2_max - x2_min) / size

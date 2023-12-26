@@ -1,4 +1,4 @@
-from typing import *
+from typing import Any
 import numpy as np
 
 
@@ -25,7 +25,7 @@ class Matrix(np.ndarray):
         else: obj = array_like    
         return obj
 
-    def __array_finalize__(self, obj: Optional[np.ndarray]) -> None:
+    def __array_finalize__(self, obj: np.ndarray | None) -> None:
         if obj is None: return
 
 

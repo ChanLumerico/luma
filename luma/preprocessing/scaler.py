@@ -8,7 +8,7 @@ from luma.interface.exception import NotFittedError
 __all__ = ['StandardScaler', 'MinMaxScaler']
 
 
-class StandardScaler(Transformer):
+class StandardScaler(Transformer, Transformer.Feature):
     
     """
     Standard scaling is a data preprocessing technique to transform 
@@ -41,7 +41,7 @@ class StandardScaler(Transformer):
     def set_params(self) -> None: ...
 
 
-class MinMaxScaler(Transformer):
+class MinMaxScaler(Transformer, Transformer.Feature):
     
     """
     MinMax scaling (also known as Min-Max normalization)

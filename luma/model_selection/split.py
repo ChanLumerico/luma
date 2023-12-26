@@ -9,9 +9,11 @@ __all__ = ['TrainTestSplit']
 
 class TrainTestSplit:
     @staticmethod
-    def split(X: Matrix, y: Matrix, 
+    def split(X: Matrix, 
+              y: Matrix, 
               test_size: float = 0.2, 
-              random_state: int = None) -> Tuple[Matrix]:
+              random_state: int = None) -> Tuple[Matrix, Matrix,
+                                                 Matrix, Matrix]:
         if X.shape[0] != y.shape[0]:
             raise ValueError()
         

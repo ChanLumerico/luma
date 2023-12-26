@@ -49,6 +49,8 @@ from luma.regressor.svm import SVR, KernelSVR
 from luma.regressor.tree import DecisionTreeRegressor
 from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor, WeightedKNNRegressor
 
+from luma.pipe.pipeline import Pipeline
+
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot
 from luma.visual.region import DecisionRegion, ClusteredRegion
 
@@ -125,6 +127,9 @@ if __name__ == '__main__':
     DecisionTreeRegressor
     
     KNNRegressor, AdaptiveKNNRegressor, WeightedKNNRegressor
+    
+    # -------------------- [ luma.pipe ] -----------------------
+    Pipeline
     
     # ------------------- [ luma.visual ] ----------------------
     CorrelationBar, CorrelationHeatMap, JointPlot
