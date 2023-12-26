@@ -10,7 +10,7 @@ from luma.interface.exception import NotFittedError, NotConvergedError
 __all__ = ['PCA', 'LDA', 'TruncatedSVD', 'FactorAnalysis']
 
 
-class PCA(Transformer, Transformer.Feature, Unsupervised):
+class PCA(Transformer, Unsupervised):
     
     """
     PCA, or Principal Component Analysis, is a dimensionality 
@@ -60,7 +60,7 @@ class PCA(Transformer, Transformer.Feature, Unsupervised):
         if n_components is not None: self.n_components = int(n_components)
 
 
-class LDA(Transformer, Transformer.Feature, Supervised):
+class LDA(Transformer, Supervised):
     
     """
     Linear Discriminant Analysis (LDA) is a dimensionality reduction 
@@ -123,7 +123,7 @@ class LDA(Transformer, Transformer.Feature, Supervised):
         if n_components is not None: self.n_components = int(n_components)
 
 
-class TruncatedSVD(Transformer, Transformer.Feature, Unsupervised):
+class TruncatedSVD(Transformer, Unsupervised):
     
     """
     runcated Singular Value Decomposition (TruncatedSVD) is a linear dimensionality 
@@ -167,7 +167,7 @@ class TruncatedSVD(Transformer, Transformer.Feature, Unsupervised):
         if n_components is not None: self.n_components = int(n_components)
 
 
-class FactorAnalysis(Transformer, Transformer.Feature, Unsupervised):
+class FactorAnalysis(Transformer, Unsupervised):
     
     """
     Factor Analysis is a statistical method used to uncover latent factors 
