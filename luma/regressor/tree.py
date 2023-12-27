@@ -54,6 +54,10 @@ class DecisionTreeRegressor(Estimator, Supervised):
         feature_indices = np.arange(n)
         best_feature, best_thresh = self._best_criteria(X, y, feature_indices)
         left_indices, right_indices = self._split(X[:, best_feature], best_thresh)
+        
+        if len(left_indices) == 0 or len(right_indices) == 0:
+            leaf_value = np.mean(y)
+            return TreeNode(value=leaf_value)
 
         left = self._grow_tree(X[left_indices], y[left_indices], depth + 1)
         right = self._grow_tree(X[right_indices], y[right_indices], depth + 1)
@@ -65,10 +69,8 @@ class DecisionTreeRegressor(Estimator, Supervised):
         return TreeNode(best_feature, best_thresh, left, right)
 
     def _stopping_criteria(self, X: Matrix, depth: int) -> bool:
-        if depth >= self.max_depth:
-            return True
-        if X.shape[0] < self.min_samples_split:
-            return True
+        if depth >= self.max_depth: return True
+        if X.shape[0] < self.min_samples_split: return True
         return False
 
     def _best_criteria(self, X: Matrix, y: Matrix, 
