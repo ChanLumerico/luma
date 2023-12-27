@@ -20,7 +20,7 @@ class SimpleImputer(Transformer, Transformer.Feature):
         self.statistics = None
         self._fitted = False
 
-    def fit(self, X: np.ndarray) -> 'SimpleImputer':
+    def fit(self, X: Matrix) -> 'SimpleImputer':
         if self.strategy == 'mean':
             self.statistics = np.nanmean(X, axis=0)
         elif self.strategy == 'median':
@@ -42,7 +42,7 @@ class SimpleImputer(Transformer, Transformer.Feature):
         self._fitted = True
         return self
 
-    def transform(self, X: np.ndarray) -> np.ndarray:
+    def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: NotFittedError(self)
         X_imp = X.copy()
         for i, stat in enumerate(self.statistics):
