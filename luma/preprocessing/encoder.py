@@ -7,36 +7,43 @@ from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
 
 class OneHotEncoder(Transformer, Transformer.Feature):
-    def __init__(self):
+    def __init__(self, features: list = None):
         self.categories_ = None
+        self.features = features
         self._fitted = False
 
     def fit(self, X: Matrix) -> 'OneHotEncoder':
-        self.categories_ = [np.unique(col) for col in X.T]
+        if self.features is None:
+            self.features = range(X.shape[1])
+
+        self.categories_ = [np.unique(X[:, col]) for col in self.features]
         self._fitted = True
         return self
 
     def transform(self, X: Matrix) -> Matrix[int]:
         if not self._fitted: raise NotFittedError(self)
+
         X_out = []
-        for i, categories in enumerate(self.categories_):
-            label_to_index = {label: idx for idx, label in enumerate(categories)}
-            matrix = np.zeros((len(X), len(categories)))
-            
-            for j, item in enumerate(X[:, i]):
-                if item in label_to_index:
-                    matrix[j, label_to_index[item]] = 1
-                else:
-                    raise ValueError(f"Unknown label {item} found in column {i}")
-            
-            X_out.append(matrix)
+        for i, col in enumerate(X.T):
+            if i in self.features:
+                categories = self.categories_[self.features.index(i)]
+                label_to_index = {label: idx for idx, label in enumerate(categories)}
+                matrix = np.zeros((len(X), len(categories)))
+
+                for j, item in enumerate(col):
+                    if item in label_to_index: matrix[j, label_to_index[item]] = 1
+                    elif item is np.nan: continue
+                    else: raise ValueError(f"Unknown label {item} found in column {i}")
+                X_out.append(matrix)
+                
+            else: X_out.append(X[:, i].reshape(-1, 1))
 
         return np.hstack(X_out).astype(int)
 
     def fit_transform(self, X: Matrix) -> Matrix[int]:
         self.fit(X)
         return self.transform(X)
-    
+
     def set_params(self) -> None: ...
 
 

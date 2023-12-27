@@ -5,7 +5,8 @@ import pandas as pd
 from luma.interface.super import Visualizer
 
 
-__all__ = ['CorrelationHeatMap', 'CorrelationBar', 'JointPlot']
+__all__ = ['CorrelationHeatMap', 'CorrelationBar', 'JointPlot', 
+           'MissingProportion']
 
 
 class CorrelationHeatMap(Visualizer):
@@ -55,6 +56,25 @@ class JointPlot(Visualizer):
     def plot(self, color: str = 'tab:blue') -> None:    
         sns.jointplot(data=self.data, x=self.x, y=self.y, kind='reg', color=color)
         plt.title(f'{self.x} vs. {self.y}')
+        plt.tight_layout()
+        plt.show()
+
+
+class MissingProportion(Visualizer):
+    def __init__(self, data: pd.DataFrame):
+        self.data = data
+
+    def nan_proportions(self) -> pd.DataFrame:
+        nan_props = self.data.isna().mean()
+        return nan_props
+
+    def plot(self):
+        nan_props = self.nan_proportions()
+        sns.barplot(x=nan_props.index, y=nan_props.values, hue=self.data.columns)
+        plt.xticks(rotation=45)
+        plt.xlabel('Columns')
+        plt.ylabel('Proportion')
+        plt.title('Missing Value Proportions')
         plt.tight_layout()
         plt.show()
 
