@@ -65,7 +65,7 @@ class Pipeline:
     
     def __init__(self,
                  models: List[Tuple[str, T]] | List[T],
-                 param_dict: Dict[str, Any],
+                 param_dict: Dict[str, Any] = dict(),
                  verbose: bool = False) -> None:
         self.models: Dict[T] = dict()
         self.param_dict = param_dict
@@ -111,8 +111,10 @@ class Pipeline:
         if not self._fitted: raise NotFittedError(self)
         for model in self.transformers:
             if not transform: break
-            if isinstance(model, Transformer.Feature):
-                X = model.transform(X)
+            if isinstance(model, Transformer.Target | Transformer.Both):
+                continue
+            
+            X = model.transform(X)
         
         return self.estimator.predict(X)
     

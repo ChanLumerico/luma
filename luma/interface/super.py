@@ -68,7 +68,7 @@ class Transformer(LUMA, metaclass=ABCMeta):
         An inner class of `Transformer` dedicated to the processing and 
         handling of feature data in a dataset.
         
-        Default property for uninherited models.
+        Default class for uninherited models.
         """
         
     class Target:
@@ -156,7 +156,7 @@ class Unsupervised(LUMA):
     the algorithm's goal is to discover hidden patterns, structures, 
     or relationships within the data.
     
-    Default property for uninherited models.
+    Default class for uninherited models.
     """
     
     def __init__(self, *args) -> None: ...

@@ -26,8 +26,9 @@ from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 from luma.model_selection.split import TrainTestSplit
 from luma.model_selection.search import GridSearchCV
 
-from luma.preprocessing.scaler import StandardScaler
-from luma.preprocessing.scaler import MinMaxScaler
+from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
+from luma.preprocessing.encoder import OneHotEncoder, LabelEncoder, OrdinalEncoder
+from luma.preprocessing.imputer import SimpleImputer, KNNImputer, HotDeckImputer
 
 from luma.reduction.linear import PCA, LDA, TruncatedSVD, FactorAnalysis
 from luma.reduction.nonlinear import KernelPCA
@@ -36,9 +37,8 @@ from luma.reduction.manifold import MDS, MetricMDS, LandmarkMDS
 from luma.reduction.manifold import LLE, ModifiedLLE, HessianLLE, LTSA
 from luma.reduction.manifold import Isomap, ConformalIsomap
 
-from luma.regressor.linear import RidgeRegressor
-from luma.regressor.linear import LassoRegressor
-from luma.regressor.linear import ElasticNetRegressor
+from luma.regressor.linear import LinearRegressor
+from luma.regressor.linear import LassoRegressor, RidgeRegressor, ElasticNetRegressor
 from luma.regressor.polynomial import PolynomialRegressor
 from luma.regressor.general import PoissonRegressor
 from luma.regressor.general import NegativeBinomialRegressor
@@ -99,10 +99,16 @@ if __name__ == '__main__':
     CosineSimilarity, Correlation, Mahalanobis
     
     # -------------- [ luma.module_selection ] -----------------
-    TrainTestSplit, GridSearchCV
+    TrainTestSplit
+    
+    GridSearchCV
     
     # ---------------- [ luma.preprocessing ] ------------------
     StandardScaler, MinMaxScaler
+    
+    OneHotEncoder, LabelEncoder, OrdinalEncoder
+    
+    SimpleImputer, KNNImputer, HotDeckImputer
     
     # ----------------- [ luma.reduction ] ---------------------
     PCA, LDA, TruncatedSVD, FactorAnalysis
@@ -114,7 +120,8 @@ if __name__ == '__main__':
     LLE, ModifiedLLE, HessianLLE, LTSA
     Isomap, ConformalIsomap
     
-    # ---------------- [ luma.regression ] ---------------------
+    # ----------------- [ luma.regressor ] ---------------------
+    LinearRegressor
     RidgeRegressor, LassoRegressor, ElasticNetRegressor
     
     PolynomialRegressor

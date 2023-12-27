@@ -1,16 +1,16 @@
-from typing import *
 import numpy as np
 
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError
-from luma.interface.super import Estimator, Evaluator
+from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['RidgeRegressor', 'LassoRegressor', 'ElasticNetRegressor']
+__all__ = ['LinearRegressor', 'RidgeRegressor', 
+           'LassoRegressor', 'ElasticNetRegressor']
 
 
-class RidgeRegressor(Estimator):
+class RidgeRegressor(Estimator, Supervised):
     
     """
     Ridge regression is a linear regression technique used to 
@@ -51,7 +51,7 @@ class RidgeRegressor(Estimator):
         if alpha is not None: self.alpha = float(alpha)
 
 
-class LassoRegressor(Estimator):
+class LassoRegressor(Estimator, Supervised):
     
     """
     Lasso regression is a linear regression technique used for 
@@ -120,7 +120,7 @@ class LassoRegressor(Estimator):
         if learning_rate is not None: self.learning_rate = float(learning_rate)
 
 
-class ElasticNetRegressor(Estimator):
+class ElasticNetRegressor(Estimator, Supervised):
     
     """
     Elastic-Net regression is a linear regression technique 
@@ -192,4 +192,36 @@ class ElasticNetRegressor(Estimator):
         if rho is not None: self.rho = float(rho)
         if max_iter is not None: self.max_iter = int(max_iter)
         if learning_rate is not None: self.learning_rate = float(learning_rate)
+
+
+class LinearRegressor(Estimator, Supervised):
+    
+    """
+    An Ordinary Least Squares (OLS) Linear Regressor is a statistical method 
+    used in linear regression analysis. It estimates the coefficients of the 
+    linear equation, minimizing the sum of the squared differences between 
+    observed and predicted values. This results in a line of best fit through 
+    the data points in multidimensional space. OLS is widely used for its 
+    simplicity and efficiency in modeling linear relationships.
+    """
+    
+    def __init__(self):
+        self.coefficients = None
+        self._fitted = False
+
+    def fit(self, X: Matrix, y: Matrix) -> 'LinearRegressor':
+        X = np.hstack([np.ones((X.shape[0], 1)), X])
+        X_T = np.transpose(X)
+        self.coefficients = np.linalg.inv(X_T.dot(X)).dot(X_T).dot(y)
+        
+        self._fitted = True
+        return self
+
+    def predict(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        X = np.hstack([np.ones((X.shape[0], 1)), X])
+        
+        return X.dot(self.coefficients)
+
+    def set_params(self) -> None: ...
 
