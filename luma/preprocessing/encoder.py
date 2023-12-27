@@ -6,6 +6,9 @@ from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
 
+__all__ = ['OneHotEncoder', 'LabelEncoder', 'OrdinalEncoder']
+
+
 class OneHotEncoder(Transformer, Transformer.Feature):
     def __init__(self, features: list = None):
         self.categories_ = None
@@ -44,7 +47,8 @@ class OneHotEncoder(Transformer, Transformer.Feature):
         self.fit(X)
         return self.transform(X)
 
-    def set_params(self) -> None: ...
+    def set_params(self, features: list = None) -> None: 
+        if features is not None: self.features = features
 
 
 class LabelEncoder(Transformer, Transformer.Target):
@@ -76,18 +80,17 @@ class LabelEncoder(Transformer, Transformer.Target):
 
 class OrdinalEncoder(Transformer, Transformer.Feature):
     def __init__(self, 
-                 strategy: Literal['appear', 'alpha'] = 'appear'):
+                 strategy: Literal['occur', 'alpha'] = 'occur'):
         self.categories_ = None
         self.strategy = strategy
         self._fitted = False
 
     def fit(self, X: Matrix) -> 'OrdinalEncoder':
-        if self.strategy == 'appear':
+        if self.strategy == 'occur':
             self.categories_ = [np.unique(col, return_index=True)[0] for col in X.T]
         elif self.strategy == 'alpha':
             self.categories_ = [np.sort(np.unique(col)) for col in X.T]
-        else:
-            raise UnsupportedParameterError(self.strategy)
+        else: raise UnsupportedParameterError(self.strategy)
 
         self._fitted = True
         return self
@@ -97,12 +100,12 @@ class OrdinalEncoder(Transformer, Transformer.Feature):
         X_out = np.zeros(X.shape, dtype=int)
         
         for i, categories in enumerate(self.categories_):
-            category_to_index = {category: index for index, category in enumerate(categories)}
+            category_to_index = {category: index 
+                                 for index, category in enumerate(categories)}
             for j, item in enumerate(X[:, i]):
                 if item in category_to_index:
                     X_out[j, i] = category_to_index[item]
-                else:
-                    raise ValueError(f"Unknown label {item} found in column {i}")
+                else: raise ValueError(f"Unknown label {item} found in column {i}")
 
         return X_out
 

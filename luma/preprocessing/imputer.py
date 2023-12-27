@@ -1,5 +1,4 @@
 from typing import Literal
-from collections import Counter
 from scipy.spatial.distance import cdist
 from scipy.stats import mode
 import numpy as np
