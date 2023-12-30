@@ -13,6 +13,7 @@ from luma.classifier.tree import DecisionTreeClassifier
 from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier, WeightedKNNClassifier
 
 from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
+from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
@@ -29,6 +30,7 @@ from luma.model_selection.search import GridSearchCV
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
 from luma.preprocessing.encoder import OneHotEncoder, LabelEncoder, OrdinalEncoder
 from luma.preprocessing.imputer import SimpleImputer, KNNImputer, HotDeckImputer
+from luma.preprocessing.outlier import LocalOutlierFactor
 
 from luma.reduction.linear import PCA, LDA, TruncatedSVD, FactorAnalysis
 from luma.reduction.nonlinear import KernelPCA
@@ -85,6 +87,8 @@ if __name__ == '__main__':
     # ----------------- [ luma.clustering ] --------------------
     KMeansClustering, KMeansClusteringPlus, KMediansClustering
     
+    AgglomerativeClustering, DivisiveClustering
+    
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor
     
@@ -109,6 +113,8 @@ if __name__ == '__main__':
     OneHotEncoder, LabelEncoder, OrdinalEncoder
     
     SimpleImputer, KNNImputer, HotDeckImputer
+    
+    LocalOutlierFactor
     
     # ----------------- [ luma.reduction ] ---------------------
     PCA, LDA, TruncatedSVD, FactorAnalysis

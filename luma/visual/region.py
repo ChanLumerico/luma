@@ -18,7 +18,7 @@ class DecisionRegion(Visualizer):
                  xlabel: str = r'$x_1$', 
                  ylabel: str = r'$x_2$',
                  cmap: str = 'rainbow',
-                 alpha: float = 0.7) -> None:
+                 alpha: float = 0.4) -> None:
         self.estimator = estimator
         self.X = X
         self.y = y
@@ -45,7 +45,7 @@ class DecisionRegion(Visualizer):
         Z = Z.reshape(xx1.shape)
         
         plt.contourf(xx1, xx2, Z, 
-                     alpha=0.4, cmap=self.cmap, 
+                     alpha=self.alpha, cmap=self.cmap, 
                      levels=len(np.unique(self.y)))
         plt.xlim(xx1.min(), xx1.max())
         plt.ylim(xx2.min(), xx2.max())
@@ -69,7 +69,7 @@ class ClusteredRegion(Visualizer):
                  xlabel: str = r'$x_1$', 
                  ylabel: str = r'$x_2$',
                  cmap: str = 'rainbow',
-                 alpha: float = 0.7) -> None:
+                 alpha: float = 0.4) -> None:
         self.estimator = estimator
         self.X = X
         self.title = title

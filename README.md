@@ -91,10 +91,10 @@ users gain insights from their machine learning models and communicate results e
 ##
 
 ### Latest Version
-`0.3.6`
+`0.4.0`
 
 ### Dependencies
-`NumPy`, `SciPy`, `Matplotlib`, `Seaborn`
+`NumPy`, `SciPy`, `Pandas`, `Matplotlib`, `Seaborn`
 
 ### Python Version
 `Python 3.10` or later

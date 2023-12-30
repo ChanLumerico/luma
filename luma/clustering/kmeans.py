@@ -3,8 +3,7 @@ import numpy as np
 
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError
-from luma.interface.super import Estimator, Evaluator, Unsupervised
-from luma.metric.classification import Accuracy
+from luma.interface.super import Estimator, Unsupervised
 
 
 __all__ = ['KMeansClustering', 'KMeansClusteringPlus', 'KMediansClustering']
@@ -64,10 +63,7 @@ class KMeansClustering(Estimator, Unsupervised):
         labels = np.argmin(distances, axis=1)
         return labels
     
-    def score(self, X: Matrix, y: Matrix, 
-              metric: Evaluator = Accuracy) -> float:
-        X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+    def score(self) -> None: ...
 
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
@@ -133,10 +129,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
         labels = np.argmin(distances, axis=1)
         return labels
     
-    def score(self, X: Matrix, y: Matrix, 
-              metric: Evaluator = Accuracy) -> float:
-        X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+    def score(self) -> None: ...
 
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
@@ -197,10 +190,7 @@ class KMediansClustering(Estimator, Unsupervised):
         labels = np.argmin(distances.sum(axis=2), axis=1)
         return labels
     
-    def score(self, X: Matrix, y: Matrix, 
-              metric: Evaluator = Accuracy) -> float:
-        X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+    def score(self) -> None: ...
     
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
