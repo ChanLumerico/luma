@@ -14,6 +14,7 @@ from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier, Weig
 
 from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
+from luma.clustering.spectral import SpectralClustering
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
@@ -88,6 +89,8 @@ if __name__ == '__main__':
     KMeansClustering, KMeansClusteringPlus, KMediansClustering
     
     AgglomerativeClustering, DivisiveClustering
+    
+    SpectralClustering
     
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor

@@ -1,4 +1,3 @@
-from typing import *
 import numpy as np
 
 from luma.interface.util import Matrix
@@ -32,12 +31,14 @@ class KMeansClustering(Estimator, Unsupervised):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
+        self._X = None
         self._fitted = False
     
     def fit(self, X: Matrix) -> 'KMeansClustering':
         init_indices = np.random.choice(X.shape[0], self.n_clusters, replace=False)
         self.centroids = X[init_indices]
-
+        self._X = X
+        
         for i in range(self.max_iter):
             distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
             labels = np.argmin(distances, axis=1)
@@ -62,6 +63,10 @@ class KMeansClustering(Estimator, Unsupervised):
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         labels = np.argmin(distances, axis=1)
         return labels
+    
+    @property
+    def labels(self) -> Matrix:
+        return self.predict(self._X)
     
     def score(self) -> None: ...
 
@@ -93,6 +98,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
+        self._X = None
         self._fitted = False
 
     def _initialize_centroids(self, X: Matrix) -> None:
@@ -106,7 +112,9 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
             self.centroids.append(X[next_centroid])
         
     def fit(self, X: Matrix) -> 'KMeansClusteringPlus':
+        self._X = X
         self._initialize_centroids(X)
+        
         for _ in range(self.max_iter):
             distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
             labels = np.argmin(distances, axis=1)
@@ -128,6 +136,10 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         labels = np.argmin(distances, axis=1)
         return labels
+    
+    @property
+    def labels(self) -> Matrix:
+        return self.predict(self._X)
     
     def score(self) -> None: ...
 
@@ -159,10 +171,13 @@ class KMediansClustering(Estimator, Unsupervised):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.verbose = verbose
+        self._X = None
         self._fitted = False
         
     def fit(self, X: Matrix) -> 'KMediansClustering':
+        self._X = X
         self.medians = X[np.random.choice(X.shape[0], self.n_clusters, replace=False)]
+        
         for i in range(self.max_iter):
             distances = np.abs(X[:, np.newaxis] - self.medians)
             labels = np.argmin(distances.sum(axis=2), axis=1)
@@ -189,6 +204,10 @@ class KMediansClustering(Estimator, Unsupervised):
         distances = np.abs(X[:, np.newaxis] - self.medians)
         labels = np.argmin(distances.sum(axis=2), axis=1)
         return labels
+    
+    @property
+    def labels(self) -> Matrix:
+        return self.predict(self._X)
     
     def score(self) -> None: ...
     
