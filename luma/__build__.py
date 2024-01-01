@@ -55,7 +55,7 @@ from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor, Weighte
 from luma.pipe.pipeline import Pipeline
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot, MissingProportion
-from luma.visual.region import DecisionRegion, ClusteredRegion
+from luma.visual.result import DecisionRegion, ClusterPlot
 
 from luma.migrate.port import ModelPorter
 
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     CorrelationBar, CorrelationHeatMap, JointPlot
     MissingProportion
     
-    DecisionRegion, ClusteredRegion
+    DecisionRegion, ClusterPlot
     
     # ------------------ [ luma.migrate ] ----------------------
     ModelPorter

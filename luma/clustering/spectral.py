@@ -8,6 +8,9 @@ from luma.interface.super import Estimator, Unsupervised
 from luma.interface.exception import NotFittedError
 
 
+__all__ = ['SpectralClustering']
+
+
 class SpectralClustering(Estimator, Unsupervised):
     
     """

@@ -5,7 +5,8 @@ from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Unsupervised
 
 
-__all__ = ['KMeansClustering', 'KMeansClusteringPlus', 'KMediansClustering']
+__all__ = ['KMeansClustering', 'KMeansClusteringPlus', 
+           'KMediansClustering', 'MiniBatchKMeansClustering']
 
 
 class KMeansClustering(Estimator, Unsupervised):
@@ -213,5 +214,55 @@ class KMediansClustering(Estimator, Unsupervised):
     
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
+        if max_iter is not None: self.max_iter = int(max_iter)
+
+
+class MiniBatchKMeansClustering(Estimator, Unsupervised):
+    def __init__(self, 
+                 n_clusters: int = None, 
+                 batch_size: int = 100, 
+                 max_iter: int = 100):
+        self.n_clusters = n_clusters
+        self.batch_size = batch_size
+        self.max_iter = max_iter
+        self.centroids = None
+        self._X = None
+        self._fitted = False
+
+    def fit(self, X: Matrix) -> 'MiniBatchKMeansClustering':
+        m, _ = X.shape
+        self._X = X
+        
+        rand_idx = np.random.choice(m, self.n_clusters, replace=False)
+        self.centroids = X[rand_idx]
+
+        for _ in range(self.max_iter):
+            batch_idx = np.random.choice(m, self.batch_size, replace=False)
+            batch = X[batch_idx]
+            
+            distances = np.linalg.norm(batch[:, np.newaxis] - self.centroids, axis=2)
+            closest_cluster_idx = np.argmin(distances, axis=1)
+            
+            for i in range(self.n_clusters):
+                cluster_points = batch[closest_cluster_idx == i]
+                if len(cluster_points) > 0:
+                    self.centroids[i] = np.mean(cluster_points, axis=0)
+
+    def predict(self, X: Matrix) -> Matrix:
+        distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
+        return np.argmin(distances, axis=1)
+    
+    @property
+    def labels(self) -> Matrix:
+        return self.predict(self._X)
+
+    def score(self) -> None: ...
+    
+    def set_params(self, 
+                   n_clusters: int = None,
+                   batch_size: int = None,
+                   max_iter: int = None) -> None:
+        if n_clusters is not None: self.n_clusters = int(n_clusters)
+        if batch_size is not None: self.batch_size = int(batch_size)
         if max_iter is not None: self.max_iter = int(max_iter)
 
