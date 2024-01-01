@@ -20,11 +20,11 @@ class LogisticRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``learning_rate`` : Step size of the gradient descent update \n
-    ``max_iter`` : Number of iteration \n
-    ``rho`` : Balancing parameter of ``elastic-net`` \n 
-    ``alpha`` : Regularization strength \n
-    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    `learning_rate` : Step size of the gradient descent update
+    `max_iter` : Number of iteration
+    `rho` : Balancing parameter of `elastic-net`
+    `alpha` : Regularization strength
+    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
     """
     
@@ -118,11 +118,11 @@ class SoftmaxRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``learning_rate`` : Step size of the gradient descent update \n
-    ``max_iter`` : Number of iteration \n
-    ``rho`` : Balancing parameter of ``elastic-net`` \n 
-    ``alpha`` : Regularization strength \n
-    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    `learning_rate` : Step size of the gradient descent update
+    `max_iter` : Number of iteration
+    `rho` : Balancing parameter of `elastic-net` 
+    `alpha` : Regularization strength
+    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
     """
     

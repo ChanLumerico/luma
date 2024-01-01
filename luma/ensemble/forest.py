@@ -24,12 +24,12 @@ class RandomForestClassifier(Estimator, Supervised):
     
     Parameters
     ----------
-    ``n_trees`` : Number of trees in the forest \n
-    ``max_depth`` :  Maximum depth of each trees \n
-    ``min_samples_split`` : Minimum number of samples required to split a node \n
-    ``bootstrap`` : Whether to bootstrap the samples of dataset \n
-    ``bootstrap_feature`` : Whether to bootstrap the features of each data \n
-    ``n_features`` : Number of features to be sampled when bootstrapping features
+    `n_trees` : Number of trees in the forest
+    `max_depth` :  Maximum depth of each trees
+    `min_samples_split` : Minimum number of samples required to split a node
+    `bootstrap` : Whether to bootstrap the samples of dataset
+    `bootstrap_feature` : Whether to bootstrap the features of each data
+    `n_features` : Number of features to be sampled when bootstrapping features
     
     """
     
@@ -130,12 +130,12 @@ class RandomForestRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``n_trees`` : Number of trees in the forest \n
-    ``max_depth`` :  Maximum depth of each trees \n
-    ``min_samples_split`` : Minimum number of samples required to split a node \n
-    ``bootstrap`` : Whether to bootstrap the samples of dataset \n
-    ``bootstrap_feature`` : Whether to bootstrap the features of each data \n
-    ``n_features`` : Number of features to be sampled when bootstrapping features
+    `n_trees` : Number of trees in the forest
+    `max_depth` :  Maximum depth of each trees
+    `min_samples_split` : Minimum number of samples required to split a node
+    `bootstrap` : Whether to bootstrap the samples of dataset
+    `bootstrap_feature` : Whether to bootstrap the features of each data
+    `n_features` : Number of features to be sampled when bootstrapping features
     
     """
     

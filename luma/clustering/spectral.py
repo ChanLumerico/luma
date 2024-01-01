@@ -4,8 +4,9 @@ import numpy as np
 
 from luma.clustering.kmeans import KMeansClusteringPlus
 from luma.interface.util import Matrix
-from luma.interface.super import Estimator, Unsupervised
+from luma.interface.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError
+from luma.metric.clustering import SilhouetteCoefficient
 
 
 __all__ = ['SpectralClustering']
@@ -25,8 +26,8 @@ class SpectralClustering(Estimator, Unsupervised):
     
     Parameters
     ----------
-    ``n_clusters`` : Number of clusters to estimate \n
-    ``gamma`` : Scaling factor for Gaussian kernel
+    `n_clusters` : Number of clusters to estimate
+    `gamma` : Scaling factor for Gaussian kernel
     
     Examples
     --------
@@ -41,9 +42,11 @@ class SpectralClustering(Estimator, Unsupervised):
                  gamma: float = 1.0):
         self.n_clusters = n_clusters
         self.gamma = gamma
+        self._X = None
         self._fitted = False
     
     def fit(self, X: Matrix) -> 'SpectralClustering':
+        self._X = X
         W = self._similarity_matrix(X)
         L = self._laplacian(W)
         
@@ -72,7 +75,8 @@ class SpectralClustering(Estimator, Unsupervised):
     def predict(self) -> None:
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
-    def score(self) -> None: ...
+    def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
+        return metric.compute(self._X, self.labels)
     
     def set_params(self, 
                    n_clusters: int = None,

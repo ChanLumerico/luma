@@ -2,7 +2,7 @@ from typing import Any
 import numpy as np
 
 
-__all__ = ['Matrix', 'TreeNode', 'NearestNeighbors']
+__all__ = ['Matrix', 'TreeNode', 'NearestNeighbors', 'SilhouetteUtil']
 
 
 class Matrix(np.ndarray):
@@ -36,11 +36,11 @@ class TreeNode:
     
     Parameters
     ----------
-    ``feature`` : Feature of node \n
-    ``threshold`` : Threshold for split point \n
-    ``left`` : Left-child node \n
-    ``right`` : Right-child node \n
-    ``value`` : Most popular label of leaf node
+    `feature` : Feature of node
+    `threshold` : Threshold for split point
+    `left` : Left-child node
+    `right` : Right-child node
+    `value` : Most popular label of leaf node
     
     """
     
@@ -68,8 +68,8 @@ class NearestNeighbors:
     
     Parameters
     ----------
-    ``data`` : Data to be handled \n
-    ``n_neighbors`` : Number of nearest neighbors
+    `data` : Data to be handled
+    `n_neighbors` : Number of nearest neighbors
     
     """
     
@@ -95,4 +95,44 @@ class NearestNeighbors:
             adj_mat[i, indices[i]] = 1
         
         return adj_mat.astype(int)
+
+
+class SilhouetteUtil:
+    
+    """
+    Internal class for computing various distances used in 
+    Silhouette coefficient calculation.
+    
+    Parameters
+    ----------
+    `idx` : Index of a single data point
+    `cluster` : Current cluster number
+    `labels` : Labels assigned by clustering estimator
+    `distances` : Square-form distance matrix of the data
+    
+    """
+    
+    def __init__(self, 
+                 idx: int,
+                 cluster: int,
+                 labels: Matrix,
+                 distances: Matrix) -> None:
+        self.idx = idx
+        self.cluster = cluster
+        self.labels = labels
+        self.distances = distances
+
+    @property
+    def avg_dist_others(self) -> Matrix:
+        others = set(self.labels) - {self.cluster}
+        sub_avg = [np.mean(self.distances[self.idx][self.labels == other]) 
+                   for other in others]
+
+        return np.mean(sub_avg)
+
+    @property
+    def avg_dist_within(self) -> Matrix | int:
+        within_cluster = self.distances[self.idx][self.labels == self.cluster]
+        if len(within_cluster) <= 1: return 0
+        return np.mean([dist for dist in within_cluster if dist != 0])
 

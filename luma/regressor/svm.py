@@ -20,11 +20,11 @@ class SVR(Estimator, Supervised):
     
     Parameters
     ----------
-    ``C`` : Regularization parameter \n
-    ``epsilon`` : Epsilon-tube in the training loss function \n
-    ``batch_size`` : Size of a single batch \n
-    ``learning_rate`` : Step-size of gradient descent update \n
-    ``max_iter`` : Number of iteration
+    `C` : Regularization parameter
+    `epsilon` : Epsilon-tube in the training loss function
+    `batch_size` : Size of a single batch
+    `learning_rate` : Step-size of gradient descent update
+    `max_iter` : Number of iteration
     
     """
     
@@ -108,13 +108,13 @@ class KernelSVR(Estimator, Supervised):
 
     Parameters
     ----------
-    ``C`` : Regularization parameter \n
-    ``deg`` : Polynomial Degree for `poly` kernel \n
-    ``gamma`` : Shape parameter of Gaussian curve for `rbf` kernel \n
-    ``coef`` : Coefficient for `poly`, `sigmoid` kernel \n
-    ``learning_rate`` : Step-size for gradient descent update \n
-    ``max_iter`` : Number of iteration \n
-    ``kernel`` : Type of kernel (e.g., `linear`, `poly`, `rbf`, `sigmoid`)
+    `C` : Regularization parameter
+    `deg` : Polynomial Degree for `poly` kernel
+    `gamma` : Shape parameter of Gaussian curve for `rbf` kernel
+    `coef` : Coefficient for `poly`, `sigmoid` kernel
+    `learning_rate` : Step-size for gradient descent update
+    `max_iter` : Number of iteration
+    `kernel` : Type of kernel (e.g., `linear`, `poly`, `rbf`, `sigmoid`)
 
     """
     

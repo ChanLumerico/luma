@@ -1,0 +1,96 @@
+from scipy.spatial.distance import pdist, squareform
+import matplotlib.pyplot as plt
+import numpy as np
+
+from luma.interface.super import Evaluator
+from luma.interface.util import Matrix, SilhouetteUtil
+
+
+__all__ = ['SilhouetteCoefficient']
+
+
+class SilhouetteCoefficient(Evaluator):
+    
+    """
+    The Silhouette Coefficient is a measure used to evaluate the quality of 
+    clusters in a dataset. It calculates how similar each data point is to its 
+    own cluster compared to other clusters. The coefficient ranges from -1 
+    (poorly clustered) to +1 (well clustered), with values near 0 indicating 
+    overlapping clusters. High average scores across a dataset suggest clear, 
+    well-separated clusters.
+    
+    Parameters
+    ----------
+    `data` : Original data
+    `labels` : Labels assigned by clustering estimator
+    
+    Examples
+    --------
+    With Instantiation
+    >>> sil = SilhouetteCoefficient(data, labels)
+    >>> score = sil.compute(data, labels) # compute() is a static method
+    >>> sil.plot()
+    
+    Without Instantiation
+    >>> score = SilhouetteCoefficient.compute(data, labels)
+    >>> SilhouetteCoefficient.plot() # Error; plot() is an instance method
+    
+    """
+    
+    def __init__(self, data: Matrix, labels: Matrix) -> None:
+        self.data = data
+        self.labels = labels
+        self.distances = squareform(pdist(self.data))
+    
+    @staticmethod
+    def compute(data: Matrix, labels: Matrix) -> Matrix[float]:
+        scores = []
+        distances = squareform(pdist(data))
+        for idx, label in enumerate(labels):
+            util = SilhouetteUtil(idx, label, labels, distances)
+            a = util.avg_dist_within
+            b = util.avg_dist_others
+            score = (b - a) / max(a, b) if max(a, b) != 0 else 0
+            scores.append(score)
+
+        return np.mean(scores)
+    
+    def _individual_silhouette(self) -> Matrix:
+        silhouette_values = []
+        for idx, label in enumerate(self.labels):
+            util = SilhouetteUtil(idx, label, self.labels, self.distances)
+            a = util.avg_dist_within
+            b = util.avg_dist_others
+            score = (b - a) / max(a, b) if max(a, b) != 0 else 0
+            silhouette_values.append(score)
+        
+        return np.array(silhouette_values)
+
+    def plot(self) -> None:
+        sample_silhouette = self._individual_silhouette()
+        y_lower = 10
+        
+        for i in range(len(set(self.labels))):
+            values = sample_silhouette[self.labels == i]
+            values.sort()
+
+            size_cluster_i = values.shape[0]
+            y_upper = y_lower + size_cluster_i
+
+            color = plt.cm.nipy_spectral(float(i) / len(set(self.labels)))
+            plt.fill_betweenx(np.arange(y_lower, y_upper), 0, values,
+                              facecolor=color, edgecolor=color, alpha=0.7)
+
+            y_lower = y_upper + 10
+        
+        plt.title("Silhouette Coefficient Plot")
+        plt.xlabel("Silhouette coefficient values")
+        plt.ylabel("Cluster label")
+        plt.axvline(x=self.compute(self.data, self.labels), 
+                    color="red", linestyle="--")
+        
+        plt.yticks([])
+        plt.xticks(np.arange(0.0, 1.2, 0.1))
+        plt.tight_layout()
+        plt.show()
+

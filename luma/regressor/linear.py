@@ -21,7 +21,7 @@ class RidgeRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``alpha`` : L2-regularization strength
+    `alpha` : L2-regularization strength
     
     """
     
@@ -63,9 +63,9 @@ class LassoRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``alpha`` : L1-regularization strength \n
-    ``max_iter`` : Number of iteration \n
-    ``learning_rate`` : Step size of the gradient descent update
+    `alpha` : L1-regularization strength
+    `max_iter` : Number of iteration
+    `learning_rate` : Step size of the gradient descent update
     
     """
     
@@ -130,10 +130,10 @@ class ElasticNetRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``alpha`` : Regularization strength \n
-    ``rho`` : Balancing parameter between ``l1`` and ``l2`` \n
-    ``max_iter`` : Number of iteration \n
-    ``learning_rate`` : Step size of the gradient descent update
+    `alpha` : Regularization strength
+    `rho` : Balancing parameter between `l1` and `l2`
+    `max_iter` : Number of iteration
+    `learning_rate` : Step size of the gradient descent update
     
     """
     

@@ -12,9 +12,11 @@ __all__ = ['PolynomialRegressor']
 
 class PolynomialRegressor(Estimator):
     
-    """Polynomial regression is a type of regression analysis used
+    """
+    Polynomial regression is a type of regression analysis used
     in statistics and machine learning to model the relationship between 
-    a dependent variable and one or more independent variables."""
+    a dependent variable and one or more independent variables.
+    """
     
     def __init__(self, degree: int = 1):
         self.degree = degree

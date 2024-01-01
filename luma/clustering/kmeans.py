@@ -2,7 +2,8 @@ import numpy as np
 
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError
-from luma.interface.super import Estimator, Unsupervised
+from luma.interface.super import Estimator, Evaluator, Unsupervised
+from luma.metric.clustering import SilhouetteCoefficient
 
 
 __all__ = ['KMeansClustering', 'KMeansClusteringPlus', 
@@ -20,8 +21,8 @@ class KMeansClustering(Estimator, Unsupervised):
     
     Parameters
     ----------
-    ``n_clusters`` : Number of clusters \n
-    ``max_iter`` : Number of iteration
+    `n_clusters` : Number of clusters
+    `max_iter` : Number of iteration
     
     """
     
@@ -69,7 +70,9 @@ class KMeansClustering(Estimator, Unsupervised):
     def labels(self) -> Matrix:
         return self.predict(self._X)
     
-    def score(self) -> None: ...
+    def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(X, X_pred)
 
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
@@ -87,8 +90,8 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
     
     Parameters
     ----------
-    ``n_clusters`` : Number of clusters \n
-    ``max_iter`` : Number of iteration
+    `n_clusters` : Number of clusters
+    `max_iter` : Number of iteration
     
     """
     
@@ -142,7 +145,9 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
     def labels(self) -> Matrix:
         return self.predict(self._X)
     
-    def score(self) -> None: ...
+    def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(X, X_pred)
 
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
@@ -160,8 +165,8 @@ class KMediansClustering(Estimator, Unsupervised):
     
     Parameters
     ----------
-    ``n_clusters`` : Number of clusters \n
-    ``max_iter`` : Number of iteration
+    `n_clusters` : Number of clusters
+    `max_iter` : Number of iteration
     
     """
     
@@ -210,7 +215,9 @@ class KMediansClustering(Estimator, Unsupervised):
     def labels(self) -> Matrix:
         return self.predict(self._X)
     
-    def score(self) -> None: ...
+    def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(X, X_pred)
     
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
@@ -218,6 +225,24 @@ class KMediansClustering(Estimator, Unsupervised):
 
 
 class MiniBatchKMeansClustering(Estimator, Unsupervised):
+    
+    """
+    Mini-Batch K-Means is an efficient variation of the traditional K-Means 
+    clustering algorithm, designed to handle large datasets more effectively. 
+    It operates by randomly selecting small subsets of the dataset (mini-batches) 
+    and using these subsets, rather than the entire dataset, to update the 
+    cluster centroids in each iteration. This approach significantly reduces 
+    the computational cost and memory requirements, making it well-suited 
+    for big data applications.
+    
+    Parameters
+    ----------
+    `n_clusters` : Number of clusters to estimate
+    `batch_size` : Size of a single mini-batch
+    `max_iter` : Maximum amount of iteration
+    
+    """
+    
     def __init__(self, 
                  n_clusters: int = None, 
                  batch_size: int = 100, 
@@ -256,7 +281,9 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
     def labels(self) -> Matrix:
         return self.predict(self._X)
 
-    def score(self) -> None: ...
+    def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(X, X_pred)
     
     def set_params(self, 
                    n_clusters: int = None,

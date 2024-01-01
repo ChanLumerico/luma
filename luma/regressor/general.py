@@ -23,11 +23,11 @@ class PoissonRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``learning_rate`` : Step size of the gradient descent update \n
-    ``max_iter`` : Number of iteration \n
-    ``rho`` : Balancing parameter of ``elastic-net`` \n 
-    ``alpha`` : Regularization strength \n
-    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    `learning_rate` : Step size of the gradient descent update
+    `max_iter` : Number of iteration
+    `rho` : Balancing parameter of `elastic-net` 
+    `alpha` : Regularization strength
+    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
     """
     
@@ -116,12 +116,12 @@ class NegativeBinomialRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``learning_rate`` : Step size of the gradient descent update \n
-    ``max_iter`` : Number of iteration \n
-    ``alpha`` : Regularization strength \n
-    ``rho`` : Balancing parameter of ``elastic-net`` \n 
-    ``phi`` : Dispersion parameter \n
-    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    `learning_rate` : Step size of the gradient descent update
+    `max_iter` : Number of iteration
+    `alpha` : Regularization strength
+    `rho` : Balancing parameter of `elastic-net` 
+    `phi` : Dispersion parameter
+    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
     """
     
@@ -216,13 +216,13 @@ class GammaRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``alpha`` : Shape parameter of gamma distribution \n
-    ``beta`` : Scale parameter of gamma distribution \n
-    ``learning_rate`` : Step size of the gradient descent update \n
-    ``max_iter`` : Number of iteration \n
-    ``reg_strength`` : Regularization strength \n
-    ``rho`` : Balancing parameter of ``elastic-net`` \n 
-    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    `alpha` : Shape parameter of gamma distribution
+    `beta` : Scale parameter of gamma distribution
+    `learning_rate` : Step size of the gradient descent update
+    `max_iter` : Number of iteration
+    `reg_strength` : Regularization strength
+    `rho` : Balancing parameter of `elastic-net` 
+    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
     """
     
@@ -318,12 +318,12 @@ class BetaRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``alpha``, ``beta`` : Shape parameters of beta function \n
-    ``learning_rate`` : Step size of the gradient descent update \n
-    ``max_iter`` : Number of iteration \n
-    ``reg_strength`` : Regularization strength \n
-    ``rho`` : Balacing parameter of ``elastic-net`` \n
-    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    `alpha`, `beta` : Shape parameters of beta function
+    `learning_rate` : Step size of the gradient descent update
+    `max_iter` : Number of iteration
+    `reg_strength` : Regularization strength
+    `rho` : Balacing parameter of `elastic-net`
+    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
     """
 
@@ -420,12 +420,12 @@ class InverseGaussianRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``learning_rate`` : Step size of the gradient descent update \n
-    ``max_iter`` : Number of iteration \n
-    ``phi`` : Shape parameter of inverse Gaussian density \n
-    ``rho`` : Balacing parameter of ``elastic-net`` \n
-    ``alpha`` : Regularization strength \n
-    ``regularization`` : Regularization type (e.g. ``l1``, ``l2``, ``elastic-net``)
+    `learning_rate` : Step size of the gradient descent update
+    `max_iter` : Number of iteration
+    `phi` : Shape parameter of inverse Gaussian density
+    `rho` : Balacing parameter of `elastic-net`
+    `alpha` : Regularization strength
+    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
     """
     

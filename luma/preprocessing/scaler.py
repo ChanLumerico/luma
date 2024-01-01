@@ -51,7 +51,7 @@ class MinMaxScaler(Transformer, Transformer.Feature):
     
     Parameters
     ----------
-    ``feature_range`` : Range to be scaled
+    `feature_range` : Range to be scaled
     
     """
     

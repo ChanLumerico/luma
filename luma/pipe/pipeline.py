@@ -24,12 +24,12 @@ class Pipeline:
     
     Parameters
     ----------
-    ``models`` : List of models \n
+    `models` : List of models \n
     You can assign labels to each model by encapsulating the label and the model
     inside a tuple. \n
     Otherwise, the name of the model is automatically assigned by default. \n
     
-    ``param_dict`` : Dictionary of parameters for each models \n
+    `param_dict` : Dictionary of parameters for each models \n
     You must specify the name(or label) of the model and its parameter name
     in the key of the dictionary. \n
     e.g. `{'model_name__param_name': value}`

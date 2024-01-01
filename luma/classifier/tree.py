@@ -23,8 +23,8 @@ class DecisionTreeClassifier(Estimator, Supervised):
     
     Parameters
     ----------
-    ``max_depth`` : Maximum depth of tree \n
-    ``min_samples_split`` : Minimum number of samples required to split a node
+    `max_depth` : Maximum depth of tree
+    `min_samples_split` : Minimum number of samples required to split a node
     
     """
 

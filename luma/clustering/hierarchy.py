@@ -3,9 +3,10 @@ from scipy.spatial.distance import pdist, squareform
 import numpy as np
 
 from luma.interface.util import Matrix
-from luma.interface.super import Estimator, Unsupervised
+from luma.interface.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.clustering.kmeans import KMeansClusteringPlus
+from luma.metric.clustering import SilhouetteCoefficient
 
 
 __all__ = ['AgglomerativeClustering', 'DivisiveClustering']
@@ -22,8 +23,8 @@ class AgglomerativeClustering(Estimator, Unsupervised):
     
     Parameters
     ----------
-    ``n_clusters`` : Number of clusters to estimate \n
-    ``linkage`` : Linkage method (e.g. `single`, `complete`, `average`, `ward`)
+    `n_clusters` : Number of clusters to estimate
+    `linkage` : Linkage method (e.g. `single`, `complete`, `average`, `ward`)
     
     Examples
     --------
@@ -39,9 +40,11 @@ class AgglomerativeClustering(Estimator, Unsupervised):
                                   'average', 'ward'] = 'single'):
         self.n_clusters = n_clusters
         self.linkage = linkage
+        self._X = None
         self._fitted = False
 
     def fit(self, X: Matrix) -> 'AgglomerativeClustering':
+        self._X = X
         n_samples = X.shape[0]
         dist_matrix = squareform(pdist(X, metric='euclidean'))
         clusters = {i: [i] for i in range(n_samples)}
@@ -115,7 +118,8 @@ class AgglomerativeClustering(Estimator, Unsupervised):
     def predict(self) -> None:
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
-    def score(self) -> None: ...
+    def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
+        return metric.compute(self._X, self.labels)
     
     def set_params(self, 
                    n_clusters: int = None,
@@ -137,7 +141,7 @@ class DivisiveClustering(Estimator, Unsupervised):
     
     Parameters
     ----------
-    ``n_clusters`` : Number of clusters to estimate
+    `n_clusters` : Number of clusters to estimate
     
     Examples
     --------
@@ -151,10 +155,12 @@ class DivisiveClustering(Estimator, Unsupervised):
                  n_clusters: int = 2):
         self.n_clusters = n_clusters
         self.clusters = []
+        self._X = None
         self._fitted = False
 
     def fit(self, X: Matrix) -> 'DivisiveClustering':
         initial_cluster = [0] * X.shape[0]
+        self._X = X
         self.clusters.append(initial_cluster)
         self._recursive_split(X)
         
@@ -192,7 +198,8 @@ class DivisiveClustering(Estimator, Unsupervised):
     def predict(self) -> None:
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
-    def score(self) -> None: ...
+    def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
+        return metric.compute(self._X, self.labels)
     
     def set_params(self, n_clusters: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)

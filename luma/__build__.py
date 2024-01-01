@@ -4,7 +4,7 @@ from luma.interface.exception import NotFittedError, NotConvergedError
 from luma.interface.exception import UnsupportedParameterError, ModelExtensionError
 from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
 from luma.interface.super import Supervised, Unsupervised, Distance
-from luma.interface.util import Matrix, TreeNode, NearestNeighbors
+from luma.interface.util import Matrix, TreeNode, NearestNeighbors, SilhouetteUtil
 
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
 from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
@@ -13,6 +13,7 @@ from luma.classifier.tree import DecisionTreeClassifier
 from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier, WeightedKNNClassifier
 
 from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
+from luma.clustering.kmeans import MiniBatchKMeansClustering
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.clustering.spectral import SpectralClustering
 
@@ -22,6 +23,7 @@ from luma.metric.classification import Accuracy, Precision, Recall, F1Score
 from luma.metric.classification import Specificity, AUCCurveROC, Complex
 from luma.metric.regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
 from luma.metric.regression import MeanAbsolutePercentageError, RSquaredScore, Complex
+from luma.metric.clustering import SilhouetteCoefficient
 from luma.metric.distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 
@@ -72,7 +74,7 @@ if __name__ == '__main__':
     Estimator, Transformer, Evaluator, Visualizer
     Supervised, Unsupervised, Distance
     
-    Matrix, TreeNode, NearestNeighbors
+    Matrix, TreeNode, NearestNeighbors, SilhouetteUtil
     
     # ---------------- [ luma.classifier ] ---------------------
     LogisticRegressor, SoftmaxRegressor
@@ -87,6 +89,7 @@ if __name__ == '__main__':
     
     # ----------------- [ luma.clustering ] --------------------
     KMeansClustering, KMeansClusteringPlus, KMediansClustering
+    MiniBatchKMeansClustering
     
     AgglomerativeClustering, DivisiveClustering
     
@@ -101,6 +104,8 @@ if __name__ == '__main__':
     
     MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
     MeanAbsolutePercentageError, RSquaredScore, Complex
+    
+    SilhouetteCoefficient
     
     Euclidean, Manhattan, Chebyshev, Minkowski
     CosineSimilarity, Correlation, Mahalanobis

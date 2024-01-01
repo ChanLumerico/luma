@@ -26,7 +26,7 @@ class KNNRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``n_neighbors`` : Number of neighbors to be considered close
+    `n_neighbors` : Number of neighbors to be considered close
     
     """
     
@@ -76,9 +76,9 @@ class AdaptiveKNNRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    ``n_density`` : Number of nearest neighbors to estimate the local density \n
-    ``min_neighbors`` : Minimum number of neighbors to be considered for averaging \n
-    ``max_neighbors`` : Maximum number of neighbors to be considered
+    `n_density` : Number of nearest neighbors to estimate the local density
+    `min_neighbors` : Minimum number of neighbors to be considered for averaging
+    `max_neighbors` : Maximum number of neighbors to be considered
 
     """
     
@@ -146,7 +146,7 @@ class WeightedKNNRegressor(Estimator, Supervised):
     
     Parameters
     ----------
-    ``n_neighbors`` : Number of neighbors to be considered close
+    `n_neighbors` : Number of neighbors to be considered close
     
     """
     

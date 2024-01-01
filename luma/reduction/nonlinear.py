@@ -21,12 +21,12 @@ class KernelPCA(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Number of principal components \n
-    ``degree`` : Polynomial degree of ``poly`` kernel \n
-    ``gamma`` : Shape parameter of ``rbf``, ``sigmoid``, ``laplacian`` \n
-    ``coef`` : Additional coefficient of ``poly``, ``sigmoid`` \n
-    ``kernel`` : Type of kernel functions
-    (e.g. ``linear``, ``poly``, ``rbf``, ``sigmoid``, ``laplacian``)
+    `n_components` : Number of principal components
+    `degree` : Polynomial degree of `poly` kernel
+    `gamma` : Shape parameter of `rbf`, `sigmoid`, `laplacian`
+    `coef` : Additional coefficient of `poly`, `sigmoid`
+    `kernel` : Type of kernel functions
+    (e.g. `linear`, `poly`, `rbf`, `sigmoid`, `laplacian`)
     
     """
     

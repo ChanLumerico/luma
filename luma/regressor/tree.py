@@ -22,8 +22,8 @@ class DecisionTreeRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    ``max_depth`` : Maximum depth of the tree \n
-    ``min_samples_split`` : Minimum number of samples required to split a node
+    `max_depth` : Maximum depth of the tree
+    `min_samples_split` : Minimum number of samples required to split a node
 
     """
     

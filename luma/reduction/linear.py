@@ -19,7 +19,7 @@ class PCA(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Number of principal components
+    `n_components` : Number of principal components
     
     """
     
@@ -70,7 +70,7 @@ class LDA(Transformer, Supervised):
     
     Parameters
     ----------
-    ``n_components`` : Number of linear discriminants
+    `n_components` : Number of linear discriminants
     
     """
     
@@ -134,7 +134,7 @@ class TruncatedSVD(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of low-space
+    `n_components` : Dimensionality of low-space
     
     """
     
@@ -178,10 +178,10 @@ class FactorAnalysis(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimeensionality of low-space \n
-    ``max_iter`` : Number of iterations \n
-    ``tol`` : Threshold for convergence \n
-    ``noise_variance`` : Initial variances for noise of each features
+    `n_components` : Dimeensionality of low-space
+    `max_iter` : Number of iterations
+    `tol` : Threshold for convergence
+    `noise_variance` : Initial variances for noise of each features
     
     """
     

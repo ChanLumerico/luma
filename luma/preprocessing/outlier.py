@@ -21,7 +21,7 @@ class LocalOutlierFactor:
     
     Parameters
     ----------
-    ``n_neighbors`` : Number of neighbors to estimate the local densities
+    `n_neighbors` : Number of neighbors to estimate the local densities
     
     Examples
     --------

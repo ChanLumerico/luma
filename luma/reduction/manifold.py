@@ -28,11 +28,11 @@ class TSNE(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of lower spcae \n
-    ``max_iter`` : Number of iteration \n
-    ``learning_rate`` : Updating factor of embedding optimization \n
-    ``perplexity`` : Perplexity parameter of Gaussian kernel \n
-    ``verbose`` : Provided details of each iteration when set ``True``
+    `n_components` : Dimensionality of lower spcae
+    `max_iter` : Number of iteration
+    `learning_rate` : Updating factor of embedding optimization
+    `perplexity` : Perplexity parameter of Gaussian kernel
+    `verbose` : Provided details of each iteration when set `True`
     
     """
     
@@ -169,7 +169,7 @@ class MDS(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of low-space
+    `n_components` : Dimensionality of low-space
     
     """
     
@@ -227,11 +227,11 @@ class MetricMDS(Transformer, Unsupervised):
     
     Parameter
     ---------
-    ``n_components`` : Dimensionality of low-space \n
-    ``metric`` : Distance metric 
-    (e.g. `euclidean`, `manhattan`, `chebyshev`, `minkowski`, \n
-    `cos_similarity`, `correation`, `mahalanobis`) \n
-    ``p`` : Power factor for `minkowski`
+    `n_components` : Dimensionality of low-space
+    `metric` : Distance metric 
+    (e.g. `euclidean`, `manhattan`, `chebyshev`, `minkowski`,
+    `cos_similarity`, `correation`, `mahalanobis`)
+    `p` : Power factor for `minkowski`
     
     """
     
@@ -318,9 +318,9 @@ class LandmarkMDS(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of low-space \n
-    ``n_landmarks`` : Number of landmarks \n
-    ``method`` : Algorithm for landmark initialization
+    `n_components` : Dimensionality of low-space
+    `n_landmarks` : Number of landmarks
+    `method` : Algorithm for landmark initialization
     (e.g. `random`, `kmeans`, `kmeans++`, `kmedians`)
     
     """
@@ -416,8 +416,8 @@ class LLE(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_neighbors`` : Number of neighbors to be considered 'close' \n
-    ``n_components`` : Dimensionality of low-space
+    `n_neighbors` : Number of neighbors to be considered 'close'
+    `n_components` : Dimensionality of low-space
     
     """
     
@@ -485,9 +485,9 @@ class ModifiedLLE(Transformer, Unsupervised):
 
     Parameters
     ----------
-    ``n_neighbors`` : Number of neighbors to be considered 'close' \n
-    ``n_components`` : Dimensionality of the lower-dimensional space \n
-    ``regularization`` : Regularization parameter for stability \n
+    `n_neighbors` : Number of neighbors to be considered 'close'
+    `n_components` : Dimensionality of the lower-dimensional space
+    `regularization` : Regularization parameter for stability
     
     """
 
@@ -557,9 +557,9 @@ class HessianLLE(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_neighbors`` : Number of neighbors to be considered 'close' \n
-    ``n_components`` : Dimensionality of the lower-dimensional space \n
-    ``regularization`` : Regularization parameter for stability \n
+    `n_neighbors` : Number of neighbors to be considered 'close'
+    `n_components` : Dimensionality of the lower-dimensional space
+    `regularization` : Regularization parameter for stability
     
     """
     
@@ -664,11 +664,11 @@ class SammonMapping(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of low-space \n
-    ``max_iter`` : Number of iteration \n
-    ``max_halves`` : Number of halving of step-size \n
-    ``tol`` : Threshold for early-stopping \n
-    ``initialize`` : Methodology for embedding-space initialization \n
+    `n_components` : Dimensionality of low-space
+    `max_iter` : Number of iteration
+    `max_halves` : Number of halving of step-size
+    `tol` : Threshold for early-stopping
+    `initialize` : Methodology for embedding-space initialization
     
     """
     
@@ -801,8 +801,8 @@ class LaplacianEigenmap(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of the lower-dimensional space \n
-    ``sigma`` : Width parameter for Gaussian kernel in affinity calculation
+    `n_components` : Dimensionality of the lower-dimensional space
+    `sigma` : Width parameter for Gaussian kernel in affinity calculation
     
     """
 
@@ -860,11 +860,11 @@ class Isomap(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of low-space \n
-    ``epsilon`` : Boundary radius of the neighbor hypersphere \n
-    ``algorithm`` : Shortest path finding algorithm
-    (e.g. `dijkstra`, `floyd`) \n
-    ``metric`` : Distance metric
+    `n_components` : Dimensionality of low-space
+    `epsilon` : Boundary radius of the neighbor hypersphere
+    `algorithm` : Shortest path finding algorithm
+    (e.g. `dijkstra`, `floyd`)
+    `metric` : Distance metric
     (e.g. `euclidean`, `cityblock`, `chebyshev`, `cosine`, `correlation`)
     
     """
@@ -943,9 +943,9 @@ class ConformalIsomap(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of low-space \n
-    ``epsilon`` : Boundary radius of the neighbor hypersphere \n
-    ``algorithm`` : Shortest path finding algorithm
+    `n_components` : Dimensionality of low-space
+    `epsilon` : Boundary radius of the neighbor hypersphere
+    `algorithm` : Shortest path finding algorithm
     (e.g. `dijkstra`, `floyd`)
     
     """
@@ -1026,8 +1026,8 @@ class LTSA(Transformer, Unsupervised):
     
     Parameters
     ----------
-    ``n_components`` : Dimensionality of low-space \n
-    ``n_neighbors`` : Number of neighbors
+    `n_components` : Dimensionality of low-space
+    `n_neighbors` : Number of neighbors
     
     """
     
