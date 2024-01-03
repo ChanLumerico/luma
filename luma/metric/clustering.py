@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from luma.interface.super import Evaluator
-from luma.interface.util import Matrix, SilhouetteUtil
+from luma.interface.util import Matrix, SilhouetteUtil, DBUtil
 
 
-__all__ = ['SilhouetteCoefficient']
+__all__ = ['SilhouetteCoefficient', 'DaviesBouldin']
 
 
 class SilhouetteCoefficient(Evaluator):
@@ -93,4 +93,42 @@ class SilhouetteCoefficient(Evaluator):
         plt.xticks(np.arange(0.0, 1.2, 0.1))
         plt.tight_layout()
         plt.show()
+
+
+class DaviesBouldin(Evaluator):
+    
+    """
+    The Davies-Bouldin Index (DBI) is a metric for evaluating clustering 
+    algorithms. It compares the average distance within clusters to the 
+    distance between clusters. Lower DBI values indicate better clustering, 
+    with compact and well-separated clusters.
+    
+    Parameters
+    ----------
+    `data` : Original data
+    `labels` : Labels assigned by clustering estimator
+    
+    """
+    
+    @staticmethod
+    def compute(data: Matrix, labels: Matrix) -> float:
+        util = DBUtil(data=data, labels=labels)
+        centroids = util.cluster_centroids
+        scatter = util.within_cluster_scatter
+        separation = util.separation
+
+        n_clusters = len(centroids)
+        db_values = np.zeros(n_clusters)
+
+        for i in range(n_clusters):
+            max_ratio = 0
+            for j in range(n_clusters):
+                if i == j: continue
+                ratio = (scatter[i] + scatter[j]) / separation[i, j]
+                if ratio > max_ratio: max_ratio = ratio
+            
+            db_values[i] = max_ratio
+        db_index = np.mean(db_values)
+        
+        return db_index
 

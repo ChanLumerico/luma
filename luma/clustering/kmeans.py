@@ -272,8 +272,12 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
                 cluster_points = batch[closest_cluster_idx == i]
                 if len(cluster_points) > 0:
                     self.centroids[i] = np.mean(cluster_points, axis=0)
+        
+        self._fitted = True
+        return self
 
     def predict(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
         distances = np.linalg.norm(X[:, np.newaxis] - self.centroids, axis=2)
         return np.argmin(distances, axis=1)
     

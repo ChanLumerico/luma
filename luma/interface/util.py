@@ -2,7 +2,8 @@ from typing import Any
 import numpy as np
 
 
-__all__ = ['Matrix', 'TreeNode', 'NearestNeighbors', 'SilhouetteUtil']
+__all__ = ['Matrix', 'TreeNode', 'NearestNeighbors', 
+           'SilhouetteUtil', 'DBUtil']
 
 
 class Matrix(np.ndarray):
@@ -10,8 +11,9 @@ class Matrix(np.ndarray):
     """
     Internal class that extends numpy.ndarray.
 
-    This class provides a way to create matrix objects that have all the capabilities 
-    of numpy arrays with the potential for additional functionalities and readability.
+    This class provides a way to create matrix objects that have 
+    all the capabilities of numpy arrays with the potential for 
+    additional functionalities and readability.s
     
     Example
     -------
@@ -101,7 +103,7 @@ class SilhouetteUtil:
     
     """
     Internal class for computing various distances used in 
-    Silhouette coefficient calculation.
+    Silhouette Coefficient calculation.
     
     Parameters
     ----------
@@ -135,4 +137,56 @@ class SilhouetteUtil:
         within_cluster = self.distances[self.idx][self.labels == self.cluster]
         if len(within_cluster) <= 1: return 0
         return np.mean([dist for dist in within_cluster if dist != 0])
+
+
+class DBUtil:
+    
+    """
+    Internal class for supporting Davies-Bouldin Index (DBI) computation.
+    
+    Parameters
+    ----------
+    `data` : Original data
+    `labels` : Labels assigned by clustering estimator
+    
+    """
+    
+    def __init__(self,
+                 data: Matrix, 
+                 labels: Matrix) -> None:
+        self.data = data
+        self.labels = labels
+    
+    @property
+    def cluster_centroids(self) -> Matrix:
+        unique_labels = np.unique(self.labels)
+        centroids = np.array([self.data[self.labels == label].mean(axis=0) 
+                              for label in unique_labels])
+        return centroids
+
+    @property
+    def within_cluster_scatter(self) -> Matrix:
+        centroids = self.cluster_centroids
+        scatter = np.zeros(len(centroids))
+        
+        for i, centroid in enumerate(centroids):
+            cluster_points = self.data[self.labels == i]
+            diff_sq =  (cluster_points - centroid) ** 2
+            scatter[i] = np.mean(np.sqrt(np.sum(diff_sq, axis=1)))
+            
+        return scatter
+
+    @property
+    def separation(self) -> Matrix:
+        centroids = self.cluster_centroids
+        n_clusters = len(centroids)
+        separation = np.zeros((n_clusters, n_clusters))
+        
+        for i in range(n_clusters):
+            for j in range(n_clusters):
+                if i == j: continue
+                diff_sq = (centroids[i] - centroids[j]) ** 2
+                separation[i, j] = np.sqrt(np.sum(diff_sq))
+                    
+        return separation
 
