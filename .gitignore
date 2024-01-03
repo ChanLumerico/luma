@@ -6,5 +6,5 @@ build/
 dist/
 example/
 luma_ml.egg-info/
-version_ico/
+others/
 __pycache__/

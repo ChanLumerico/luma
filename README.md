@@ -1,4 +1,10 @@
-<img src="others/luma.png" alt="logo" width="75" height="75">
+<!DOCTYPE html>
+<html>
+    <a href="https://lumerico284.notion.site/lumerico284/LUMA-76330376b0e64cc1b95874c469aeb327">
+        <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/luma.png" alt="logo" width="75" height="75">
+    </a>
+</html>
+
 
 # LUMA
 <!-- ------------------ -->
