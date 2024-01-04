@@ -4,13 +4,15 @@ from scipy.linalg import eigh
 import numpy as np
 
 from luma.clustering.kmeans import KMeansClusteringPlus
+from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.interface.util import Matrix
 from luma.interface.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.clustering import SilhouetteCoefficient
 
 
-__all__ = ['SpectralClustering', 'NormalizedSpectralClustering']
+__all__ = ['SpectralClustering', 'NormalizedSpectralClustering',
+           'HierarchicalSpectralClustering']
 
 
 class SpectralClustering(Estimator, Unsupervised):
@@ -167,4 +169,96 @@ class NormalizedSpectralClustering(Estimator, Unsupervised):
         if n_clusters is not None: self.n_clusters = int(n_clusters)
         if gamma is not None: self.gamma = float(gamma)
         if strategy is not None: self.strategy = str(strategy)
+
+
+class HierarchicalSpectralClustering(Estimator, Unsupervised):
+    
+    """
+    Hierarchical spectral clustering starts by applying spectral clustering 
+    to transform data into a space where clusters are more linearly separable. 
+    This involves constructing a similarity matrix, computing the Laplacian, 
+    and performing eigenvalue decomposition. The transformed data is then 
+    clustered using hierarchical methods, either agglomerative (building 
+    clusters by merging smaller ones) or divisive (splitting larger clusters 
+    into smaller ones). This approach reveals multi-level structures in the 
+    data, uncovering both broad and fine-grained clustering patterns.
+    
+    Parameters
+    ----------
+    `n_clusters` : Number of clusters to estimate
+    `method` : Method for hierarchical clustering
+    (e.g. `agglomerative`, `divisive`)
+    `linkage` : Linkage method for `agglomerative` clustering
+    (e.g. `single`, `complete`, `average`, `ward`)
+    `gamma` : Scaling factor for Gaussian kernel
+    
+    """
+    
+    def __init__(self, 
+                 n_clusters: int, 
+                 method: Literal['agglomerative', 'divisive'],
+                 linkage: Literal['single', 'complete', 
+                                  'average', 'ward'] = 'single',
+                 gamma: float = 1.0,):
+        self.n_clusters = n_clusters
+        self.method = method
+        self.linkage = linkage
+        self.gamma = gamma
+        self._hierarchy_model = None
+        self._X = None
+        self._fitted = False
+    
+    def fit(self, X: Matrix) -> 'HierarchicalSpectralClustering':
+        self._X = X
+        W = self._similarity_matrix(X)
+        L = self._laplacian(W)
+        
+        _, eigenvecs = eigh(L)
+        V = eigenvecs[:, :self.n_clusters]
+        
+        if self.method == 'agglomerative':
+            self._hierarchy_model = AgglomerativeClustering()
+        elif self.method == 'divisive':
+            self._hierarchy_model = DivisiveClustering()
+        else:
+            raise UnsupportedParameterError(self.method)
+        
+        self._hierarchy_model.n_clusters = self.n_clusters
+        if hasattr(self._hierarchy_model, 'linkage'):
+            self._hierarchy_model.linkage = self.linkage
+        
+        self._hierarchy_model.fit(V)
+        
+        self._fitted = True
+        return self
+
+    def _similarity_matrix(self, X: Matrix) -> Matrix:
+        sq_dists = pdist(X, 'sqeuclidean')
+        mat_sq_dists = squareform(sq_dists)
+        return np.exp(-self.gamma * mat_sq_dists)
+
+    def _laplacian(self, W: Matrix) -> Matrix:
+        D = np.diag(np.sum(W, axis=1))
+        return D - W
+
+    @property
+    def labels(self) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        return self._hierarchy_model.labels
+    
+    def predict(self) -> None:
+        raise Warning(f"{type(self).__name__} does not support prediction!")
+    
+    def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
+        return metric.compute(self._X, self.labels)
+    
+    def set_params(self, 
+                   n_clusters: int = None,
+                   method: Literal = None,
+                   linkage: Literal = None,
+                   gamma: float = None) -> None:
+        if n_clusters is not None: self.n_clusters = int(n_clusters)
+        if method is not None: self.method = str(method)
+        if linkage is not None: self.linkage = str(linkage)
+        if gamma is not None: self.gamma = float(gamma)
 
