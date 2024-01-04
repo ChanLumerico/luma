@@ -8,6 +8,9 @@ from luma.metric.distance import Euclidean, Minkowski
 from luma.metric.clustering import SilhouetteCoefficient
 
 
+__all__ = ['DBSCAN']
+
+
 class DBSCAN(Estimator, Unsupervised):
     
     """
@@ -90,8 +93,8 @@ class DBSCAN(Estimator, Unsupervised):
         if not self._fitted: raise NotFittedError(self)
         return np.array(self._cluster_labels)
     
-    def predict(self) -> Matrix:
-        return self.labels
+    def predict(self) -> None:
+        raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.compute(self._X, self.labels)
