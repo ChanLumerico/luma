@@ -1,4 +1,4 @@
-from typing import Any, Literal
+from typing import Literal
 from scipy.spatial.distance import pdist, squareform
 from scipy.linalg import eigh
 import numpy as np
@@ -12,7 +12,8 @@ from luma.metric.clustering import SilhouetteCoefficient
 
 
 __all__ = ['SpectralClustering', 'NormalizedSpectralClustering',
-           'HierarchicalSpectralClustering']
+           'HierarchicalSpectralClustering',
+           'AdaptiveSpectralClustering']
 
 
 class SpectralClustering(Estimator, Unsupervised):
@@ -261,4 +262,75 @@ class HierarchicalSpectralClustering(Estimator, Unsupervised):
         if method is not None: self.method = str(method)
         if linkage is not None: self.linkage = str(linkage)
         if gamma is not None: self.gamma = float(gamma)
+
+
+class AdaptiveSpectralClustering(Estimator, Unsupervised):
+    
+    """
+    Adaptive Spectral Clustering automatically determines the number of clusters 
+    and scale parameters directly from the data, reducing the need for manual 
+    tuning. It constructs a similarity matrix, typically using a Gaussian kernel 
+    with an adaptively chosen scale. Eigenvalue decomposition on the Laplacian of 
+    this matrix reveals the data's structure, and the eigen-gap heuristic is 
+    employed to select the optimal number of clusters.
+    
+    Parameters
+    ----------
+    `gamma` : Scaling factor for Gaussian kernel
+    `max_clusters` : Upper-bound of the number of clusters to estimate
+    
+    """
+    
+    def __init__(self, 
+                 gamma: float = 1.0,
+                 max_clusters: int = 10) -> None:
+        self.gamma = gamma
+        self.max_clusters = max_clusters
+        self._X = None
+        self._fitted = False
+    
+    def fit(self, X: Matrix) -> 'AdaptiveSpectralClustering':
+        self._X = X
+        W = self._similarity_matrix(X)
+        L = self._laplacian(W)
+        
+        eigvals, eigvecs = eigh(L)
+        self.n_clusters = self._optimal_clusters(eigvals)
+        
+        V = eigvecs[:, :self.n_clusters]
+        kmeans = KMeansClusteringPlus(n_clusters=self.n_clusters)
+        self.kmeans = kmeans.fit(V)
+        
+        self._fitted = True
+        return self
+
+    def _similarity_matrix(self, X: Matrix) -> Matrix:
+        sq_dists = pdist(X, metric='sqeuclidean')
+        mat_sq_dists = squareform(sq_dists)
+        return np.exp(-self.gamma * mat_sq_dists)
+    
+    def _laplacian(self, W: Matrix) -> Matrix:
+        D = np.diag(np.sum(W, axis=0))
+        return D - W
+    
+    def _optimal_clusters(self, eigvals: Matrix) -> Matrix:
+        eigval_diff = np.diff(eigvals)
+        return np.argmax(eigval_diff[:self.max_clusters]) + 1
+    
+    @property
+    def labels(self) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        return self.kmeans.labels
+    
+    def predict(self) -> None:
+        raise Warning(f"{type(self).__name__} does not support prediction!")
+
+    def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
+        return metric.compute(self._X, self.labels)
+    
+    def set_params(self, 
+                   gamma: float = None,
+                   max_clusters: int = None) -> None:
+        if gamma is not None: self.gamma = float(gamma)
+        if max_clusters is not None: self.max_clusters = int(max_clusters)
 
