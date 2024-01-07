@@ -4,8 +4,15 @@ from luma.interface.util import Matrix
 from luma.interface.super import Evaluator
 
 
-__all__ = ['Accuracy', 'Precision', 'Recall', 'F1Score', 
-           'Specificity', 'AUCCurveROC', 'Complex']
+__all__ = (
+    'Accuracy', 
+    'Precision', 
+    'Recall', 
+    'F1Score', 
+    'Specificity', 
+    'AUCCurveROC', 
+    'Complex'
+)
 
 
 class Accuracy(Evaluator):

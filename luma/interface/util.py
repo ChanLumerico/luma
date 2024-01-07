@@ -2,8 +2,13 @@ from typing import Any
 import numpy as np
 
 
-__all__ = ['Matrix', 'TreeNode', 'NearestNeighbors', 
-           'SilhouetteUtil', 'DBUtil']
+__all__ = (
+    'Matrix', 
+    'TreeNode', 
+    'NearestNeighbors', 
+    'SilhouetteUtil', 
+    'DBUtil'
+)
 
 
 class Matrix(np.ndarray):

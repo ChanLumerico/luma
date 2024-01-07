@@ -7,7 +7,9 @@ from luma.interface.super import Estimator, Evaluator
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['PolynomialRegressor']
+__all__ = (
+    'PolynomialRegressor'
+)
 
 
 class PolynomialRegressor(Estimator):

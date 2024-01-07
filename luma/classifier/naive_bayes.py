@@ -7,7 +7,10 @@ from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.metric.classification import Accuracy
 
 
-__all__ = ['GaussianNaiveBayes', 'BernoulliNaiveBayes']
+__all__ = (
+    'GaussianNaiveBayes', 
+    'BernoulliNaiveBayes'
+)
 
 
 class GaussianNaiveBayes(Estimator, Supervised):

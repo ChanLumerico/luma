@@ -6,8 +6,12 @@ from luma.interface.super import Estimator, Evaluator, Unsupervised
 from luma.metric.clustering import SilhouetteCoefficient
 
 
-__all__ = ['KMeansClustering', 'KMeansClusteringPlus', 
-           'KMediansClustering', 'MiniBatchKMeansClustering']
+__all__ = (
+    'KMeansClustering', 
+    'KMeansClusteringPlus', 
+    'KMediansClustering', 
+    'MiniBatchKMeansClustering'
+)
 
 
 class KMeansClustering(Estimator, Unsupervised):

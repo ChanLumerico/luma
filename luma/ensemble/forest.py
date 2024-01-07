@@ -11,7 +11,10 @@ from luma.metric.classification import Accuracy
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['RandomForestClassifier', 'RandomForestRegressor']
+__all__ = (
+    'RandomForestClassifier', 
+    'RandomForestRegressor'
+)
 
 
 class RandomForestClassifier(Estimator, Supervised):

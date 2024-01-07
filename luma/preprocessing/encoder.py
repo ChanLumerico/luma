@@ -6,7 +6,11 @@ from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
 
-__all__ = ['OneHotEncoder', 'LabelEncoder', 'OrdinalEncoder']
+__all__ = (
+    'OneHotEncoder', 
+    'LabelEncoder', 
+    'OrdinalEncoder'
+)
 
 
 class OneHotEncoder(Transformer, Transformer.Feature):

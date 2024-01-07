@@ -10,7 +10,9 @@ from luma.metric.regression import MeanSquaredError
 T = TypeVar('T', bound=Union[Estimator, Transformer])
 
 
-__all__ = ['Pipeline']
+__all__ = (
+    'Pipeline'
+)
 
 
 class Pipeline:

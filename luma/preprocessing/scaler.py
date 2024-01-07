@@ -5,7 +5,10 @@ from luma.interface.super import Transformer
 from luma.interface.exception import NotFittedError
 
 
-__all__ = ['StandardScaler', 'MinMaxScaler']
+__all__ = (
+    'StandardScaler', 
+    'MinMaxScaler'
+)
 
 
 class StandardScaler(Transformer, Transformer.Feature):

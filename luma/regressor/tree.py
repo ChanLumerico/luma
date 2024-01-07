@@ -8,7 +8,9 @@ from luma.interface.util import TreeNode
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['DecisionTreeRegressor']
+__all__ = (
+    'DecisionTreeRegressor'
+)
 
 
 class DecisionTreeRegressor(Estimator, Supervised):

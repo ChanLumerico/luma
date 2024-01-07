@@ -7,7 +7,12 @@ from luma.interface.super import Transformer, Unsupervised, Supervised
 from luma.interface.exception import NotFittedError, NotConvergedError
 
 
-__all__ = ['PCA', 'LDA', 'TruncatedSVD', 'FactorAnalysis']
+__all__ = (
+    'PCA', 
+    'LDA', 
+    'TruncatedSVD', 
+    'FactorAnalysis'
+)
 
 
 class PCA(Transformer, Unsupervised):

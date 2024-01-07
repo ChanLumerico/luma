@@ -2,7 +2,9 @@ from typing import Any
 import sys
 
 
-__all__ = ['LUMA']
+__all__ = (
+    'LUMA'
+)
 
 
 class LUMA:

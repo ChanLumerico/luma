@@ -7,7 +7,10 @@ from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['SVR', 'KernelSVR']
+__all__ = (
+    'SVR', 
+    'KernelSVR'
+)
 
 
 class SVR(Estimator, Supervised):

@@ -7,7 +7,10 @@ from luma.interface.util import Matrix
 from luma.interface.super import Visualizer, Estimator
 
 
-__all__ = ['DecisionRegion', 'ClusterPlot']
+__all__ = (
+    'DecisionRegion', 
+    'ClusterPlot'
+)
 
 
 class DecisionRegion(Visualizer):

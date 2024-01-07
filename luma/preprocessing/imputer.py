@@ -9,7 +9,11 @@ from luma.interface.super import Transformer
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
 
-__all__ = ['SimpleImputer', 'KNNImputer', 'HotDeckImputer']
+__all__ = (
+    'SimpleImputer', 
+    'KNNImputer', 
+    'HotDeckImputer'
+)
 
 
 class SimpleImputer(Transformer, Transformer.Feature):

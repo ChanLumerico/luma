@@ -8,8 +8,11 @@ from luma.interface.exception import NotFittedError
 from luma.metric.classification import Accuracy
 
 
-__all__ = ['KNNClassifier', 'AdaptiveKNNClassifier', 
-           'WeightedKNNClassifier']
+__all__ = (
+    'KNNClassifier', 
+    'AdaptiveKNNClassifier', 
+    'WeightedKNNClassifier'
+)
 
 
 class KNNClassifier(Estimator, Supervised):

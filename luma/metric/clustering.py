@@ -6,7 +6,10 @@ from luma.interface.super import Evaluator
 from luma.interface.util import Matrix, SilhouetteUtil, DBUtil
 
 
-__all__ = ['SilhouetteCoefficient', 'DaviesBouldin']
+__all__ = (
+    'SilhouetteCoefficient', 
+    'DaviesBouldin'
+)
 
 
 class SilhouetteCoefficient(Evaluator):

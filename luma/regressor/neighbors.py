@@ -8,8 +8,11 @@ from luma.interface.exception import NotFittedError
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['KNNRegressor', 'AdaptiveKNNRegressor', 
-           'WeightedKNNRegressor']
+__all__ = (
+    'KNNRegressor', 
+    'AdaptiveKNNRegressor', 
+    'WeightedKNNRegressor'
+)
 
 
 class KNNRegressor(Estimator, Supervised):

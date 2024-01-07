@@ -11,9 +11,12 @@ from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.clustering import SilhouetteCoefficient
 
 
-__all__ = ['SpectralClustering', 'NormalizedSpectralClustering',
-           'HierarchicalSpectralClustering',
-           'AdaptiveSpectralClustering']
+__all__ = (
+    'SpectralClustering', 
+    'NormalizedSpectralClustering',
+    'HierarchicalSpectralClustering',
+    'AdaptiveSpectralClustering'
+)
 
 
 class SpectralClustering(Estimator, Unsupervised):

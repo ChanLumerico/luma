@@ -14,9 +14,20 @@ from luma.clustering.kmeans import *
 from luma.metric.distance import *
 
 
-__all__ = ['TSNE', 'MDS', 'MetricMDS', 'LandmarkMDS', 'LLE',
-           'ModifiedLLE', 'HessianLLE', 'SammonMapping', 'LaplacianEigenmap',
-           'Isomap', 'ConformalIsomap', 'LTSA']
+__all__ = (
+    'TSNE', 
+    'MDS', 
+    'MetricMDS', 
+    'LandmarkMDS', 
+    'LLE',
+    'ModifiedLLE', 
+    'HessianLLE', 
+    'SammonMapping', 
+    'LaplacianEigenmap',
+    'Isomap', 
+    'ConformalIsomap', 
+    'LTSA'
+)
 
 
 class TSNE(Transformer, Unsupervised):

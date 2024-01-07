@@ -4,7 +4,9 @@ import numpy as np
 from luma.interface.util import Matrix
 
 
-__all__ = ['TrainTestSplit']
+__all__ = (
+    'TrainTestSplit'
+)
 
 
 class TrainTestSplit:

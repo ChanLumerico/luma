@@ -6,7 +6,9 @@ from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError
 
 
-__all__ = ['LocalOutlierFactor']
+__all__ = (
+    'LocalOutlierFactor'
+)
 
 
 class LocalOutlierFactor:

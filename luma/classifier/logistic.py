@@ -7,7 +7,10 @@ from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.interface.super import Estimator, Evaluator, Supervised
 
 
-__all__ = ['LogisticRegressor', 'SoftmaxRegressor']
+__all__ = (
+    'LogisticRegressor', 
+    'SoftmaxRegressor'
+)
 
 
 class LogisticRegressor(Estimator, Supervised):

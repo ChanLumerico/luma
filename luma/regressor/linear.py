@@ -6,8 +6,12 @@ from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['LinearRegressor', 'RidgeRegressor', 
-           'LassoRegressor', 'ElasticNetRegressor']
+__all__ = (
+    'LinearRegressor', 
+    'RidgeRegressor', 
+    'LassoRegressor', 
+    'ElasticNetRegressor'
+)
 
 
 class RidgeRegressor(Estimator, Supervised):

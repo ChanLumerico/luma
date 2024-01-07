@@ -2,8 +2,12 @@ from typing import Any
 from luma.interface.super import Transformer, Estimator
 
 
-__all__ = ['NotFittedError', 'UnsupportedParameterError', 'NotConvergedError',
-           'ModelExtensionError']
+__all__ = (
+    'NotFittedError', 
+    'UnsupportedParameterError', 
+    'NotConvergedError',
+    'ModelExtensionError'
+)
 
 
 def get_name(model: Any) -> str: return type(model).__name__

@@ -4,8 +4,15 @@ from typing import Any
 from luma.core.main import LUMA
 
 
-__all__ = ['Estimator', 'Transformer', 'Evaluator', 'Visualizer', 
-           'Supervised', 'Unsupervised', 'Distance']
+__all__ = (
+    'Estimator', 
+    'Transformer', 
+    'Evaluator', 
+    'Visualizer', 
+    'Supervised', 
+    'Unsupervised', 
+    'Distance'
+)
 
 
 class Estimator(LUMA, metaclass=ABCMeta):

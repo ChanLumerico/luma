@@ -9,7 +9,10 @@ from luma.clustering.kmeans import KMeansClusteringPlus
 from luma.metric.clustering import SilhouetteCoefficient
 
 
-__all__ = ['AgglomerativeClustering', 'DivisiveClustering']
+__all__ = (
+    'AgglomerativeClustering', 
+    'DivisiveClustering'
+)
 
 
 class AgglomerativeClustering(Estimator, Unsupervised):

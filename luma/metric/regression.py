@@ -5,8 +5,14 @@ from luma.interface.util import Matrix
 from luma.interface.super import Evaluator
 
 
-__all__ = ['MeanAbsoluteError', 'MeanSquaredError', 'RootMeanSquaredError',
-           'MeanAbsolutePercentageError', 'RSquaredScore', 'Complex']
+__all__ = (
+    'MeanAbsoluteError', 
+    'MeanSquaredError', 
+    'RootMeanSquaredError',
+    'MeanAbsolutePercentageError', 
+    'RSquaredScore', 
+    'Complex'
+)
 
 
 class MeanAbsoluteError(Evaluator):

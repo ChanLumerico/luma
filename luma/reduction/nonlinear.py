@@ -7,7 +7,9 @@ from luma.interface.super import Transformer, Unsupervised
 from luma.interface.exception import NotFittedError
 
 
-__all__ = ['KernelPCA']
+__all__ = (
+    'KernelPCA'
+)
     
 
 class KernelPCA(Transformer, Unsupervised):

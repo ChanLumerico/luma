@@ -8,7 +8,9 @@ from luma.interface.exception import ModelExtensionError, UnsupportedParameterEr
 MODEL_EXTENSION = '.luma'
 
 
-__all__ = ['ModelPorter']
+__all__ = (
+    'ModelPorter'
+)
 
 
 class ModelPorter:

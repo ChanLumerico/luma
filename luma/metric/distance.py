@@ -5,8 +5,15 @@ from luma.interface.util import Matrix
 from luma.interface.super import Distance
 
 
-__all__ = ['Euclidean', 'Manhattan', 'Chebyshev', 'Minkowski', 
-           'CosineSimilarity', 'Correlation', 'Mahalanobis']
+__all__ = (
+    'Euclidean', 
+    'Manhattan', 
+    'Chebyshev', 
+    'Minkowski', 
+    'CosineSimilarity', 
+    'Correlation', 
+    'Mahalanobis'
+)
 
 
 class Euclidean(Distance):

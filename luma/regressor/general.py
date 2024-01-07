@@ -8,8 +8,13 @@ from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
 
 
-__all__ = ['PoissonRegressor', 'NegativeBinomialRegressor', 'GammaRegressor',
-           'BetaRegressor', 'InverseGaussianRegressor']
+__all__ = (
+    'PoissonRegressor', 
+    'NegativeBinomialRegressor', 
+    'GammaRegressor',
+    'BetaRegressor', 
+    'InverseGaussianRegressor'
+)
 
 
 class PoissonRegressor(Estimator, Supervised):

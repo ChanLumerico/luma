@@ -5,8 +5,12 @@ import pandas as pd
 from luma.interface.super import Visualizer
 
 
-__all__ = ['CorrelationHeatMap', 'CorrelationBar', 'JointPlot', 
-           'MissingProportion']
+__all__ = (
+    'CorrelationHeatMap', 
+    'CorrelationBar', 
+    'JointPlot', 
+    'MissingProportion'
+)
 
 
 class CorrelationHeatMap(Visualizer):

@@ -18,7 +18,7 @@ from luma.clustering.kmeans import MiniBatchKMeansClustering
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.clustering.spectral import SpectralClustering, NormalizedSpectralClustering
 from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpectralClustering
-from luma.clustering.density import DBSCAN
+from luma.clustering.density import DBSCAN, HDBSCAN
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
@@ -60,6 +60,7 @@ from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor, Weighte
 from luma.pipe.pipeline import Pipeline
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot, MissingProportion
+from luma.visual.graph import GraphPlot
 from luma.visual.result import DecisionRegion, ClusterPlot
 
 from luma.migrate.port import ModelPorter
@@ -99,7 +100,7 @@ if __name__ == '__main__':
     SpectralClustering, NormalizedSpectralClustering
     HierarchicalSpectralClustering, AdaptiveSpectralClustering
     
-    DBSCAN
+    DBSCAN, HDBSCAN
     
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor
@@ -161,6 +162,8 @@ if __name__ == '__main__':
     # ------------------- [ luma.visual ] ----------------------
     CorrelationBar, CorrelationHeatMap, JointPlot
     MissingProportion
+    
+    GraphPlot
     
     DecisionRegion, ClusterPlot
     

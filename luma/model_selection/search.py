@@ -6,7 +6,9 @@ from luma.interface.super import Estimator, Evaluator
 from luma.interface.exception import NotFittedError
 
 
-__all__ = ['GridSearchCV']
+__all__ = (
+    'GridSearchCV'
+)
 
 
 class GridSearchCV:

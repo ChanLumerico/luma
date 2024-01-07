@@ -9,7 +9,9 @@ from luma.interface.util import TreeNode
 from luma.metric.classification import Accuracy
 
 
-__all__ = ['DecisionTreeClassifier']
+__all__ = (
+    'DecisionTreeClassifier'
+)
 
 
 class DecisionTreeClassifier(Estimator, Supervised):
