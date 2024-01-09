@@ -13,6 +13,41 @@ __all__ = (
 
 
 class AffinityPropagation(Estimator, Unsupervised):
+    
+    """
+    Affinity Propagation is a clustering algorithm that identifies exemplars 
+    among data points, effectively determining cluster centers. It works by 
+    exchanging messages between pairs of data points until a set of exemplars 
+    and corresponding clusters emerges. The algorithm doesn't require the 
+    number of clusters to be specified in advance. Affinity Propagation is 
+    particularly useful for problems where the optimal number of clusters 
+    is unknown or hard to estimate.
+    
+    Parameters
+    ----------
+    `max_iter` : Maximum iterations for message exchange
+    `damping` : Balancing factor for ensuring numerical stability and convergence
+    `tol` : Early-stopping threshold
+    `preference` : Parameter which determines the selectivity of choosing exemplars
+    
+    * Self-Similarity Setting:
+        The preference value represents the "self-similarity" of each data point. 
+        It is the value on the diagonal of the similarity matrix, which influences 
+        how likely a data point is to be chosen as an exemplar (a cluster center).
+    
+    * Influencing Cluster Count:
+        A higher preference value suggests a greater likelihood for a data point to 
+        become an exemplar, potentially leading to more clusters. Conversely, a lower 
+        preference value tends to produce fewer clusters, as fewer points are strong 
+        candidates for being exemplars.
+    
+    * Default Setting:
+        If not explicitly set, the preference is often chosen automatically based on 
+        the input data. Common practices include setting it to the median or mean of 
+        the similarity values.
+    
+    """
+    
     def __init__(self, 
                  max_iter: int = 100,
                  damping: float = 0.7,

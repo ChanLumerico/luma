@@ -19,6 +19,7 @@ from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClusterin
 from luma.clustering.spectral import SpectralClustering, NormalizedSpectralClustering
 from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpectralClustering
 from luma.clustering.density import DBSCAN
+from luma.clustering.affinity import AffinityPropagation
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
@@ -102,6 +103,8 @@ if __name__ == '__main__':
     HierarchicalSpectralClustering, AdaptiveSpectralClustering
     
     DBSCAN
+    
+    AffinityPropagation
     
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor
