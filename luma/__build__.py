@@ -4,7 +4,7 @@ from luma.interface.exception import NotFittedError, NotConvergedError
 from luma.interface.exception import UnsupportedParameterError, ModelExtensionError
 from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
 from luma.interface.super import Supervised, Unsupervised, Distance
-from luma.interface.util import Matrix, Vector, Constant, TreeNode, NearestNeighbors
+from luma.interface.util import Matrix, Vector, Scalar, TreeNode, NearestNeighbors
 from luma.interface.util import SilhouetteUtil, DBUtil
 
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
@@ -19,7 +19,7 @@ from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClusterin
 from luma.clustering.spectral import SpectralClustering, NormalizedSpectralClustering
 from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpectralClustering
 from luma.clustering.density import DBSCAN
-from luma.clustering.affinity import AffinityPropagation
+from luma.clustering.affinity import AffinityPropagation, AdaptiveAffinityPropagation
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     Estimator, Transformer, Evaluator, Visualizer,
     Supervised, Unsupervised, Distance
     
-    Matrix, Vector, Constant, TreeNode, NearestNeighbors,
+    Matrix, Vector, Scalar, TreeNode, NearestNeighbors,
     SilhouetteUtil, DBUtil
     
     # ---------------- [ luma.classifier ] ---------------------
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     
     DBSCAN
     
-    AffinityPropagation
+    AffinityPropagation, AdaptiveAffinityPropagation
     
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor

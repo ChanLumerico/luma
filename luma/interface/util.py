@@ -5,7 +5,7 @@ import numpy as np
 __all__ = (
     'Matrix', 
     'Vector', 
-    'Constant', 
+    'Scalar', 
     'TreeNode', 
     'NearestNeighbors', 
     'SilhouetteUtil', 
@@ -54,15 +54,15 @@ class Vector(Matrix):
         return obj
 
 
-class Constant:
+class Scalar:
     
     """
-    A placeholder class for constant type.
+    A placeholder class for scalar type.
     
     This class encompasses `int` and `float`.
     """
     
-    def __new__(cls, value: int | float) -> 'Constant':
+    def __new__(cls, value: int | float) -> 'Scalar':
         return float(value)
 
 
