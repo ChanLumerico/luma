@@ -1,6 +1,4 @@
 from typing import Literal
-from scipy.spatial import distance_matrix
-from scipy.sparse.csgraph import minimum_spanning_tree
 import numpy as np
 
 from luma.interface.super import Estimator, Evaluator, Unsupervised
@@ -11,8 +9,7 @@ from luma.metric.clustering import SilhouetteCoefficient
 
 
 __all__ = (
-    'DBSCAN', 
-    'HDBSCAN'
+    'DBSCAN'
 )
 
 
@@ -110,6 +107,3 @@ class DBSCAN(Estimator, Unsupervised):
         if epsilon is not None: self.epsilon = float(epsilon)
         if min_points is not None: self.min_points = int(min_points)
 
-
-class HDBSCAN(Estimator, Unsupervised):
-    ...

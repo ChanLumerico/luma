@@ -4,6 +4,8 @@ import numpy as np
 
 __all__ = (
     'Matrix', 
+    'Vector', 
+    'Constant', 
     'TreeNode', 
     'NearestNeighbors', 
     'SilhouetteUtil', 
@@ -14,7 +16,7 @@ __all__ = (
 class Matrix(np.ndarray):
 
     """
-    Internal class that extends numpy.ndarray.
+    Internal class that extends `numpy.ndarray`.
 
     This class provides a way to create matrix objects that have 
     all the capabilities of numpy arrays with the potential for 
@@ -34,6 +36,34 @@ class Matrix(np.ndarray):
 
     def __array_finalize__(self, obj: np.ndarray | None) -> None:
         if obj is None: return
+
+
+class Vector(Matrix):
+    
+    """
+    Internal class for vector that extends `Matrix`.
+    
+    This class represents a single row/column vector with its
+    type of `numpy.ndarray` or `Matrix`.
+    
+    """
+    
+    def __new__(cls, array_like: Any) -> 'Vector':
+        if isinstance(array_like, list): obj = Matrix(array_like)
+        else: obj = array_like    
+        return obj
+
+
+class Constant:
+    
+    """
+    A placeholder class for constant type.
+    
+    This class encompasses `int` and `float`.
+    """
+    
+    def __new__(cls, value: int | float) -> 'Constant':
+        return float(value)
 
 
 class TreeNode:

@@ -84,20 +84,31 @@ class ClusterPlot(Visualizer):
         self.ylabel = ylabel
         self.cmap = cmap
         self.alpha = alpha
+        self.labels = self.estimator.labels
         
         if self.title == 'auto':
             self.title = type(self.estimator).__name__
     
     def plot(self) -> None:
-        plt.scatter(self.X[:, 0], self.X[:, 1], 
+        plt.scatter(self.X[self.labels == -1, 0], 
+                    self.X[self.labels == -1, 1],
+                    marker='x',
+                    c='black',
+                    label='Noise')
+        
+        plt.scatter(self.X[self.labels != -1, 0], 
+                    self.X[self.labels != -1, 1], 
                     marker='o',
-                    c=self.estimator.labels,
+                    c=self.labels[self.labels != -1],
                     cmap=self.cmap,
                     alpha=self.alpha,
-                    edgecolors='black',)
+                    edgecolors='black')
+        
         plt.title(self.title)
         plt.xlabel(self.xlabel)
         plt.ylabel(self.ylabel)
+        
+        plt.legend() if len(self.X[self.labels == -1]) else Ellipsis
         plt.tight_layout()
         plt.show()
 

@@ -4,7 +4,7 @@ from luma.interface.exception import NotFittedError, NotConvergedError
 from luma.interface.exception import UnsupportedParameterError, ModelExtensionError
 from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
 from luma.interface.super import Supervised, Unsupervised, Distance
-from luma.interface.util import Matrix, TreeNode, NearestNeighbors
+from luma.interface.util import Matrix, Vector, Constant, TreeNode, NearestNeighbors
 from luma.interface.util import SilhouetteUtil, DBUtil
 
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
@@ -18,7 +18,7 @@ from luma.clustering.kmeans import MiniBatchKMeansClustering
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.clustering.spectral import SpectralClustering, NormalizedSpectralClustering
 from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpectralClustering
-from luma.clustering.density import DBSCAN, HDBSCAN
+from luma.clustering.density import DBSCAN
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
@@ -72,13 +72,14 @@ if __name__ == '__main__':
     LUMA
     
     # ----------------- [ luma.interface ] ---------------------
-    NotFittedError, NotConvergedError
+    NotFittedError, NotConvergedError,
     UnsupportedParameterError, ModelExtensionError
     
-    Estimator, Transformer, Evaluator, Visualizer
+    Estimator, Transformer, Evaluator, Visualizer,
     Supervised, Unsupervised, Distance
     
-    Matrix, TreeNode, NearestNeighbors, SilhouetteUtil, DBUtil
+    Matrix, Vector, Constant, TreeNode, NearestNeighbors,
+    SilhouetteUtil, DBUtil
     
     # ---------------- [ luma.classifier ] ---------------------
     LogisticRegressor, SoftmaxRegressor
@@ -92,15 +93,15 @@ if __name__ == '__main__':
     KNNClassifier, AdaptiveKNNClassifier, WeightedKNNClassifier
     
     # ----------------- [ luma.clustering ] --------------------
-    KMeansClustering, KMeansClusteringPlus, KMediansClustering
+    KMeansClustering, KMeansClusteringPlus, KMediansClustering,
     MiniBatchKMeansClustering
     
     AgglomerativeClustering, DivisiveClustering
     
-    SpectralClustering, NormalizedSpectralClustering
+    SpectralClustering, NormalizedSpectralClustering,
     HierarchicalSpectralClustering, AdaptiveSpectralClustering
     
-    DBSCAN, HDBSCAN
+    DBSCAN
     
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor
@@ -109,12 +110,12 @@ if __name__ == '__main__':
     Accuracy, Precision, Recall, F1Score, Specificity, 
     AUCCurveROC, Complex
     
-    MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
+    MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError,
     MeanAbsolutePercentageError, RSquaredScore, Complex
     
     SilhouetteCoefficient, DaviesBouldin
     
-    Euclidean, Manhattan, Chebyshev, Minkowski
+    Euclidean, Manhattan, Chebyshev, Minkowski,
     CosineSimilarity, Correlation, Mahalanobis
     
     # -------------- [ luma.module_selection ] -----------------
@@ -136,18 +137,18 @@ if __name__ == '__main__':
     
     KernelPCA
     
-    TSNE, SammonMapping, LaplacianEigenmap
-    MDS, MetricMDS, LandmarkMDS
-    LLE, ModifiedLLE, HessianLLE, LTSA
+    TSNE, SammonMapping, LaplacianEigenmap,
+    MDS, MetricMDS, LandmarkMDS,
+    LLE, ModifiedLLE, HessianLLE, LTSA,
     Isomap, ConformalIsomap
     
     # ----------------- [ luma.regressor ] ---------------------
-    LinearRegressor
+    LinearRegressor,
     RidgeRegressor, LassoRegressor, ElasticNetRegressor
     
     PolynomialRegressor
     
-    PoissonRegressor, NegativeBinomialRegressor, GammaRegressor
+    PoissonRegressor, NegativeBinomialRegressor, GammaRegressor,
     BetaRegressor, InverseGaussianRegressor
     
     SVR, KernelSVR
@@ -160,7 +161,7 @@ if __name__ == '__main__':
     Pipeline
     
     # ------------------- [ luma.visual ] ----------------------
-    CorrelationBar, CorrelationHeatMap, JointPlot
+    CorrelationBar, CorrelationHeatMap, JointPlot,
     MissingProportion
     
     GraphPlot
