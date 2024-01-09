@@ -5,7 +5,7 @@ from luma.interface.exception import UnsupportedParameterError, ModelExtensionEr
 from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
 from luma.interface.super import Supervised, Unsupervised, Distance
 from luma.interface.util import Matrix, Vector, Scalar, TreeNode, NearestNeighbors
-from luma.interface.util import SilhouetteUtil, DBUtil
+from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil
 
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
 from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     Supervised, Unsupervised, Distance
     
     Matrix, Vector, Scalar, TreeNode, NearestNeighbors,
-    SilhouetteUtil, DBUtil
+    SilhouetteUtil, DBUtil, KernelUtil
     
     # ---------------- [ luma.classifier ] ---------------------
     LogisticRegressor, SoftmaxRegressor

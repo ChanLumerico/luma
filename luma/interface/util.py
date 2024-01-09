@@ -1,5 +1,7 @@
-from typing import Any
+from typing import Any, Callable
 import numpy as np
+
+from luma.interface.exception import UnsupportedParameterError
 
 
 __all__ = (
@@ -9,7 +11,8 @@ __all__ = (
     'TreeNode', 
     'NearestNeighbors', 
     'SilhouetteUtil', 
-    'DBUtil'
+    'DBUtil',
+    'KernelUtil'
 )
 
 
@@ -224,4 +227,63 @@ class DBUtil:
                 separation[i, j] = np.sqrt(np.sum(diff_sq))
                     
         return separation
+
+
+class KernelUtil:
+    
+    """
+    Internal class for kernel methods(tricks).
+    
+    This class facilitates transferring kernel type strings
+    into actual specific kernel function.
+    
+    Example
+    -------
+    >>> util = KernelUtil(kernel='rbf')
+    >>> util.kernel_func
+    KernelUtil.rbf_kernel: Callable[[...], Matrix]
+    
+    """
+    
+    def __init__(self, kernel: str) -> None:
+        self.kernel = kernel
+    
+    def linear_kernel(self, X: Matrix) -> Matrix:
+        return np.dot(X, X.T)
+    
+    def polynomial_kernel(self, X: Matrix, 
+                          gamma: float = 1.0,
+                          coef: float = 0.0,
+                          deg: int = 2) -> Matrix:
+        return (gamma * np.dot(X, X.T) + coef) ** deg
+    
+    def rbf_kernel(self, X: Matrix, gamma: float = 1.0) -> Matrix:
+        _left = np.sum(X ** 2, axis=1).reshape(-1, 1)
+        _right = np.sum(X ** 2, axis=1) - 2 * np.dot(X, X.T)
+        
+        return np.exp(-gamma * (_left + _right))
+    
+    def sigmoid_kernel(self, X: Matrix,
+                       gamma: float = 1.0,
+                       coef: float = 0.0) -> Matrix:
+        return np.tanh(gamma * np.dot(X, X.T) + coef)
+    
+    def laplacian_kernel(self, X: Matrix, gamma: float = 1.0) -> Matrix:
+        manhattan_dists = np.sum(np.abs(X[:, np.newaxis] - X), axis=2)
+        return np.exp(-gamma * manhattan_dists)
+    
+    @property
+    def kernel_func(self) -> Callable[[Matrix, Ellipsis], Matrix]:
+        if self.kernel in ('linear', 'lin'):
+            return self.linear_kernel
+        elif self.kernel in ('poly', 'polynomial'):
+            return self.polynomial_kernel
+        elif self.kernel in ('rbf', 'gaussian', 'Gaussian'):
+            return self.rbf_kernel
+        elif self.kernel in ('sigmoid', 'tanh'):
+            return self.sigmoid_kernel
+        elif self.kernel in ('laplacian', 'lap'):
+            return self.laplacian_kernel
+        else:
+            raise UnsupportedParameterError(self.kernel)
 
