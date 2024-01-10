@@ -18,8 +18,9 @@ from luma.clustering.kmeans import MiniBatchKMeansClustering
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.clustering.spectral import SpectralClustering, NormalizedSpectralClustering
 from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpectralClustering
-from luma.clustering.density import DBSCAN
+from luma.clustering.density import DBSCAN, OPTICS
 from luma.clustering.affinity import AffinityPropagation, AdaptiveAffinityPropagation
+from luma.clustering.affinity import KernelAffinityPropagation
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
@@ -102,9 +103,10 @@ if __name__ == '__main__':
     SpectralClustering, NormalizedSpectralClustering,
     HierarchicalSpectralClustering, AdaptiveSpectralClustering
     
-    DBSCAN
+    DBSCAN, OPTICS
     
-    AffinityPropagation, AdaptiveAffinityPropagation
+    AffinityPropagation, AdaptiveAffinityPropagation,
+    KernelAffinityPropagation
     
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor
