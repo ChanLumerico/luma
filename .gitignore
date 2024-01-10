@@ -2,6 +2,7 @@
 *.pyc
 *.luma
 setup.py
+token.key
 build/
 dist/
 example/
