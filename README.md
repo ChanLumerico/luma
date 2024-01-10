@@ -102,7 +102,7 @@ users gain insights from their machine learning models and communicate results e
 `0.4.6`
 
 ### Dependencies
-`NumPy`, `SciPy`, `Pandas`, `Matplotlib`, `Seaborn`
+`NumPy`, `SciPy`, `NetworkX`, `Pandas`, `Matplotlib`, `Seaborn`
 
 ### Python Version
 `Python 3.10` or later

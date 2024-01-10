@@ -1,18 +1,22 @@
-from typing import Literal
+from typing import Literal, Tuple, List
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import cdist
 import numpy as np
 
 from luma.interface.super import Estimator, Evaluator, Unsupervised
-from luma.interface.util import Matrix, Scalar
-from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.interface.util import Matrix, Vector, Scalar
+from luma.interface.exception import (NotFittedError, 
+                                      NotConvergedError, 
+                                      UnsupportedParameterError)
+
 from luma.metric.distance import Euclidean, Minkowski
 from luma.metric.clustering import SilhouetteCoefficient
 
 
 __all__ = (
     'DBSCAN',
-    'OPTICS'
+    'OPTICS',
+    'DENCLUE'
 )
 
 
@@ -116,9 +120,9 @@ class OPTICS(Estimator, Unsupervised):
     """
     OPTICS (Ordering Points To Identify the Clustering Structure) is an 
     unsupervised learning algorithm for identifying cluster structures 
-    in spatial data. It creates an ordered list of points based on 
+    in spatial  It creates an ordered list of points based on 
     core-distance and reachability-distance, allowing it to find 
-    clusters of varying densities. Unlike algorithms like DBSCAN, it 
+    clusters of varying density. Unlike algorithms like DBSCAN, it 
     doesn't require a global density threshold, making it versatile 
     for complex datasets. The result is often visualized as a 
     reachability plot, revealing the data's clustering hierarchy and 
@@ -246,4 +250,144 @@ class OPTICS(Estimator, Unsupervised):
         if epsilon is not None: self.epsilon = float(epsilon)
         if min_points is not None: self.min_points = int(min_points)
         if threshold is not None: self.threshold = str(threshold)
+
+
+class DENCLUE(Estimator, Unsupervised):
+    def __init__(self, 
+                 h: float | Literal['auto'] = 'auto', 
+                 tol: float = 1e-3, 
+                 max_climb: int = 100,
+                 min_density: float = 0.0, 
+                 sample_weight: Vector = None,
+                 verbose: bool = False) -> None:
+        self.h = h
+        self.tol = tol
+        self.max_climb = max_climb
+        self.min_density = min_density
+        self.sample_weight = sample_weight
+        self.verbose = verbose
+        self._X = None
+        self._fitted = False
+
+    def fit(self, X: Matrix) -> 'DENCLUE':
+        self._m, self._n = X.shape
+        
+        attractors: Vector = np.zeros((self._m, self._n))
+        rad: Vector = np.zeros((self._m, 1))
+        density: Vector = np.zeros((self._m, 1))
+        
+        if self.h == 'auto': self.h = np.std(X) / 5
+        if self.sample_weight is None:
+            self.sample_weight = np.ones((self._m, 1))
+        
+        labels = -np.ones(X.shape[0])
+        for i in range(self._m):
+            attractors[i], density[i], rad[i] = self._climb_hill(X[i], X)
+        
+        adj_list = [[] for _ in range(self._m)]
+        for i in range(self._m):
+            for j in range(i + 1, self._m):
+                diff = np.linalg.norm(attractors[i] - attractors[j])
+                if diff <= rad[i] + rad[j]:
+                    adj_list[i].append(j)
+                    adj_list[j].append(i)
+        
+        num_clusters = 0
+        for cl in self._find_connected_components(adj_list):
+            max_instance = max(cl, key=lambda x: density[x])
+            max_density = density[max_instance]
+            
+            if max_density >= self.min_density:
+                labels[cl] = num_clusters            
+            num_clusters += 1
+
+        self.labels = labels
+        self._fitted = True
+        return self
+    
+    def _climb_hill(self, x: Vector, X: Matrix) -> Tuple[Vector, float, float]:
+        error, prob = 99.0, 0.0
+        x1 = np.copy(x)
+        
+        iters = 0
+        r_new, r_old, r_2old = 0.0, 0.0, 0.0
+        while True:
+            r_3old, r_2old, r_old = r_2old, r_old, r_new
+            x0 = np.copy(x1)
+            x1, density = self._step(x0, X)
+            
+            error, prob = density - prob, density
+            r_new = np.linalg.norm(x1 - x0)
+            radius = r_3old + r_2old + r_old + r_new
+            
+            iters += 1
+            if iters > 3 and error < self.tol: break
+            if iters == self.max_climb: 
+                raise NotConvergedError(self)
+            
+        return x1, prob, radius
+
+    def _step(self, x: Vector, X: Matrix) -> Tuple[Vector, float]:
+        sup_weight = 0.0
+        x1 = np.zeros((1, self._n))
+        
+        for j in range(self._m):
+            kernel = self._kernel_func(x, X[j], self._n)
+            kernel = kernel * self.sample_weight[j] / (self.h ** self._n)
+            
+            sup_weight = sup_weight + kernel
+            x1 = x1 + (kernel * X[j])
+            
+        x1 = x1 / sup_weight
+        density = sup_weight / np.sum(self.sample_weight)
+        
+        return x1, density
+
+    def _kernel_func(self, xi: Vector, xj: Vector, deg: int):
+        kernel = np.exp(-(np.linalg.norm(xi - xj) / self.h) ** 2 / 2)
+        kernel /= (2 * np.pi) ** (deg / 2)
+        
+        return kernel
+
+    def _find_connected_components(self, adj_list: List[list]) -> list:
+        def __dfs(node: int) -> Vector:
+            stack, path = [node], []
+            while stack:
+                vertex = stack.pop()
+                if not visited[vertex]:
+                    visited[vertex] = True
+                    path.append(vertex)
+                    stack.extend(set(adj_list[vertex]) - set(path))
+            
+            return np.array(path)
+
+        clusters = []
+        visited = [False] * self._m
+        for node in range(self._m):
+            if visited[node]: continue
+            cluster = __dfs(node)
+            clusters.append(cluster)
+
+        return clusters
+
+    def predict(self) -> None:
+        raise Warning(f"{type(self).__name__} does not support prediction!")
+    
+    def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
+        return metric.compute(self._X, self.labels)
+    
+    def set_params(self, 
+                   h: float | str = None,
+                   tol: float = None,
+                   max_climb: int = None,
+                   min_density: float = 0.0,
+                   sample_weight: Vector = None) -> None:
+        if tol is not None: self.tol = float(tol)
+        if max_climb is not None: self.max_climb = int(max_climb)
+        if min_density is not None: self.min_density = float(min_density)
+        if sample_weight is not None: self.sample_weight = sample_weight
+        if h is not None:
+            if isinstance(h, str): self.h = str(h)
+            elif isinstance(h, float): self.tol = float(h)
+            else: raise UnsupportedParameterError(h)
 
