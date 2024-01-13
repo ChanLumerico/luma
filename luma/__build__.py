@@ -18,7 +18,7 @@ from luma.clustering.kmeans import MiniBatchKMeansClustering
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.clustering.spectral import SpectralClustering, NormalizedSpectralClustering
 from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpectralClustering
-from luma.clustering.density import DBSCAN, OPTICS
+from luma.clustering.density import DBSCAN, OPTICS, DENCLUE
 from luma.clustering.affinity import AffinityPropagation, AdaptiveAffinityPropagation
 from luma.clustering.affinity import KernelAffinityPropagation
 
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     SpectralClustering, NormalizedSpectralClustering,
     HierarchicalSpectralClustering, AdaptiveSpectralClustering
     
-    DBSCAN, OPTICS
+    DBSCAN, OPTICS, DENCLUE
     
     AffinityPropagation, AdaptiveAffinityPropagation,
     KernelAffinityPropagation

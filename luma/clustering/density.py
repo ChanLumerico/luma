@@ -5,9 +5,8 @@ import numpy as np
 
 from luma.interface.super import Estimator, Evaluator, Unsupervised
 from luma.interface.util import Matrix, Vector, Scalar
-from luma.interface.exception import (NotFittedError, 
-                                      NotConvergedError, 
-                                      UnsupportedParameterError)
+from luma.interface.exception import NotFittedError, NotConvergedError
+from luma.interface.exception import UnsupportedParameterError
 
 from luma.metric.distance import Euclidean, Minkowski
 from luma.metric.clustering import SilhouetteCoefficient
@@ -253,19 +252,43 @@ class OPTICS(Estimator, Unsupervised):
 
 
 class DENCLUE(Estimator, Unsupervised):
+    
+    """
+    DENCLUE (Density-Based Clustering) is a machine learning algorithm 
+    for identifying clusters in large datasets. It uses mathematical 
+    functions, typically Gaussian kernels, to estimate data density. 
+    Cluster centers are determined by the peaks of these density functions. 
+    The algorithm excels in handling clusters of arbitrary shapes and noise, 
+    but is sensitive to parameter settings.
+    
+    Parameters
+    ----------
+    `h` : Smoothing parameter of local density estimation
+    `tol` : Threshold for early convergence
+    `max_climb` : Maximum number of climbing process for finding local maxima
+    `min_density` : Minimum local densities to be considered
+    `sample_weight` : Custom individual weights for sample data
+    
+    Reference
+    ---------
+    Hinneburg, A., & Gabriel, H. H. (2007, September). Denclue 2.0: Fast 
+    clustering based on kernel density estimation. In International symposium 
+    on intelligent data analysis (pp. 70-80). Berlin, Heidelberg: Springer 
+    Berlin Heidelberg.
+    
+    """
+    
     def __init__(self, 
                  h: float | Literal['auto'] = 'auto', 
                  tol: float = 1e-3, 
                  max_climb: int = 100,
                  min_density: float = 0.0, 
-                 sample_weight: Vector = None,
-                 verbose: bool = False) -> None:
+                 sample_weight: Vector = None) -> None:
         self.h = h
         self.tol = tol
         self.max_climb = max_climb
         self.min_density = min_density
         self.sample_weight = sample_weight
-        self.verbose = verbose
         self._X = None
         self._fitted = False
 
