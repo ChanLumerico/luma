@@ -68,16 +68,20 @@
             </table>
         </div>
         <h2></h2>
-        <div class="info">
-            <h3 class="info-header">Others</h3>
+        <div class="others">
+            <h3 class="others-header">Others</h3>
             <table>
                 <tr>
-                    <td>Dependencies</td>
-                    <td>NumPy, SciPy, Pandas, Matplotlib, Seaborn</td>
+                    <td>Latest Version</td>
+                    <td>0.4.7</td>
                 </tr>
                 <tr>
                     <td>Python Version</td>
                     <td>Python 3.10 or later</td>
+                </tr>
+                <tr>
+                    <td>Dependencies</td>
+                    <td>NumPy, SciPy, Pandas, Matplotlib, Seaborn</td>
                 </tr>
                 <tr>
                     <td>Documentation</td>
