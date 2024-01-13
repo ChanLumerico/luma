@@ -7,32 +7,6 @@
             <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/luma.png" alt="logo" width="75" height="75">
         </a>
     </form>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .subtitle { 
-            font-size: 18px; 
-            color: #bbb; 
-            margin-top: 5px; }
-        .module { margin-bottom: 10px; }
-        .module-header { 
-            padding:10px; 
-            font-weight: bold; }
-        .module-content { 
-            border: 1px solid #ddd; 
-            padding: 10px; }
-        .info-header { 
-            padding:10px; 
-            font-weight: bold; }
-        .info { margin-top: 20px; }
-        .info h3 { margin-top: 0; }
-        table { 
-            width: 100%; 
-            border-collapse: collapse; }
-        th, td { 
-            border: 1px solid #ddd; 
-            padding: 8px; 
-            text-align: left; }
-    </style>
 </head>
 <body>
 
