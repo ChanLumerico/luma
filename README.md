@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <h1 class="main-title">
-            <span style="vertical-align: middle;">
-                <a href="https://lumerico284.notion.site/lumerico284/LUMA-76330376b0e64cc1b95874c469aeb327">
-                    <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/luma.png" alt="logo" width="50" height="50" style="vertical-align: middle;">
-                </a>
-            </span>
-            LUMA
-        </h1>
+        <a href="https://lumerico284.notion.site/lumerico284/LUMA-76330376b0e64cc1b95874c469aeb327">
+            <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/luma.png" alt="logo" width="75" height="75">
+        </a>
+        <h1 class="main-title">LUMA</h1>
         <p class="subtitle">A Comprehensive Python Module for Machine Learning and Data Science</p>
         <div class="module">
             <h3 class="module-header">Submodules</h3>
