@@ -1,6 +1,7 @@
+from typing import Any
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Evaluator, Unsupervised
 from luma.metric.clustering import SilhouetteCoefficient
@@ -10,6 +11,7 @@ __all__ = (
     'KMeansClustering', 
     'KMeansClusteringPlus', 
     'KMediansClustering', 
+    'KMedoidsClustering',
     'MiniBatchKMeansClustering'
 )
 
@@ -89,7 +91,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
     K-means++ is an improved version of the original K-means clustering algorithm, 
     designed to address some of its shortcomings and produce more robust and 
     efficient clustering results. K-means++ was introduced by David Arthur and 
-    Sergei Vassilvitskii in a 2007 research paper titled "k-means++: 
+    Sergei Vassilvitskii in a 2007 research paper titled "n_clusters-means++: 
     The Advantages of Careful Seeding."
     
     Parameters
@@ -226,6 +228,93 @@ class KMediansClustering(Estimator, Unsupervised):
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
         if max_iter is not None: self.max_iter = int(max_iter)
+
+
+class KMedoidsClustering(Estimator, Unsupervised):
+    
+    """
+    K-Medoids is a clustering algorithm similar to K-Means, but it uses actual 
+    data points as cluster centers (medoids) instead of centroids. It minimizes 
+    the sum of dissimilarities between points labeled to be in a cluster and a 
+    point designated as the medoid of that cluster. During each iteration, it 
+    reassigns points to the closest medoid and updates medoids based on the 
+    current cluster assignments. K-Medoids is more robust to noise and outliers 
+    compared to K-Means.
+    
+    Parameters
+    ----------
+    `n_clusters` : Number of clusters to estimate
+    `max_iter` : Maximum iteration for PAM (Partitioning Around Medoids) algorithm
+    `random_state` : Seed for randomized initialization of medoids
+    
+    """
+    
+    def __init__(self, 
+                 n_clusters: int, 
+                 max_iter: int = 300, 
+                 random_state: int = None,
+                 verbose: bool = False) -> None:
+        self.n_clusters = n_clusters
+        self.max_iter = max_iter
+        self.random_state = random_state
+        self.medoids = None
+        self.verbose = verbose
+        self._X = None
+        self._fitted = False
+
+    def fit(self, X: Matrix) -> 'KMedoidsClustering': 
+        self._X = X
+        m, _ = X.shape
+        np.random.seed(self.random_state)
+        initial_indices = np.random.choice(m, self.n_clusters, replace=False)
+        self.medoids = X[initial_indices]
+        
+        for i in range(self.max_iter):
+            labels = self._closest_medoid(X, self.medoids)
+            new_medoids = np.array([X[labels == n_clusters].mean(axis=0) 
+                                    for n_clusters in range(self.n_clusters)])
+
+            if self.verbose and i % 10 == 0 and i:
+                print(f'[K-Medoids] iteration: {i}/{self.max_iter}', end='')
+                print(f' with medoids-norm {np.linalg.norm(self.medoids)}')
+            
+            if np.all(new_medoids == self.medoids): 
+                if self.verbose:
+                    print(f'[K-Medoids] Early-convergence at iteration')
+                    print(f'{i}/{self.max_iter}')
+                break
+            
+            self.medoids = new_medoids
+        
+        self._fitted = True
+        return self
+
+    def _closest_medoid(self, X: Matrix, medoids: Matrix) -> Matrix:
+        distances = np.zeros((X.shape[0], self.n_clusters))
+        for idx, medoid in enumerate(medoids):
+            distances[:, idx] = np.linalg.norm(X - medoid, axis=1)
+        
+        return np.argmin(distances, axis=1)
+    
+    @property
+    def labels(self) -> Vector:
+        return self._closest_medoid(self._X, self.medoids)
+    
+    def predict(self, X: Matrix) -> Vector:
+        if not self._fitted: raise NotFittedError(self)
+        return self._closest_medoid(X, self.medoids)
+    
+    def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(X, X_pred)
+    
+    def set_params(self, 
+                   n_clusters: int = None,
+                   max_iter: int = None,
+                   random_state: int = None) -> None:
+        if n_clusters is not None: self.n_clusters = int(n_clusters)
+        if max_iter is not None: self.max_iter = int(max_iter)
+        if random_state is not None: self.random_state = int(random_state)
 
 
 class MiniBatchKMeansClustering(Estimator, Unsupervised):

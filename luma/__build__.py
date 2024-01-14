@@ -14,7 +14,7 @@ from luma.classifier.tree import DecisionTreeClassifier
 from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier, WeightedKNNClassifier
 
 from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
-from luma.clustering.kmeans import MiniBatchKMeansClustering
+from luma.clustering.kmeans import KMedoidsClustering, MiniBatchKMeansClustering
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.clustering.spectral import SpectralClustering, NormalizedSpectralClustering
 from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpectralClustering
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     
     # ----------------- [ luma.clustering ] --------------------
     KMeansClustering, KMeansClusteringPlus, KMediansClustering,
-    MiniBatchKMeansClustering
+    KMedoidsClustering, MiniBatchKMeansClustering
     
     AgglomerativeClustering, DivisiveClustering
     
