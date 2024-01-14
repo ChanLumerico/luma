@@ -73,7 +73,7 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>0.4.7</td>
+                    <td>0.4.8</td>
                 </tr>
                 <tr>
                     <td>Python Version</td>

@@ -11,7 +11,8 @@ __all__ = (
     'KMeansClusteringPlus', 
     'KMediansClustering', 
     'KMedoidsClustering',
-    'MiniBatchKMeansClustering'
+    'MiniBatchKMeansClustering',
+    'FuzzyKMeansClustering'
 )
 
 
@@ -388,4 +389,115 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
         if n_clusters is not None: self.n_clusters = int(n_clusters)
         if batch_size is not None: self.batch_size = int(batch_size)
         if max_iter is not None: self.max_iter = int(max_iter)
+
+
+class FuzzyKMeansClustering(Estimator, Unsupervised):
+    
+    """
+    Fuzzy KMeans (FKM) is a clustering algorithm where each data point can 
+    belong to multiple clusters with varying degrees of membership. It 
+    iteratively updates cluster centroids and membership levels based on the 
+    distance of points to centroids, weighted by their membership. The 
+    algorithm is suitable for data with overlapping or unclear boundaries 
+    between clusters. FKM provides a soft partitioning of the data, allowing 
+    more flexible cluster assignments compared to hard clustering methods.
+    
+    Parameters
+    ----------
+    `n_clusters` : Number of clusters to estimate
+    `max_iter` : Maximum iteration
+    `m`: Fuzziness parameter (larger makes labels softer)
+    `tol` : Threshold for early convergence
+    `random_state` : Seed for randomized initialization of centers
+    
+    """
+    
+    def __init__(self, 
+                 n_clusters: int, 
+                 max_iter: int = 100, 
+                 m: float = 2.0, 
+                 tol: float = 1e-5,
+                 random_state: int = None,
+                 verbose: bool = False) -> None:
+        self.n_clusters = n_clusters
+        self.max_iter = max_iter
+        self.m = m
+        self.tol = tol
+        self.random_state = random_state
+        self.verbose = verbose
+        self._X = None
+        self._fitted = False
+
+    def fit(self, X: Matrix) -> 'FuzzyKMeansClustering':
+        self._X = X
+        m, _ = X.shape
+
+        np.random.seed(self.random_state)
+        self.centers = X[np.random.choice(m, self.n_clusters, replace=False)]
+        self.membership = np.zeros((m, self.n_clusters))
+
+        for iter in range(self.max_iter):
+            for i in range(m):
+                for j in range(self.n_clusters):
+                    sum_term = self._sum(X, i, j)
+                    self.membership[i, j] = 1 / sum_term if sum_term != 0 else 0
+
+            prev_centers = np.copy(self.centers)
+            for j in range(self.n_clusters):
+                num_ = sum([self.membership[i, j] ** self.m * X[i] for i in range(m)])
+                denom_ = sum([self.membership[i, j] ** self.m for i in range(m)])
+                self.centers[j] = num_ / denom_ if denom_ else 0
+            
+            diff = np.linalg.norm(self.centers - prev_centers)
+            if self.verbose and iter % 10 == 0 and iter:
+                print(f'[FKM] iteration: {iter}/{self.max_iter}', end='')
+                print(f' with delta-center-norm: {diff}')
+
+            if diff < self.tol: 
+                if self.verbose:
+                    print(f'[FKM] Early-convergnece at iteration', end='')
+                    print(f' {iter}/{self.max_iter}')
+                break
+        
+        self._fitted = True
+        return self
+    
+    def _sum(self, X: Matrix, i: int, j: int) -> Matrix:
+        sum_term = 0
+        for k in range(self.n_clusters):
+            distance_ratio = np.linalg.norm(X[i] - self.centers[j])
+            distance_ratio /= (np.linalg.norm(X[i] - self.centers[k]) + self.tol)
+            sum_term += (distance_ratio ** (2 / (self.m - 1)))
+        
+        return sum_term
+
+    @property
+    def labels(self) -> Vector:
+        return self.predict(self._X)
+
+    def predict(self, X: Matrix) -> Vector:
+        if not self._fitted: raise NotFittedError(self)
+        m, _ = X.shape
+        predictions = np.zeros(m)
+        for i in range(m):
+            distances = [np.linalg.norm(X[i] - center) for center in self.centers]
+            predictions[i] = np.argmin(distances)
+        
+        return predictions
+
+    def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(X, X_pred)
+    
+    def set_params(self, 
+                   n_clusters: int = None,
+                   max_iter: int = None,
+                   m: float = None,
+                   tol: float = None,
+                   random_state: int = None) -> None:
+        if n_clusters is not None: self.n_clusters = int(n_clusters)
+        if max_iter is not None: self.max_iter = int(max_iter)
+        if m is not None: self.m = float(m)
+        if tol is not None: self.tol = float(tol)
+        if random_state is not None: self.random_state = int(random_state)
 
