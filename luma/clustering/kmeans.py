@@ -1,4 +1,3 @@
-from typing import Any
 import numpy as np
 
 from luma.interface.util import Matrix, Vector
@@ -91,7 +90,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
     K-means++ is an improved version of the original K-means clustering algorithm, 
     designed to address some of its shortcomings and produce more robust and 
     efficient clustering results. K-means++ was introduced by David Arthur and 
-    Sergei Vassilvitskii in a 2007 research paper titled "n_clusters-means++: 
+    Sergei Vassilvitskii in a 2007 research paper titled "k-means++: 
     The Advantages of Careful Seeding."
     
     Parameters
