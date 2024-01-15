@@ -1,4 +1,4 @@
-from typing import Literal, Tuple, List
+from typing import Any, Literal, Tuple, List
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import cdist
 import numpy as np
@@ -15,7 +15,8 @@ from luma.metric.clustering import SilhouetteCoefficient
 __all__ = (
     'DBSCAN',
     'OPTICS',
-    'DENCLUE'
+    'DENCLUE',
+    'MeanShiftClustering'
 )
 
 
@@ -413,4 +414,84 @@ class DENCLUE(Estimator, Unsupervised):
             if isinstance(h, str): self.h = str(h)
             elif isinstance(h, float): self.tol = float(h)
             else: raise UnsupportedParameterError(h)
+
+
+class MeanShiftClustering(Estimator, Unsupervised):
+    
+    """
+    Mean Shift is a non-parametric, iterative clustering algorithm 
+    that identifies clusters in a dataset by updating candidate cluster 
+    centers to the mean of points within a given region (bandwidth). 
+    The process repeats until convergence, where centers no longer 
+    significantly shift. It automatically determines the number of 
+    clusters based on the data distribution. Mean Shift is especially 
+    effective in discovering clusters of arbitrary shapes and sizes.
+    
+    Parameters
+    ----------
+    `bandwidth` : Window size for kernel density estimation
+    `max_iter` : Maximum iteration
+    `tol` : Tolerence threshold for early convergence
+    
+    """
+    
+    def __init__(self, 
+                 bandwidth: float = 2.0, 
+                 max_iter: int = 300, 
+                 tol: float = 1e-3,
+                 verbose: bool = False) -> None:
+        self.bandwidth = bandwidth
+        self.max_iter = max_iter
+        self.tol = tol
+        self.verbose = verbose
+        self._X = None
+        self._fitted = False
+
+    def fit(self, X: Matrix) -> 'MeanShiftClustering':
+        self._X = X
+        m, _ = X.shape
+        
+        centers = np.copy(X)
+        for iter in range(self.max_iter):
+            new_centers = []
+            for i in range(m):
+                points = X[np.linalg.norm(X - centers[i], axis=1) < self.bandwidth]
+                new_center = points.mean(axis=0)
+                new_centers.append(new_center)
+            new_centers = np.array(new_centers)
+            
+            diff = np.linalg.norm(new_centers - centers)
+            if self.verbose and iter % 10 == 0 and iter:
+                print(f'[MeanShift] iteration: {iter}/{self.max_iter}', end='')
+                print(f' with delta-centers-norm {diff}')
+            
+            if diff < self.tol:
+                if self.verbose:
+                    print(f'[MeanShift] Early-convergence occurred at', end='')
+                    print(f' iteration {iter}/{self.max_iter}')
+                break
+            centers = new_centers
+            
+        self.centers = centers
+        self._fitted = True
+        return self
+
+    @property
+    def labels(self) -> Vector:
+        return self.predict(self._X)
+    
+    def predict(self, X: Matrix) -> Vector:
+        norm_ = np.linalg.norm(X[:, np.newaxis] - self.centers, axis=2)
+        return np.argmin(norm_, axis=1)
+    
+    def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
+        return metric.compute(self._X, self.labels)
+    
+    def set_params(self, 
+                   bandwidth: float = None,
+                   max_iter: int = None,
+                   tol: float = None) -> None:
+        if bandwidth is not None: self.bandwidth = float(bandwidth)
+        if max_iter is not None: self.max_iter = int(max_iter)
+        if tol is not None: self.tol = float(tol)
 
