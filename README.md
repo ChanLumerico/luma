@@ -73,10 +73,14 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>0.4.8</td>
+                    <td>0.4.10</td>
                 </tr>
                 <tr>
-                    <td>Python Version</td>
+                    <td>Lines of Code</td>
+                    <td>~7.5K</td>
+                </tr>
+                <tr>
+                    <td>Requirement</td>
                     <td>Python 3.10 or later</td>
                 </tr>
                 <tr>

@@ -22,6 +22,7 @@ from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpe
 from luma.clustering.density import DBSCAN, OPTICS, DENCLUE, MeanShiftClustering
 from luma.clustering.affinity import AffinityPropagation, AdaptiveAffinityPropagation
 from luma.clustering.affinity import KernelAffinityPropagation
+from luma.clustering.mixture import GaussianMixture, MultinomialMixture
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 
@@ -109,6 +110,8 @@ if __name__ == '__main__':
     
     AffinityPropagation, AdaptiveAffinityPropagation,
     KernelAffinityPropagation
+    
+    GaussianMixture, MultinomialMixture
     
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor
