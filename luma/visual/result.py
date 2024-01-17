@@ -38,7 +38,11 @@ class DecisionRegion(Visualizer):
         if self.y is None and hasattr(self.estimator, 'labels'):
             self.y = self.estimator.labels
 
-    def plot(self, size: float = 250, scale: float = 10.0) -> None:
+    def plot(self, 
+             ax: Optional[plt.Axes] = None, 
+             size: float = 250, 
+             scale: float = 10.0, 
+             show: bool = False) -> plt.Axes:
         x1_min, x1_max = self.X[:, 0].min(), self.X[:, 0].max()
         x2_min, x2_max = self.X[:, 1].min(), self.X[:, 1].max()
         delta_1, delta_2 = (x1_max - x1_min) / size, (x2_max - x2_min) / size
@@ -51,21 +55,28 @@ class DecisionRegion(Visualizer):
         Z = self.estimator.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
         Z = Z.reshape(xx1.shape)
         
-        plt.contourf(xx1, xx2, Z, 
-                     alpha=self.alpha, cmap=self.cmap, 
-                     levels=len(np.unique(self.y)))
-        plt.xlim(xx1.min(), xx1.max())
-        plt.ylim(xx2.min(), xx2.max())
+        if ax is None: _, ax = plt.subplots()
+        ax.contourf(xx1, xx2, Z, 
+                    alpha=self.alpha, 
+                    cmap=self.cmap, 
+                    levels=len(np.unique(self.y)))
+        
+        ax.set_xlim(xx1.min(), xx1.max())
+        ax.set_ylim(xx2.min(), xx2.max())
 
-        plt.scatter(self.X[:, 0], self.X[:, 1], 
-                    c=self.y, cmap=self.cmap, 
-                    alpha=0.8, edgecolors='black')
-
-        plt.xlabel(self.xlabel)
-        plt.ylabel(self.ylabel)
-        plt.title(self.title)
-        plt.tight_layout()
-        plt.show()
+        ax.scatter(self.X[:, 0], self.X[:, 1], 
+                   c=self.y, 
+                   cmap=self.cmap, 
+                   alpha=0.8, 
+                   edgecolors='black')
+        
+        ax.set_xlabel(self.xlabel)
+        ax.set_ylabel(self.ylabel)
+        ax.set_title(self.title)
+        ax.figure.tight_layout()
+        
+        if show: plt.show()
+        return ax
 
 
 class ClusterPlot(Visualizer):
@@ -89,26 +100,31 @@ class ClusterPlot(Visualizer):
         if self.title == 'auto':
             self.title = type(self.estimator).__name__
     
-    def plot(self) -> None:
-        plt.scatter(self.X[self.labels == -1, 0], 
-                    self.X[self.labels == -1, 1],
-                    marker='x',
-                    c='black',
-                    label='Noise')
+    def plot(self, 
+             ax: Optional[plt.Axes] = None, 
+             show: bool = False) -> plt.Axes:
+        if ax is None: _, ax = plt.subplots()
+        ax.scatter(self.X[self.labels == -1, 0], 
+                   self.X[self.labels == -1, 1],
+                   marker='x',
+                   c='black', 
+                   label='Noise')
         
-        plt.scatter(self.X[self.labels != -1, 0], 
-                    self.X[self.labels != -1, 1], 
-                    marker='o',
-                    c=self.labels[self.labels != -1],
-                    cmap=self.cmap,
-                    alpha=self.alpha,
-                    edgecolors='black')
+        ax.scatter(self.X[self.labels != -1, 0], 
+                   self.X[self.labels != -1, 1], 
+                   marker='o',
+                   c=self.labels[self.labels != -1],
+                   cmap=self.cmap,
+                   alpha=self.alpha,
+                   edgecolors='black')
         
-        plt.title(self.title)
-        plt.xlabel(self.xlabel)
-        plt.ylabel(self.ylabel)
+        ax.set_title(self.title)
+        ax.set_xlabel(self.xlabel)
+        ax.set_ylabel(self.ylabel)
         
-        plt.legend() if len(self.X[self.labels == -1]) else Ellipsis
-        plt.tight_layout()
-        plt.show()
+        if len(self.X[self.labels == -1]): ax.legend()
+        ax.figure.tight_layout()
+
+        if show: plt.show()
+        return ax
 
