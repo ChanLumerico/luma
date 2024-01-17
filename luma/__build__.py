@@ -36,6 +36,7 @@ from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 
 from luma.model_selection.split import TrainTestSplit
 from luma.model_selection.search import GridSearchCV
+from luma.model_selection.cv import CrossValidator
 
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
 from luma.preprocessing.encoder import OneHotEncoder, LabelEncoder, OrdinalEncoder
@@ -48,6 +49,7 @@ from luma.reduction.manifold import TSNE, SammonMapping, LaplacianEigenmap
 from luma.reduction.manifold import MDS, MetricMDS, LandmarkMDS
 from luma.reduction.manifold import LLE, ModifiedLLE, HessianLLE, LTSA
 from luma.reduction.manifold import Isomap, ConformalIsomap
+from luma.reduction.select import SBS, SFS, RFE
 
 from luma.regressor.linear import LinearRegressor
 from luma.regressor.linear import LassoRegressor, RidgeRegressor, ElasticNetRegressor
@@ -133,6 +135,8 @@ if __name__ == '__main__':
     
     GridSearchCV
     
+    CrossValidator
+    
     # ---------------- [ luma.preprocessing ] ------------------
     StandardScaler, MinMaxScaler
     
@@ -151,6 +155,8 @@ if __name__ == '__main__':
     MDS, MetricMDS, LandmarkMDS,
     LLE, ModifiedLLE, HessianLLE, LTSA,
     Isomap, ConformalIsomap
+    
+    SBS, SFS, RFE
     
     # ----------------- [ luma.regressor ] ---------------------
     LinearRegressor,

@@ -4,6 +4,7 @@ import numpy as np
 from luma.interface.util import Matrix
 from luma.interface.super import Estimator, Evaluator
 from luma.interface.exception import NotFittedError
+from luma.model_selection.cv import CrossValidator
 
 
 __all__ = (
@@ -12,18 +13,62 @@ __all__ = (
 
 
 class GridSearchCV:
+    
+    """
+    Grid seach with cross validation(CV) is a method used to tune hyperparameters 
+    of a model by searching through a specified parameter grid. It evaluates all 
+    combinations of parameter values to find the best combination. This process 
+    is performed using cross-validation to ensure model performance is not biased 
+    to a specific data split. The result is the optimal set of parameters that 
+    yield the best model performance according to a chosen metric.
+    
+    Parameters
+    ----------
+    `estimator` : An estimator to fit and evaluate
+    `param_grid` : Parameter grid for repetitive search
+    `cv` : K-fold size for cross validation
+    `metric` : Scoring metric for evaluation
+    `refit` : Whether to re-fit the estimator with the best parameters found
+    `random_state` : Seed for random sampling for cross validation
+    
+    Notes
+    -----
+    * An instance of the estimator must be passed to `estimator`
+    * For `metric`, both class or instance are possible
+    
+    Examples
+    --------
+    >>> param_grid = {'param_1': [...], 
+                      'param_2': [...],
+                      ...,
+                      AnyStr: List[Any]}
+    
+    >>> grid = GridSearchCV(estimator=AnyEstimator(),
+                            param_grid=param_grid,
+                            cv=5,
+                            metric=AnyEvaluator,
+                            refit=True,
+                            random_state=None)
+    >>> grid.fit(X, y)
+    >>> score = grid.best_score
+    >>> model = grid.best_model
+    
+    """
+    
     def __init__(self, 
-                 model: Estimator, 
+                 estimator: Estimator, 
                  param_grid: dict, 
                  cv: int = 5, 
                  metric: Evaluator = None,
                  refit: bool = True, 
+                 random_state: int = None,
                  verbose: bool = False) -> None:
-        self.model = model
+        self.estimator = estimator
         self.param_grid = param_grid
         self.cv = cv
         self.metric = metric
         self.refit = refit
+        self.random_state = random_state
         self.verbose = verbose
         self._fitted = False
 
@@ -38,12 +83,16 @@ class GridSearchCV:
                   f'totalling {self.cv * max_iter} fits.\n')
         
         for i, params in enumerate(param_combinations, start=1):
-            self.model.set_params(**params)
-            scores = self._cross_validation(X, y)
-
-            mean_score = np.mean(scores)
+            self.estimator.set_params(**params)
+            cv_model = CrossValidator(estimator=self.estimator,
+                                      metric=self.metric,
+                                      cv=self.cv,
+                                      random_state=self.random_state,
+                                      verbose=self.verbose)
+            
+            mean_score = cv_model.score(X, y)
             if self.verbose:
-                print(f'[{i}/{max_iter}] {params} - score:',
+                print(f'[GridSearchCV] candidate {i}/{max_iter} {params} - score:',
                       f'{mean_score:.3f}')
             if best_score is None or mean_score > best_score:
                 best_score = mean_score
@@ -57,39 +106,11 @@ class GridSearchCV:
             print(f'[GridSearchCV] Best score: {self.best_score}')
         
         if self.refit:
-            self.model.set_params(**best_params)
-            self.model.fit(X, y)
+            self.estimator.set_params(**best_params)
+            self.estimator.fit(X, y)
         
         self._fitted = True
         return self.best_model
-
-    def _cross_validation(self, X: Matrix, y: Matrix) -> list:
-        num_samples = X.shape[0]
-        fold_size = num_samples // self.cv
-        scores = []
-
-        indices = np.arange(num_samples)
-        np.random.shuffle(indices)
-        
-        for i in range(self.cv):
-            start = i * fold_size
-            end = start + fold_size if i < self.cv - 1 else num_samples
-
-            test_indices = indices[start:end]
-            train_indices = np.concatenate((indices[0:start], indices[end:]))
-
-            X_train, X_test = X[train_indices], X[test_indices]
-            y_train, y_test = y[train_indices], y[test_indices]
-
-            self.model.fit(X_train, y_train)
-            if self.metric: score = self.model.score(X_test, y_test, metric=self.metric)
-            else: score = self.model.score(X_test, y_test)
-            scores.append(score)
-        
-            if self.verbose:
-                print(f'[GridSearchCV] fold {i + 1} - score: {score:.3f}')
-
-        return scores
 
     def _get_param_combinations(self) -> List[Dict[str, Any]]:
         keys, values = zip(*self.param_grid.items())
@@ -100,5 +121,5 @@ class GridSearchCV:
     @property
     def best_model(self) -> Estimator:
         if not self._fitted: raise NotFittedError(self)
-        return self.model
+        return self.estimator
 
