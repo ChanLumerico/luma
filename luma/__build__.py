@@ -26,6 +26,7 @@ from luma.clustering.affinity import KernelAffinityPropagation
 from luma.clustering.mixture import GaussianMixture, MultinomialMixture
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
+from luma.ensemble.vote import MajorityVoteClassifier
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score
 from luma.metric.classification import Specificity, AUCCurveROC, Complex
@@ -119,6 +120,8 @@ if __name__ == '__main__':
     
     # ----------------- [ luma.ensemble ] ----------------------
     RandomForestClassifier, RandomForestRegressor
+    
+    MajorityVoteClassifier
     
     # ------------------ [ luma.metric ] -----------------------
     Accuracy, Precision, Recall, F1Score, Specificity, 

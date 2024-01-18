@@ -2,7 +2,7 @@ from itertools import combinations
 from typing import Tuple
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Transformer
+from luma.interface.super import Estimator, Evaluator, Transformer, Supervised
 from luma.interface.util import Matrix, Vector, Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.model_selection.split import TrainTestSplit
@@ -16,7 +16,7 @@ __all__ = (
 )
 
 
-class SBS(Transformer, Transformer.Feature):
+class SBS(Transformer, Transformer.Feature, Supervised):
     
     """
     Sequential Backward Selection (SBS) is a feature selection technique 
@@ -54,14 +54,14 @@ class SBS(Transformer, Transformer.Feature):
     """
     
     def __init__(self, 
-                 estimator: Estimator,
-                 n_features: int | float,
-                 metric: Evaluator,
+                 estimator: Estimator = None,
+                 n_features: int | float = 1,
+                 metric: Evaluator = None,
                  test_size: float = 0.2,
                  cv: int = 5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
-        self.estimator = Clone(estimator).get
+        self.estimator = estimator
         self.n_features = n_features
         self.metric = metric
         self.test_size = test_size
@@ -72,6 +72,8 @@ class SBS(Transformer, Transformer.Feature):
     
     def fit(self, X: Matrix, y: Vector) -> 'SBS':
         _, n = X.shape
+        self.estimator = Clone(self.estimator).get
+        
         if 0 < self.n_features < 1:
             self.n_features = np.ceil(n * self.n_features).astype(int)
         elif self.n_features <= 0 or self.n_features > n:
@@ -159,7 +161,7 @@ class SBS(Transformer, Transformer.Feature):
             else: self.n_features = int(n_features)
 
 
-class SFS(Transformer, Transformer.Feature):
+class SFS(Transformer, Transformer.Feature, Supervised):
     
     """
     Sequential Forward Selection (SFS) is a feature selection technique
@@ -199,14 +201,14 @@ class SFS(Transformer, Transformer.Feature):
     """
 
     def __init__(self, 
-                 estimator: Estimator,
-                 n_features: int | float,
-                 metric: Evaluator,
+                 estimator: Estimator = None,
+                 n_features: int | float = 1,
+                 metric: Evaluator = None,
                  test_size: float = 0.2,
                  cv: int = 5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
-        self.estimator = Clone(estimator).get
+        self.estimator = estimator
         self.n_features = n_features
         self.metric = metric
         self.test_size = test_size
@@ -217,6 +219,8 @@ class SFS(Transformer, Transformer.Feature):
 
     def fit(self, X: Matrix, y: Vector) -> 'SFS':
         _, n = X.shape
+        self.estimator = Clone(self.estimator).get
+        
         if isinstance(self.n_features, float) and 0 < self.n_features < 1:
             self.n_features = np.ceil(n * self.n_features).astype(int)
         elif self.n_features <= 0 or self.n_features > n:
@@ -298,7 +302,7 @@ class SFS(Transformer, Transformer.Feature):
             else: self.n_features = int(n_features)
 
 
-class RFE(Transformer, Transformer.Feature):
+class RFE(Transformer, Transformer.Feature, Supervised):
     
     """
     Recursive Feature Elimination (RFE) is a feature selection method 
@@ -339,14 +343,14 @@ class RFE(Transformer, Transformer.Feature):
     """
     
     def __init__(self,
-                 estimator: Estimator,
-                 n_features: int | float,
-                 metric: Evaluator,
+                 estimator: Estimator = None,
+                 n_features: int | float = 1,
+                 metric: Evaluator = None,
                  step_size: int = 1,
                  cv: int = 5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
-        self.estimator = Clone(estimator).get
+        self.estimator = estimator
         self.n_features = n_features
         self.metric = metric
         self.step_size = step_size
@@ -357,6 +361,8 @@ class RFE(Transformer, Transformer.Feature):
 
     def fit(self, X: Matrix, y: Vector) -> 'RFE':
         _, n = X.shape
+        self.estimator = Clone(self.estimator).get
+        
         if 0 < self.n_features < 1:
             self.n_features = np.floor(n * self.n_features).astype(int)
         elif self.n_features <= 0 or self.n_features > n:

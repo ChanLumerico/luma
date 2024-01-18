@@ -61,7 +61,7 @@ class Pipeline:
     transform data using `pipe.transform()` if the pipeline sequence contains
     transformers.
     
-    * Not all the transformers are compatible with `Pipeline`.
+    * Not all the models are compatible with `Pipeline`.
 
     """
     
@@ -84,7 +84,7 @@ class Pipeline:
         
         self.set_params(param_dict)
     
-    def fit(self, X: Matrix, y: Matrix) -> List[T]:
+    def fit(self, X: Matrix, y: Matrix) -> 'Pipeline':
         self._X, self._y = self.fit_transform(X, y)
         model = self.estimator
         if hasattr(model, 'verbose'):
@@ -95,6 +95,7 @@ class Pipeline:
         model.fit(*data)
         
         self._fitted = True
+        return self
         
     def transform(self, X: Matrix, y: Matrix) -> Tuple[Matrix, Matrix]:
         if not self._fitted: raise NotFittedError(self)

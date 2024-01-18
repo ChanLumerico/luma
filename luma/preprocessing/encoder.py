@@ -15,7 +15,7 @@ __all__ = (
 
 class OneHotEncoder(Transformer, Transformer.Feature):
     def __init__(self, features: list = None):
-        self.categories_ = None
+        self.categories = None
         self.features = features
         self._fitted = False
 
@@ -23,7 +23,7 @@ class OneHotEncoder(Transformer, Transformer.Feature):
         if self.features is None:
             self.features = range(X.shape[1])
 
-        self.categories_ = [np.unique(X[:, col]) for col in self.features]
+        self.categories = [np.unique(X[:, col]) for col in self.features]
         self._fitted = True
         return self
 
@@ -33,7 +33,7 @@ class OneHotEncoder(Transformer, Transformer.Feature):
         X_out = []
         for i, col in enumerate(X.T):
             if i in self.features:
-                categories = self.categories_[self.features.index(i)]
+                categories = self.categories[self.features.index(i)]
                 label_to_index = {label: idx for idx, label in enumerate(categories)}
                 matrix = np.zeros((len(X), len(categories)))
 
@@ -57,23 +57,33 @@ class OneHotEncoder(Transformer, Transformer.Feature):
 
 class LabelEncoder(Transformer, Transformer.Target):
     def __init__(self):
-        self.classes_ = None
+        self.classes = None
         self._fitted = False
 
     def fit(self, y: Matrix) -> 'LabelEncoder':
-        self.classes_ = np.unique(y)
+        self.classes = np.unique(y)
         self._fitted = True
         return self
 
     def transform(self, y: Matrix) -> Matrix[int]:
         if not self._fitted: raise NotFittedError(self)
-        class_to_index = {k: v for v, k in enumerate(self.classes_)}
+        class_to_index = {k: v for v, k in enumerate(self.classes)}
         
         X_transformed = np.array([class_to_index.get(y_, -1) for y_ in y])
         if -1 in X_transformed:
             raise ValueError("Unknown label found in input data.")
 
         return X_transformed
+    
+    def inverse_transform(self, y: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        index_to_class = {v: k for k, v in enumerate(self.classes)}
+        
+        X_inversed = np.array([index_to_class.get(y_, None) for y_ in y])
+        if None in X_inversed:
+            raise ValueError("Unknown index found in input data.")
+
+        return X_inversed
 
     def fit_transform(self, y: Matrix) -> Matrix[int]:
         self.fit(y)
@@ -85,15 +95,15 @@ class LabelEncoder(Transformer, Transformer.Target):
 class OrdinalEncoder(Transformer, Transformer.Feature):
     def __init__(self, 
                  strategy: Literal['occur', 'alpha'] = 'occur'):
-        self.categories_ = None
+        self.categories = None
         self.strategy = strategy
         self._fitted = False
 
     def fit(self, X: Matrix) -> 'OrdinalEncoder':
         if self.strategy == 'occur':
-            self.categories_ = [np.unique(col, return_index=True)[0] for col in X.T]
+            self.categories = [np.unique(col, return_index=True)[0] for col in X.T]
         elif self.strategy == 'alpha':
-            self.categories_ = [np.sort(np.unique(col)) for col in X.T]
+            self.categories = [np.sort(np.unique(col)) for col in X.T]
         else: raise UnsupportedParameterError(self.strategy)
 
         self._fitted = True
@@ -103,7 +113,7 @@ class OrdinalEncoder(Transformer, Transformer.Feature):
         if not self._fitted: raise NotFittedError(self)
         X_out = np.zeros(X.shape, dtype=int)
         
-        for i, categories in enumerate(self.categories_):
+        for i, categories in enumerate(self.categories):
             category_to_index = {category: index 
                                  for index, category in enumerate(categories)}
             for j, item in enumerate(X[:, i]):
