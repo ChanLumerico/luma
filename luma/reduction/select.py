@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 
 from luma.interface.super import Estimator, Evaluator, Transformer
-from luma.interface.util import Matrix, Vector
+from luma.interface.util import Matrix, Vector, Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.model_selection.split import TrainTestSplit
 from luma.model_selection.cv import CrossValidator
@@ -38,8 +38,6 @@ class SBS(Transformer, Transformer.Feature):
     Notes
     -----
     * An instance of the estimator must be passed to `estimator`
-    * Do not use the estimator for `SBS` if it is supposed to be the
-        main estimator for the model
     * For `metric`, both class or instance are possible
     
     Examples
@@ -63,7 +61,7 @@ class SBS(Transformer, Transformer.Feature):
                  cv: int = 5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
-        self.estimator = estimator
+        self.estimator = Clone(estimator).get
         self.n_features = n_features
         self.metric = metric
         self.test_size = test_size
@@ -208,7 +206,7 @@ class SFS(Transformer, Transformer.Feature):
                  cv: int = 5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
-        self.estimator = estimator
+        self.estimator = Clone(estimator).get
         self.n_features = n_features
         self.metric = metric
         self.test_size = test_size
@@ -348,7 +346,7 @@ class RFE(Transformer, Transformer.Feature):
                  cv: int = 5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
-        self.estimator = estimator
+        self.estimator = Clone(estimator).get
         self.n_features = n_features
         self.metric = metric
         self.step_size = step_size

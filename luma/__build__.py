@@ -6,6 +6,7 @@ from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
 from luma.interface.super import Supervised, Unsupervised, Distance
 from luma.interface.util import Matrix, Vector, Scalar, TreeNode, NearestNeighbors
 from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil
+from luma.interface.util import Clone
 
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
 from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
@@ -85,7 +86,8 @@ if __name__ == '__main__':
     Supervised, Unsupervised, Distance
     
     Matrix, Vector, Scalar, TreeNode, NearestNeighbors,
-    SilhouetteUtil, DBUtil, KernelUtil
+    SilhouetteUtil, DBUtil, KernelUtil,
+    Clone
     
     # ---------------- [ luma.classifier ] ---------------------
     LogisticRegressor, SoftmaxRegressor

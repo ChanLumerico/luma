@@ -1,6 +1,7 @@
 from typing import Any, Callable
 import numpy as np
 
+from luma.interface.super import Estimator, Transformer
 from luma.interface.exception import UnsupportedParameterError
 
 
@@ -12,7 +13,8 @@ __all__ = (
     'NearestNeighbors', 
     'SilhouetteUtil', 
     'DBUtil',
-    'KernelUtil'
+    'KernelUtil',
+    'Clone'
 )
 
 
@@ -286,4 +288,48 @@ class KernelUtil:
             return self.laplacian_kernel
         else:
             raise UnsupportedParameterError(self.kernel)
+
+
+class Clone:
+    
+    """
+    A utility class for cloning LUMA models.
+
+    This class creates a copy of a given LUMA model, 
+    which can be either an Estimator or a Transformer. 
+    The clone includes all parameters of the original model. 
+    Optionally, the trained state of the model can also be copied 
+    if applicable.
+
+    Parameters
+    ----------
+    `model` : The model to be cloned
+    `pass_fitted` : Whether to copy the fitted state of the original model
+    
+    Examples
+    --------
+    >>> original_model = AnyModel(...)
+    >>> cloned_model = Clone(original_model, pass_fitted=True).get
+
+    """
+    
+    def __init__(self,
+                 model: Estimator | Transformer = None,
+                 pass_fitted: bool = False) -> None:
+        self.model = model
+        self.pass_fitted = pass_fitted
+    
+    @property
+    def get(self) -> Estimator | Transformer:
+        model_cls = type(self.model)
+        new_model = model_cls()
+        
+        for param, val in self.model.__dict__.items():
+            try: new_model.set_params(**{param: val})
+            except: continue
+        
+        if hasattr(self.model, '_fitted') and self.pass_fitted:
+            new_model._fitted = self.model._fitted
+        
+        return new_model
 
