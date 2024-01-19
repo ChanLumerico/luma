@@ -50,7 +50,7 @@ class VotingClassifier(Estimator, Supervised):
                  estimators: List[Estimator] = None,
                  voting: Literal['label', 'prob'] = 'label',
                  weights: Vector[Scalar] = None,
-                 verbose: bool = True) -> None:
+                 verbose: bool = False) -> None:
         self.estimators = estimators
         self.voting = voting
         self.weights = weights
@@ -152,7 +152,7 @@ class VotingRegressor(Estimator, Supervised):
     def __init__(self,
                  estimators: List[Estimator] = None,
                  weights: Vector[Scalar] = None,
-                 verbose: bool = True) -> None:
+                 verbose: bool = False) -> None:
         self.estimators = estimators
         self.weights = weights
         self.verbose = verbose

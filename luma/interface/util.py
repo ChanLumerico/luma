@@ -309,7 +309,7 @@ class Clone:
     Examples
     --------
     >>> original_model = AnyModel(...)
-    >>> cloned_model = Clone(original_model, pass_fitted=True).get
+    >>> cloned_model = Clone(model=original_model, pass_fitted=True).get
 
     """
     

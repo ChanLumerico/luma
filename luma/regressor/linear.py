@@ -226,6 +226,11 @@ class LinearRegressor(Estimator, Supervised):
         X = np.hstack([np.ones((X.shape[0], 1)), X])
         
         return X.dot(self.coefficients)
+    
+    def score(self, X: Matrix, y: Matrix, 
+              metric: Evaluator = MeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.compute(y_true=y, y_pred=X_pred)
 
     def set_params(self) -> None: ...
 

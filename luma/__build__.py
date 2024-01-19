@@ -27,6 +27,7 @@ from luma.clustering.mixture import GaussianMixture, MultinomialMixture
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 from luma.ensemble.vote import VotingClassifier, VotingRegressor
+from luma.ensemble.bagging import BaggingClassifier
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score
 from luma.metric.classification import Specificity, AUCCurveROC, Complex
@@ -55,7 +56,7 @@ from luma.reduction.select import SBS, SFS, RFE
 
 from luma.regressor.linear import LinearRegressor
 from luma.regressor.linear import LassoRegressor, RidgeRegressor, ElasticNetRegressor
-from luma.regressor.polynomial import PolynomialRegressor
+from luma.regressor.poly import PolynomialRegressor
 from luma.regressor.general import PoissonRegressor
 from luma.regressor.general import NegativeBinomialRegressor
 from luma.regressor.general import GammaRegressor
