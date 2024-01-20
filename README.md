@@ -77,7 +77,7 @@
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
-                    <td>~10.4K</td>
+                    <td>~10.6K</td>
                 </tr>
                 <tr>
                     <td>Requirement</td>

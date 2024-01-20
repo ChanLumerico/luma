@@ -9,6 +9,11 @@ from luma.preprocessing.encoder import LabelBinarizer
 from luma.metric.classification import Accuracy
 
 
+__all__ = (
+    'AdaBoostClassifier'
+)
+
+
 class AdaBoostClassifier(Estimator, Supervised):
     
     """
