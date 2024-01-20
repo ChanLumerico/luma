@@ -124,6 +124,8 @@ if __name__ == '__main__':
     
     VotingClassifier, VotingRegressor
     
+    BaggingClassifier
+    
     # ------------------ [ luma.metric ] -----------------------
     Accuracy, Precision, Recall, F1Score, Specificity, 
     AUCCurveROC, Complex
