@@ -2,14 +2,15 @@ from typing import Literal
 import numpy as np
 
 from luma.interface.super import Transformer
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
 
 __all__ = (
     'OneHotEncoder', 
     'LabelEncoder', 
-    'OrdinalEncoder'
+    'OrdinalEncoder',
+    'LabelBinarizer'
 )
 
 
@@ -128,3 +129,31 @@ class OrdinalEncoder(Transformer, Transformer.Feature):
         return self.transform(X)
 
     def set_params(self) -> None: ...
+
+
+class LabelBinarizer(Transformer, Transformer.Target):
+    def __init__(self) -> None:
+        self.classes_ = None
+        self._fitted = False
+
+    def fit(self, y: Vector) -> 'LabelBinarizer':
+        self.classes_ = np.unique(y)
+        self._fitted = True
+        return self
+
+    def transform(self, y: Vector) -> Vector:
+        binarized = np.zeros((len(y), len(self.classes_)))
+        for i, label in enumerate(y):
+            class_index = np.where(self.classes_ == label)[0][0]
+            binarized[i, class_index] = 1
+        return binarized
+    
+    def fit_transform(self, y: Vector) -> Vector:
+        self.fit(y)
+        return self.transform(y)
+
+    def inverse_transform(self, y: Vector) -> Vector:
+        return self.classes_[np.argmax(y, axis=1)]
+    
+    def set_params(self) -> None: ...
+

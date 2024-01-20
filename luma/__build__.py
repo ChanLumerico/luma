@@ -28,6 +28,7 @@ from luma.clustering.mixture import GaussianMixture, MultinomialMixture
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 from luma.ensemble.vote import VotingClassifier, VotingRegressor
 from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
+from luma.ensemble.boost import AdaBoostClassifier
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score
 from luma.metric.classification import Specificity, AUCCurveROC, Complex
@@ -43,6 +44,7 @@ from luma.model_selection.cv import CrossValidator
 
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
 from luma.preprocessing.encoder import OneHotEncoder, LabelEncoder, OrdinalEncoder
+from luma.preprocessing.encoder import LabelBinarizer
 from luma.preprocessing.imputer import SimpleImputer, KNNImputer, HotDeckImputer
 from luma.preprocessing.outlier import LocalOutlierFactor
 
@@ -126,6 +128,8 @@ if __name__ == '__main__':
     
     BaggingClassifier, BaggingRegressor
     
+    AdaBoostClassifier
+    
     # ------------------ [ luma.metric ] -----------------------
     Accuracy, Precision, Recall, F1Score, Specificity, 
     AUCCurveROC, Complex
@@ -148,7 +152,7 @@ if __name__ == '__main__':
     # ---------------- [ luma.preprocessing ] ------------------
     StandardScaler, MinMaxScaler
     
-    OneHotEncoder, LabelEncoder, OrdinalEncoder
+    OneHotEncoder, LabelEncoder, OrdinalEncoder, LabelBinarizer
     
     SimpleImputer, KNNImputer, HotDeckImputer
     
