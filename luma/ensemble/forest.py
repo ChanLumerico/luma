@@ -2,7 +2,7 @@ from typing import *
 from scipy.stats import mode
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Vector
 from luma.classifier.tree import DecisionTreeClassifier
 from luma.regressor.tree import DecisionTreeRegressor
 from luma.interface.super import Estimator, Evaluator, Supervised
@@ -33,6 +33,7 @@ class RandomForestClassifier(Estimator, Supervised):
     `bootstrap` : Whether to bootstrap the samples of dataset
     `bootstrap_feature` : Whether to bootstrap the features of each data
     `n_features` : Number of features to be sampled when bootstrapping features
+    `sample_weights` : Weight of each sample (`1.0` if set to `None`)
     
     """
     
@@ -43,6 +44,7 @@ class RandomForestClassifier(Estimator, Supervised):
                  bootstrap: bool = True,
                  bootstrap_feature: bool = False,
                  n_features: int | Literal['auto'] = 'auto',
+                 sample_weights: Vector = None,
                  verbose: bool = False) -> None:
         self.n_trees = n_trees
         self.max_depth = max_depth
@@ -50,6 +52,7 @@ class RandomForestClassifier(Estimator, Supervised):
         self.n_features = n_features
         self.bootstrap = bootstrap
         self.bootstrap_feature = bootstrap_feature
+        self.sample_weights = sample_weights
         self.verbose = verbose
         self.trees = None
         self._fitted = False
@@ -74,7 +77,9 @@ class RandomForestClassifier(Estimator, Supervised):
                 X_sample = X_sample[:, bootstrap_feature]
             
             tree.set_params(max_depth=self.max_depth, 
-                            min_samples_split=self.min_samples_split)
+                            min_samples_split=self.min_samples_split,
+                            sample_weights=self.sample_weights)
+            
             tree.fit(X_sample, y_sample)
             
             if self.verbose:
@@ -107,10 +112,12 @@ class RandomForestClassifier(Estimator, Supervised):
                    min_samples_split: int = None,
                    n_features: int | str = None,
                    bootstrap: bool = None,
-                   bootstrap_feature: bool = None) -> None:
+                   bootstrap_feature: bool = None,
+                   sample_weights: Vector = None) -> None:
         if n_trees is not None: self.n_trees = int(n_trees)
         if max_depth is not None: self.max_depth = int(max_depth)
         if bootstrap is not None: self.bootstrap = bool(bootstrap)
+        if sample_weights is not None: self.sample_weights = sample_weights
         
         if bootstrap_feature is not None: 
             self.bootstrap_feature = bool(bootstrap_feature)
@@ -139,6 +146,7 @@ class RandomForestRegressor(Estimator, Supervised):
     `bootstrap` : Whether to bootstrap the samples of dataset
     `bootstrap_feature` : Whether to bootstrap the features of each data
     `n_features` : Number of features to be sampled when bootstrapping features
+    `sample_weights` : Weight of each sample (`1.0` if set to `None`)
     
     """
     
@@ -149,6 +157,7 @@ class RandomForestRegressor(Estimator, Supervised):
                  bootstrap: bool = True,
                  bootstrap_feature: bool = False,
                  n_features: int | Literal['auto'] = 'auto',
+                 sample_weights: Vector = None,
                  verbose: bool = False) -> None:
         self.n_trees = n_trees
         self.max_depth = max_depth
@@ -156,6 +165,7 @@ class RandomForestRegressor(Estimator, Supervised):
         self.n_features = n_features
         self.bootstrap = bootstrap
         self.bootstrap_feature = bootstrap_feature
+        self.sample_weights = sample_weights
         self.verbose = verbose
         self.trees = None
         self._fitted = False
@@ -180,7 +190,9 @@ class RandomForestRegressor(Estimator, Supervised):
                 X_sample = X_sample[:, bootstrap_feature]
             
             tree.set_params(max_depth=self.max_depth, 
-                            min_samples_split=self.min_samples_split)
+                            min_samples_split=self.min_samples_split,
+                            sample_weights=self.sample_weights)
+
             tree.fit(X_sample, y_sample)
             
             if self.verbose:
@@ -213,10 +225,12 @@ class RandomForestRegressor(Estimator, Supervised):
                    min_samples_split: int = None,
                    n_features: int | str = None,
                    bootstrap: bool = None,
-                   bootstrap_feature: bool = None) -> None:
+                   bootstrap_feature: bool = None,
+                   sample_weights: Vector = None) -> None:
         if n_trees is not None: self.n_trees = int(n_trees)
         if max_depth is not None: self.max_depth = int(max_depth)
         if bootstrap is not None: self.bootstrap = bool(bootstrap)
+        if sample_weights is not None: self.sample_weights = sample_weights
         
         if bootstrap_feature is not None: 
             self.bootstrap_feature = bool(bootstrap_feature)
