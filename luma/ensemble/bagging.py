@@ -217,14 +217,26 @@ class BaggingRegressor(Estimator, Supervised):
             estimator = Clone(self.base_estimator).get
             estimator.fit(X_sample, y_sample)
             self.estimators_.append((estimator, f_indices))
+            
+            if self.verbose:
+                print(f'[Bagging] Finished fitting',
+                      f'{type(self.base_estimator).__name__}',
+                      f'{i + 1}/{self.n_estimators}')
         
         self._fitted = True
         return self
     
     def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise NotFittedError(self)
-        predictions = np.array([estimator.predict(X[:, f_indices]) 
-                                for estimator, f_indices in self.estimators_])
+        
+        predictions = []
+        for i, (estimator, f_indices) in enumerate(self.estimators_):
+            predictions.append(estimator.predict(X[:, f_indices]))
+            if self.verbose:
+                print(f'[Bagging] Finished prediction of',
+                      f'{type(self.base_estimator).__name__}',
+                      f'{i + 1}/{self.n_estimators}')
+        
         return np.mean(predictions, axis=0)
     
     def score(self, X: Matrix, y: Vector, 

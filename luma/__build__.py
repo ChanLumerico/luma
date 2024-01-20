@@ -27,7 +27,7 @@ from luma.clustering.mixture import GaussianMixture, MultinomialMixture
 
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 from luma.ensemble.vote import VotingClassifier, VotingRegressor
-from luma.ensemble.bagging import BaggingClassifier
+from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score
 from luma.metric.classification import Specificity, AUCCurveROC, Complex
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     
     VotingClassifier, VotingRegressor
     
-    BaggingClassifier
+    BaggingClassifier, BaggingRegressor
     
     # ------------------ [ luma.metric ] -----------------------
     Accuracy, Precision, Recall, F1Score, Specificity, 

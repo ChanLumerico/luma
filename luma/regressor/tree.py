@@ -1,7 +1,7 @@
 from typing import Tuple
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.interface.util import TreeNode
@@ -26,27 +26,35 @@ class DecisionTreeRegressor(Estimator, Supervised):
     ----------
     `max_depth` : Maximum depth of the tree
     `min_samples_split` : Minimum number of samples required to split a node
+    `sample_weights` : Weight of each sample (`1.0` if set to `None`)
 
     """
     
     def __init__(self,
                  max_depth: int = 100,
                  min_samples_split: int = 2,
+                 sample_weights: Vector = None,
                  verbose: bool = False) -> None:
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
+        self.sample_weights = sample_weights
         self.verbose = verbose
         self.root = None
         self._fitted = False
 
     def fit(self, X: Matrix, y: Matrix) -> 'DecisionTreeRegressor':
-        _, self.n_features = X.shape
-        self.root = self._grow_tree(X, y, depth=0)
+        self.n_samples, self.n_features = X.shape
+        
+        if self.sample_weights is None: 
+            self.sample_weights = np.ones(self.n_samples)
+        self.root = self._grow_tree(X, y, self.sample_weights)
+        
+        self.root = self._grow_tree(X, y, self.sample_weights, depth=0)
 
         self._fitted = True
         return self
 
-    def _grow_tree(self, X: Matrix, y: Matrix, 
+    def _grow_tree(self, X: Matrix, y: Matrix, w: Vector, 
                    depth: int = 0) -> TreeNode:
         _, n = X.shape
         if self._stopping_criteria(X, depth):
@@ -54,15 +62,17 @@ class DecisionTreeRegressor(Estimator, Supervised):
             return TreeNode(value=leaf_value)
 
         feature_indices = np.arange(n)
-        best_feature, best_thresh = self._best_criteria(X, y, feature_indices)
+        best_feature, best_thresh = self._best_criteria(X, y, w, feature_indices)
         left_indices, right_indices = self._split(X[:, best_feature], best_thresh)
         
         if len(left_indices) == 0 or len(right_indices) == 0:
             leaf_value = np.mean(y)
             return TreeNode(value=leaf_value)
 
-        left = self._grow_tree(X[left_indices], y[left_indices], depth + 1)
-        right = self._grow_tree(X[right_indices], y[right_indices], depth + 1)
+        left = self._grow_tree(X[left_indices], y[left_indices], 
+                               w[left_indices], depth + 1)
+        right = self._grow_tree(X[right_indices], y[right_indices], 
+                                w[right_indices], depth + 1)
 
         if self.verbose:
             print(f'[DecisionTree] Depth {depth} reached -', end=' ')
@@ -75,9 +85,9 @@ class DecisionTreeRegressor(Estimator, Supervised):
         if X.shape[0] < self.min_samples_split: return True
         return False
 
-    def _best_criteria(self, X: Matrix, y: Matrix, 
+    def _best_criteria(self, X: Matrix, y: Matrix, w: Vector, 
                        indices: Matrix) -> Tuple[int, float]:
-        best_var = np.var(y)
+        best_var = self._weighted_var(y, w)
         split_idx, split_thresh = 0, 0.0
         for idx in indices:
             X_col = X[:, idx]
@@ -86,12 +96,13 @@ class DecisionTreeRegressor(Estimator, Supervised):
                 left_indices, right_indices = self._split(X_col, threshold)
                 if len(left_indices) == 0 or len(right_indices) == 0:
                     continue
+                
+                var_left = self._weighted_var(y[left_indices], w[left_indices])
+                var_right = self._weighted_var(y[right_indices], w[right_indices])
 
-                var_left = np.var(y[left_indices])
-                var_right = np.var(y[right_indices])
-
-                weighted_var = (len(left_indices) / len(y)) * var_left
-                weighted_var += (len(right_indices) / len(y)) * var_right
+                n = np.sum(w)
+                n_l, n_r = np.sum(w[left_indices]), np.sum(w[right_indices])
+                weighted_var = (n_l / n) * var_left + (n_r / n) * var_right
 
                 if weighted_var < best_var:
                     best_var = weighted_var
@@ -99,6 +110,11 @@ class DecisionTreeRegressor(Estimator, Supervised):
                     split_thresh = threshold
 
         return split_idx, split_thresh
+    
+    def _weighted_var(self, y: Matrix, w: Vector) -> float:
+        average = np.average(y, weights=w)
+        variance = np.average((y - average) ** 2, weights=w)
+        return variance
 
     def _split(self, X_col: Matrix, thresh: float) -> Tuple[Matrix]:
         left_indices = np.argwhere(X_col <= thresh).flatten()
@@ -132,11 +148,13 @@ class DecisionTreeRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.compute(y_true=y, y_pred=X_pred)
-
+    
     def set_params(self,
                    max_depth: int = None,
-                   min_samples_split: int = None) -> None:
+                   min_samples_split: int = None,
+                   sample_weights: Vector = None) -> None:
         if max_depth is not None: self.max_depth = int(max_depth)
+        if sample_weights is not None: self.sample_weights = sample_weights
         if min_samples_split is not None: 
             self.min_samples_split = int(min_samples_split)
 

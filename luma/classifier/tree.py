@@ -2,7 +2,7 @@ from typing import Tuple
 from collections import Counter
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
 from luma.interface.super import Estimator, Evaluator, Supervised
 from luma.interface.util import TreeNode
@@ -27,27 +27,33 @@ class DecisionTreeClassifier(Estimator, Supervised):
     ----------
     `max_depth` : Maximum depth of tree
     `min_samples_split` : Minimum number of samples required to split a node
+    `sample_weights` : Weight of each sample (`1.0` if set to `None`)
     
     """
 
     def __init__(self, 
                  max_depth: int = 100,
                  min_samples_split: int = 2,
+                 sample_weights: Vector = None,
                  verbose: bool = False) -> None:
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
+        self.sample_weights = sample_weights
         self.verbose = verbose
         self.root = None
         self._fitted = False
 
     def fit(self, X: Matrix, y: Matrix) -> 'DecisionTreeClassifier':
-        _, self.n_features = X.shape
-        self.root = self._grow_tree(X, y)
+        self.n_samples, self.n_features = X.shape
+        
+        if self.sample_weights is None: 
+            self.sample_weights = np.ones(self.n_samples)
+        self.root = self._grow_tree(X, y, self.sample_weights)
         
         self._fitted = True
         return self
 
-    def _grow_tree(self, X: Matrix, y: Matrix, 
+    def _grow_tree(self, X: Matrix, y: Matrix, w: Vector, 
                    depth: int = 0) -> TreeNode:
         _, n = X.shape
         if self._stopping_criteria(X, y, depth):
@@ -56,15 +62,17 @@ class DecisionTreeClassifier(Estimator, Supervised):
 
         feature_indices = np.random.choice(n, self.n_features, replace=False)
         
-        best_feature, best_thresh = self._best_criteria(X, y, feature_indices)
+        best_feature, best_thresh = self._best_criteria(X, y, w, feature_indices)
         left_indices, right_indices = self._split(X[:, best_feature], best_thresh)
         
         if len(left_indices) == 0 or len(right_indices) == 0:
             leaf_value = self._most_common_label(y)
             return TreeNode(value=leaf_value)
         
-        left = self._grow_tree(X[left_indices], y[left_indices], depth + 1)
-        right = self._grow_tree(X[right_indices], y[right_indices], depth + 1)
+        left = self._grow_tree(X[left_indices], y[left_indices], 
+                               w[left_indices], depth + 1)
+        right = self._grow_tree(X[right_indices], y[right_indices], 
+                                w[right_indices], depth + 1)
         
         if self.verbose:
             print(f'[DecisionTree] Depth {depth} reached -', end=' ')
@@ -79,7 +87,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
         if X.shape[0] < self.min_samples_split: return True
         return False
 
-    def _best_criteria(self, X: Matrix, y: Matrix, 
+    def _best_criteria(self, X: Matrix, y: Matrix, w: Vector,
                        indices: Matrix) -> Tuple[int, float]:
         best_gain = -1
         split_idx, split_thresh = 0, 0.0
@@ -87,7 +95,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
             X_col = X[:, idx]
             thresholds = np.unique(X_col)
             for threshold in thresholds:
-                gain = self._information_gain(X_col, y, threshold)
+                gain = self._information_gain(X_col, y, w, threshold)
 
                 if gain > best_gain:
                     best_gain = gain
@@ -96,15 +104,16 @@ class DecisionTreeClassifier(Estimator, Supervised):
 
         return split_idx, split_thresh
 
-    def _information_gain(self, X_col: Matrix, y: Matrix, 
+    def _information_gain(self, X_col: Matrix, y: Matrix, w: Vector, 
                           thresh: float) -> float:
-        parent_entropy = self._entropy(y)
+        parent_entropy = self._entropy(y, w)
         left_indices, right_indices = self._split(X_col, thresh)
         if not len(left_indices) or not len(right_indices): return 0
 
-        n = len(y)
-        n_l, n_r = len(left_indices), len(right_indices)
-        e_l, e_r = self._entropy(y[left_indices]), self._entropy(y[right_indices])
+        n = np.sum(w)
+        n_l, n_r = np.sum(w[left_indices]), np.sum(w[right_indices])
+        e_l = self._entropy(y[left_indices], w[left_indices])
+        e_r = self._entropy(y[right_indices], w[right_indices])
         child_entropy = (n_l / n) * e_l + (n_r / n) * e_r
 
         ig = parent_entropy - child_entropy
@@ -126,9 +135,10 @@ class DecisionTreeClassifier(Estimator, Supervised):
         most_common = counter.most_common(1)[0][0]
         return most_common
     
-    def _entropy(self, y: Matrix) -> float:
-        hist = np.bincount(y)
-        ps = hist / len(y)
+    def _entropy(self, y: Matrix, w: Vector) -> float:
+        unique_labels, _ = np.unique(y, return_counts=True)
+        ps = np.array([np.sum(w[y == label]) for label in unique_labels]) / np.sum(w)
+        
         return -np.sum([p * np.log2(p) for p in ps if p])
     
     def print_tree(self) -> None:
@@ -154,8 +164,10 @@ class DecisionTreeClassifier(Estimator, Supervised):
 
     def set_params(self,
                    max_depth: int = None,
-                   min_samples_split: int = None) -> None:
+                   min_samples_split: int = None,
+                   sample_weights: Vector = None) -> None:
         if max_depth is not None: self.max_depth = int(max_depth)
+        if sample_weights is not None: self.sample_weights = sample_weights
         if min_samples_split is not None: 
             self.min_samples_split = int(min_samples_split)
 
