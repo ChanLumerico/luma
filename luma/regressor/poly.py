@@ -44,7 +44,7 @@ class PolynomialRegressor(Estimator):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
 
     def set_params(self, degree: int = None) -> None:
         self.degree = int(degree)

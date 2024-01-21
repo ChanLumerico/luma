@@ -17,7 +17,7 @@ __all__ = (
 )
 
 
-class RandomForestClassifier(Estimator, Supervised):
+class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
     
     """
     A Random Forest Classifier is an ensemble learning method in machine learning, 
@@ -104,7 +104,7 @@ class RandomForestClassifier(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self,
                    n_trees: int = None,
@@ -130,7 +130,7 @@ class RandomForestClassifier(Estimator, Supervised):
                 self.n_features = str(n_features)
 
 
-class RandomForestRegressor(Estimator, Supervised):
+class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
     
     """
     A Random Forest Regressor is an ensemble learning algorithm for regression 
@@ -217,7 +217,7 @@ class RandomForestRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self,
                    n_trees: int = None,

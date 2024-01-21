@@ -15,7 +15,7 @@ __all__ = (
 )
 
 
-class BaggingClassifier(Estimator, Supervised):
+class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
     
     """
     A Bagging Classifier is an ensemble learning technique that trains 
@@ -121,7 +121,7 @@ class BaggingClassifier(Estimator, Supervised):
     
     def score(self, X: Matrix, y: Vector, metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self, 
                    base_estimator: Estimator = None,
@@ -143,7 +143,7 @@ class BaggingClassifier(Estimator, Supervised):
         return self.estimators_[index]
 
 
-class BaggingRegressor(Estimator, Supervised):
+class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
     
     """
     A Bagging Regressor is an ensemble meta-estimator that fits base 
@@ -242,7 +242,7 @@ class BaggingRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Vector, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self, 
                    base_estimator: Estimator = None,

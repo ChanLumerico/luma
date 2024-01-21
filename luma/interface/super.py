@@ -26,13 +26,31 @@ class Estimator(LUMA, metaclass=ABCMeta):
     deep neural networks, and their goal is to capture patterns and 
     relationships within the data to make accurate predictions on new, unseen data.
     
-    Example
+    Methods
     -------
-    >>> model = AnyEstimator(*args)
-    >>> model.fit(X_train, y_train)
-    >>> prediction = model.predict(X_test)
+    For training:
+    >>> def fit(self, *args) -> Estimator: ...
+    
+    For prediction:
+    >>> def predict(self, *args) -> Vector: ...
+    
+    For scoring
+    >>> def score(self, *args) -> float: ...
+    
+    For setting parameters when tuning
+    >>> def set_params(self, *args) -> None: ...
     
     """
+    
+    class Meta:
+        
+        """
+        An inner class of `Estimator` for meta-estimator.
+        
+        A meta-estimator is a type of estimator in machine learning that 
+        combines or extends other estimators to improve performance or 
+        functionality, such as ensemble methods or pipelines.
+        """
     
     @abstractmethod
     def fit(self, *args) -> 'Estimator': ...
@@ -58,14 +76,19 @@ class Transformer(LUMA, metaclass=ABCMeta):
     machine learning algorithm being used, enhancing the model's performance 
     by ensuring the data is in the right format and is free from inconsistencies or noise.
     
-    Example
+    Methods
     -------
-    >>> trans = AnyTransformer()
-    >>> trans.fit(data)
-    >>> new_data = trans.transform(data)
+    For fitting:
+    >>> def fit(self, *args) -> Transformer: ...
     
-    To fit and transform at the same time,
-    >>> new_data = trans.fit_transform(data)
+    For transformation:
+    >>> def transform(self, *args) -> Matrix: ...
+    
+    For fitting and transformation at once:
+    >>> def fit_transform(self, *args) -> Matrix:
+    
+    For setting parameters when tuning:
+    >>> def set_params(self, *args) -> None: ...
     
     """
     
@@ -113,15 +136,15 @@ class Evaluator(LUMA, metaclass=ABCMeta):
     how well a model is performing on a particular task, 
     such as classification or regression. 
     
-    Example
+    Methods
     -------
-    >>> metric = AnyEvaluator()
-    >>> score = metric.compute(y_true=target, y_pred=predictions)
+    For scoring:
+    >>> def score(*args) -> float: ...
     
     """
     
     @abstractstaticmethod
-    def compute(*args) -> float: ...
+    def score(*args) -> float: ...
 
 
 class Visualizer(LUMA, metaclass=ABCMeta):
@@ -132,10 +155,10 @@ class Visualizer(LUMA, metaclass=ABCMeta):
     Visualizers play a crucial role in simplifying the interpretation of complex 
     machine learning processes and results.
     
-    Example
+    Methods
     -------
-    >>> plotter = AnyVisualizer()
-    >>> plotter.plot()
+    For plotting:
+    >>> def plot(self, *args) -> None: ...
     
     """
     
@@ -164,6 +187,12 @@ class Unsupervised(LUMA):
     or relationships within the data.
     
     Default class for uninherited models.
+    
+    Properties
+    ----------
+    Get assigned labels:
+    >>> def labels(self) -> Vector: ...
+    
     """
     
     def __init__(self, *args) -> None: ...
@@ -179,13 +208,13 @@ class Distance(LUMA, metaclass=ABCMeta):
     or "difference" there is between two points, objects, or distributions. Different 
     types of distances serve various purposes, and they are used in different contexts.
     
-    Example
+    Methods
     -------
-    >>> metric = AnyDistance()
-    >>> dist = metric.distance(x, y)
+    For computing the distance:
+    >>> def compute(*args) -> float: ...
     
     """
     
     @abstractstaticmethod
-    def distance(*args) -> float: ...
+    def compute(*args) -> float: ...
 

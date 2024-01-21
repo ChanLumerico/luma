@@ -95,7 +95,7 @@ class PoissonRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
 
     def set_params(self,
                    learning_rate: float = None,
@@ -192,7 +192,7 @@ class NegativeBinomialRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self,
                    learning_rate: float = None,
@@ -293,7 +293,7 @@ class GammaRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_param(self,
                   alpha: float = None,
@@ -396,7 +396,7 @@ class BetaRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self, 
                    alpha: float = None, 
@@ -494,7 +494,7 @@ class InverseGaussianRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
 
     def set_params(self, 
                    learning_rate: float = None, 

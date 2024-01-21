@@ -134,7 +134,7 @@ class SBS(Transformer, Transformer.Feature, Supervised):
         self.estimator.fit(X_train[:, indices], y_train)
         y_pred = self.estimator.predict(X_test[:, indices])
         
-        return self.metric.compute(y_true=y_test, y_pred=y_pred)
+        return self.metric.score(y_true=y_test, y_pred=y_pred)
     
     def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
@@ -275,7 +275,7 @@ class SFS(Transformer, Transformer.Feature, Supervised):
         self.estimator.fit(X_train[:, indices], y_train)
         y_pred = self.estimator.predict(X_test[:, indices])
         
-        return self.metric.compute(y_true=y_test, y_pred=y_pred)
+        return self.metric.score(y_true=y_test, y_pred=y_pred)
     
     def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
@@ -405,7 +405,7 @@ class RFE(Transformer, Transformer.Feature, Supervised):
             else:
                 self.estimator.fit(X[:, indices], y)
                 y_pred = self.estimator.predict(X[:, indices])
-                score = self.metric.compute(y_true=y, y_pred=y_pred)
+                score = self.metric.score(y_true=y, y_pred=y_pred)
                 
             scores[i] = score
         

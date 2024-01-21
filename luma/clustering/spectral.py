@@ -83,7 +83,7 @@ class SpectralClustering(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    n_clusters: int = None,
@@ -164,7 +164,7 @@ class NormalizedSpectralClustering(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    n_clusters: int = None,
@@ -254,7 +254,7 @@ class HierarchicalSpectralClustering(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    n_clusters: int = None,
@@ -329,7 +329,7 @@ class AdaptiveSpectralClustering(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
 
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    gamma: float = None,

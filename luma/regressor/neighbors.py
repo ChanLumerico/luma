@@ -61,7 +61,7 @@ class KNNRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self, n_neighbors: int = None) -> None:
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
@@ -126,7 +126,7 @@ class AdaptiveKNNRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self, 
                    n_density: int = None,
@@ -183,7 +183,7 @@ class WeightedKNNRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self, n_neighbors: int = None) -> None:
         if n_neighbors is not None: self.n_neighbors = int(n_neighbors)

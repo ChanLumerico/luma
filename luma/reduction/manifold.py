@@ -290,13 +290,13 @@ class MetricMDS(Transformer, Unsupervised):
         for i in range(m):
             for j in range(i + 1, m):
                 join = (X[i], X[j])
-                if self.metric == 'euclidean': d = Euclidean.distance(*join)
-                elif self.metric == 'manhattan': d = Manhattan.distance(*join)
-                elif self.metric == 'chebyshev': d = Chebyshev.distance(*join)
-                elif self.metric == 'minkowski': d = Minkowski.distance(*join, self.p)
-                elif self.metric == 'cos_similarity': d = CosineSimilarity.distance(*join)
-                elif self.metric == 'correlation': d = Correlation.distance(*join)
-                elif self.metric == 'mahalanobis': d = Mahalanobis.distance(*join, cov)
+                if self.metric == 'euclidean': d = Euclidean.compute(*join)
+                elif self.metric == 'manhattan': d = Manhattan.compute(*join)
+                elif self.metric == 'chebyshev': d = Chebyshev.compute(*join)
+                elif self.metric == 'minkowski': d = Minkowski.compute(*join, self.p)
+                elif self.metric == 'cos_similarity': d = CosineSimilarity.compute(*join)
+                elif self.metric == 'correlation': d = Correlation.compute(*join)
+                elif self.metric == 'mahalanobis': d = Mahalanobis.compute(*join, cov)
                 else: raise ValueError(f'[mMDS] Invalid distance metric: {self.metric}')
                 D[i, j] = D[j, i] = d
         

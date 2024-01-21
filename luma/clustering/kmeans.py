@@ -78,7 +78,7 @@ class KMeansClustering(Estimator, Unsupervised):
     
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
-        return metric.compute(X, X_pred)
+        return metric.score(X, X_pred)
 
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
@@ -153,7 +153,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
     
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
-        return metric.compute(X, X_pred)
+        return metric.score(X, X_pred)
 
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
@@ -223,7 +223,7 @@ class KMediansClustering(Estimator, Unsupervised):
     
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
-        return metric.compute(X, X_pred)
+        return metric.score(X, X_pred)
     
     def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
@@ -306,7 +306,7 @@ class KMedoidsClustering(Estimator, Unsupervised):
     
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
-        return metric.compute(X, X_pred)
+        return metric.score(X, X_pred)
     
     def set_params(self, 
                    n_clusters: int = None,
@@ -380,7 +380,7 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
 
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
-        return metric.compute(X, X_pred)
+        return metric.score(X, X_pred)
     
     def set_params(self, 
                    n_clusters: int = None,
@@ -487,7 +487,7 @@ class FuzzyKMeansClustering(Estimator, Unsupervised):
 
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
-        return metric.compute(X, X_pred)
+        return metric.score(X, X_pred)
     
     def set_params(self, 
                    n_clusters: int = None,

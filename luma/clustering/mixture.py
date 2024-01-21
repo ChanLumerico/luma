@@ -112,7 +112,7 @@ class GaussianMixture(Estimator, Unsupervised):
     
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
-        return metric.compute(X, X_pred)
+        return metric.score(X, X_pred)
     
     def set_params(self, 
                    n_clusters: int = None,
@@ -228,7 +228,7 @@ class MultinomialMixture(Estimator, Unsupervised):
     
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
-        return metric.compute(X, X_pred)
+        return metric.score(X, X_pred)
     
     def set_params(self, 
                    n_clusters: int = None,

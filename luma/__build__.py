@@ -28,12 +28,12 @@ from luma.clustering.mixture import GaussianMixture, MultinomialMixture
 from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 from luma.ensemble.vote import VotingClassifier, VotingRegressor
 from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
-from luma.ensemble.boost import AdaBoostClassifier
+from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score
-from luma.metric.classification import Specificity, AUCCurveROC, Complex
+from luma.metric.classification import Specificity, AUCCurveROC
 from luma.metric.regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
-from luma.metric.regression import MeanAbsolutePercentageError, RSquaredScore, Complex
+from luma.metric.regression import MeanAbsolutePercentageError, RSquaredScore
 from luma.metric.clustering import SilhouetteCoefficient, DaviesBouldin
 from luma.metric.distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
@@ -128,14 +128,14 @@ if __name__ == '__main__':
     
     BaggingClassifier, BaggingRegressor
     
-    AdaBoostClassifier
+    AdaBoostClassifier, AdaBoostRegressor
     
     # ------------------ [ luma.metric ] -----------------------
     Accuracy, Precision, Recall, F1Score, Specificity, 
-    AUCCurveROC, Complex
+    AUCCurveROC
     
     MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError,
-    MeanAbsolutePercentageError, RSquaredScore, Complex
+    MeanAbsolutePercentageError, RSquaredScore
     
     SilhouetteCoefficient, DaviesBouldin
     

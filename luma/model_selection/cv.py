@@ -50,6 +50,3 @@ class CrossValidator(Evaluator):
         
         return np.mean(scores)
 
-    def compute(self, X: Matrix, y: Vector) -> float:
-        return self.score(X, y)
-

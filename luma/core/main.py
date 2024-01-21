@@ -8,13 +8,6 @@ __all__ = (
 
 
 class LUMA:
-    
-    """
-    LUMA
-    ====
-    A Comprehensive Python Module for Machine Learning and Data Science
-    """
-
     def __init__(self) -> None: ...
     
     def __call__(self, *args, **kwargs) -> Any: ...

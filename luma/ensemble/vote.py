@@ -15,7 +15,7 @@ __all__ = (
 )
 
 
-class VotingClassifier(Estimator, Supervised):
+class VotingClassifier(Estimator, Estimator.Meta, Supervised):
     
     """
     A Voting Classifier is an ensemble machine learning model that combines 
@@ -108,7 +108,7 @@ class VotingClassifier(Estimator, Supervised):
 
     def score(self, X: Matrix, y: Vector, metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self, 
                    estimators: List[Estimator] = None,
@@ -122,7 +122,7 @@ class VotingClassifier(Estimator, Supervised):
         return self.estimators_[index]
 
 
-class VotingRegressor(Estimator, Supervised):
+class VotingRegressor(Estimator, Estimator.Meta, Supervised):
     
     """
     A Voting Regressor is an ensemble machine learning model that combines 
@@ -184,7 +184,7 @@ class VotingRegressor(Estimator, Supervised):
     def score(self, X: Matrix, y: Vector, 
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def set_params(self, 
                    estimators: List[Estimator] = None,

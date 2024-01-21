@@ -73,7 +73,7 @@ class DBSCAN(Estimator, Unsupervised):
     def _generate_neighbors(self, X: Matrix, idx: int) -> Matrix:
         neighbors = []
         for i in range(X.shape[0]):
-            if self.metric_func.distance(X[idx], X[i]) < self.epsilon:
+            if self.metric_func.compute(X[idx], X[i]) < self.epsilon:
                 neighbors.append(i)
 
         return np.array(neighbors)
@@ -106,7 +106,7 @@ class DBSCAN(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    epsilon: float = None,
@@ -241,7 +241,7 @@ class OPTICS(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    epsilon: float = None,
@@ -398,7 +398,7 @@ class DENCLUE(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    h: float | str = None,
@@ -485,7 +485,7 @@ class MeanShiftClustering(Estimator, Unsupervised):
         return np.argmin(norm_, axis=1)
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    bandwidth: float = None,

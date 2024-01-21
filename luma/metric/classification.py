@@ -10,20 +10,19 @@ __all__ = (
     'Recall', 
     'F1Score', 
     'Specificity', 
-    'AUCCurveROC', 
-    'Complex'
+    'AUCCurveROC'
 )
 
 
 class Accuracy(Evaluator):
     @staticmethod
-    def compute(y_true: Matrix, y_pred: Matrix) -> float:
+    def score(y_true: Matrix, y_pred: Matrix) -> float:
         return np.mean(y_true == y_pred)
 
 
 class Precision(Evaluator):
     @staticmethod
-    def compute(y_true: Matrix, y_pred: Matrix) -> float:
+    def score(y_true: Matrix, y_pred: Matrix) -> float:
         true_positives = np.sum((y_true == 1) & (y_pred == 1))
         false_positives = np.sum((y_true == 0) & (y_pred == 1))
         return true_positives / (true_positives + false_positives)
@@ -31,7 +30,7 @@ class Precision(Evaluator):
 
 class Recall(Evaluator):
     @staticmethod
-    def compute(y_true: Matrix, y_pred: Matrix) -> float:
+    def score(y_true: Matrix, y_pred: Matrix) -> float:
         true_positives = np.sum((y_true == 1) & (y_pred == 1))
         false_negatives = np.sum((y_true == 1) & (y_pred == 0))
         return true_positives / (true_positives + false_negatives)
@@ -39,15 +38,15 @@ class Recall(Evaluator):
 
 class F1Score(Evaluator):
     @staticmethod
-    def compute(y_true: Matrix, y_pred: Matrix) -> float:
-        precision = Precision.compute(y_true, y_pred)
-        recall = Recall.compute(y_true, y_pred)
+    def score(y_true: Matrix, y_pred: Matrix) -> float:
+        precision = Precision.score(y_true, y_pred)
+        recall = Recall.score(y_true, y_pred)
         return 2 * (precision * recall) / (precision + recall)
 
 
 class Specificity(Evaluator):
     @staticmethod
-    def compute(y_true: Matrix, y_pred: Matrix) -> float:
+    def score(y_true: Matrix, y_pred: Matrix) -> float:
         true_negatives = np.sum((y_true == 0) & (y_pred == 0))
         false_positives = np.sum((y_true == 0) & (y_pred == 1))
         return true_negatives / (true_negatives + false_positives)
@@ -60,8 +59,8 @@ class AUCCurveROC(Evaluator):
         tpr, fpr = [], []
         for threshold in thresholds:
             y_pred = y_scores >= threshold
-            tpr.append(Recall.compute(y_true, y_pred))
-            fpr.append(1 - Specificity.compute(y_true, y_pred))
+            tpr.append(Recall.score(y_true, y_pred))
+            fpr.append(1 - Specificity.score(y_true, y_pred))
         return fpr, tpr
     
     @staticmethod
@@ -71,16 +70,4 @@ class AUCCurveROC(Evaluator):
         for i in range(1, n):
             auc += (fpr[i] - fpr[i - 1]) * tpr[i]
         return auc
-
-
-class Complex:
-    @staticmethod
-    def compute(y_true: Matrix, y_pred: Matrix) -> dict:
-        scores = dict()
-        scores['accuracy'] = Accuracy.compute(y_true, y_pred)
-        scores['precision'] = Precision.compute(y_true, y_pred)
-        scores['recall'] = Recall.compute(y_true, y_pred)
-        scores['f1-score'] = F1Score.compute(y_true, y_pred)
-        scores['specificity'] = Specificity.compute(y_true, y_pred)
-        return scores
 

@@ -46,7 +46,7 @@ class SilhouetteCoefficient(Evaluator):
         self.distances = squareform(pdist(self.data))
     
     @staticmethod
-    def compute(data: Matrix, labels: Matrix) -> Matrix[float]:
+    def score(data: Matrix, labels: Matrix) -> Matrix[float]:
         scores = []
         distances = squareform(pdist(data))
         for idx, label in enumerate(labels):
@@ -89,7 +89,7 @@ class SilhouetteCoefficient(Evaluator):
         plt.title("Silhouette Coefficient Plot")
         plt.xlabel("Silhouette coefficient values")
         plt.ylabel("Cluster label")
-        plt.axvline(x=self.compute(self.data, self.labels), 
+        plt.axvline(x=self.score(self.data, self.labels), 
                     color="red", linestyle="--")
         
         plt.yticks([])
@@ -114,7 +114,7 @@ class DaviesBouldin(Evaluator):
     """
     
     @staticmethod
-    def compute(data: Matrix, labels: Matrix) -> float:
+    def score(data: Matrix, labels: Matrix) -> float:
         util = DBUtil(data=data, labels=labels)
         centroids = util.cluster_centroids
         scatter = util.within_cluster_scatter

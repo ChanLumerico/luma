@@ -15,7 +15,7 @@ __all__ = (
 )
 
 
-class Pipeline:
+class Pipeline(Estimator, Estimator.Meta):
     
     """
     A pipeline is a sequence of steps to process data and build a model. 
@@ -158,7 +158,7 @@ class Pipeline:
             elif pkg == 'regressor': metric = MeanSquaredError
         
         X_pred = self.predict(X)
-        return metric.compute(y_true=y, y_pred=X_pred)
+        return metric.score(y_true=y, y_pred=X_pred)
     
     def dump(self) -> None:
         print(f"Configuration of a pipeline:")

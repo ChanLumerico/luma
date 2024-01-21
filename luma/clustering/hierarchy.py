@@ -122,7 +122,7 @@ class AgglomerativeClustering(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, 
                    n_clusters: int = None,
@@ -202,7 +202,7 @@ class DivisiveClustering(Estimator, Unsupervised):
         raise Warning(f"{type(self).__name__} does not support prediction!")
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
-        return metric.compute(self._X, self.labels)
+        return metric.score(self._X, self.labels)
     
     def set_params(self, n_clusters: int = None) -> None:
         if n_clusters is not None: self.n_clusters = int(n_clusters)
