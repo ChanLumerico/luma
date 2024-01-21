@@ -30,6 +30,8 @@ from luma.ensemble.vote import VotingClassifier, VotingRegressor
 from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
 from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 
+from luma.neural.perceptron import PerceptronClassifier
+
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score
 from luma.metric.classification import Specificity, AUCCurveROC
 from luma.metric.regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
@@ -93,7 +95,7 @@ if __name__ == '__main__':
     SilhouetteUtil, DBUtil, KernelUtil,
     Clone
     
-    # ---------------- [ luma.classifier ] ---------------------
+    # ----------------- [ luma.classifier ] --------------------
     LogisticRegressor, SoftmaxRegressor
     
     GaussianNaiveBayes, BernoulliNaiveBayes
@@ -121,7 +123,7 @@ if __name__ == '__main__':
     
     GaussianMixture, MultinomialMixture
     
-    # ----------------- [ luma.ensemble ] ----------------------
+    # ------------------ [ luma.ensemble ] ---------------------
     RandomForestClassifier, RandomForestRegressor
     
     VotingClassifier, VotingRegressor
@@ -130,7 +132,10 @@ if __name__ == '__main__':
     
     AdaBoostClassifier, AdaBoostRegressor
     
-    # ------------------ [ luma.metric ] -----------------------
+    # ------------------- [ luma.neural ] ----------------------
+    PerceptronClassifier
+    
+    # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity, 
     AUCCurveROC
     
@@ -142,7 +147,7 @@ if __name__ == '__main__':
     Euclidean, Manhattan, Chebyshev, Minkowski,
     CosineSimilarity, Correlation, Mahalanobis
     
-    # -------------- [ luma.module_selection ] -----------------
+    # --------------- [ luma.module_selection ] ----------------
     TrainTestSplit
     
     GridSearchCV
