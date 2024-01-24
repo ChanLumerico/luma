@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Tuple
+from typing import List, Literal, Optional, Tuple
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap 
 import numpy as np
@@ -12,7 +12,8 @@ from luma.metric.classification import Recall, Specificity
 __all__ = (
     'DecisionRegion', 
     'ClusterPlot',
-    'ROCCurve'
+    'ROCCurve',
+    'ConfusionMatrix'
 )
 
 
@@ -198,4 +199,51 @@ class ROCCurve(Visualizer):
         for i in range(1, len(fpr)):
             auc += (fpr[i] - fpr[i - 1]) * (tpr[i] + tpr[i - 1]) / 2
         return auc
+
+
+class ConfusionMatrix(Visualizer):
+    def __init__(self, 
+                 y_true: Vector, 
+                 y_pred: Vector, 
+                 labels: List[str] | None = None,
+                 cmap: ListedColormap = 'Blues') -> None:
+        self.cmap = cmap
+        self.conf_matrix = self._confusion_matrix(y_true, y_pred)
+        
+        if labels is None:
+            self.labels = np.arange(len(np.unique(y_true)))
+
+    def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
+        if ax is None: ax = plt.gca()
+        
+        cax = ax.imshow(self.conf_matrix, interpolation='nearest', cmap=self.cmap)
+        ax.set_title('Confusion Matrix')
+        plt.colorbar(cax, ax=ax)
+
+        tick_marks = np.arange(len(self.labels))
+        ax.set_xticks(tick_marks)
+        ax.set_xticklabels(self.labels, rotation=45)
+        ax.set_yticks(tick_marks)
+        ax.set_yticklabels(self.labels)
+
+        thresh = self.conf_matrix.max() / 2.
+        for i, j in np.ndindex(self.conf_matrix.shape):
+            ax.text(j, i, format(self.conf_matrix[i, j], 'd'),
+                    horizontalalignment="center",
+                    color="white" if self.conf_matrix[i, j] > thresh else "black")
+
+        ax.set_ylabel('True label')
+        ax.set_xlabel('Predicted label')
+        ax.set_aspect('equal', adjustable='box')
+
+        if show: plt.show()
+        return ax
+
+    def _confusion_matrix(self, y_true: Vector, y_pred: Vector) -> Matrix:
+        unique_labels = np.unique(np.concatenate((y_true, y_pred)))
+        matrix = np.zeros((len(unique_labels), len(unique_labels)), dtype=int)
+        for true, pred in zip(y_true, y_pred):
+            matrix[true, pred] += 1
+        
+        return matrix
 
