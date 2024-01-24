@@ -6,13 +6,14 @@ import numpy as np
 from luma.interface.util import Matrix, Vector
 from luma.interface.super import Visualizer, Estimator
 from luma.preprocessing.encoder import LabelBinarizer
-from luma.metric.classification import Recall, Specificity
+from luma.metric.classification import Precision, Recall, Specificity
 
 
 __all__ = (
     'DecisionRegion', 
     'ClusterPlot',
     'ROCCurve',
+    'PrecisionRecallCurve',
     'ConfusionMatrix'
 )
 
@@ -199,6 +200,73 @@ class ROCCurve(Visualizer):
         for i in range(1, len(fpr)):
             auc += (fpr[i] - fpr[i - 1]) * (tpr[i] + tpr[i - 1]) / 2
         return auc
+
+
+class PrecisionRecallCurve(Visualizer):
+    def __init__(self,
+                 y_true: Vector,
+                 y_scores: Matrix) -> None:
+        self.y_true = y_true
+        self.y_scores = y_scores
+        self.n_classes = y_scores.shape[1]
+
+    def plot(self,
+             ax: Optional[plt.Axes] = None,
+             show: bool = False) -> plt.Axes:
+        if ax is None: _, ax = plt.subplots()
+        y_binary = LabelBinarizer().fit_transform(self.y_true)
+
+        pres, recs = [], []
+        for cl in range(self.n_classes):
+            pre, rec = self._pre_rec(y_binary[:, cl], self.y_scores[:, cl])
+            pres.append(pre)
+            recs.append(rec)
+
+            ap = self._average_precision(pre, rec)
+            ax.plot(rec, pre,
+                    linewidth=2,
+                    label=f'PR Curve {cl} (AP = {ap:.2f})')
+
+        mean_pre, mean_rec = np.mean(pres, axis=0), np.mean(recs, axis=0)
+        mean_ap = self._average_precision(mean_pre, mean_rec)
+
+        ax.plot(mean_rec, mean_pre,
+                color='dimgray',
+                linewidth=2,
+                linestyle='--',
+                label=f'Mean PR (AP = {mean_ap:.2f})')
+        
+        ax.plot([1, 0], [0, 1], 
+                color='darkgray', 
+                linestyle=':', 
+                label='Random Guessing')
+
+        ax.set_xlim([-0.05, 1.05])
+        ax.set_ylim([-0.05, 1.05])
+        ax.set_xlabel('Recall')
+        ax.set_ylabel('Precision')
+        ax.set_title('Precision-Recall Curve')
+        ax.legend(loc="lower left")
+        ax.figure.tight_layout()
+
+        if show: plt.show()
+        return ax
+    
+    def _pre_rec(self, y_true: Vector, y_score: Vector) -> Tuple[Vector, Vector]:
+        thresholds = np.sort(y_score)[::-1]
+        pre, rec = [], []
+        for threshold in thresholds:
+            y_pred = y_score >= threshold
+            pre.append(Precision.score(y_true, y_pred))
+            rec.append(Recall.score(y_true, y_pred))
+
+        return np.array(pre), np.array(rec)
+    
+    def _average_precision(self, pre: Vector, rec: Vector) -> float:
+        ap = 0
+        for i in range(1, len(rec)):
+            ap += (rec[i] - rec[i - 1]) * pre[i]
+        return ap
 
 
 class ConfusionMatrix(Visualizer):

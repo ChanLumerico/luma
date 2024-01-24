@@ -73,7 +73,8 @@ from luma.pipe.pipeline import Pipeline
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot, MissingProportion
 from luma.visual.graph import GraphPlot
-from luma.visual.result import DecisionRegion, ClusterPlot, ROCCurve, ConfusionMatrix
+from luma.visual.result import DecisionRegion, ClusterPlot, ROCCurve, PrecisionRecallCurve
+from luma.visual.result import ConfusionMatrix
 
 from luma.migrate.port import ModelPorter
 
@@ -197,7 +198,8 @@ if __name__ == '__main__':
     
     GraphPlot
     
-    DecisionRegion, ClusterPlot, ROCCurve, ConfusionMatrix
+    DecisionRegion, ClusterPlot, ROCCurve, PrecisionRecallCurve, 
+    ConfusionMatrix
     
     # ------------------ [ luma.migrate ] ----------------------
     ModelPorter

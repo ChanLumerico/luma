@@ -81,7 +81,7 @@
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
-                    <td>~11.0K</td>
+                    <td>~11.3K</td>
                 </tr>
                 <tr>
                     <td>Requirement</td>
