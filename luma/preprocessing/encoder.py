@@ -132,7 +132,8 @@ class OrdinalEncoder(Transformer, Transformer.Feature):
 
 
 class LabelBinarizer(Transformer, Transformer.Target):
-    def __init__(self) -> None:
+    def __init__(self, negative_target: bool = False) -> None:
+        self.negative_target = negative_target
         self.classes_ = None
         self._fitted = False
 
@@ -142,10 +143,16 @@ class LabelBinarizer(Transformer, Transformer.Target):
         return self
 
     def transform(self, y: Vector) -> Vector:
-        binarized = np.zeros((len(y), len(self.classes_)))
+        if not self._fitted: raise NotFittedError(self)
+        if self.negative_target:
+            binarized = np.full((len(y), len(self.classes_)), -1)
+        else:
+            binarized = np.full((len(y), len(self.classes_)), 0)
+        
         for i, label in enumerate(y):
             class_index = np.where(self.classes_ == label)[0][0]
             binarized[i, class_index] = 1
+        
         return binarized
     
     def fit_transform(self, y: Vector) -> Vector:
@@ -155,5 +162,7 @@ class LabelBinarizer(Transformer, Transformer.Target):
     def inverse_transform(self, y: Vector) -> Vector:
         return self.classes_[np.argmax(y, axis=1)]
     
-    def set_params(self) -> None: ...
+    def set_params(self, negative_target: bool = None) -> None:
+        if negative_target is not None: 
+            self.negative_target = negative_target
 
