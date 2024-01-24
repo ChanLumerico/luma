@@ -1,3 +1,4 @@
+from typing import Optional
 from matplotlib import colors, pyplot as plt
 import numpy as np
 
@@ -44,13 +45,16 @@ class GraphPlot(Visualizer):
         self.title = title
         self.grid = grid
     
-    def plot(self, size: float = 250, scale: float = 10.0) -> None:
+    def plot(self, 
+             ax: Optional[plt.Axes] = None, 
+             size: float = 250, 
+             scale: float = 10.0,
+             show: bool = False) -> plt.Axes:
         x_min, x_max = self.nodes[:, 0].min(), self.nodes[:, 0].max()
         y_min, y_max = self.nodes[:, 1].min(), self.nodes[:, 1].max()
         delta_x, delta_y = (x_max - x_min) / size, (y_max - y_min) / size
         
         m, _ = self.nodes.shape
-
         i_upper, j_upper = np.triu_indices(m, k=1)
         weights = self.edges[i_upper, j_upper]
         valid_edges = (weights != 0) & (weights != np.inf)
@@ -61,8 +65,8 @@ class GraphPlot(Visualizer):
         norm = colors.Normalize(vmin=weights.min(), vmax=weights.max())
         cmap = plt.cm.plasma
 
-        _, ax = plt.subplots()
-        ax.scatter(self.nodes[:, 0], self.nodes[:, 1],  c='black', s=20)
+        if ax is None: _, ax = plt.subplots()
+        ax.scatter(self.nodes[:, 0], self.nodes[:, 1], c='black', s=20)
 
         for edge, weight in zip(edges, weights):
             points = self.nodes[edge]
@@ -73,15 +77,16 @@ class GraphPlot(Visualizer):
         sm.set_array([])
         plt.colorbar(sm, ax=ax, label='Edge Weights')
 
-        plt.axis('equal')
-        plt.xlim(x_min - delta_x * scale, x_max + delta_x * scale)
-        plt.ylim(y_min - delta_y * scale, y_max + delta_y * scale)
+        ax.set_aspect('equal')
+        ax.set_xlim(x_min - delta_x * scale, x_max + delta_x * scale)
+        ax.set_ylim(y_min - delta_y * scale, y_max + delta_y * scale)
         
-        plt.xlabel(self.xlabel)
-        plt.ylabel(self.ylabel)
-        plt.title('Graph Plot' if self.title is None else self.title)
+        ax.set_xlabel(self.xlabel)
+        ax.set_ylabel(self.ylabel)
+        ax.set_title('Graph Plot' if self.title is None else self.title)
+        ax.figure.tight_layout()
         
-        plt.grid() if self.grid else _
-        plt.tight_layout()
-        plt.show()
+        if self.grid: ax.grid()
+        if show: plt.show()
+        return ax
 

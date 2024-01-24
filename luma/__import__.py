@@ -32,8 +32,7 @@ from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 
 from luma.neural.perceptron import PerceptronClassifier, PerceptronRegressor
 
-from luma.metric.classification import Accuracy, Precision, Recall, F1Score
-from luma.metric.classification import Specificity, AUCCurveROC
+from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
 from luma.metric.regression import MeanAbsolutePercentageError, RSquaredScore
 from luma.metric.clustering import SilhouetteCoefficient, DaviesBouldin
@@ -74,7 +73,7 @@ from luma.pipe.pipeline import Pipeline
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot, MissingProportion
 from luma.visual.graph import GraphPlot
-from luma.visual.result import DecisionRegion, ClusterPlot
+from luma.visual.result import DecisionRegion, ClusterPlot, ROCCurve
 
 from luma.migrate.port import ModelPorter
 
@@ -136,8 +135,7 @@ if __name__ == '__main__':
     PerceptronClassifier, PerceptronRegressor
     
     # ------------------- [ luma.metric ] ----------------------
-    Accuracy, Precision, Recall, F1Score, Specificity, 
-    AUCCurveROC
+    Accuracy, Precision, Recall, F1Score, Specificity
     
     MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError,
     MeanAbsolutePercentageError, RSquaredScore
@@ -199,7 +197,7 @@ if __name__ == '__main__':
     
     GraphPlot
     
-    DecisionRegion, ClusterPlot
+    DecisionRegion, ClusterPlot, ROCCurve
     
     # ------------------ [ luma.migrate ] ----------------------
     ModelPorter

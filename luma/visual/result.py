@@ -1,15 +1,18 @@
-from typing import Literal, Optional
+from typing import Literal, Optional, Tuple
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap 
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Vector
 from luma.interface.super import Visualizer, Estimator
+from luma.preprocessing.encoder import LabelBinarizer
+from luma.metric.classification import Recall, Specificity
 
 
 __all__ = (
     'DecisionRegion', 
-    'ClusterPlot'
+    'ClusterPlot',
+    'ROCCurve'
 )
 
 
@@ -127,4 +130,72 @@ class ClusterPlot(Visualizer):
 
         if show: plt.show()
         return ax
+
+
+class ROCCurve(Visualizer):
+    def __init__(self,
+                 y_true: Vector,
+                 y_scores: Matrix) -> None:
+        self.y_true = y_true
+        self.y_scores = y_scores
+        self.n_classes = y_scores.shape[1]
+    
+    def plot(self, 
+             ax: Optional[plt.Axes] = None, 
+             show: bool = False) -> plt.Axes:
+        if ax is None: _, ax = plt.subplots()
+        y_binary = LabelBinarizer().fit_transform(self.y_true)
+        
+        fprs, tprs = [], []
+        for cl in range(self.n_classes):
+            fpr, tpr = self._fpr_tpr(y_binary[:, cl], self.y_scores[:, cl])
+            fprs.append(fpr)
+            tprs.append(tpr)
+            
+            auc = self._auc(fpr, tpr)
+            ax.plot(fpr, tpr, 
+                    linewidth=2,
+                    label=f'ROC Curve {cl} (area = {auc:.2f})')
+        
+        mean_fpr, mean_tpr = np.mean(fprs, axis=0), np.mean(tprs, axis=0)
+        mean_auc = self._auc(mean_fpr, mean_tpr)
+        
+        ax.plot(mean_fpr, mean_tpr,
+                color='dimgray', 
+                linewidth=2,
+                linestyle='--', 
+                label=f'Mean ROC (area = {mean_auc:.2f})')
+        
+        ax.plot([0, 1], [0, 1], 
+                color='darkgray', 
+                linestyle=':', 
+                label='Random Guessing')
+        
+        ax.set_xlim([-0.05, 1.05])
+        ax.set_ylim([-0.05, 1.05])
+        ax.set_xlabel('False Positive Rate')
+        
+        ax.set_ylabel('True Positive Rate')
+        ax.set_title('ROC Curve')
+        ax.legend(loc="lower right")
+        ax.figure.tight_layout()
+
+        if show: plt.show()
+        return ax
+    
+    def _fpr_tpr(self, y_true: Vector, y_score: Vector) -> Tuple[Vector, Vector]:
+        thresholds = np.sort(y_score)[::-1]
+        fpr, tpr = [], []
+        for threshold in thresholds:
+            y_pred = y_score >= threshold
+            tpr.append(Recall.score(y_true, y_pred))
+            fpr.append(1 - Specificity.score(y_true, y_pred))
+        
+        return np.array(fpr), np.array(tpr)
+    
+    def _auc(self, fpr: Vector, tpr: Vector) -> float:
+        auc = 0
+        for i in range(1, len(fpr)):
+            auc += (fpr[i] - fpr[i - 1]) * (tpr[i] + tpr[i - 1]) / 2
+        return auc
 

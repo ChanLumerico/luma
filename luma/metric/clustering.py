@@ -1,8 +1,9 @@
+from typing import Optional
 from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 import numpy as np
 
-from luma.interface.super import Evaluator
+from luma.interface.super import Evaluator, Visualizer
 from luma.interface.util import Matrix, SilhouetteUtil, DBUtil
 
 
@@ -12,7 +13,7 @@ __all__ = (
 )
 
 
-class SilhouetteCoefficient(Evaluator):
+class SilhouetteCoefficient(Evaluator, Visualizer):
     
     """
     The Silhouette Coefficient is a measure used to evaluate the quality of 
@@ -30,13 +31,17 @@ class SilhouetteCoefficient(Evaluator):
     Examples
     --------
     With Instantiation
-    >>> sil = SilhouetteCoefficient(data, labels)
-    >>> score = sil.compute(data, labels) # compute() is a static method
-    >>> sil.plot()
+    ```py
+        sil = SilhouetteCoefficient(data, labels)
+        score = sil.score(data, labels) # compute() is a static method
+        sil.plot(...)
+    ```
     
     Without Instantiation
-    >>> score = SilhouetteCoefficient.compute(data, labels)
-    >>> SilhouetteCoefficient.plot() # Error; plot() is an instance method
+    ```py
+        score = SilhouetteCoefficient.score(data, labels)
+        SilhouetteCoefficient.plot(...) # Error; plot() is an instance method
+    ```
     
     """
     
@@ -69,7 +74,8 @@ class SilhouetteCoefficient(Evaluator):
         
         return np.array(silhouette_values)
 
-    def plot(self) -> None:
+    def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
+        if ax is None: _, ax = plt.subplots()
         sample_silhouette = self._individual_silhouette()
         y_lower = 10
         
@@ -81,21 +87,22 @@ class SilhouetteCoefficient(Evaluator):
             y_upper = y_lower + size_cluster_i
 
             color = plt.cm.nipy_spectral(float(i) / len(set(self.labels)))
-            plt.fill_betweenx(np.arange(y_lower, y_upper), 0, values,
-                              facecolor=color, edgecolor=color, alpha=0.7)
-
+            ax.fill_betweenx(np.arange(y_lower, y_upper), 0, values,
+                            facecolor=color, edgecolor=color, alpha=0.7)
             y_lower = y_upper + 10
         
-        plt.title("Silhouette Coefficient Plot")
-        plt.xlabel("Silhouette coefficient values")
-        plt.ylabel("Cluster label")
-        plt.axvline(x=self.score(self.data, self.labels), 
-                    color="red", linestyle="--")
+        ax.set_title("Silhouette Coefficient Plot")
+        ax.set_xlabel("Silhouette coefficient values")
+        ax.set_ylabel("Cluster label")
+        ax.axvline(x=self.score(self.data, self.labels), 
+                   color="red", linestyle="--")
         
-        plt.yticks([])
-        plt.xticks(np.arange(0.0, 1.2, 0.1))
+        ax.set_yticks([])
+        ax.set_xticks(np.arange(0.0, 1.2, 0.1))
         plt.tight_layout()
-        plt.show()
+
+        if show: plt.show()
+        return ax
 
 
 class DaviesBouldin(Evaluator):

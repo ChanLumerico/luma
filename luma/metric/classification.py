@@ -9,8 +9,7 @@ __all__ = (
     'Precision', 
     'Recall', 
     'F1Score', 
-    'Specificity', 
-    'AUCCurveROC'
+    'Specificity'
 )
 
 
@@ -50,24 +49,4 @@ class Specificity(Evaluator):
         true_negatives = np.sum((y_true == 0) & (y_pred == 0))
         false_positives = np.sum((y_true == 0) & (y_pred == 1))
         return true_negatives / (true_negatives + false_positives)
-
-
-class AUCCurveROC(Evaluator):
-    @staticmethod
-    def roc_curve(y_true: Matrix, y_scores: Matrix) -> float:
-        thresholds = np.sort(y_scores)
-        tpr, fpr = [], []
-        for threshold in thresholds:
-            y_pred = y_scores >= threshold
-            tpr.append(Recall.score(y_true, y_pred))
-            fpr.append(1 - Specificity.score(y_true, y_pred))
-        return fpr, tpr
-    
-    @staticmethod
-    def auc_roc(fpr: float, tpr: float) -> float:
-        n = len(fpr)
-        auc = 0
-        for i in range(1, n):
-            auc += (fpr[i] - fpr[i - 1]) * tpr[i]
-        return auc
 
