@@ -1,14 +1,17 @@
+from typing import Literal
 import numpy as np
 
 from luma.interface.super import Estimator, Evaluator, Supervised
-from luma.interface.exception import NotFittedError
+from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.interface.util import Matrix, Vector
 from luma.preprocessing.encoder import LabelBinarizer
 from luma.metric.classification import Accuracy
+from luma.metric.regression import MeanSquaredError
 
 
 __all__ = (
     'PerceptronClassifier',
+    'PerceptronRegressor'
 )
 
 
@@ -28,17 +31,26 @@ class PerceptronClassifier(Estimator, Supervised):
     ----------
     `learning_rate` : Step size for updating weights
     `max_iter` : Maximum iteration
+    `regularization` : Regularizing methods (e.g. `l1`, `l2`, `elastic-net`)
+    `alpha` : Regularization strength
+    `rho` : Ratio of `l1` (Only use when `elastic-net` regularization)
     `random_state` : Seed for random shuffling during SGD
     
     """    
     
     def __init__(self, 
                  learning_rate: float = 0.01,
-                 max_iter: int = 100,
+                 max_iter: int = 1000,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
+                 alpha: float = 0.0001,
+                 rho: float = 0.5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
+        self.regularization = regularization
+        self.alpha = alpha
+        self.rho = rho
         self.random_state = random_state
         self.verbose = verbose
         self.weights_ = None
@@ -61,7 +73,10 @@ class PerceptronClassifier(Estimator, Supervised):
             for xi, yi in zip(X, y_binary):
                 linear_output = np.dot(self.weights_, xi)
                 y_pred = self._softmax(linear_output)
+                
                 self.weights_ += self.learning_rate * np.outer(yi - y_pred, xi)
+                if self.regularization:
+                    self._regularize_weights()
 
             if self.verbose and i % 10 == 0:
                 print(f'[Perceptron] Iteration {i}/{self.max_iter}',
@@ -79,6 +94,18 @@ class PerceptronClassifier(Estimator, Supervised):
         
         return exp / np.sum(exp, axis=1, keepdims=True)
     
+    def _regularize_weights(self) -> None:
+        if self.regularization == 'l1':
+            self.weights_ -= self.alpha * np.sign(self.weights_)
+        elif self.regularization == 'l2':
+            self.weights_ -= self.alpha * self.weights_
+        elif self.regularization == 'elastic-net':
+            l1_term = self.rho * np.sign(self.weights_)
+            l2_term = (1 - self.rho) * self.weights_
+            self.weights_ -= self.alpha * (l1_term + l2_term)
+        else:
+            UnsupportedParameterError(self.regularization)
+    
     def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise NotFittedError(self)
         X = self._add_bias(X)
@@ -95,8 +122,117 @@ class PerceptronClassifier(Estimator, Supervised):
     def set_params(self, 
                    learning_rate: float = None,
                    max_iter: int = None,
+                   regularization: str = None,
+                   alpha: float = None,
+                   rho: float = None,
                    random_state: int = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
+        if regularization is not None: self.regularization = regularization
+        if alpha is not None: self.alpha = float(alpha)
+        if rho is not None: self.rho = float(rho)
+        if random_state is not None: self.random_state = int(random_state)
+
+
+class PerceptronRegressor(Estimator, Supervised):
+
+    """
+    Perceptron Regressor is a simple linear model used for regression tasks.
+    It makes predictions based on a linear combination of input features and
+    weights. The Perceptron Regressor updates its weights during training to
+    minimize the difference between predicted and actual continuous outcomes.
+    This model provides a basic understanding of linear regression in the
+    context of neural networks.
+    
+    Parameters
+    ----------
+    `learning_rate` : Step size for updating weights
+    `max_iter` : Maximum iteration
+    `random_state` : Seed for random shuffling during SGD
+    
+    """
+
+    def __init__(self, 
+                 learning_rate: float = 0.01,
+                 max_iter: int = 1000,
+                 regularization: Literal['l1', 'l2', 'elastic-net'] = None,
+                 alpha: float = 0.0001,
+                 rho: float = 0.5,
+                 random_state: int = None,
+                 verbose: bool = False) -> None:
+        self.learning_rate = learning_rate
+        self.max_iter = max_iter
+        self.regularization = regularization
+        self.alpha = alpha
+        self.rho = rho
+        self.random_state = random_state
+        self.verbose = verbose
+        self.weights_ = None
+        self._fitted = False
+
+    def fit(self, X: Matrix, y: Vector) -> 'PerceptronRegressor':
+        m, n = X.shape
+        np.random.seed(self.random_state)
+
+        X = self._add_bias(X)
+        self.weights_ = np.random.uniform(-0.01, 0.01, n + 1)
+
+        for i in range(self.max_iter):
+            indices = np.arange(m)
+            np.random.shuffle(indices)
+            X, y = X[indices], y[indices]
+
+            for xi, yi in zip(X, y):
+                y_pred = np.dot(self.weights_, xi)
+                error = yi - y_pred
+                
+                self.weights_ += self.learning_rate * error * xi
+                if self.regularization:
+                    self._regularize_weights()
+
+            if self.verbose and i % 10 == 0:
+                print(f'[Perceptron] Iteration {i}/{self.max_iter}',
+                      f'with weight-norm: {np.linalg.norm(self.weights_)}')
+
+        self._fitted = True
+        return self
+
+    def _add_bias(self, X: Matrix) -> Matrix:
+        return np.insert(X, 0, 1, axis=1)
+    
+    def _regularize_weights(self) -> None:
+        if self.regularization == 'l1':
+            self.weights_ -= self.alpha * np.sign(self.weights_)
+        elif self.regularization == 'l2':
+            self.weights_ -= self.alpha * self.weights_
+        elif self.regularization == 'elastic-net':
+            l1_term = self.rho * np.sign(self.weights_)
+            l2_term = (1 - self.rho) * self.weights_
+            self.weights_ -= self.alpha * (l1_term + l2_term)
+        else:
+            UnsupportedParameterError(self.regularization)
+
+    def predict(self, X: Matrix) -> Vector:
+        if not self._fitted: raise NotFittedError(self)
+        X = self._add_bias(X)
+        return np.dot(X, self.weights_)
+
+    def score(self, X: Matrix, y: Vector, 
+              metric: Evaluator = MeanSquaredError) -> float:
+        y_pred = self.predict(X)
+        return metric.score(y_true=y, y_pred=y_pred)
+
+    def set_params(self, 
+                   learning_rate: float = None,
+                   max_iter: int = None,
+                   regularization: str = None,
+                   alpha: float = None,
+                   rho: float = None,
+                   random_state: int = None) -> None:
+        if learning_rate is not None: self.learning_rate = float(learning_rate)
+        if max_iter is not None: self.max_iter = int(max_iter)
+        if regularization is not None: self.regularization = regularization
+        if alpha is not None: self.alpha = float(alpha)
+        if rho is not None: self.rho = float(rho)
         if random_state is not None: self.random_state = int(random_state)
 

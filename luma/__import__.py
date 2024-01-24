@@ -30,7 +30,7 @@ from luma.ensemble.vote import VotingClassifier, VotingRegressor
 from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
 from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 
-from luma.neural.perceptron import PerceptronClassifier
+from luma.neural.perceptron import PerceptronClassifier, PerceptronRegressor
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score
 from luma.metric.classification import Specificity, AUCCurveROC
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     AdaBoostClassifier, AdaBoostRegressor
     
     # ------------------- [ luma.neural ] ----------------------
-    PerceptronClassifier
+    PerceptronClassifier, PerceptronRegressor
     
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity, 

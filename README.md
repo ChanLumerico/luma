@@ -46,6 +46,10 @@
                     <td>Tools for model selection and hyperparameter tuning.</td>
                 </tr>
                 <tr>
+                    <td>luma.neural</td>
+                    <td>Deep learning models and neural network utilities.</td>
+                </tr>
+                <tr>
                     <td>luma.pipe</td>
                     <td>Creating and managing machine learning pipelines.</td>
                 </tr>
@@ -73,7 +77,7 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>0.5.4</td>
+                    <td>0.5.5</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
