@@ -14,7 +14,8 @@ __all__ = (
     'ClusterPlot',
     'ROCCurve',
     'PrecisionRecallCurve',
-    'ConfusionMatrix'
+    'ConfusionMatrix',
+    'ResidualPlot'
 )
 
 
@@ -314,4 +315,50 @@ class ConfusionMatrix(Visualizer):
             matrix[true, pred] += 1
         
         return matrix
+
+
+class ResidualPlot(Visualizer):
+    def __init__(self, 
+                 estimator: Estimator,
+                 X: Matrix,
+                 y: Vector,
+                 alpha: float = 0.7,
+                 cmap: ListedColormap = 'RdYlBu') -> None:
+        self.estimator = estimator
+        self.X = X
+        self.y = y
+        self.alpha = alpha
+        self.cmap = cmap
+    
+    def plot(self, 
+             ax: Optional[plt.Axes] = None,
+             show: bool = False) -> plt.Axes:
+        if ax is None: _, ax = plt.subplots()
+        resid = self._calculate_residuals()
+        
+        ax.scatter(self.X, resid, 
+                   c=resid, 
+                   s=20, 
+                   cmap=self.cmap, 
+                   alpha=self.alpha)
+
+        ax.axhline(y=0, c='black', 
+                   lw=2, label='Perfect Fit')
+        
+        ax.axhline(y=resid.mean(), c='gray', ls='--', 
+                   lw=2, label='Average Residual')
+        
+        ax.set_xlabel('Predicted Values')
+        ax.set_ylabel('Residuals')
+        ax.set_title(f'Residual Plot of {type(self.estimator).__name__}')
+        ax.legend()
+        ax.figure.tight_layout()
+
+        if show: plt.show()
+        return ax
+
+    def _calculate_residuals(self) -> Vector:
+        predictions = self.estimator.predict(self.X)
+        residuals = self.y - predictions
+        return residuals
 
