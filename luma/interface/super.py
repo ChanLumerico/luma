@@ -29,17 +29,24 @@ class Estimator(LUMA, metaclass=ABCMeta):
     Methods
     -------
     For training:
-    >>> def fit(self, *args) -> Estimator: ...
+    ```py 
+        def fit(self, *args) -> Estimator
+    ```
     
     For prediction:
-    >>> def predict(self, *args) -> Vector: ...
+    ```py
+        def predict(self, *args) -> Vector
+    ```
     
     For scoring
-    >>> def score(self, *args) -> float: ...
+    ```py
+        def score(self, *args) -> float
+    ```
     
     For setting parameters when tuning
-    >>> def set_params(self, *args) -> None: ...
-    
+    ```py
+        def set_params(self, *args) -> None
+    ```
     """
     
     class Meta:
@@ -79,17 +86,24 @@ class Transformer(LUMA, metaclass=ABCMeta):
     Methods
     -------
     For fitting:
-    >>> def fit(self, *args) -> Transformer: ...
+    ```py
+        def fit(self, *args) -> Transformer
+    ```
     
     For transformation:
-    >>> def transform(self, *args) -> Matrix: ...
+    ```py
+        def transform(self, *args) -> Matrix
+    ```
     
     For fitting and transformation at once:
-    >>> def fit_transform(self, *args) -> Matrix:
+    ```py
+        def fit_transform(self, *args) -> Matrix
+    ```
     
     For setting parameters when tuning:
-    >>> def set_params(self, *args) -> None: ...
-    
+    ```py
+        def set_params(self, *args) -> None
+    ```
     """
     
     class Feature: 
@@ -139,8 +153,9 @@ class Evaluator(LUMA, metaclass=ABCMeta):
     Methods
     -------
     For scoring:
-    >>> def score(*args) -> float: ...
-    
+    ```py
+        def score(*args) -> float
+    ```
     """
     
     @abstractstaticmethod
@@ -158,8 +173,9 @@ class Visualizer(LUMA, metaclass=ABCMeta):
     Methods
     -------
     For plotting:
-    >>> def plot(self, *args) -> None: ...
-    
+    ```py
+        def plot(self, *args) -> None
+    ```
     """
     
     @abstractmethod
@@ -191,8 +207,10 @@ class Unsupervised(LUMA):
     Properties
     ----------
     Get assigned labels:
-    >>> def labels(self) -> Vector: ...
-    
+    ```py
+        @property
+        def labels(self) -> Vector
+    ```
     """
     
     def __init__(self, *args) -> None: ...
@@ -211,8 +229,9 @@ class Distance(LUMA, metaclass=ABCMeta):
     Methods
     -------
     For computing the distance:
-    >>> def compute(*args) -> float: ...
-    
+    ```py
+        def compute(*args) -> float
+    ```
     """
     
     @abstractstaticmethod

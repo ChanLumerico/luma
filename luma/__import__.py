@@ -30,7 +30,7 @@ from luma.ensemble.vote import VotingClassifier, VotingRegressor
 from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
 from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 
-from luma.neural.perceptron import PerceptronClassifier, PerceptronRegressor
+from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
@@ -42,6 +42,7 @@ from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 from luma.model_selection.split import TrainTestSplit
 from luma.model_selection.search import GridSearchCV
 from luma.model_selection.cv import CrossValidator
+from luma.model_selection.robust import RANSAC, MLESAC
 
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
 from luma.preprocessing.encoder import OneHotEncoder, LabelEncoder, OrdinalEncoder
@@ -152,6 +153,8 @@ if __name__ == '__main__':
     GridSearchCV
     
     CrossValidator
+    
+    RANSAC, MLESAC
     
     # ---------------- [ luma.preprocessing ] ------------------
     StandardScaler, MinMaxScaler

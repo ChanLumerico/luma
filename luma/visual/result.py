@@ -306,7 +306,7 @@ class ConfusionMatrix(Visualizer):
 
         if show: plt.show()
         return ax
-
+    
     def _confusion_matrix(self, y_true: Vector, y_pred: Vector) -> Matrix:
         unique_labels = np.unique(np.concatenate((y_true, y_pred)))
         matrix = np.zeros((len(unique_labels), len(unique_labels)), dtype=int)
