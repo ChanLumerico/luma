@@ -6,6 +6,7 @@ token.key
 build/
 dist/
 example/
+test/
 luma_ml.egg-info/
 version_ico/
 __pycache__/
