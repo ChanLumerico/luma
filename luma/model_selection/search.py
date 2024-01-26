@@ -1,4 +1,4 @@
-from typing import *
+from typing import Any, Dict, List, Tuple
 import numpy as np
 
 from luma.interface.util import Matrix
@@ -35,7 +35,11 @@ class GridSearchCV:
     -----
     * An instance of the estimator must be passed to `estimator`
     * For `metric`, both class or instance are possible
-    
+    * `scores_` attribute has the form of
+        
+        ```py
+        List[Tuple[dict, Any]]
+        ```
     Examples
     --------
     >>> param_grid = {'param_1': [...], 
@@ -70,6 +74,7 @@ class GridSearchCV:
         self.refit = refit
         self.random_state = random_state
         self.verbose = verbose
+        self.scores_ = []
         self._fitted = False
 
     def fit(self, X: Matrix, y: Matrix) -> Estimator:
@@ -90,10 +95,13 @@ class GridSearchCV:
                                       random_state=self.random_state,
                                       verbose=self.verbose)
             
-            mean_score = cv_model.score(X, y)
+            _, mean_score = cv_model.score(X, y)
+            self.scores_.append((params, mean_score))
+            
             if self.verbose:
                 print(f'[GridSearchCV] candidate {i}/{max_iter} {params} - score:',
                       f'{mean_score:.3f}')
+            
             if best_score is None or mean_score > best_score:
                 best_score = mean_score
                 best_params = params

@@ -34,7 +34,7 @@ class TrainTestSplit:
     def __init__(self, 
                  X: Matrix,
                  y: Vector,
-                 test_size: float = 0.3,
+                 test_size: int | float = 0.3,
                  random_state: int = None) -> None:
         self.X = X
         self.y = y
@@ -47,8 +47,12 @@ class TrainTestSplit:
             raise ValueError("Sample size mismatch between 'X' and 'y'!")
         
         num_samples = self.X.shape[0]
-        num_test_samples = int(self.test_size * num_samples)
         indices = np.arange(num_samples)
+        
+        if self.test_size < 1.0:
+            num_test_samples = int(self.test_size * num_samples)
+        else:
+            num_test_samples = self.test_size
         
         if self.random_state is not None:
             np.random.seed(self.random_state)

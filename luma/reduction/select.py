@@ -93,7 +93,7 @@ class SBS(Transformer, Transformer.Feature, Supervised):
         self.indices = tuple(range(n))
         self.subsets = [self.indices]
         
-        if self.cv: score = cv_model.score(X, y)
+        if self.cv: _, score = cv_model.score(X, y)
         else: score = self._calculate_score(X_train, X_test, 
                                             y_train, y_test, indices=self.indices)
         self.scores = [score]
@@ -103,7 +103,7 @@ class SBS(Transformer, Transformer.Feature, Supervised):
             scores = []
             subsets = []
             for p in combinations(self.indices, n - 1):
-                if self.cv: score = cv_model.score(X[:, p], y)
+                if self.cv: _, score = cv_model.score(X[:, p], y)
                 else: score = self._calculate_score(X_train, X_test, 
                                                     y_train, y_test, indices=p)
                 scores.append(score)
@@ -247,7 +247,7 @@ class SFS(Transformer, Transformer.Feature, Supervised):
             subsets = []
             for p in combinations(range(n), len(self.indices) + 1):
                 if set(self.indices).issubset(set(p)):
-                    if self.cv: score = cv_model.score(X[:, p], y)
+                    if self.cv: _, score = cv_model.score(X[:, p], y)
                     else: score = self._calculate_score(X_train, X_test, 
                                                         y_train, y_test, indices=p)
                     scores.append(score)
@@ -401,7 +401,7 @@ class RFE(Transformer, Transformer.Feature, Supervised):
             indices[i] = False
             
             if self.cv:
-                score = self.cv_model.score(X[:, indices], y)
+                _, score = self.cv_model.score(X[:, indices], y)
             else:
                 self.estimator.fit(X[:, indices], y)
                 y_pred = self.estimator.predict(X[:, indices])

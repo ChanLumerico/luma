@@ -77,7 +77,7 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>0.5.5</td>
+                    <td>0.5.6</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
