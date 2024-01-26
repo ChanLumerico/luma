@@ -82,7 +82,7 @@ class GridSearchCV:
         best_params = None
         param_combinations = self._get_param_combinations()
         max_iter = len(param_combinations)
-
+        
         if self.verbose:
             print(f'Fitting {self.cv} folds for {max_iter} candidates,',
                   f'totalling {self.cv * max_iter} fits.\n')

@@ -77,11 +77,11 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>0.5.6</td>
+                    <td>0.5.7</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
-                    <td>~11.7K</td>
+                    <td>~12K</td>
                 </tr>
                 <tr>
                     <td>Requirement</td>

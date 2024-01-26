@@ -73,9 +73,9 @@ from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor, Weighte
 from luma.pipe.pipeline import Pipeline
 
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot, MissingProportion
-from luma.visual.graph import GraphPlot
 from luma.visual.evaluation import DecisionRegion, ClusterPlot, ROCCurve, PrecisionRecallCurve
-from luma.visual.evaluation import ConfusionMatrix, ResidualPlot, LearningCurve, ValidationCurve
+from luma.visual.evaluation import ConfusionMatrix, ResidualPlot, LearningCurve
+from luma.visual.evaluation import ValidationCurve, ValidationHeatmap
 
 from luma.migrate.port import ModelPorter
 
@@ -199,11 +199,9 @@ if __name__ == '__main__':
     CorrelationBar, CorrelationHeatMap, JointPlot,
     MissingProportion
     
-    GraphPlot
-    
     DecisionRegion, ClusterPlot, ROCCurve, PrecisionRecallCurve, 
     ConfusionMatrix, ResidualPlot, LearningCurve,
-    ValidationCurve
+    ValidationCurve, ValidationHeatmap
     
     # ------------------ [ luma.migrate ] ----------------------
     ModelPorter
