@@ -14,7 +14,7 @@ __all__ = (
 )
 
 
-class RANSAC(Estimator, Estimator.Meta, Supervised):
+class RANSAC(Estimator, Supervised):
     
     """
     RANSAC (Random Sample Consensus) is an iterative algorithm used for robust 
@@ -151,7 +151,7 @@ class RANSAC(Estimator, Estimator.Meta, Supervised):
         if random_state is not None: self.random_state = int(random_state)
 
 
-class MLESAC(Estimator, Estimator.Meta, Supervised):
+class MLESAC(Estimator, Supervised):
     
     """
     MLESAC (Maximum Likelihood Estimation SAmple Consensus) is an iterative algorithm 

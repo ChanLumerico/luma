@@ -602,7 +602,7 @@ class ValidationCurve(Visualizer):
                         test_mean - test_std, 
                         color='seagreen', 
                         alpha=0.2)
-
+        
         ax.set_title(f"Validation Curve for '{self.param_name}'")
         ax.set_xlabel(self.param_name)
         ax.set_ylabel(metric_name)
@@ -637,7 +637,7 @@ class ValidationHeatmap(Visualizer):
     `cv` : Number of times for cross-validation
     `metric` : Evaluation metric for scoring
     `random_state` : Seed for random sampling upon splitting samples
-
+    
     """
     
     def __init__(self, 
@@ -667,7 +667,7 @@ class ValidationHeatmap(Visualizer):
                         self.param_dict[self.names_[1]])
         
         self.scores = np.zeros(self.sizes_)
-
+    
     def _evaluate(self) -> None:
         param_combs = list(product(*self.param_dict.values()))
         max_iter = len(param_combs)
@@ -684,28 +684,26 @@ class ValidationHeatmap(Visualizer):
                                       metric=self.metric,
                                       cv=self.cv,
                                       random_state=self.random_state,
-                                      verbose=self.verbose)
+                                      verbose=False)
             
             _, score = cv_model.score(self.X, self.y)
             i, j = idx // self.sizes_[1], idx % self.sizes_[1]
             self.scores[i, j] = score
             
             if self.verbose:
-                print(f'[ValidationHeatmap] candidate {idx}/{max_iter}',
+                print(f'[ValidationHeatmap] candidate {idx + 1}/{max_iter}',
                       f'{param_values} - score: {score:.3f}')
-            
+    
     def plot(self, 
              ax: Optional[plt.Axes] = None, 
-             cmap: ListedColormap = 'inferno',
-             log_xscale: bool = False,
-             log_yscale: bool = False,
+             cmap: ListedColormap = 'RdYlGn',
+             log_xticks: bool = True,
+             log_yticks: bool = True,
              annotate: bool = True,
              show: bool = False) -> plt.Axes:
         self._evaluate()
-        if ax is None: ax = plt.gca()
-        self.names_ = list(self.param_dict.keys())
-        
-        cax = ax.contourf(*self.values_, self.scores, cmap=cmap)
+        if ax is None: _, ax = plt.subplots()
+        cax = ax.imshow(self.scores, cmap=cmap)
         ax.figure.colorbar(cax)
         
         if annotate:
@@ -715,15 +713,16 @@ class ValidationHeatmap(Visualizer):
                     ax.text(j, i, f'{score:.2f}', 
                             ha='center', 
                             va='center', 
-                            color='white')
+                            color='white',
+                            alpha=0.7)
         
         ax.set_xticks(range(self.sizes_[0]), np.round(self.values_[0], 2))
         ax.set_yticks(range(self.sizes_[1]), np.round(self.values_[1], 2))
         
-        if log_xscale:
+        if log_xticks:
             ax.set_xticklabels([r'$10^{' + f'{np.log10(n):.1f}' + r'}$' 
                                 for n in self.values_[0]])
-        if log_yscale:
+        if log_yticks:
             ax.set_yticklabels([r'$10^{' + f'{np.log10(n):.1f}' + r'}$' 
                                 for n in self.values_[1]])
         
