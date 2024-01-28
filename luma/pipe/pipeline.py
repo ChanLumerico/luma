@@ -1,4 +1,4 @@
-from typing import Dict, Literal, Tuple, List, TypeVar, Union, Any
+from typing import Dict, Literal, Tuple, List, TypeVar, Any
 
 from luma.interface.super import Estimator, Transformer, Evaluator
 from luma.interface.super import Supervised
@@ -7,7 +7,7 @@ from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.classification import Accuracy
 from luma.metric.regression import MeanSquaredError
 
-T = TypeVar('T', bound=Union[Estimator, Transformer])
+MT = TypeVar('MT', bound=Estimator | Transformer)
 
 
 __all__ = (
@@ -29,7 +29,7 @@ class Pipeline(Estimator, Estimator.Meta):
     `models` : List of models \n
     You can assign labels to each model by encapsulating the label and the model
     inside a tuple. \n
-    Otherwise, the name of the model is automatically assigned by default. \n
+    Otherwise, the name of the model is automatically assigned by default.
     
     `param_dict` : Dictionary of parameters for each models \n
     You must specify the name(or label) of the model and its parameter name
@@ -46,30 +46,52 @@ class Pipeline(Estimator, Estimator.Meta):
                 ('est', Estimator())
             ],
             param_dict={
-                'trans_1__param': Any,
-                'trans_2__param': Any,
+                'trans_1__param': List[Any],
+                'trans_2__param': List[Any],
                 ...,
-                'est__param': Any
+                'est__param': List[Any]
             }
         )
     >>> pipe.fit(X_train, y_train)
     >>> y_pred = pipe.predict(X_test)
     
+    Properties
+    ----------
+    Getting list of transformers:
+        ```py
+        @property
+        def transformers(self) -> List[Transformer]
+        ```
+    
+    Getting final estimator:
+        ```py
+        @property
+        def estimator(self) -> Estimator
+        ```
+    
+    Getting transformed data:
+        ```py
+        @property
+        def transformed_data(self) -> Tuple[Matrix, Matrix]
+        ```
+    
     Notes
     -----
     * To use `Pipeline` with visual methods of `luma.visual`, make sure to
     transform data using `pipe.transform()` if the pipeline sequence contains
-    transformers.
+    transformers
     
-    * Not all the models are compatible with `Pipeline`.
-
+    * More than one estimator might cause procedural failure
+    * Not all the models are compatible with `Pipeline`
+    * Type `MT` is a generic type for `Estimator` and `Transformer`
+    
     """
     
     def __init__(self,
-                 models: List[Tuple[str, T]] | List[T],
+                 models: List[Tuple[str, MT]] | List[MT],
                  param_dict: Dict[str, Any] = dict(),
                  verbose: bool = False) -> None:
-        self.models: Dict[T] = dict()
+        self.models: Dict[MT] = dict()
         self.param_dict = param_dict
         self.verbose = verbose
         self._X: Matrix
@@ -186,11 +208,11 @@ class Pipeline(Estimator, Estimator.Meta):
     def transformed_data(self) -> Tuple[Matrix, Matrix]:
         return self._X, self._y
     
-    def __getitem__(self, index: int) -> T:
+    def __getitem__(self, index: int) -> MT:
         for i, model in enumerate(self.models.values()):
             if index == i: return model
         else: raise IndexError('Model index out of bounds!')
     
-    def __setitem__(self, label: str, model: T):
+    def __setitem__(self, label: str, model: MT):
         self.models[label] = model
 

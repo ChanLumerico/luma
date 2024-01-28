@@ -40,7 +40,7 @@ from luma.metric.distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 
 from luma.model_selection.split import TrainTestSplit
-from luma.model_selection.search import GridSearchCV
+from luma.model_selection.search import GridSearchCV, RandomizedSearchCV
 from luma.model_selection.cv import CrossValidator
 
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     # --------------- [ luma.module_selection ] ----------------
     TrainTestSplit
     
-    GridSearchCV
+    GridSearchCV, RandomizedSearchCV
     
     CrossValidator
     

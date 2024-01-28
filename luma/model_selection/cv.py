@@ -75,8 +75,8 @@ class CrossValidator(Evaluator):
             
             self.estimator.fit(X_train, y_train)
             if self.metric: 
-                train_score = self.estimator.score(X_train, y_train, metric=self.metric)
-                test_score = self.estimator.score(X_test, y_test, metric=self.metric)
+                train_score = self.estimator.score(X_train, y_train, self.metric)
+                test_score = self.estimator.score(X_test, y_test, self.metric)
             else: 
                 train_score = self.estimator.score(X_train, y_train)
                 test_score = self.estimator.score(X_test, y_test)
