@@ -2,7 +2,7 @@ from scipy.spatial import distance_matrix
 import numpy as np
 
 from luma.interface.util import Matrix
-from luma.interface.super import Estimator, Supervised, Evaluator
+from luma.core.super import Estimator, Supervised, Evaluator
 from luma.interface.util import NearestNeighbors
 from luma.interface.exception import NotFittedError
 from luma.metric.regression import MeanSquaredError
@@ -62,9 +62,6 @@ class KNNRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, n_neighbors: int = None) -> None:
-        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
 
 
 class AdaptiveKNNRegressor(Estimator, Supervised):
@@ -127,14 +124,6 @@ class AdaptiveKNNRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   n_density: int = None,
-                   min_neighbors: int = None,
-                   max_neighbors: int = None) -> None:
-        if n_density is not None: self.n_density = int(n_density)
-        if min_neighbors is not None: self.min_neighbors = int(min_neighbors)
-        if max_neighbors is not None: self.max_neighbors = int(max_neighbors)
 
 
 class WeightedKNNRegressor(Estimator, Supervised):
@@ -184,7 +173,4 @@ class WeightedKNNRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, n_neighbors: int = None) -> None:
-        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
 

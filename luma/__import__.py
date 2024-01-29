@@ -1,9 +1,10 @@
 from luma.core.main import LUMA
+from luma.core.base import ModelBase, ParadigmBase, MetricBase, VisualBase
+from luma.core.super import Estimator, Transformer, Optimizer, Evaluator, Visualizer
+from luma.core.super import Supervised, Unsupervised, Distance
 
 from luma.interface.exception import NotFittedError, NotConvergedError
 from luma.interface.exception import UnsupportedParameterError, ModelExtensionError
-from luma.interface.super import Estimator, Transformer, Evaluator, Visualizer
-from luma.interface.super import Supervised, Unsupervised, Distance
 from luma.interface.util import Matrix, Vector, Scalar, TreeNode, NearestNeighbors
 from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil
 from luma.interface.util import Clone
@@ -84,12 +85,14 @@ if __name__ == '__main__':
     # ------------------- [ luma.core ] ------------------------
     LUMA
     
+    ModelBase, ParadigmBase, MetricBase, VisualBase
+    
+    Estimator, Transformer, Optimizer, Evaluator, Visualizer,
+    Supervised, Unsupervised, Distance
+    
     # ----------------- [ luma.interface ] ---------------------
     NotFittedError, NotConvergedError,
     UnsupportedParameterError, ModelExtensionError
-    
-    Estimator, Transformer, Evaluator, Visualizer,
-    Supervised, Unsupervised, Distance
     
     Matrix, Vector, Scalar, TreeNode, NearestNeighbors,
     SilhouetteUtil, DBUtil, KernelUtil,

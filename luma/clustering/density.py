@@ -1,9 +1,9 @@
-from typing import Any, Literal, Tuple, List
+from typing import Literal, Tuple, List
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import cdist
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Unsupervised
+from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.interface.util import Matrix, Vector, Scalar
 from luma.interface.exception import NotFittedError, NotConvergedError
 from luma.interface.exception import UnsupportedParameterError
@@ -107,12 +107,6 @@ class DBSCAN(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   epsilon: float = None,
-                   min_points: int = None) -> None:
-        if epsilon is not None: self.epsilon = float(epsilon)
-        if min_points is not None: self.min_points = int(min_points)
 
 
 class OPTICS(Estimator, Unsupervised):
@@ -242,14 +236,6 @@ class OPTICS(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   epsilon: float = None,
-                   min_points: int = None,
-                   threshold: float = None) -> None:
-        if epsilon is not None: self.epsilon = float(epsilon)
-        if min_points is not None: self.min_points = int(min_points)
-        if threshold is not None: self.threshold = str(threshold)
 
 
 class DENCLUE(Estimator, Unsupervised):
@@ -399,21 +385,6 @@ class DENCLUE(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   h: float | str = None,
-                   tol: float = None,
-                   max_climb: int = None,
-                   min_density: float = 0.0,
-                   sample_weight: Vector = None) -> None:
-        if tol is not None: self.tol = float(tol)
-        if max_climb is not None: self.max_climb = int(max_climb)
-        if min_density is not None: self.min_density = float(min_density)
-        if sample_weight is not None: self.sample_weight = sample_weight
-        if h is not None:
-            if isinstance(h, str): self.h = str(h)
-            elif isinstance(h, float): self.tol = float(h)
-            else: raise UnsupportedParameterError(h)
 
 
 class MeanShiftClustering(Estimator, Unsupervised):
@@ -486,12 +457,4 @@ class MeanShiftClustering(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   bandwidth: float = None,
-                   max_iter: int = None,
-                   tol: float = None) -> None:
-        if bandwidth is not None: self.bandwidth = float(bandwidth)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if tol is not None: self.tol = float(tol)
 

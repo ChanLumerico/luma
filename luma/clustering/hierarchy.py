@@ -3,7 +3,7 @@ from scipy.spatial.distance import pdist, squareform
 import numpy as np
 
 from luma.interface.util import Matrix
-from luma.interface.super import Estimator, Evaluator, Unsupervised
+from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.clustering.kmeans import KMeansClusteringPlus
 from luma.metric.clustering import SilhouetteCoefficient
@@ -123,12 +123,6 @@ class AgglomerativeClustering(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   linkage: Literal = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if linkage is not None: self.linkage = str(linkage)
 
 
 class DivisiveClustering(Estimator, Unsupervised):
@@ -203,7 +197,4 @@ class DivisiveClustering(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, n_clusters: int = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
 

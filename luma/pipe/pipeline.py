@@ -1,7 +1,7 @@
 from typing import Dict, Literal, Tuple, List, TypeVar, Any
 
-from luma.interface.super import Estimator, Transformer, Evaluator
-from luma.interface.super import Supervised
+from luma.core.super import Estimator, Transformer, Evaluator
+from luma.core.super import Supervised
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.classification import Accuracy

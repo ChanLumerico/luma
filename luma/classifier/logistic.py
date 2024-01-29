@@ -4,7 +4,7 @@ import numpy as np
 from luma.interface.util import Matrix
 from luma.metric.classification import Accuracy
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 
 
 __all__ = (
@@ -97,18 +97,6 @@ class LogisticRegressor(Estimator, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   learning_rate: float = None, 
-                   max_iter: int = None, 
-                   l1_ratio: float = None, 
-                   alpha: float = None, 
-                   regularization: Literal = None) -> None:
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if alpha is not None: self.alpha = float(alpha)
-        if regularization is not None: self.regularization = str(regularization)
 
 
 class SoftmaxRegressor(Estimator, Supervised):
@@ -205,16 +193,4 @@ class SoftmaxRegressor(Estimator, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self,
-                   learning_rate: float = None,
-                   max_iter: int = None,
-                   l1_ratio: float = None,
-                   alpha: float = None,
-                   regularization: Literal = None) -> None:
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if alpha is not None: self.alpha = float(alpha)
-        if regularization is not None: self.regularization = str(regularization)
 

@@ -1,7 +1,7 @@
 from typing import List, Literal
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.util import Matrix, Vector, Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.classifier.tree import DecisionTreeClassifier
@@ -120,14 +120,6 @@ class AdaBoostClassifier(Estimator, Estimator.Meta, Supervised):
     def score(self, X: Matrix, y: Vector, metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   base_estimator: Estimator = None,
-                   n_estimators: int = None,
-                   learning_rate: float = None) -> None:
-        if base_estimator is not None: self.base_estimator = base_estimator
-        if n_estimators is not None: self.n_estimators = n_estimators
-        if learning_rate is not None: self.learning_rate = learning_rate
 
     def __getitem__(self, index: int) -> Estimator:
         return self.estimators_[index]
@@ -229,16 +221,6 @@ class AdaBoostRegressor(Estimator, Estimator.Meta, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-
-    def set_params(self, 
-                   base_estimator: Estimator = None,
-                   n_estimators: int = None,
-                   learning_rate: float = None,
-                   loss: str = None) -> None:
-        if base_estimator is not None: self.base_estimator = base_estimator
-        if n_estimators is not None: self.n_estimators = int(n_estimators)
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if loss is not None: self.loss = loss
     
     def __getitem__(self, index: int) -> Estimator:
         return self.estimators_[index]

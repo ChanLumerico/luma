@@ -1,6 +1,6 @@
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.util import Matrix, Vector, Clone
 from luma.interface.exception import NotFittedError
 from luma.classifier.tree import DecisionTreeClassifier
@@ -123,22 +123,6 @@ class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
     
-    def set_params(self, 
-                   base_estimator: Estimator = None,
-                   n_estimators: int = None,
-                   max_samples: float | int = None,
-                   max_features: float | int = None,
-                   bootstrap: bool = False,
-                   bootstrap_feature: bool = False,
-                   random_state: int = None) -> None:
-        if base_estimator is not None: self.base_estimator = base_estimator
-        if n_estimators is not None: self.n_estimators = int(n_estimators)
-        if max_samples is not None: self.max_samples = float(max_samples)
-        if max_features is not None: self.max_features = float(max_features)
-        if bootstrap is not None: self.bootstrap = bootstrap
-        if bootstrap_feature is not None: self.bootstrap_feature = bootstrap_feature
-        if random_state is not None: self.random_state = random_state
-    
     def __getitem__(self, index: int) -> Estimator:
         return self.estimators_[index]
 
@@ -243,22 +227,6 @@ class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   base_estimator: Estimator = None,
-                   n_estimators: int = None,
-                   max_samples: float | int = None,
-                   max_features: float | int = None,
-                   bootstrap: bool = False,
-                   bootstrap_feature: bool = False,
-                   random_state: int = None) -> None:
-        if base_estimator is not None: self.base_estimator = base_estimator
-        if n_estimators is not None: self.n_estimators = int(n_estimators)
-        if max_samples is not None: self.max_samples = float(max_samples)
-        if max_features is not None: self.max_features = float(max_features)
-        if bootstrap is not None: self.bootstrap = bootstrap
-        if bootstrap_feature is not None: self.bootstrap_feature = bootstrap_feature
-        if random_state is not None: self.random_state = random_state
     
     def __getitem__(self, index: int) -> Estimator:
         return self.estimators_[index]

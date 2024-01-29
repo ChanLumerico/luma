@@ -3,7 +3,7 @@ import numpy as np
 
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.classification import Accuracy
 
 
@@ -88,8 +88,6 @@ class GaussianNaiveBayes(Estimator, Supervised):
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
 
-    def set_params(self) -> None: ...
-
 
 class BernoulliNaiveBayes(Estimator, Supervised):
     
@@ -150,6 +148,4 @@ class BernoulliNaiveBayes(Estimator, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self) -> None: ...
 

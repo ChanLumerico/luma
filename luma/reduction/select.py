@@ -2,7 +2,7 @@ from itertools import combinations
 from typing import Tuple
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Transformer, Supervised
+from luma.core.super import Estimator, Evaluator, Transformer, Supervised
 from luma.interface.util import Matrix, Vector, Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.model_selection.split import TrainTestSplit
@@ -143,22 +143,6 @@ class SBS(Transformer, Transformer.Feature, Supervised):
     def fit_transform(self, X: Matrix, y: Vector) -> Matrix:
         self.fit(X, y)
         return self.transform(X)
-    
-    def set_params(self, 
-                   estimator: Estimator = None,
-                   n_features: int | float = None,
-                   metric: Evaluator = None,
-                   test_size: float = None,
-                   cv: int = None,
-                   random_state: int = None) -> None:
-        if estimator is not None: self.estimator = estimator
-        if metric is not None: self.metric = metric
-        if test_size is not None: self.test_size = float(test_size)
-        if cv is not None: self.cv = int(cv)
-        if random_state is not None: self.random_state = int(random_state)
-        if n_features is not None:
-            if 0 < n_features < 1: self.n_features = float(n_features)
-            else: self.n_features = int(n_features)
 
 
 class SFS(Transformer, Transformer.Feature, Supervised):
@@ -284,22 +268,6 @@ class SFS(Transformer, Transformer.Feature, Supervised):
     def fit_transform(self, X: Matrix, y: Vector) -> Matrix:
         self.fit(X, y)
         return self.transform(X)
-    
-    def set_params(self, 
-                   estimator: Estimator = None,
-                   n_features: int | float = None,
-                   metric: Evaluator = None,
-                   test_size: float = None,
-                   cv: int = None,
-                   random_state: int = None) -> None:
-        if estimator is not None: self.estimator = estimator
-        if metric is not None: self.metric = metric
-        if test_size is not None: self.test_size = float(test_size)
-        if cv is not None: self.cv = int(cv)
-        if random_state is not None: self.random_state = int(random_state)
-        if n_features is not None:
-            if 0 < n_features < 1: self.n_features = float(n_features)
-            else: self.n_features = int(n_features)
 
 
 class RFE(Transformer, Transformer.Feature, Supervised):
@@ -418,20 +386,4 @@ class RFE(Transformer, Transformer.Feature, Supervised):
     def fit_transform(self, X: Matrix, y: Vector) -> Matrix:
         self.fit(X, y)
         return self.transform(X)
-    
-    def set_params(self, 
-                   estimator: Estimator = None,
-                   n_features: int | float = None,
-                   metric: Evaluator = None,
-                   step_size: int = None,
-                   cv: int = None,
-                   random_state: int = None) -> None:
-        if estimator is not None: self.estimator = estimator
-        if metric is not None: self.metric = metric
-        if step_size is not None: self.test_size = int(step_size)
-        if cv is not None: self.cv = int(cv)
-        if random_state is not None: self.random_state = int(random_state)
-        if n_features is not None:
-            if 0 < n_features < 1: self.n_features = float(n_features)
-            else: self.n_features = int(n_features)
 

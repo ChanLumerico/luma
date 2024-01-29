@@ -2,7 +2,7 @@ import numpy as np
 
 from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
-from luma.interface.super import Estimator, Evaluator, Unsupervised
+from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.metric.clustering import SilhouetteCoefficient
 
 
@@ -80,10 +80,6 @@ class KMeansClustering(Estimator, Unsupervised):
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
 
-    def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if max_iter is not None: self.max_iter = int(max_iter)
-
 
 class KMeansClusteringPlus(Estimator, Unsupervised):
     
@@ -155,10 +151,6 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
 
-    def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if max_iter is not None: self.max_iter = int(max_iter)
-
 
 class KMediansClustering(Estimator, Unsupervised):
     
@@ -224,10 +216,6 @@ class KMediansClustering(Estimator, Unsupervised):
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
-    
-    def set_params(self, n_clusters: int = None, max_iter: int = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if max_iter is not None: self.max_iter = int(max_iter)
 
 
 class KMedoidsClustering(Estimator, Unsupervised):
@@ -307,14 +295,6 @@ class KMedoidsClustering(Estimator, Unsupervised):
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   max_iter: int = None,
-                   random_state: int = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if random_state is not None: self.random_state = int(random_state)
 
 
 class MiniBatchKMeansClustering(Estimator, Unsupervised):
@@ -381,14 +361,6 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   batch_size: int = None,
-                   max_iter: int = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if batch_size is not None: self.batch_size = int(batch_size)
-        if max_iter is not None: self.max_iter = int(max_iter)
 
 
 class FuzzyKMeansClustering(Estimator, Unsupervised):
@@ -488,16 +460,4 @@ class FuzzyKMeansClustering(Estimator, Unsupervised):
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   max_iter: int = None,
-                   m: float = None,
-                   tol: float = None,
-                   random_state: int = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if m is not None: self.m = float(m)
-        if tol is not None: self.tol = float(tol)
-        if random_state is not None: self.random_state = int(random_state)
 

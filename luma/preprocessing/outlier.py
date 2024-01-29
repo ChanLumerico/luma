@@ -93,7 +93,4 @@ class LocalOutlierFactor:
         condition = lof_scores < threshold
         if y is None: return X[condition]
         else: return X[condition], y[condition]
-    
-    def set_params(self, n_neighbors: int = None) -> None:
-        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
 

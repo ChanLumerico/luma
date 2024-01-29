@@ -1,7 +1,7 @@
 from typing import Tuple
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
 from luma.metric.regression import MeanSquaredError
@@ -135,20 +135,6 @@ class RANSAC(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   estimator: Estimator = None,
-                   min_points: int | float = None,
-                   max_iter: int = None,
-                   min_inliers: int | float = None,
-                   threshold: float = None,
-                   random_state: int = None) -> None:
-        if estimator is not None: self.estimator = estimator
-        if min_points is not None: self.min_points = float(min_points)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if min_inliers is not None: self.min_inliers = float(min_inliers)
-        if threshold is not None: self.threshold = float(threshold)
-        if random_state is not None: self.random_state = int(random_state)
 
 
 class MLESAC(Estimator, Supervised):
@@ -290,18 +276,4 @@ class MLESAC(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   estimator: Estimator = None,
-                   min_points: int | float = None,
-                   max_iter: int = None,
-                   min_inliers: int | float = None,
-                   threshold: float = None,
-                   random_state: int = None) -> None:
-        if estimator is not None: self.estimator = estimator
-        if min_points is not None: self.min_points = float(min_points)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if min_inliers is not None: self.min_inliers = float(min_inliers)
-        if threshold is not None: self.threshold = float(threshold)
-        if random_state is not None: self.random_state = int(random_state)
 

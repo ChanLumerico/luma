@@ -8,7 +8,7 @@ import numpy as np
 
 from luma.interface.util import Matrix
 from luma.reduction.linear import PCA
-from luma.interface.super import Transformer, Unsupervised
+from luma.core.super import Transformer, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.clustering.kmeans import *
 from luma.metric.distance import *
@@ -157,16 +157,6 @@ class TSNE(Transformer, Unsupervised):
     
     def _momentum(self, iteration: int):
         return 0.5 if iteration < 250 else 0.8
-    
-    def set_params(self,
-                   n_components: int = None,
-                   perplexity: float = None,
-                   learning_rate: float = None,
-                   max_iter: int = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if perplexity is not None: self.perplexity = float(perplexity)
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
 
 
 class MDS(Transformer, Unsupervised):
@@ -223,9 +213,6 @@ class MDS(Transformer, Unsupervised):
         stress /= np.sum(D ** 2)
         stress = np.sqrt(stress)
         return stress
-    
-    def set_params(self, n_components: int = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
 
 
 class MetricMDS(Transformer, Unsupervised):
@@ -308,14 +295,6 @@ class MetricMDS(Transformer, Unsupervised):
         stress /= np.sum(D ** 2)
         stress = np.sqrt(stress)
         return stress
-    
-    def set_params(self, 
-                   n_components: int = None,
-                   p: float | int = None,
-                   metric: Literal = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if p is not None: self.p = float(p)
-        if metric is not None: self.metric = str(metric)
 
 
 class LandmarkMDS(Transformer, Unsupervised):
@@ -406,14 +385,6 @@ class LandmarkMDS(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
-    
-    def set_params(self,
-                   n_components: int = None,
-                   n_landmarks: int = None,
-                   method: Literal = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if n_landmarks is not None: self.n_landmarks = int(n_landmarks)
-        if method is not None: self.method = str(method)
 
 
 class LLE(Transformer, Unsupervised):
@@ -476,12 +447,6 @@ class LLE(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
-
-    def set_params(self, 
-                   n_neighbors: int = None, 
-                   n_components: int = None) -> None:
-        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
-        if n_components is not None: self.n_components = int(n_components)
 
 
 class ModifiedLLE(Transformer, Unsupervised):
@@ -548,14 +513,6 @@ class ModifiedLLE(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
-    
-    def set_params(self, 
-                   n_neighbors: int = None, 
-                   n_components: int = None,
-                   regularization: float = None) -> None:
-        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
-        if n_components is not None: self.n_components = int(n_components)
-        if regularization is not None: self.regularization = float(regularization)
 
 
 class HessianLLE(Transformer, Unsupervised):
@@ -655,14 +612,6 @@ class HessianLLE(Transformer, Unsupervised):
             index_mat[i] = np.array([neighbors])
         
         return index_mat
-
-    def set_params(self, 
-                   n_neighbors: int = None, 
-                   n_components: int = None,
-                   regularization: float = None) -> None:
-        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
-        if n_components is not None: self.n_components = int(n_components)
-        if regularization is not None: self.regularization = float(regularization)
 
 
 class SammonMapping(Transformer, Unsupervised):
@@ -787,18 +736,6 @@ class SammonMapping(Transformer, Unsupervised):
         self.fit(X)
         return self.transform()
 
-    def set_params(self,
-                   n_components: int = None,
-                   max_iter: int = None,
-                   max_halves: int = None,
-                   initialize: Literal = None,
-                   tol: float = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if max_halves is not None: self.max_halves = int(max_halves)
-        if initialize is not None: self.initialize = str(initialize)
-        if tol is not None: self.tol = float(tol)
-
 
 class LaplacianEigenmap(Transformer, Unsupervised):
     
@@ -853,10 +790,6 @@ class LaplacianEigenmap(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
-
-    def set_params(self, n_components: int = None, sigma: float = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if sigma is not None: self.sigma = float(sigma)
 
 
 class Isomap(Transformer, Unsupervised):
@@ -931,16 +864,6 @@ class Isomap(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
-    
-    def set_params(self, 
-                   n_components: int = None, 
-                   epsilon: float = None,
-                   algorithm: Literal = None,
-                   metric: Literal = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if epsilon is not None: self.epsilon = float(epsilon)
-        if algorithm is not None: self.algorithm = str(algorithm)
-        if metric is not None: self.method = str(metric)
 
 
 class ConformalIsomap(Transformer, Unsupervised):
@@ -1016,14 +939,6 @@ class ConformalIsomap(Transformer, Unsupervised):
         self.fit(X)
         return self.transform()
 
-    def set_params(self,
-                   n_components: int = None,
-                   epsilon: float = None,
-                   algorithm: Literal = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if epsilon is not None: self.epsilon = float(epsilon)
-        if algorithm is not None: self.algorithm = str(algorithm)
-
 
 class LTSA(Transformer, Unsupervised):
     
@@ -1095,10 +1010,4 @@ class LTSA(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform()
-
-    def set_params(self,
-                   n_components: int = None,
-                   n_neighbors: int = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
 

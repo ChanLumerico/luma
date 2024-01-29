@@ -2,7 +2,7 @@ from typing import Literal
 import numpy as np
 
 from luma.interface.util import Matrix, Vector, Scalar, KernelUtil
-from luma.interface.super import Estimator, Evaluator, Unsupervised
+from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.clustering import SilhouetteCoefficient
 
@@ -163,23 +163,6 @@ class AffinityPropagation(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   max_iter: int = None,
-                   damping: float = None,
-                   preference: Scalar | Vector | str = None,
-                   tol: float = None) -> None:
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if damping is not None: self.damping = float(damping)
-        if tol is not None: self.tol = float(tol)
-        
-        if preference is not None:
-            if isinstance(preference, (int, float)):
-                self.preference = float(preference)
-            elif isinstance(preference, np.ndarray):
-                self.preference = preference
-            else: 
-                self.preference = str(preference)
 
 
 class AdaptiveAffinityPropagation(Estimator, Unsupervised):
@@ -330,25 +313,6 @@ class AdaptiveAffinityPropagation(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   max_iter: int = None,
-                   damping: float = None,
-                   preference: Scalar | Vector | str = None,
-                   tol: float = None,
-                   lambda_param: float = None) -> None:
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if damping is not None: self.damping = float(damping)
-        if tol is not None: self.tol = float(tol)
-        if lambda_param is not None: self.lambda_param = float(lambda_param)
-        
-        if preference is not None:
-            if isinstance(preference, (int, float)):
-                self.preference = float(preference)
-            elif isinstance(preference, np.ndarray):
-                self.preference = preference
-            else: 
-                self.preference = str(preference)
 
 
 class KernelAffinityPropagation(Estimator, Unsupervised):
@@ -492,25 +456,4 @@ class KernelAffinityPropagation(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   max_iter: int = None,
-                   damping: float = None,
-                   preference: Scalar | Vector | str = None,
-                   tol: float = None,
-                   kernel: Literal = None,
-                   gamma: float = None) -> None:
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if damping is not None: self.damping = float(damping)
-        if tol is not None: self.tol = float(tol)
-        if kernel is not None: self.kernel = str(kernel)
-        if gamma is not None: self.gamma = float(gamma)
-        
-        if preference is not None:
-            if isinstance(preference, (int, float)):
-                self.preference = float(preference)
-            elif isinstance(preference, np.ndarray):
-                self.preference = preference
-            else: 
-                self.preference = str(preference)
 

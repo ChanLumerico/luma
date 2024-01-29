@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from luma.interface.util import Matrix, Vector
-from luma.interface.super import Evaluator, Visualizer, Estimator
+from luma.core.super import Evaluator, Visualizer, Estimator
 from luma.model_selection.split import TrainTestSplit
 from luma.preprocessing.encoder import LabelBinarizer
 from luma.metric.classification import Accuracy, Precision, Recall, Specificity

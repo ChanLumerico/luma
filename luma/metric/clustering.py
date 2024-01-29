@@ -3,7 +3,7 @@ from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
 import numpy as np
 
-from luma.interface.super import Evaluator, Visualizer
+from luma.core.super import Evaluator, Visualizer
 from luma.interface.util import Matrix, SilhouetteUtil, DBUtil
 
 

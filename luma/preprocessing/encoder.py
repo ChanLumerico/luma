@@ -1,7 +1,7 @@
 from typing import Literal
 import numpy as np
 
-from luma.interface.super import Transformer
+from luma.core.super import Transformer
 from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
@@ -52,9 +52,6 @@ class OneHotEncoder(Transformer, Transformer.Feature):
         self.fit(X)
         return self.transform(X)
 
-    def set_params(self, features: list = None) -> None: 
-        if features is not None: self.features = features
-
 
 class LabelEncoder(Transformer, Transformer.Target):
     def __init__(self):
@@ -89,8 +86,6 @@ class LabelEncoder(Transformer, Transformer.Target):
     def fit_transform(self, y: Matrix) -> Matrix[int]:
         self.fit(y)
         return self.transform(y)
-
-    def set_params(self) -> None: ...
 
 
 class OrdinalEncoder(Transformer, Transformer.Feature):
@@ -128,8 +123,6 @@ class OrdinalEncoder(Transformer, Transformer.Feature):
         self.fit(X)
         return self.transform(X)
 
-    def set_params(self) -> None: ...
-
 
 class LabelBinarizer(Transformer, Transformer.Target):
     def __init__(self, negative_target: bool = False) -> None:
@@ -161,8 +154,4 @@ class LabelBinarizer(Transformer, Transformer.Target):
 
     def inverse_transform(self, y: Vector) -> Vector:
         return self.classes_[np.argmax(y, axis=1)]
-    
-    def set_params(self, negative_target: bool = None) -> None:
-        if negative_target is not None: 
-            self.negative_target = negative_target
 

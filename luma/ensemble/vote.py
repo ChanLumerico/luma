@@ -1,7 +1,7 @@
 from typing import List, Literal
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.util import Matrix, Vector, Scalar, Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.classification import Accuracy
@@ -109,14 +109,6 @@ class VotingClassifier(Estimator, Estimator.Meta, Supervised):
     def score(self, X: Matrix, y: Vector, metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   estimators: List[Estimator] = None,
-                   voting: Literal = None,
-                   weights: Vector[Scalar] = None) -> None:
-        if estimators is not None: self.estimators = estimators
-        if voting is not None: self.voting = str(voting)
-        if weights is not None: self.weights = weights
 
     def __getitem__(self, index: int) -> Estimator:
         return self.estimators_[index]
@@ -185,12 +177,6 @@ class VotingRegressor(Estimator, Estimator.Meta, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   estimators: List[Estimator] = None,
-                   weights: Vector[Scalar] = None) -> None:
-        if estimators is not None: self.estimators = estimators
-        if weights is not None: self.weights = weights
 
     def __getitem__(self, index: int) -> Estimator:
         return self.estimators_[index]

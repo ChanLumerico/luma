@@ -2,7 +2,7 @@ import numpy as np
 
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
 
 
@@ -50,9 +50,6 @@ class RidgeRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-
-    def set_params(self, alpha: float = None) -> None:
-        if alpha is not None: self.alpha = float(alpha)
 
 
 class LassoRegressor(Estimator, Supervised):
@@ -114,14 +111,6 @@ class LassoRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   alpha: float = None, 
-                   max_iter: int = None,
-                   learning_rate: float = None) -> None:
-        if alpha is not None: self.alpha = float(alpha)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
 
 
 class ElasticNetRegressor(Estimator, Supervised):
@@ -186,16 +175,6 @@ class ElasticNetRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self,
-                   alpha: float = None,
-                   l1_ratio: float = None,
-                   max_iter: int = None,
-                   learning_rate: float = None) -> None:
-        if alpha is not None: self.alpha = float(alpha)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
 
 
 class LinearRegressor(Estimator, Supervised):
@@ -231,6 +210,4 @@ class LinearRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-
-    def set_params(self) -> None: ...
 

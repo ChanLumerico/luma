@@ -1,7 +1,7 @@
 from typing import Literal
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.interface.util import Matrix, Vector
 from luma.preprocessing.encoder import LabelBinarizer
@@ -118,20 +118,6 @@ class PerceptronClassifier(Estimator, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   learning_rate: float = None,
-                   max_iter: int = None,
-                   regularization: str = None,
-                   alpha: float = None,
-                   l1_ratio: float = None,
-                   random_state: int = None) -> None:
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if regularization is not None: self.regularization = regularization
-        if alpha is not None: self.alpha = float(alpha)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if random_state is not None: self.random_state = int(random_state)
 
 
 class PerceptronRegressor(Estimator, Supervised):
@@ -221,18 +207,4 @@ class PerceptronRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         y_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=y_pred)
-
-    def set_params(self, 
-                   learning_rate: float = None,
-                   max_iter: int = None,
-                   regularization: str = None,
-                   alpha: float = None,
-                   l1_ratio: float = None,
-                   random_state: int = None) -> None:
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if regularization is not None: self.regularization = regularization
-        if alpha is not None: self.alpha = float(alpha)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if random_state is not None: self.random_state = int(random_state)
 

@@ -4,7 +4,7 @@ import numpy as np
 import random
 
 from luma.interface.util import Matrix, Vector
-from luma.interface.super import Estimator, Evaluator
+from luma.core.super import Estimator, Evaluator, Optimizer
 from luma.interface.exception import NotFittedError
 from luma.model_selection.cv import CrossValidator
 
@@ -17,7 +17,7 @@ __all__ = (
 )
 
 
-class GridSearchCV:
+class GridSearchCV(Optimizer):
     
     """
     Grid seach with cross validation(CV) is a method used to tune hyperparameters 
@@ -108,8 +108,10 @@ class GridSearchCV:
             self.scores_.append((params, mean_score))
             
             if self.verbose:
-                print(f'[GridSearchCV] candidate {i}/{max_iter} {params} - score:',
-                      f'{mean_score:.3f}')
+                params_f = {k: f'{v:.4f}' if isinstance(v, float) else v 
+                            for k, v in params.items()}
+                print(f'[GridSearchCV] candidate {i + 1}/{max_iter} {params_f}',
+                      f'- score:{mean_score:.3f}')
             
             if best_score is None or mean_score > best_score:
                 best_score = mean_score
@@ -141,7 +143,7 @@ class GridSearchCV:
         return self.estimator
 
 
-class RandomizedSearchCV:
+class RandomizedSearchCV(Optimizer):
     
     """
     Randomized search with cross-validation (CV) is a method used to tune 
@@ -240,8 +242,10 @@ class RandomizedSearchCV:
             self.scores_.append((params, mean_score))
             
             if self.verbose:
+                params_f = {k: f'{v:.4f}' if isinstance(v, float) else v 
+                            for k, v in params.items()}
                 print(f'[RandomSearchCV] candidate {i + 1}/{self.max_iter}',
-                      f'{params} - score: {mean_score:.3f}')
+                      f'{params_f} - score: {mean_score:.3f}')
             
             if best_score is None or mean_score > best_score:
                 best_score = mean_score

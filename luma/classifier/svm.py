@@ -1,9 +1,9 @@
-from typing import *
+from typing import Literal
 import numpy as np
 
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.classification import Accuracy
 
 
@@ -99,16 +99,6 @@ class SVC(Estimator, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self,
-                   C: float = None,
-                   batch_size: int = None,
-                   learning_rate: float = None,
-                   max_iter: int = None) -> None:
-        if C is not None: self.C = float(C)
-        if batch_size is not None: self.batch_size = int(batch_size)
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
 
 
 class KernelSVC(Estimator, Supervised):
@@ -227,20 +217,4 @@ class KernelSVC(Estimator, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self,
-                   C: float = None,
-                   deg: int = None,
-                   gamma: float = None,
-                   coef: float = None,
-                   learning_rate: float = None,
-                   max_iter: int = None,
-                   kernel: Literal = None) -> None:
-        if C is not None: self.C = float(C)
-        if deg is not None: self.deg = int(deg)
-        if gamma is not None: self.gamma = float(gamma)
-        if coef is not None: self.coef = float(coef)
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if kernel is not None: self.kernel = str(kernel)
 

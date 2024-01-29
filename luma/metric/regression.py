@@ -2,7 +2,7 @@ from typing import *
 import numpy as np
 
 from luma.interface.util import Matrix
-from luma.interface.super import Evaluator
+from luma.core.super import Evaluator
 
 
 __all__ = (

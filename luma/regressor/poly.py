@@ -3,7 +3,7 @@ import numpy as np
 
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError
-from luma.interface.super import Estimator, Evaluator
+from luma.core.super import Estimator, Evaluator
 from luma.metric.regression import MeanSquaredError
 
 
@@ -75,14 +75,4 @@ class PolynomialRegressor(Estimator):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-
-    def set_params(self, 
-                   deg: int = None,
-                   alpha: float = None,
-                   l1_ratio: float = None,
-                   regularization: Literal = None) -> None:
-        if deg is not None: self.deg = int(deg)
-        if alpha is not None: self.alpha = float(alpha)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if regularization is not None: self.regularization = regularization
 

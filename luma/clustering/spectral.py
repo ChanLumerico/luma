@@ -6,7 +6,7 @@ import numpy as np
 from luma.clustering.kmeans import KMeansClusteringPlus
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.interface.util import Matrix
-from luma.interface.super import Estimator, Evaluator, Unsupervised
+from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.clustering import SilhouetteCoefficient
 
@@ -84,12 +84,6 @@ class SpectralClustering(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   gamma: float = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if gamma is not None: self.gamma = float(gamma)
 
 
 class NormalizedSpectralClustering(Estimator, Unsupervised):
@@ -165,14 +159,6 @@ class NormalizedSpectralClustering(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   gamma: float = None,
-                   strategy: Literal = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if gamma is not None: self.gamma = float(gamma)
-        if strategy is not None: self.strategy = str(strategy)
 
 
 class HierarchicalSpectralClustering(Estimator, Unsupervised):
@@ -255,16 +241,6 @@ class HierarchicalSpectralClustering(Estimator, Unsupervised):
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   method: Literal = None,
-                   linkage: Literal = None,
-                   gamma: float = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if method is not None: self.method = str(method)
-        if linkage is not None: self.linkage = str(linkage)
-        if gamma is not None: self.gamma = float(gamma)
 
 
 class AdaptiveSpectralClustering(Estimator, Unsupervised):
@@ -330,10 +306,4 @@ class AdaptiveSpectralClustering(Estimator, Unsupervised):
 
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)
-    
-    def set_params(self, 
-                   gamma: float = None,
-                   max_clusters: int = None) -> None:
-        if gamma is not None: self.gamma = float(gamma)
-        if max_clusters is not None: self.max_clusters = int(max_clusters)
 

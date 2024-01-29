@@ -2,7 +2,7 @@ from typing import Literal
 import pickle
 import os
 
-from luma.interface.super import Estimator, Transformer
+from luma.core.super import Estimator, Transformer
 from luma.interface.exception import ModelExtensionError, UnsupportedParameterError
 
 MODEL_EXTENSION = '.luma'

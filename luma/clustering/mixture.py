@@ -1,6 +1,6 @@
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator, Unsupervised
+from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.interface.util import Matrix, Vector
 from luma.metric.clustering import SilhouetteCoefficient
 from luma.interface.exception import NotFittedError
@@ -113,16 +113,6 @@ class GaussianMixture(Estimator, Unsupervised):
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   max_iter: int = None,
-                   tol: float = None,
-                   random_state: int = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if tol is not None: self.tol = float(tol)
-        if random_state is not None: self.random_state = int(random_state)
 
 
 class MultinomialMixture(Estimator, Unsupervised):
@@ -229,12 +219,4 @@ class MultinomialMixture(Estimator, Unsupervised):
     def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
-    
-    def set_params(self, 
-                   n_clusters: int = None,
-                   max_iter: int = None,
-                   tol: float = None) -> None:
-        if n_clusters is not None: self.n_clusters = int(n_clusters)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if tol is not None: self.tol = float(tol)
 

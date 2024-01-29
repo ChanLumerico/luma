@@ -1,12 +1,16 @@
-from abc import *
 from typing import Any
+from abc import (ABCMeta, 
+                 abstractmethod, 
+                 abstractstaticmethod, 
+                 abstractproperty)
 
-from luma.core.main import LUMA
+from luma.core.base import *
 
 
 __all__ = (
     'Estimator', 
     'Transformer', 
+    'Optimizer',
     'Evaluator', 
     'Visualizer', 
     'Supervised', 
@@ -15,7 +19,7 @@ __all__ = (
 )
 
 
-class Estimator(LUMA, metaclass=ABCMeta):
+class Estimator(ModelBase, metaclass=ABCMeta):
     
     """
     An estimator is a mathematical model or algorithm 
@@ -30,16 +34,19 @@ class Estimator(LUMA, metaclass=ABCMeta):
     -------
     For training:
     ```py 
+        @abstractmethod
         def fit(self, *args) -> Estimator
     ```
     
     For prediction:
     ```py
+        @abstractmethod
         def predict(self, *args) -> Vector
     ```
     
     For scoring
     ```py
+        @abstractmethod
         def score(self, *args) -> float
     ```
     
@@ -63,40 +70,44 @@ class Estimator(LUMA, metaclass=ABCMeta):
     def fit(self, *args) -> 'Estimator': ...
     
     @abstractmethod
-    def predict(self, *args) -> ...: ...
+    def predict(self, *args) -> Any: ...
     
     @abstractmethod
     def score(self, *args) -> float: ...
     
-    @abstractmethod
-    def set_params(self, *args) -> None: ...
+    def set_params(self, **kwargs) -> None:
+        return super().set_params(**kwargs)
 
 
-class Transformer(LUMA, metaclass=ABCMeta):
+class Transformer(ModelBase, metaclass=ABCMeta):
     
     """
-    A transformer (preprocessor) is a component or set of operations used to prepare and 
-    clean raw data before it is fed into a machine learning model. 
+    A transformer (preprocessor) is a component or set of operations used to 
+    prepare and clean raw data before it is fed into a machine learning model. 
     Preprocessing tasks can include data normalization, handling missing values, 
     feature scaling, one-hot encoding, and more. 
     The goal of a preprocessor is to make the data suitable for the specific 
     machine learning algorithm being used, enhancing the model's performance 
-    by ensuring the data is in the right format and is free from inconsistencies or noise.
+    by ensuring the data is in the right format and is free from inconsistencies 
+    or noise.
     
     Methods
     -------
     For fitting:
     ```py
+        @abstractmethod
         def fit(self, *args) -> Transformer
     ```
     
     For transformation:
     ```py
+        @abstractmethod
         def transform(self, *args) -> Matrix
     ```
     
     For fitting and transformation at once:
     ```py
+        @abstractmethod
         def fit_transform(self, *args) -> Matrix
     ```
     
@@ -138,11 +149,35 @@ class Transformer(LUMA, metaclass=ABCMeta):
     @abstractmethod
     def fit_transform(self, *args) -> Any: ...
     
-    @abstractmethod
-    def set_params(self, *args) -> None: ...
+    def set_params(self, **kwargs) -> None:
+        return super().set_params(**kwargs)
 
 
-class Evaluator(LUMA, metaclass=ABCMeta):
+class Optimizer(ModelBase, metaclass=ABCMeta):
+    
+    """
+    The Optimizer class serves as a superclass for optimization techniques in 
+    the luma module, focusing on hyperparameter tuning and model optimization. 
+    This class inherits from ModelBase, indicating its role in enhancing and 
+    fine-tuning machine learning models. It provides an abstract base for 
+    different optimization strategies, offering a standardized interface for 
+    systematically exploring and evaluating different combinations of model 
+    parameters.
+    
+    Properties
+    ----------
+    Get the best(optimized) estimator or transformer:
+    ```py
+        @abstractproperty
+        def best_model(self) -> Estimator | Transformer
+    
+    """
+    
+    @abstractproperty
+    def best_model(self) -> Estimator | Transformer: ...
+
+
+class Evaluator(MetricBase, metaclass=ABCMeta):
     
     """
     Evaluators, a.k.a. metrics are quantitative measures used to assess the performance 
@@ -154,6 +189,7 @@ class Evaluator(LUMA, metaclass=ABCMeta):
     -------
     For scoring:
     ```py
+        @abstractstaticmethod
         def score(*args) -> float
     ```
     """
@@ -162,7 +198,7 @@ class Evaluator(LUMA, metaclass=ABCMeta):
     def score(*args) -> float: ...
 
 
-class Visualizer(LUMA, metaclass=ABCMeta):
+class Visualizer(VisualBase, metaclass=ABCMeta):
     
     """
     A visualizer is a tool that helps visualize and understand various aspects 
@@ -174,6 +210,7 @@ class Visualizer(LUMA, metaclass=ABCMeta):
     -------
     For plotting:
     ```py
+        @abstractmethod
         def plot(self, *args) -> None
     ```
     """
@@ -182,7 +219,7 @@ class Visualizer(LUMA, metaclass=ABCMeta):
     def plot(self, *args) -> None: ...
 
 
-class Supervised(LUMA):
+class Supervised(ParadigmBase):
     
     """
     Supervised learning is a type of machine learning where the algorithm learns 
@@ -194,7 +231,7 @@ class Supervised(LUMA):
     def __init__(self, *args) -> None: ...
 
 
-class Unsupervised(LUMA):
+class Unsupervised(ParadigmBase):
     
     """
     Unsupervised learning is a machine learning paradigm where the algorithm 
@@ -219,7 +256,7 @@ class Unsupervised(LUMA):
     def labels(self) -> Any:...
 
 
-class Distance(LUMA, metaclass=ABCMeta):
+class Distance(MetricBase, metaclass=ABCMeta):
     
     """
     In mathematics and machine learning, distance is a measure of how much "separation" 
@@ -230,6 +267,7 @@ class Distance(LUMA, metaclass=ABCMeta):
     -------
     For computing the distance:
     ```py
+        @abstractstaticmethod
         def compute(*args) -> float
     ```
     """

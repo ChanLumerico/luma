@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from luma.interface.util import Matrix
-from luma.interface.super import Transformer
+from luma.core.super import Transformer
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
 
@@ -68,9 +68,6 @@ class SimpleImputer(Transformer, Transformer.Feature):
         self.fit(X)
         return self.transform(X)
 
-    def set_params(self, strategy: Literal = None) -> None:
-        if strategy is not None: self.strategy = str(strategy)
-
 
 class KNNImputer(Transformer, Transformer.Feature):
     def __init__(self, n_neighbors: int = 5):
@@ -116,9 +113,6 @@ class KNNImputer(Transformer, Transformer.Feature):
         
         return distances
 
-    def set_params(self, n_neighbors: int = None) -> None:
-        if n_neighbors is not None: self.n_neighbors = int(n_neighbors)
-
 
 class HotDeckImputer(Transformer, Transformer.Feature):
     def __init__(self):
@@ -158,6 +152,4 @@ class HotDeckImputer(Transformer, Transformer.Feature):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform(X)
-
-    def set_params(self) -> None: ... 
 

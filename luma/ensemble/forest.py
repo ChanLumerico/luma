@@ -5,7 +5,7 @@ import numpy as np
 from luma.interface.util import Matrix, Vector
 from luma.classifier.tree import DecisionTreeClassifier
 from luma.regressor.tree import DecisionTreeRegressor
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.classification import Accuracy
 from luma.metric.regression import MeanSquaredError
@@ -105,29 +105,6 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self,
-                   n_trees: int = None,
-                   max_depth: int = None,
-                   min_samples_split: int = None,
-                   n_features: int | str = None,
-                   bootstrap: bool = None,
-                   bootstrap_feature: bool = None,
-                   sample_weights: Vector = None) -> None:
-        if n_trees is not None: self.n_trees = int(n_trees)
-        if max_depth is not None: self.max_depth = int(max_depth)
-        if bootstrap is not None: self.bootstrap = bool(bootstrap)
-        if sample_weights is not None: self.sample_weights = sample_weights
-        
-        if bootstrap_feature is not None: 
-            self.bootstrap_feature = bool(bootstrap_feature)
-        if min_samples_split is not None: 
-            self.min_samples_split = int(min_samples_split)
-        if n_features is not None:
-            if isinstance(n_features, int):
-                self.n_features = int(n_features)
-            elif isinstance(n_features, str):
-                self.n_features = str(n_features)
 
 
 class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
@@ -218,27 +195,4 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self,
-                   n_trees: int = None,
-                   max_depth: int = None,
-                   min_samples_split: int = None,
-                   n_features: int | str = None,
-                   bootstrap: bool = None,
-                   bootstrap_feature: bool = None,
-                   sample_weights: Vector = None) -> None:
-        if n_trees is not None: self.n_trees = int(n_trees)
-        if max_depth is not None: self.max_depth = int(max_depth)
-        if bootstrap is not None: self.bootstrap = bool(bootstrap)
-        if sample_weights is not None: self.sample_weights = sample_weights
-        
-        if bootstrap_feature is not None: 
-            self.bootstrap_feature = bool(bootstrap_feature)
-        if min_samples_split is not None: 
-            self.min_samples_split = int(min_samples_split)
-        if n_features is not None:
-            if isinstance(n_features, int):
-                self.n_features = int(n_features)
-            elif isinstance(n_features, str):
-                self.n_features = str(n_features)
 

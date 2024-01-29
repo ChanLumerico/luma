@@ -1,5 +1,5 @@
 from typing import Any
-from luma.interface.super import Transformer, Estimator
+from luma.core.super import Transformer, Estimator
 
 
 __all__ = (

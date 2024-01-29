@@ -1,7 +1,7 @@
 import numpy as np
 
 from luma.interface.util import Matrix
-from luma.interface.super import Transformer
+from luma.core.super import Transformer
 from luma.interface.exception import NotFittedError
 
 
@@ -40,8 +40,6 @@ class StandardScaler(Transformer, Transformer.Feature):
     def inverse_transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         return (X * self.std) + self.mean
-    
-    def set_params(self) -> None: ...
 
 
 class MinMaxScaler(Transformer, Transformer.Feature):
@@ -85,7 +83,4 @@ class MinMaxScaler(Transformer, Transformer.Feature):
         min_val, max_val = self.feature_range
         original = (X - min_val) / (max_val - min_val) * (self.max - self.min)
         return original + self.min
-    
-    def set_params(self, feature_range: tuple = None) -> None:
-        if feature_range is not None: self.feature_range = tuple(feature_range)
 

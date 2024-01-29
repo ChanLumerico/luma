@@ -4,7 +4,7 @@ from scipy.linalg import svd, eigh
 import numpy as np
 
 from luma.interface.util import Matrix
-from luma.interface.super import Transformer, Unsupervised, Supervised
+from luma.core.super import Transformer, Unsupervised, Supervised
 from luma.interface.exception import (NotFittedError,
                                       NotConvergedError,
                                       UnsupportedParameterError)
@@ -64,9 +64,6 @@ class PCA(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform(X)
-
-    def set_params(self, n_components: int = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
 
 
 class KernelPCA(Transformer, Unsupervised):
@@ -153,18 +150,6 @@ class KernelPCA(Transformer, Unsupervised):
     
     def _laplacian(self, x: Matrix, y: Matrix) -> Matrix:
         return np.exp(-self.gamma * np.linalg.norm(x - y))
-    
-    def set_params(self,
-                   n_components: int = None,
-                   degree: int = None,
-                   gamma: float = None,
-                   coef: float = None,
-                   kernel: Literal = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if degree is not None: self.degree = int(degree)
-        if gamma is not None: self.gamma = float(gamma)
-        if coef is not None: self.coef = float(coef)
-        if kernel is not None: self.kernel = str(kernel)
 
 
 class LDA(Transformer, Supervised):
@@ -226,9 +211,6 @@ class LDA(Transformer, Supervised):
         self.fit(X, y)
         return self.transform(X)
 
-    def set_params(self, n_components: int = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-
 
 class TruncatedSVD(Transformer, Unsupervised):
     
@@ -269,9 +251,6 @@ class TruncatedSVD(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform(X)
-
-    def set_params(self, n_components: int = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
 
 
 class FactorAnalysis(Transformer, Unsupervised):
@@ -351,7 +330,6 @@ class FactorAnalysis(Transformer, Unsupervised):
         self.W = W
         self._fitted = True
         return self
-
     
     def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
@@ -363,15 +341,4 @@ class FactorAnalysis(Transformer, Unsupervised):
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
         return self.transform(X)
-    
-    def set_params(self,
-                   n_components: int = None,
-                   max_iter: int = None,
-                   tol: float = None,
-                   noise_variance: Matrix | list = None) -> None:
-        if n_components is not None: self.n_components = int(n_components)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if tol is not None: self.tol = float(tol)
-        if noise_variance is not None: self.noise_variance = np.array(noise_variance)
 
-    

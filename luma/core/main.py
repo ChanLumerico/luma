@@ -1,5 +1,5 @@
-from typing import Any
 import sys
+import luma
 
 
 __all__ = (
@@ -8,11 +8,13 @@ __all__ = (
 
 
 class LUMA:
-    def __init__(self) -> None: ...
+    def __validate__(self) -> None: self
     
-    def __call__(self, *args, **kwargs) -> Any: ...
+    def __alloc__(self, *args, **kwargs) -> None: args, kwargs
     
-    def __init_subclass__(cls) -> None: ...
+    def __dealloc__(self) -> None: del self
+    
+    def __doc__(self) -> str: return luma.__doc__
 
     if sys.version_info < (3, 10):
         print("LUMA requires Python 3.10 or more", file=sys.stderr)

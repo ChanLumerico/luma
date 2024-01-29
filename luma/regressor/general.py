@@ -4,7 +4,7 @@ import numpy as np
 
 from luma.interface.util import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
-from luma.interface.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
 
 
@@ -97,18 +97,6 @@ class PoissonRegressor(Estimator, Supervised):
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
 
-    def set_params(self,
-                   learning_rate: float = None,
-                   max_iter: int = None,
-                   alpha: float = None,
-                   l1_ratio: float = None,
-                   regularization: Literal = None) -> None:
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if alpha is not None: self.alpha = float(alpha)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if regularization is not None: self.regularization = str(regularization)
-
 
 class NegativeBinomialRegressor(Estimator, Supervised):
     
@@ -193,20 +181,6 @@ class NegativeBinomialRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self,
-                   learning_rate: float = None,
-                   max_iter: int = None,
-                   alpha: float = None,
-                   l1_ratio: float = None,
-                   phi: float = None,
-                   regularization: Literal = None) -> None:
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if alpha is not None: self.alpha = float(alpha)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if phi is not None: self.phi = float(phi)
-        if regularization is not None: self.regularization = str(regularization)
 
 
 class GammaRegressor(Estimator, Supervised):
@@ -294,22 +268,6 @@ class GammaRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_param(self,
-                  alpha: float = None,
-                  beta: float = None,
-                  learning_rate: float = None,
-                  max_iter: int = None,
-                  reg_strength: float = None,
-                  l1_ratio: float = None,
-                  regularization: Literal = None) -> None:
-        if alpha is not None: self.alpha = float(alpha)
-        if beta is not None: self.beta = float(beta)
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if reg_strength is not None: self.reg_strength = float(reg_strength)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if regularization is not None: self.regularization = str(regularization)
 
 
 class BetaRegressor(Estimator, Supervised):
@@ -397,22 +355,6 @@ class BetaRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-    
-    def set_params(self, 
-                   alpha: float = None, 
-                   beta: float = None, 
-                   learning_rate: float = None, 
-                   max_iter: int = None, 
-                   reg_strength: float = None, 
-                   l1_ratio: float = None, 
-                   regularization: Literal = None) -> None:
-        if alpha is not None: self.alpha = float(alpha)
-        if beta is not None: self.beta = float(beta)
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if reg_strength is not None: self.reg_strength = float(reg_strength)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if regularization is not None: self.regularization = str(regularization)
 
 
 class InverseGaussianRegressor(Estimator, Supervised):
@@ -495,18 +437,4 @@ class InverseGaussianRegressor(Estimator, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
-
-    def set_params(self, 
-                   learning_rate: float = None, 
-                   max_iter: int = None, 
-                   phi: float = None,
-                   l1_ratio: float = None,
-                   alpha: float = None, 
-                   regularization: Literal = None) -> None:
-        if learning_rate is not None: self.learning_rate = float(learning_rate)
-        if max_iter is not None: self.max_iter = int(max_iter)
-        if phi is not None: self.phi = float(phi)
-        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
-        if alpha is not None: self.alpha = float(alpha)
-        if regularization is not None: self.regularization = str(regularization)
 

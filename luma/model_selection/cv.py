@@ -1,7 +1,7 @@
 from typing import Tuple
 import numpy as np
 
-from luma.interface.super import Estimator, Evaluator
+from luma.core.super import Estimator, Evaluator
 from luma.interface.util import Matrix, Vector
 
 
