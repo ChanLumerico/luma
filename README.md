@@ -77,7 +77,7 @@
             <table border="0">
                 <tr>
                     <td>
-                        <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/class-structure.png" alt="structure">
+                        <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/structure.png" alt="structure">
                     </td>
                 </tr>
             </table>
