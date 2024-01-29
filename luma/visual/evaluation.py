@@ -343,11 +343,12 @@ class ResidualPlot(Visualizer):
         if ax is None: _, ax = plt.subplots()
         resid = self._calculate_residuals()
         
-        ax.scatter(self.X, resid, 
-                   c=resid, 
-                   s=20, 
-                   cmap=self.cmap, 
-                   alpha=self.alpha)
+        cax = ax.scatter(self.estimator.predict(self.X), 
+                         resid, 
+                         c=resid, 
+                         s=20, 
+                         cmap=self.cmap, 
+                         alpha=self.alpha)
 
         ax.axhline(y=0, c='black', 
                    lw=2, label='Perfect Fit')
@@ -358,6 +359,8 @@ class ResidualPlot(Visualizer):
         ax.set_xlabel('Predicted Values')
         ax.set_ylabel('Residuals')
         ax.set_title(f'Residual Plot of {type(self.estimator).__name__}')
+        
+        ax.figure.colorbar(cax)
         ax.legend()
         ax.figure.tight_layout()
 

@@ -126,7 +126,7 @@ class Pipeline(Estimator, Estimator.Meta):
             if isinstance(model, Transformer.Target):
                 y_trans = model.transform(y_trans)
             elif isinstance(model, Transformer.Both):
-                X_trans, y_trans = model.transform(X_trans)
+                X_trans, y_trans = model.transform(X_trans, y_trans)
             else:
                 X_trans = model.transform(X_trans)
 

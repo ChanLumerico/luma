@@ -241,41 +241,51 @@ class KernelUtil:
     
     Example
     -------
-    >>> util = KernelUtil(kernel='rbf')
+    >>> util = KernelUtil(kernel='rbf', **params)
     >>> util.kernel_func
-    KernelUtil.rbf_kernel: Callable[[...], Matrix]
+    KernelUtil.rbf_kernel: Callable[[Matrix, Matrix | None], Matrix]
     
     """
     
-    def __init__(self, kernel: str) -> None:
+    def __init__(self, 
+                 kernel: str,
+                 alpha: float,
+                 gamma: float,
+                 coef: float,
+                 deg: int) -> None:
         self.kernel = kernel
+        self.alpha = alpha
+        self.gamma = gamma
+        self.coef = coef
+        self.deg = deg
     
-    def linear_kernel(self, X: Matrix) -> Matrix:
-        return np.dot(X, X.T)
+    def linear_kernel(self, Xi: Matrix, Xj: Matrix = None) -> Matrix:
+        if Xj is None: Xj = Xi.copy()
+        return np.dot(Xi, Xj.T)
     
-    def polynomial_kernel(self, X: Matrix, 
-                          gamma: float = 1.0,
-                          coef: float = 0.0,
-                          deg: int = 2) -> Matrix:
-        return (gamma * np.dot(X, X.T) + coef) ** deg
+    def polynomial_kernel(self, Xi: Matrix, Xj: Matrix = None) -> Matrix:
+        if Xj is None: Xj = Xi.copy()
+        return (self.gamma * np.dot(Xi, Xj.T) + self.coef) ** self.deg
     
-    def rbf_kernel(self, X: Matrix, gamma: float = 1.0) -> Matrix:
-        _left = np.sum(X ** 2, axis=1).reshape(-1, 1)
-        _right = np.sum(X ** 2, axis=1) - 2 * np.dot(X, X.T)
+    def rbf_kernel(self, Xi: Matrix, Xj: Matrix = None) -> Matrix:
+        if Xj is None: Xj = Xi.copy()
+        _left = np.sum(Xi ** 2, axis=1).reshape(-1, 1)
+        _right = np.sum(Xj ** 2, axis=1) - 2 * np.dot(Xi, Xj.T)
         
-        return np.exp(-gamma * (_left + _right))
+        return np.exp(-self.gamma * (_left + _right))
     
-    def sigmoid_kernel(self, X: Matrix,
-                       gamma: float = 1.0,
-                       coef: float = 0.0) -> Matrix:
-        return np.tanh(gamma * np.dot(X, X.T) + coef)
+    def sigmoid_kernel(self, Xi: Matrix, Xj: Matrix = None) -> Matrix:
+        if Xj is None: Xj = Xi.copy()
+        return np.tanh(self.gamma * np.dot(Xi, Xj.T) + self.coef)
     
-    def laplacian_kernel(self, X: Matrix, gamma: float = 1.0) -> Matrix:
-        manhattan_dists = np.sum(np.abs(X[:, np.newaxis] - X), axis=2)
-        return np.exp(-gamma * manhattan_dists)
+    def laplacian_kernel(self, Xi: Matrix, Xj: Matrix = None) -> Matrix:
+        if Xj is None: Xj = Xi.copy()
+        manhattan_dists = np.sum(np.abs(Xi[:, np.newaxis] - Xj), axis=2)
+        
+        return np.exp(-self.gamma * manhattan_dists)
     
     @property
-    def kernel_func(self) -> Callable[[Matrix, Ellipsis], Matrix]:
+    def kernel_func(self) -> Callable[[Matrix, Matrix | None], Matrix]:
         if self.kernel in ('linear', 'lin'):
             return self.linear_kernel
         elif self.kernel in ('poly', 'polynomial'):

@@ -343,7 +343,7 @@ class RFE(Transformer, Transformer.Feature, Supervised):
 
         self.support = np.ones(n, dtype=bool)
         self.ranking = np.ones(n, dtype=int)
-
+        
         while np.sum(self.support) > self.n_features:
             scores = self._calculate_score(X, y)
             indices = np.argsort(scores)[::-1][:self.step_size]
@@ -352,7 +352,8 @@ class RFE(Transformer, Transformer.Feature, Supervised):
 
             if self.verbose:
                 print(f'[RFE] Removed {self.step_size} features,', 
-                      f'remaining features: {np.sum(self.support)}')
+                      f'remaining features: {np.sum(self.support)}',
+                      f'with best-score: {scores[:self.step_size]}')
         
         features = tuple(i for i, sup in enumerate(self.support) if sup)
         if self.verbose:

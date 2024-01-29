@@ -124,6 +124,17 @@ class Transformer(ModelBase, metaclass=ABCMeta):
         handling of feature data in a dataset.
         
         Default class for uninherited models.
+        
+        * `fit` method only gets parameter: `X`
+        
+            ```py
+            def fit(self, X: Matrix) -> Transformer
+            ```
+        * `transform` method only gets `X` and returns transformed `X`
+        
+            ```py
+            def transform(self, X: Matrix) -> Matrix
+            ```
         """
         
     class Target:
@@ -131,6 +142,17 @@ class Transformer(ModelBase, metaclass=ABCMeta):
         """
         An inner class of `Transformer` dedicated to the processing and 
         handling of target data in a dataset.
+        
+        * `fit` method only gets parameter: `y`
+
+            ```py
+            def fit(self, y: Vector) -> Transformer
+            ```
+        * `transform` method only gets `y` and returns transformed `y`
+        
+            ```py
+            def transform(self, y: Vector) -> Matrix | Vector
+            ```
         """
          
     class Both: 
@@ -138,6 +160,21 @@ class Transformer(ModelBase, metaclass=ABCMeta):
         """
         An inner class of `Transformer` dedicated to the processing and 
         handling of both feature and target data in a dataset.
+        
+        * `fit` method gets two parameters: `X`, `y`
+        
+            ```py
+            def fit(self, X: Matrix, y: Vector) -> Transformer
+            ```
+            To ignore `y`, replace with placeholder `_`:
+            ```py
+            def fit(self, X: Matrix, _ = None) -> Transformer
+            ```
+        * `transform` method gets `X` and `y` and returns transformed `X` and `y`
+        
+            ```py
+            def transform(self, X: Matrix, y: Vector) -> Tuple[Matrix, Matrix | Vector]
+            ```
         """
     
     @abstractmethod

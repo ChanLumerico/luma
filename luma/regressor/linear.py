@@ -1,6 +1,7 @@
+from typing import Literal
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Vector, KernelUtil
 from luma.interface.exception import NotFittedError
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
@@ -10,7 +11,8 @@ __all__ = (
     'LinearRegressor', 
     'RidgeRegressor', 
     'LassoRegressor', 
-    'ElasticNetRegressor'
+    'ElasticNetRegressor',
+    'KernelRidgeRegressor'
 )
 
 
@@ -205,6 +207,72 @@ class LinearRegressor(Estimator, Supervised):
         X = np.hstack([np.ones((X.shape[0], 1)), X])
         
         return X.dot(self.coefficients)
+    
+    def score(self, X: Matrix, y: Matrix, 
+              metric: Evaluator = MeanSquaredError) -> float:
+        X_pred = self.predict(X)
+        return metric.score(y_true=y, y_pred=X_pred)
+
+
+class KernelRidgeRegressor(Estimator, Supervised):
+    
+    """
+    Kernel Ridge Regression (KRR) combines ridge regression's linear coefficient 
+    penalization with kernel methods to handle non-linear data. By using a kernel 
+    function, KRR maps input data into a higher-dimensional feature space. In this 
+    transformed space, it minimizes the regularized loss function to find linear 
+    relationships. KRR excels in capturing complex, non-linear patterns in data, 
+    making it versatile for various regression tasks.
+    
+    Parameters
+    ----------
+    `alpha` : Regularization strength
+    `deg` : Degree for `poly` kernel
+    `gamma` : Scaling factor for `tanh`, `rbf`, and `laplacian` kernels
+    `coef` : Base coefficient for `linear` and `poly` kernels
+    `kernel` : Kernel functions
+    
+    """
+    
+    def __init__(self, 
+                 alpha: float = 1.0,
+                 deg: int = 2,
+                 gamma: float = 1.0,
+                 coef: float = 1.0,
+                 kernel: Literal['linear', 'poly', 'rbf',
+                                 'tanh', 'laplacian'] = 'rbf') -> None:
+        self.alpha = alpha
+        self.deg = deg
+        self.gamma = gamma
+        self.coef = coef
+        self.kernel = kernel
+        self._X = None
+        self._fitted = False
+        
+        self.kernel_params = {
+            'alpha': self.alpha,
+            'gamma': self.gamma,
+            'deg': self.deg,
+            'coef': self.coef
+        }
+    
+    def fit(self, X: Matrix, y: Vector) -> 'KernelRidgeRegressor':
+        m, _ = X.shape
+        self._X = X
+        self.ku_ = KernelUtil(self.kernel, **self.kernel_params)
+        
+        K = self.ku_.kernel_func(X)
+        self.alpha_mat = np.eye(m) * self.alpha
+        self.dual_coef = np.linalg.inv(K + self.alpha_mat).dot(y)
+    
+        self._fitted = True
+        return self
+    
+    def predict(self, X: Matrix) -> Vector:
+        if not self._fitted: raise NotFittedError(self)
+        K = self.ku_.kernel_func(X, self._X)
+        
+        return K.dot(self.dual_coef)
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:

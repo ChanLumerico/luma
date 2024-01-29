@@ -2,7 +2,8 @@ from typing import Tuple
 from scipy.spatial.distance import cdist
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.core.super import Transformer, Supervised
+from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
 
 
@@ -11,7 +12,7 @@ __all__ = (
 )
 
 
-class LocalOutlierFactor:
+class LocalOutlierFactor(Transformer, Transformer.Both, Supervised):
     
     """
     The Local Outlier Factor (LOF) algorithm identifies outliers by comparing 
@@ -34,18 +35,20 @@ class LocalOutlierFactor:
     >>> lof_scores = lof.get_scores(X)
     
     Filtering Dataset
-    >>> X_, y_ = lof.filter(X, y) # Supervised
-    >>> X_ = lof.filter(X) # Unsupervised
+    >>> X_, y_ = lof.filter(X, y) # or lof.transform(X, y)
     
     """
     
-    def __init__(self, n_neighbors: int = 10):
+    def __init__(self, 
+                 n_neighbors: int = 10,
+                 threshold: float = 1.5):
         self.n_neighbors = n_neighbors
+        self.threshold = threshold
         self.lrd_ = None
         self.neighbors_ = None
         self._fitted = False
-        
-    def fit(self, X: Matrix) -> 'LocalOutlierFactor':
+    
+    def fit(self, X: Matrix, _ = None) -> 'LocalOutlierFactor':
         n_samples = len(X)
         self.lrd_ = np.zeros(n_samples)
         self.neighbors_ = []
@@ -87,10 +90,16 @@ class LocalOutlierFactor:
 
         return lof
     
-    def filter(self, X: Matrix, y: Matrix = None,
-               threshold: float = 1.5) -> Tuple[Matrix, Matrix | None]:
+    def filter(self, X: Matrix, y: Matrix) -> Tuple[Matrix, Vector]:
         lof_scores = self.get_scores(X)
-        condition = lof_scores < threshold
-        if y is None: return X[condition]
-        else: return X[condition], y[condition]
+        condition = lof_scores < self.threshold
+        
+        return X[condition], y[condition]
+    
+    def transform(self, X: Matrix, y: Vector) -> Tuple[Matrix, Vector]:
+        return self.filter(X, y)
+    
+    def fit_transform(self, X: Matrix, y: Vector) -> Tuple[Matrix, Vector]:
+        self.fit(X)
+        return self.transform(X, y)
 

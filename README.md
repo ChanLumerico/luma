@@ -88,7 +88,7 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>0.5.8</td>
+                    <td>0.5.9</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
