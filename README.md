@@ -72,6 +72,17 @@
             </table>
         </div>
         <h2></h2>
+        <div class="structure">
+            <h3 class="structure-header">Structure</h3>
+            <table border="0">
+                <tr>
+                    <td>
+                        <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/class-structure.png" alt="structure">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <h2></h2>
         <div class="others">
             <h3 class="others-header">Others</h3>
             <table>
@@ -81,7 +92,7 @@
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
-                    <td>~12K</td>
+                    <td>~11.7K</td>
                 </tr>
                 <tr>
                     <td>Requirement</td>
