@@ -25,7 +25,7 @@ class LogisticRegressor(Estimator, Supervised):
     ----------
     `learning_rate` : Step size of the gradient descent update
     `max_iter` : Number of iteration
-    `rho` : Balancing parameter of `elastic-net`
+    `l1_ratio` : Balancing parameter of `elastic-net`
     `alpha` : Regularization strength
     `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
@@ -34,13 +34,13 @@ class LogisticRegressor(Estimator, Supervised):
     def __init__(self, 
                  learning_rate : float = 0.01, 
                  max_iter: int = 100, 
-                 rho: float = 0.5, 
+                 l1_ratio: float = 0.5, 
                  alpha: float = 0.01, 
                  regularization: Literal['l1', 'l2', 'elastic-net'] = None,
                  verbose: bool = False):
         self.learning_rate = learning_rate
         self.max_iter = max_iter
-        self.rho = rho
+        self.l1_ratio = l1_ratio
         self.regularization = regularization
         self.alpha = alpha
         self.verbose = verbose
@@ -75,7 +75,7 @@ class LogisticRegressor(Estimator, Supervised):
         elif self.regularization == 'elastic-net':
             l1_term = np.sign(self.theta)
             l2_term = 2 * self.theta
-            return (1 - self.rho) * l2_term + self.rho * l1_term
+            return (1 - self.l1_ratio) * l2_term + self.l1_ratio * l1_term
         elif self.regularization is None: return np.zeros_like(self.theta)
         else: raise UnsupportedParameterError(self.regularization)
 
@@ -101,12 +101,12 @@ class LogisticRegressor(Estimator, Supervised):
     def set_params(self, 
                    learning_rate: float = None, 
                    max_iter: int = None, 
-                   rho: float = None, 
+                   l1_ratio: float = None, 
                    alpha: float = None, 
                    regularization: Literal = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
-        if rho is not None: self.rho = float(rho)
+        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
         if alpha is not None: self.alpha = float(alpha)
         if regularization is not None: self.regularization = str(regularization)
 
@@ -123,7 +123,7 @@ class SoftmaxRegressor(Estimator, Supervised):
     ----------
     `learning_rate` : Step size of the gradient descent update
     `max_iter` : Number of iteration
-    `rho` : Balancing parameter of `elastic-net` 
+    `l1_ratio` : Balancing parameter of `elastic-net` 
     `alpha` : Regularization strength
     `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
     
@@ -132,13 +132,13 @@ class SoftmaxRegressor(Estimator, Supervised):
     def __init__(self,
                  learning_rate: float = 0.01,
                  max_iter: int = 100,
-                 rho: float = 0.5,
+                 l1_ratio: float = 0.5,
                  alpha: float = 0.01,
                  regularization: Literal['l1', 'l2', 'elastic-net'] = None,
                  verbose: bool = False) -> None:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
-        self.rho = rho
+        self.l1_ratio = l1_ratio
         self.alpha = alpha
         self.regularization = regularization
         self.verbose = verbose
@@ -183,7 +183,7 @@ class SoftmaxRegressor(Estimator, Supervised):
         elif self.regularization == 'elastic-net':
             l1_term = np.sign(self.theta)
             l2_term = 2 * self.theta
-            return (1 - self.rho) * l2_term + self.rho * l1_term
+            return (1 - self.l1_ratio) * l2_term + self.l1_ratio * l1_term
         elif self.regularization is None: return np.zeros_like(self.theta)
         else: raise UnsupportedParameterError(self.regularization)
     
@@ -209,12 +209,12 @@ class SoftmaxRegressor(Estimator, Supervised):
     def set_params(self,
                    learning_rate: float = None,
                    max_iter: int = None,
-                   rho: float = None,
+                   l1_ratio: float = None,
                    alpha: float = None,
                    regularization: Literal = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
-        if rho is not None: self.rho = float(rho)
+        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
         if alpha is not None: self.alpha = float(alpha)
         if regularization is not None: self.regularization = str(regularization)
 

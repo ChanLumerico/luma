@@ -49,8 +49,7 @@ from luma.preprocessing.encoder import LabelBinarizer
 from luma.preprocessing.imputer import SimpleImputer, KNNImputer, HotDeckImputer
 from luma.preprocessing.outlier import LocalOutlierFactor
 
-from luma.reduction.linear import PCA, LDA, TruncatedSVD, FactorAnalysis
-from luma.reduction.nonlinear import KernelPCA
+from luma.reduction.linear import PCA, KernelPCA, LDA, TruncatedSVD, FactorAnalysis
 from luma.reduction.manifold import TSNE, SammonMapping, LaplacianEigenmap
 from luma.reduction.manifold import MDS, MetricMDS, LandmarkMDS
 from luma.reduction.manifold import LLE, ModifiedLLE, HessianLLE, LTSA
@@ -164,9 +163,7 @@ if __name__ == '__main__':
     LocalOutlierFactor
     
     # ----------------- [ luma.reduction ] ---------------------
-    PCA, LDA, TruncatedSVD, FactorAnalysis
-    
-    KernelPCA
+    PCA, KernelPCA, LDA, TruncatedSVD, FactorAnalysis
     
     TSNE, SammonMapping, LaplacianEigenmap,
     MDS, MetricMDS, LandmarkMDS,

@@ -135,7 +135,7 @@ class ElasticNetRegressor(Estimator, Supervised):
     Parameters
     ----------
     `alpha` : Regularization strength
-    `rho` : Balancing parameter between `l1` and `l2`
+    `l1_ratio` : Balancing parameter between `l1` and `l2`
     `max_iter` : Number of iteration
     `learning_rate` : Step size of the gradient descent update
     
@@ -143,12 +143,12 @@ class ElasticNetRegressor(Estimator, Supervised):
     
     def __init__(self, 
                  alpha: float = 1.0, 
-                 rho: float = 0.5, 
+                 l1_ratio: float = 0.5, 
                  max_iter: int = 100, 
                  learning_rate: float = 0.01,
                  verbose: bool = False) -> None:
         self.alpha = alpha
-        self.rho = rho
+        self.l1_ratio = l1_ratio
         self.max_iter = max_iter
         self.learning_rate = learning_rate
         self.verbose = verbose
@@ -166,10 +166,10 @@ class ElasticNetRegressor(Estimator, Supervised):
             y_pred = X.dot(self.coef_)
             gradient = -(1 / N) * X.T.dot(y - y_pred)
             lefthand = self.coef_ - self.learning_rate * gradient
-            righthand = self.alpha * self.rho
+            righthand = self.alpha * self.l1_ratio
             
             self.coef_ = self._soft_threshold(lefthand, righthand)
-            self.coef_ /= 1 + self.alpha * (1 - self.rho)
+            self.coef_ /= 1 + self.alpha * (1 - self.l1_ratio)
             
             if self.verbose and i % 10 == 0: 
                 print(f'[ElasticReg] iteration: {i}/{self.max_iter}')
@@ -189,11 +189,11 @@ class ElasticNetRegressor(Estimator, Supervised):
     
     def set_params(self,
                    alpha: float = None,
-                   rho: float = None,
+                   l1_ratio: float = None,
                    max_iter: int = None,
                    learning_rate: float = None) -> None:
         if alpha is not None: self.alpha = float(alpha)
-        if rho is not None: self.rho = float(rho)
+        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
         if max_iter is not None: self.max_iter = int(max_iter)
         if learning_rate is not None: self.learning_rate = float(learning_rate)
 

@@ -329,7 +329,7 @@ class ResidualPlot(Visualizer):
                  estimator: Estimator,
                  X: Matrix,
                  y: Vector,
-                 alpha: float = 0.7,
+                 alpha: float = 0.8,
                  cmap: ListedColormap = 'RdYlBu') -> None:
         self.estimator = estimator
         self.X = X

@@ -1,4 +1,4 @@
-from typing import Any, Callable, Tuple
+from typing import Any, Callable
 import numpy as np
 
 from luma.interface.super import Estimator, Transformer

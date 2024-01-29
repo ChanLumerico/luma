@@ -33,7 +33,7 @@ class PerceptronClassifier(Estimator, Supervised):
     `max_iter` : Maximum iteration
     `regularization` : Regularizing methods (e.g. `l1`, `l2`, `elastic-net`)
     `alpha` : Regularization strength
-    `rho` : Ratio of `l1` (Only use when `elastic-net` regularization)
+    `l1_ratio` : Ratio of `l1` (Only use when `elastic-net` regularization)
     `random_state` : Seed for random shuffling during SGD
     
     """    
@@ -43,14 +43,14 @@ class PerceptronClassifier(Estimator, Supervised):
                  max_iter: int = 1000,
                  regularization: Literal['l1', 'l2', 'elastic-net'] = None,
                  alpha: float = 0.0001,
-                 rho: float = 0.5,
+                 l1_ratio: float = 0.5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.regularization = regularization
         self.alpha = alpha
-        self.rho = rho
+        self.l1_ratio = l1_ratio
         self.random_state = random_state
         self.verbose = verbose
         self.weights_ = None
@@ -100,8 +100,8 @@ class PerceptronClassifier(Estimator, Supervised):
         elif self.regularization == 'l2':
             self.weights_ -= self.alpha * self.weights_
         elif self.regularization == 'elastic-net':
-            l1_term = self.rho * np.sign(self.weights_)
-            l2_term = (1 - self.rho) * self.weights_
+            l1_term = self.l1_ratio * np.sign(self.weights_)
+            l2_term = (1 - self.l1_ratio) * self.weights_
             self.weights_ -= self.alpha * (l1_term + l2_term)
         else:
             UnsupportedParameterError(self.regularization)
@@ -124,13 +124,13 @@ class PerceptronClassifier(Estimator, Supervised):
                    max_iter: int = None,
                    regularization: str = None,
                    alpha: float = None,
-                   rho: float = None,
+                   l1_ratio: float = None,
                    random_state: int = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
         if regularization is not None: self.regularization = regularization
         if alpha is not None: self.alpha = float(alpha)
-        if rho is not None: self.rho = float(rho)
+        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
         if random_state is not None: self.random_state = int(random_state)
 
 
@@ -157,14 +157,14 @@ class PerceptronRegressor(Estimator, Supervised):
                  max_iter: int = 1000,
                  regularization: Literal['l1', 'l2', 'elastic-net'] = None,
                  alpha: float = 0.0001,
-                 rho: float = 0.5,
+                 l1_ratio: float = 0.5,
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.learning_rate = learning_rate
         self.max_iter = max_iter
         self.regularization = regularization
         self.alpha = alpha
-        self.rho = rho
+        self.l1_ratio = l1_ratio
         self.random_state = random_state
         self.verbose = verbose
         self.weights_ = None
@@ -206,8 +206,8 @@ class PerceptronRegressor(Estimator, Supervised):
         elif self.regularization == 'l2':
             self.weights_ -= self.alpha * self.weights_
         elif self.regularization == 'elastic-net':
-            l1_term = self.rho * np.sign(self.weights_)
-            l2_term = (1 - self.rho) * self.weights_
+            l1_term = self.l1_ratio * np.sign(self.weights_)
+            l2_term = (1 - self.l1_ratio) * self.weights_
             self.weights_ -= self.alpha * (l1_term + l2_term)
         else:
             UnsupportedParameterError(self.regularization)
@@ -227,12 +227,12 @@ class PerceptronRegressor(Estimator, Supervised):
                    max_iter: int = None,
                    regularization: str = None,
                    alpha: float = None,
-                   rho: float = None,
+                   l1_ratio: float = None,
                    random_state: int = None) -> None:
         if learning_rate is not None: self.learning_rate = float(learning_rate)
         if max_iter is not None: self.max_iter = int(max_iter)
         if regularization is not None: self.regularization = regularization
         if alpha is not None: self.alpha = float(alpha)
-        if rho is not None: self.rho = float(rho)
+        if l1_ratio is not None: self.l1_ratio = float(l1_ratio)
         if random_state is not None: self.random_state = int(random_state)
 
