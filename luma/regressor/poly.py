@@ -50,7 +50,7 @@ class PolynomialRegressor(Estimator):
         reg_matrix = self._regularization_matrix(X_poly.shape[1])
         augmented_matrix = np.vstack([X_poly, np.sqrt(self.alpha) * reg_matrix])
         augmented_target = np.hstack([y, np.zeros(X_poly.shape[1])])
-        self.coefficients = np.linalg.lstsq(augmented_matrix, augmented_target, rcond=None)[0]
+        self.coef_ = np.linalg.lstsq(augmented_matrix, augmented_target, rcond=None)[0]
         self._fitted = True
         return self
 
@@ -69,7 +69,7 @@ class PolynomialRegressor(Estimator):
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         X_poly = self._generate_polynomial_features(X)
-        return np.dot(X_poly, self.coefficients)
+        return np.dot(X_poly, self.coef_)
 
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:

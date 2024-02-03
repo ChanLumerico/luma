@@ -58,7 +58,7 @@ from luma.reduction.manifold import Isomap, ConformalIsomap
 from luma.reduction.select import SBS, SFS, RFE
 
 from luma.regressor.linear import LinearRegressor, LassoRegressor, RidgeRegressor
-from luma.regressor.linear import ElasticNetRegressor, KernelRidgeRegressor
+from luma.regressor.linear import ElasticNetRegressor, KernelRidgeRegressor, BayesianRidgeRegressor
 from luma.regressor.poly import PolynomialRegressor
 from luma.regressor.general import PoissonRegressor
 from luma.regressor.general import NegativeBinomialRegressor
@@ -177,7 +177,8 @@ if __name__ == '__main__':
     
     # ----------------- [ luma.regressor ] ---------------------
     LinearRegressor, RidgeRegressor, LassoRegressor, 
-    ElasticNetRegressor, KernelRidgeRegressor
+    ElasticNetRegressor, KernelRidgeRegressor,
+    BayesianRidgeRegressor
     
     PolynomialRegressor
     
