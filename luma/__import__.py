@@ -10,7 +10,7 @@ from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil
 from luma.interface.util import Clone
 
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
-from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
+from luma.classifier.bayes import GaussianNaiveBayes, BernoulliNaiveBayes, QDA
 from luma.classifier.svm import SVC, KernelSVC
 from luma.classifier.tree import DecisionTreeClassifier
 from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier, WeightedKNNClassifier
@@ -101,7 +101,7 @@ if __name__ == '__main__':
     # ----------------- [ luma.classifier ] --------------------
     LogisticRegressor, SoftmaxRegressor
     
-    GaussianNaiveBayes, BernoulliNaiveBayes
+    GaussianNaiveBayes, BernoulliNaiveBayes, QDA
     
     SVC, KernelSVC
     

@@ -1,7 +1,7 @@
 from typing import Any
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Scalar, Vector
 from luma.interface.exception import NotFittedError
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.classification import Accuracy
@@ -9,7 +9,8 @@ from luma.metric.classification import Accuracy
 
 __all__ = (
     'GaussianNaiveBayes', 
-    'BernoulliNaiveBayes'
+    'BernoulliNaiveBayes',
+    'QDA'
 )
 
 
@@ -143,6 +144,68 @@ class BernoulliNaiveBayes(Estimator, Supervised):
             exp_class_probs = np.exp(class_probs - np.max(class_probs))
             probas.append(exp_class_probs / exp_class_probs.sum())
         return np.array(probas)
+    
+    def score(self, X: Matrix, y: Matrix, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.score(y_true=y, y_pred=X_pred)
+
+
+class QDA(Estimator, Supervised):
+    
+    """
+    Quadratic Discriminant Analysis (QDA) is a classification technique 
+    that assumes data from each class follows a Gaussian distribution 
+    with class-specific covariance matrices. It calculates the probability 
+    of a given sample belonging to each class based on a quadratic decision 
+    boundary determined by these distributions. Unlike Linear Discriminant 
+    Analysis (LDA), QDA allows for the modeling of nonlinear relationships 
+    due to the class-specific covariances. It is well-suited for datasets 
+    where classes exhibit different levels of variance.
+    """
+    
+    def __init__(self) -> None:
+        self.means = None
+        self.covs = None
+        self.priors = None
+        self.classes = None
+        self._fitted = False
+    
+    def fit(self, X: Matrix, y: Vector) -> 'QDA':
+        m, n = X.shape
+        self.classes = np.unique(y)
+        n_classes = len(self.classes)
+        
+        self.means = np.zeros((n_classes, n))
+        self.covs = np.zeros((n_classes, n, n))
+        self.priors = np.zeros(n_classes)
+        
+        for i, cl in enumerate(self.classes):
+            X_cls = X[y == cl]
+            self.means[i] = np.mean(X_cls, axis=0)
+            self.covs[i] = np.cov(X_cls, rowvar=False)
+            self.priors[i] = X_cls.shape[0] / m
+        
+        self._fitted = True
+        return self
+
+    def predict(self, X: Matrix) -> Vector:
+        y_pred = [self._predict_sample(x) for x in X]
+        return Vector(y_pred)
+    
+    def _predict_sample(self, x: Vector) -> Scalar:
+        discs = np.zeros(len(self.classes))
+        for i in range(len(self.classes)):
+            diff = x - self.means[i]
+            cov_inv = np.linalg.inv(self.covs[i])
+            cov_det = np.linalg.det(self.covs[i])
+            
+            disc = np.log(cov_det) + diff.T.dot(cov_inv).dot(diff)
+            disc *= -0.5
+            disc += np.log(self.priors[i])
+            discs[i] = disc
+        
+        return self.classes[np.argmax(discs)]
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
