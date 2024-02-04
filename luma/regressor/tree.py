@@ -142,7 +142,7 @@ class DecisionTreeRegressor(Estimator, Supervised):
 
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        return np.array([self._traverse_tree(x, self.root) for x in X])
+        return Matrix([self._traverse_tree(x, self.root) for x in X])
 
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:

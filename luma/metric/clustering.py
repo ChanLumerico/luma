@@ -72,7 +72,7 @@ class SilhouetteCoefficient(Evaluator, Visualizer):
             score = (b - a) / max(a, b) if max(a, b) != 0 else 0
             silhouette_values.append(score)
         
-        return np.array(silhouette_values)
+        return Matrix(silhouette_values)
 
     def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
         if ax is None: _, ax = plt.subplots()

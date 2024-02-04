@@ -200,9 +200,9 @@ class DBUtil:
     @property
     def cluster_centroids(self) -> Matrix:
         unique_labels = np.unique(self.labels)
-        centroids = np.array([self.data[self.labels == label].mean(axis=0) 
-                              for label in unique_labels])
-        return centroids
+        centroids = [self.data[self.labels == label].mean(axis=0) 
+                     for label in unique_labels]
+        return Matrix(centroids)
 
     @property
     def within_cluster_scatter(self) -> Matrix:

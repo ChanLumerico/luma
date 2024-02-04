@@ -56,7 +56,7 @@ class KNNRegressor(Estimator, Supervised):
             average_value = np.mean(nearest_neighbor_values)
             predictions.append(average_value)
 
-        return np.array(predictions)
+        return Matrix(predictions)
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:
@@ -118,7 +118,7 @@ class AdaptiveKNNRegressor(Estimator, Supervised):
             average_value = np.mean(self._y[nearest_indices])
             predictions.append(average_value)
 
-        return np.array(predictions)
+        return Matrix(predictions)
 
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = MeanSquaredError) -> float:

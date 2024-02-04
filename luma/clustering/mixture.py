@@ -74,7 +74,7 @@ class GaussianMixture(Estimator, Unsupervised):
         random_indices = np.random.permutation(m)[:self.n_clusters]
         
         self.means = X[random_indices]
-        self.covs = np.array([np.cov(X.T) for _ in range(self.n_clusters)])
+        self.covs = Matrix([np.cov(X.T) for _ in range(self.n_clusters)])
         self.weights = np.full(self.n_clusters, 1 / self.n_clusters)
     
     def _E_step(self, X: Matrix) -> Matrix:

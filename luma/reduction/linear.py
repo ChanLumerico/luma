@@ -293,7 +293,7 @@ class FactorAnalysis(Transformer, Unsupervised):
         variance = X.var(axis=0)
         psi = np.ones(n)
         if self.noise_variance:
-            psi = np.array(self.noise_variance)
+            psi = Matrix(self.noise_variance)
         
         logLikelihood = []
         prev_logL = -np.inf

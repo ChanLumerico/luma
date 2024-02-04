@@ -64,7 +64,7 @@ class DecisionRegion(Visualizer):
         xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, delta_1), 
                                np.arange(x2_min, x2_max, delta_2))
         
-        Z = self.estimator.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
+        Z = self.estimator.predict(Matrix([xx1.ravel(), xx2.ravel()]).T)
         Z = Z.reshape(xx1.shape)
         
         if ax is None: _, ax = plt.subplots()
@@ -200,7 +200,7 @@ class ROCCurve(Visualizer):
             tpr.append(Recall.score(y_true, y_pred))
             fpr.append(1 - Specificity.score(y_true, y_pred))
         
-        return np.array(fpr), np.array(tpr)
+        return Vector(fpr), Vector(tpr)
     
     def _auc(self, fpr: Vector, tpr: Vector) -> float:
         auc = 0
@@ -267,7 +267,7 @@ class PrecisionRecallCurve(Visualizer):
             pre.append(Precision.score(y_true, y_pred))
             rec.append(Recall.score(y_true, y_pred))
 
-        return np.array(pre), np.array(rec)
+        return Vector(pre), Vector(rec)
     
     def _average_precision(self, pre: Vector, rec: Vector) -> float:
         ap = 0

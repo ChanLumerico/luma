@@ -67,7 +67,7 @@ class LabelEncoder(Transformer, Transformer.Target):
         if not self._fitted: raise NotFittedError(self)
         class_to_index = {k: v for v, k in enumerate(self.classes)}
         
-        X_transformed = np.array([class_to_index.get(y_, -1) for y_ in y])
+        X_transformed = Matrix([class_to_index.get(y_, -1) for y_ in y])
         if -1 in X_transformed:
             raise ValueError("Unknown label found in input data.")
 
@@ -77,7 +77,7 @@ class LabelEncoder(Transformer, Transformer.Target):
         if not self._fitted: raise NotFittedError(self)
         index_to_class = {v: k for k, v in enumerate(self.classes)}
         
-        X_inversed = np.array([index_to_class.get(y_, None) for y_ in y])
+        X_inversed = Matrix([index_to_class.get(y_, None) for y_ in y])
         if None in X_inversed:
             raise ValueError("Unknown index found in input data.")
 

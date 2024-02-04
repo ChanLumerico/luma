@@ -137,7 +137,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
     
     def _entropy(self, y: Matrix, w: Vector) -> float:
         unique_labels, _ = np.unique(y, return_counts=True)
-        ps = np.array([np.sum(w[y == label]) for label in unique_labels]) / np.sum(w)
+        ps = Matrix([np.sum(w[y == label]) for label in unique_labels]) / np.sum(w)
         
         return -np.sum([p * np.log2(p) for p in ps if p])
     
@@ -155,7 +155,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
 
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        return np.array([self._traverse_tree(x, self.root) for x in X])
+        return Matrix([self._traverse_tree(x, self.root) for x in X])
 
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:

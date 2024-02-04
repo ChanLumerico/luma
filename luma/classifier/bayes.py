@@ -68,7 +68,7 @@ class GaussianNaiveBayes(Estimator, Supervised):
 
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        return np.array([self._classify_sample(x) for x in X])
+        return Matrix([self._classify_sample(x) for x in X])
 
     def predict_proba(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
@@ -80,9 +80,9 @@ class GaussianNaiveBayes(Estimator, Supervised):
                 likelihood = self._calculate_likelihood(x, *self.parameters[i])
                 posterior = prior * likelihood
                 posteriors.append(posterior)
-            posteriors = np.array(posteriors)
+            posteriors = Vector(posteriors)
             probabilities.append(posteriors / np.sum(posteriors))          
-        return np.array(probabilities)
+        return Matrix(probabilities)
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
@@ -128,7 +128,8 @@ class BernoulliNaiveBayes(Estimator, Supervised):
 
             predicted_class = self.classes[np.argmax(class_scores)]
             predictions.append(predicted_class)
-        return np.array(predictions)
+        
+        return Matrix(predictions)
 
     def predict_proba(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
@@ -143,7 +144,7 @@ class BernoulliNaiveBayes(Estimator, Supervised):
 
             exp_class_probs = np.exp(class_probs - np.max(class_probs))
             probas.append(exp_class_probs / exp_class_probs.sum())
-        return np.array(probas)
+        return Matrix(probas)
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:

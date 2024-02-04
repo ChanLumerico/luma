@@ -55,7 +55,7 @@ class KNNClassifier(Estimator, Supervised):
             most_common_label = np.bincount(nearest_neighbor_labels).argmax()
             predictions.append(most_common_label)
 
-        return np.array(predictions)
+        return Matrix(predictions)
 
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
@@ -123,7 +123,7 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
             most_common = np.argmax(votes)
             predictions.append(most_common)
 
-        return np.array(predictions)
+        return Matrix(predictions)
 
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:

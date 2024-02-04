@@ -102,7 +102,7 @@ class AdaBoostClassifier(Estimator, Estimator.Meta, Supervised):
     def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise NotFittedError(self)
         m, _ = X.shape
-        clf_preds = np.array([clf.predict(X) for clf in self.estimators_])
+        clf_preds = Matrix([clf.predict(X) for clf in self.estimators_])
         weighted_preds = np.zeros((m, len(self.classes_)))
         
         for i, clf_pred in enumerate(clf_preds):

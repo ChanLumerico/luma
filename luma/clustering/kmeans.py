@@ -52,17 +52,17 @@ class KMeansClustering(Estimator, Unsupervised):
             labels = np.argmin(distances, axis=1)
             
             new_centroids = [X[labels == i].mean(axis=0) for i in range(self.n_clusters)]
-            if np.all(np.array(new_centroids) == self.centroids): 
+            if np.all(Matrix(new_centroids) == self.centroids): 
                 if self.verbose: print(f'[K-Means] Ealry convergence at itertaion {i}')
                 break
             
             if self.verbose and i % 10 == 0: 
-                diff_norm = np.linalg.norm(np.array(new_centroids) - np.array(self.centroids))
+                diff_norm = np.linalg.norm(Matrix(new_centroids) - Matrix(self.centroids))
                 print(f'[K-Means] iteration: {i}/{self.max_iter}', end='')
                 print(f' - delta-centroid norm: {diff_norm}')
             self.centroids = new_centroids
             
-        self.centroids = np.array(self.centroids)
+        self.centroids = Matrix(self.centroids)
         self._fitted = True
         return self
     
@@ -111,7 +111,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
         self.centroids = [X[np.random.choice(X.shape[0])]]
         for _ in range(1, self.n_clusters):
             distances = [min([np.linalg.norm(x - c) ** 2 for c in self.centroids]) for x in X]
-            distances = np.array(distances)
+            distances = Matrix(distances)
             
             probs = distances / distances.sum()
             next_centroid = np.random.choice(X.shape[0], p=probs)
@@ -133,7 +133,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
             if self.verbose and i % 10 == 0: 
                 print(f'[K-Means++] iteration: {i}/{self.max_iter}', end='')
         
-        self.centroids = np.array(self.centroids)
+        self.centroids = Matrix(self.centroids)
         self._fitted = True
         return self
     
@@ -187,14 +187,14 @@ class KMediansClustering(Estimator, Unsupervised):
             labels = np.argmin(distances.sum(axis=2), axis=1)
 
             new_medians = [np.median(X[labels == i], axis=0) for i in range(self.n_clusters)]
-            new_medians = np.array(new_medians)
+            new_medians = Matrix(new_medians)
             
-            if np.all(np.array(new_medians) == self.medians): 
+            if np.all(Matrix(new_medians) == self.medians): 
                 if self.verbose: print(f'[K-Medians] Ealry convergence at itertaion {i}')
                 break
             
             if self.verbose and i % 10 == 0: 
-                diff_norm = np.linalg.norm(np.array(new_medians) - np.array(self.medians))
+                diff_norm = np.linalg.norm(Matrix(new_medians) - Matrix(self.medians))
                 print(f'[K-Medians] iteration: {i}/{self.max_iter}', end='')
                 print(f' - delta-centroid norm: {diff_norm}')
             
@@ -259,8 +259,8 @@ class KMedoidsClustering(Estimator, Unsupervised):
         
         for i in range(self.max_iter):
             labels = self._closest_medoid(X, self.medoids)
-            new_medoids = np.array([X[labels == n_clusters].mean(axis=0) 
-                                    for n_clusters in range(self.n_clusters)])
+            new_medoids = Matrix([X[labels == n_clusters].mean(axis=0) 
+                                  for n_clusters in range(self.n_clusters)])
 
             if self.verbose and i % 10 == 0 and i:
                 print(f'[K-Medoids] iteration: {i}/{self.max_iter}', end='')

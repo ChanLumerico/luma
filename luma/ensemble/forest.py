@@ -1,4 +1,4 @@
-from typing import *
+from typing import Literal
 from scipy.stats import mode
 import numpy as np
 
@@ -96,7 +96,7 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
 
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        preds = np.array([tree.predict(X) for tree in self.trees])
+        preds = Matrix([tree.predict(X) for tree in self.trees])
         majority, _ = mode(preds, axis=0)
         
         return majority.flatten()
@@ -186,7 +186,7 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
 
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        preds = np.array([tree.predict(X) for tree in self.trees])
+        preds = Matrix([tree.predict(X) for tree in self.trees])
         average_predictions = np.mean(preds, axis=0)
         
         return average_predictions

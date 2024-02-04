@@ -190,7 +190,7 @@ class DivisiveClustering(Estimator, Unsupervised):
     @property
     def labels(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        return np.array(self.clusters[-1])
+        return Matrix(self.clusters[-1])
     
     def predict(self) -> None:
         raise Warning(f"{type(self).__name__} does not support prediction!")

@@ -76,7 +76,7 @@ class DBSCAN(Estimator, Unsupervised):
             if self.metric_func.compute(X[idx], X[i]) < self.epsilon:
                 neighbors.append(i)
 
-        return np.array(neighbors)
+        return Matrix(neighbors)
 
     def _expand_cluster(self, X: Matrix, neighbors: Matrix, clusters: Matrix, 
                         idx: int, current: int) -> None:
@@ -100,7 +100,7 @@ class DBSCAN(Estimator, Unsupervised):
     @property
     def labels(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        return np.array(self._cluster_labels)
+        return Matrix(self._cluster_labels)
     
     def predict(self) -> None:
         raise Warning(f"{type(self).__name__} does not support prediction!")
@@ -369,7 +369,7 @@ class DENCLUE(Estimator, Unsupervised):
                     path.append(vertex)
                     stack.extend(set(adj_list[vertex]) - set(path))
             
-            return np.array(path)
+            return Matrix(path)
 
         clusters = []
         visited = [False] * self._m
@@ -429,7 +429,7 @@ class MeanShiftClustering(Estimator, Unsupervised):
                 points = X[np.linalg.norm(X - centers[i], axis=1) < self.bandwidth]
                 new_center = points.mean(axis=0)
                 new_centers.append(new_center)
-            new_centers = np.array(new_centers)
+            new_centers = Matrix(new_centers)
             
             diff = np.linalg.norm(new_centers - centers)
             if self.verbose and iter % 10 == 0 and iter:

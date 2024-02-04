@@ -118,7 +118,7 @@ class TSNE(Transformer, Unsupervised):
         
         for i in range(N):
             func = lambda sig: self._compute_perplexity(
-                self._P_conditional(distances[i:i + 1, :], np.array([sig])))
+                self._P_conditional(distances[i:i + 1, :], Matrix([sig])))
             
             opt_sigmas[i] = self._binary_search(func)
             if self.verbose and i % 50 == 0: 
@@ -570,7 +570,7 @@ class HessianLLE(Transformer, Unsupervised):
                 j += self.n_components - k
             
             Q, R = np.linalg.qr(Yi)
-            w = np.array(Q[:, self.n_components + 1:])
+            w = Matrix(Q[:, self.n_components + 1:])
             S = w.sum(axis=0)
             S[np.where(np.abs(S) < self.regularization)] = 1.0
             w /= S
@@ -595,7 +595,7 @@ class HessianLLE(Transformer, Unsupervised):
     
     def transform(self) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        return np.array(self.Y * self.R).T
+        return Matrix(self.Y * self.R).T
     
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
@@ -609,7 +609,7 @@ class HessianLLE(Transformer, Unsupervised):
             _, neighbors = kd_tree.query(X[i], k=self.n_neighbors + 1, p=2)
             neighbors = neighbors.tolist()
             neighbors.remove(i)
-            index_mat[i] = np.array([neighbors])
+            index_mat[i] = Matrix([neighbors])
         
         return index_mat
 

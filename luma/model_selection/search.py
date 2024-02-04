@@ -133,7 +133,7 @@ class GridSearchCV(Optimizer):
     
     def _get_param_combinations(self) -> List[Dict[str, Any]]:
         keys, values = zip(*self.param_grid.items())
-        param_combinations = np.array(np.meshgrid(*values)).T.reshape(-1, len(keys))
+        param_combinations = Matrix(np.meshgrid(*values)).T.reshape(-1, len(keys))
         param_combinations = [dict(zip(keys, v)) for v in param_combinations]
         return param_combinations
     
