@@ -2,10 +2,19 @@
 <html>
     <body>
         <a href="https://lumerico284.notion.site/lumerico284/LUMA-76330376b0e64cc1b95874c469aeb327">
-            <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/luma.png" alt="logo" width="75" height="75">
+            <img src="https://github.com/ChanLumerico/luma/raw/main/others/luma.png" alt="logo" width="75" height="75">
         </a>
         <h1 class="main-title">LUMA</h1>
         <p class="subtitle">A Comprehensive Python Module for Machine Learning and Data Science</p>
+        <a href="https://pypi.org/project/luma-ml/">
+            <img alt="pypi-version" src="https://img.shields.io/pypi/v/luma-ml?logo=python&logoColor=white&color=blue">
+        </a>
+        <a href="https://pypi.org/project/luma-ml/">
+            <img alt="pypi-downloads" src="https://img.shields.io/pypi/dm/luma-ml">
+        </a>
+        <a href="https://github.com/ChanLumerico/luma">
+            <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/ChanLumerico/luma?color=yellow">
+        </a>
         <div class="module">
             <h3 class="module-header">Submodules</h3>
             <table>
@@ -77,7 +86,7 @@
             <table border="0">
                 <tr>
                     <td>
-                        <img src="https://github.com/ChanLumerico/LUMA/raw/main/others/structure.png" alt="structure">
+                        <img src="https://github.com/ChanLumerico/luma/raw/main/others/structure.png" alt="structure">
                     </td>
                 </tr>
             </table>
