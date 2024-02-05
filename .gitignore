@@ -1,7 +1,6 @@
 .DS_Store
 *.pyc
 *.luma
-setup.py
 setup.sh
 token.key
 build/
