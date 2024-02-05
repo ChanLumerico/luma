@@ -9,8 +9,9 @@ from luma.interface.util import Matrix, Vector, Scalar, TreeNode, NearestNeighbo
 from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil
 from luma.interface.util import Clone
 
+from luma.classifier.discriminant import LDAClassifier, QDAClassifier
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
-from luma.classifier.bayes import GaussianNaiveBayes, BernoulliNaiveBayes, QDA
+from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
 from luma.classifier.svm import SVC, KernelSVC
 from luma.classifier.tree import DecisionTreeClassifier
 from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier, WeightedKNNClassifier
@@ -99,9 +100,11 @@ if __name__ == '__main__':
     Clone
     
     # ----------------- [ luma.classifier ] --------------------
+    LDAClassifier, QDAClassifier
+    
     LogisticRegressor, SoftmaxRegressor
     
-    GaussianNaiveBayes, BernoulliNaiveBayes, QDA
+    GaussianNaiveBayes, BernoulliNaiveBayes
     
     SVC, KernelSVC
     

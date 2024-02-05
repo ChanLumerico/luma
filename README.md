@@ -6,15 +6,9 @@
         </a>
         <h1 class="main-title">LUMA</h1>
         <p class="subtitle">A Comprehensive Python Module for Machine Learning and Data Science</p>
-        <a href="https://pypi.org/project/luma-ml/">
-            <img alt="pypi-version" src="https://img.shields.io/pypi/v/luma-ml?logo=python&logoColor=white&color=blue">
-        </a>
-        <a href="https://pypi.org/project/luma-ml/">
-            <img alt="pypi-downloads" src="https://img.shields.io/pypi/dm/luma-ml">
-        </a>
-        <a href="https://github.com/ChanLumerico/luma">
-            <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/ChanLumerico/luma?color=yellow">
-        </a>
+        <img alt="pypi-version" src="https://img.shields.io/pypi/v/luma-ml?logo=python&logoColor=white&color=blue">
+        <img alt="pypi-downloads" src="https://img.shields.io/pypi/dm/luma-ml">
+        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/ChanLumerico/luma?color=yellow">
         <div class="module">
             <h3 class="module-header">Submodules</h3>
             <table>

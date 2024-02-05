@@ -164,6 +164,11 @@ class LDA(Transformer, Supervised):
     ----------
     `n_components` : Number of linear discriminants
     
+    Notes
+    -----
+    * To use LDA for classification, refer to 
+        `luma.classifier.discriminant.LDAClassifier`
+    
     """
     
     def __init__(self, n_components: int = None) -> None:
