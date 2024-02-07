@@ -110,7 +110,7 @@ class GridSearchCV(Optimizer):
             if self.verbose:
                 params_f = {k: f'{v:.4f}' if isinstance(v, float) else v 
                             for k, v in params.items()}
-                print(f'[GridSearchCV] candidate {i + 1}/{max_iter} {params_f}',
+                print(f'[GridSearchCV] candidate {i}/{max_iter} {params_f}',
                       f'- score:{mean_score:.3f}')
             
             if best_score is None or mean_score > best_score:

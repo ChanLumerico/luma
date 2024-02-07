@@ -2,12 +2,14 @@ import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.util import Matrix, Scalar, Vector
+from luma.interface.exception import NotFittedError
 from luma.metric.classification import Accuracy
 
 
 __all__ = (
     'LDAClassifier',
-    'QDAClassifier'
+    'QDAClassifier',
+    'RDAClassifier'
 )
 
 
@@ -60,6 +62,7 @@ class LDAClassifier(Estimator, Supervised):
         return self
     
     def predict(self, X: Matrix) -> Vector:
+        if not self._fitted: raise not NotFittedError(self)
         scores = np.dot(X, self.coef_.T) + self.intercept_
         return np.argmax(scores, axis=1)
     
@@ -108,9 +111,99 @@ class QDAClassifier(Estimator, Supervised):
         return self
 
     def predict(self, X: Matrix) -> Vector:
+        if not self._fitted: raise not NotFittedError(self)
         y_pred = [self._predict_sample(x) for x in X]
         return Vector(y_pred)
     
+    def _predict_sample(self, x: Vector) -> Scalar:
+        discs = np.zeros(len(self.classes))
+        for i in range(len(self.classes)):
+            diff = x - self.means[i]
+            cov_inv = np.linalg.inv(self.covs[i])
+            cov_det = np.linalg.det(self.covs[i])
+            
+            disc = np.log(cov_det) + diff.T.dot(cov_inv).dot(diff)
+            disc *= -0.5
+            disc += np.log(self.priors[i])
+            discs[i] = disc
+        
+        return self.classes[np.argmax(discs)]
+    
+    def score(self, X: Matrix, y: Matrix, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.score(y_true=y, y_pred=X_pred)
+
+
+class RDAClassifier(Estimator, Supervised):
+    
+    """
+    Regularized Discriminant Analysis (RDA) combines the features of 
+    Linear Discriminant Analysis (LDA) and Quadratic Discriminant Analysis 
+    (QDA) by introducing regularization to the covariance matrices. It 
+    adjusts the covariance estimates with a blend between the pooled 
+    covariance (LDA approach) and class-specific covariances (QDA approach), 
+    enhancing classification performance. RDA is particularly effective in 
+    scenarios with high-dimensional data or when the number of samples is 
+    limited. The method employs regularization parameters to balance bias 
+    and variance, aiming to optimize model accuracy.
+    
+    Parameters
+    ----------
+    `alpha` : Balancing parameter between the class-specific covariance matrices
+    (0 for LDA-like, 1 for QDA-like approach)
+    `gamma` : Shrinkage applied to the covariance matrices
+    (0 for large shrinkage, i.e. max regularization)
+    
+    """
+    
+    def __init__(self, 
+                 alpha: float = 0.5,
+                 gamma: float = 0.5) -> None:
+        self.alpha = alpha
+        self.gamma = gamma
+        self.classes = None
+        self.means = None
+        self.priors = None
+        self.covs = None
+        self._fitted = False
+    
+    def fit(self, X: Matrix, y: Vector) -> 'RDAClassifier':
+        m, n = X.shape
+        self.classes = np.unique(y)
+        n_classes = len(self.classes)
+        
+        self.means = np.zeros((n_classes, n))
+        self.pooled_cov = np.zeros((n, n))
+        self.covs = np.zeros((n_classes, n, n))
+        self.priors = np.zeros(n_classes)
+        
+        for i, cl in enumerate(self.classes):
+            X_cls = X[y == cl]
+            self.means[i] = np.mean(X_cls, axis=0)
+            self.priors[i] = X_cls.shape[0] / m
+            class_cov = np.cov(X_cls, rowvar=False)
+            self.pooled_cov += class_cov * (X_cls.shape[0] - 1)
+        
+        self.pooled_cov /= (m - n_classes)
+        
+        for i in range(n_classes):
+            X_cls = X[y == self.classes[i]]
+            class_cov = np.cov(X_cls, rowvar=False)
+            self.covs[i] = self.alpha * class_cov
+            self.covs[i] += (1 - self.alpha) *  self.pooled_cov
+            
+            self.covs[i] = self.gamma * self.covs[i]
+            self.covs[i] += (1 - self.gamma) * np.eye(n) * np.trace(self.covs[i])
+            self.covs[i] /= n
+        
+        self._fitted = True
+        return self
+    
+    def predict(self, X: Matrix) -> Vector:
+        if not self._fitted: raise not NotFittedError(self)
+        return Vector([self._predict_sample(x) for x in X])
+
     def _predict_sample(self, x: Vector) -> Scalar:
         discs = np.zeros(len(self.classes))
         for i in range(len(self.classes)):
