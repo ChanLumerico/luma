@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Any, Callable, Literal
 import numpy as np
 
 from luma.core.super import Estimator, Transformer
@@ -247,12 +247,18 @@ class KernelUtil:
     
     """
     
+    kernel_type = Literal['lin' ,'linear',
+                          'poly', 'polynoimal',
+                          'rbf', 'gaussian', 'Gaussian',
+                          'tanh', 'sigmoid',
+                          'lap', 'laplacian']
+    
     def __init__(self, 
                  kernel: str,
-                 alpha: float,
-                 gamma: float,
-                 coef: float,
-                 deg: int) -> None:
+                 alpha: float = 1.0,
+                 gamma: float = 1.0,
+                 coef: float = 0.0,
+                 deg: int = 2) -> None:
         self.kernel = kernel
         self.alpha = alpha
         self.gamma = gamma

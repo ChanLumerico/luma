@@ -1,8 +1,7 @@
-from typing import Literal
 import numpy as np
 
-from luma.interface.util import Matrix
-from luma.interface.exception import NotFittedError, UnsupportedParameterError
+from luma.interface.util import Matrix, KernelUtil
+from luma.interface.exception import NotFittedError
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.classification import Accuracy
 
@@ -130,7 +129,7 @@ class KernelSVC(Estimator, Supervised):
                  coef: float = 1.0,
                  learning_rate: float = 0.001,
                  max_iter: int = 1000,
-                 kernel: Literal['linear', 'poly', 'rbf', 'sigmoid'] = 'rbf',
+                 kernel: KernelUtil.kernel_type = 'rbf',
                  verbose: bool = False) -> None:
         self.C = C
         self.deg = deg
@@ -197,11 +196,14 @@ class KernelSVC(Estimator, Supervised):
         return np.tanh(2 * xi.dot(xj.T) + self.coef)
 
     def _set_kernel_func(self) -> None:
-        if self.kernel == 'linear': self._kernel_func = self._linear_kernel
-        elif self.kernel == 'poly': self._kernel_func = self._poly_kernel
-        elif self.kernel == 'rbf': self._kernel_func = self._rbf_kernel
-        elif self.kernel == 'sigmoid': self._kernel_func = self._sigmoid_kernel
-        else: raise UnsupportedParameterError(self.kernel)
+        if self.kernel in ('linear', 'lin'): 
+            self._kernel_func = self._linear_kernel
+        elif self.kernel in ('poly', 'polynomial'): 
+            self._kernel_func = self._poly_kernel
+        elif self.kernel in ('rbf', 'gaussian', 'Gaussian'): 
+            self._kernel_func = self._rbf_kernel
+        elif self.kernel in ('sigmoid', 'tanh'): 
+            self._kernel_func = self._sigmoid_kernel
 
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)

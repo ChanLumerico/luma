@@ -9,7 +9,7 @@ from luma.interface.util import Matrix, Vector, Scalar, TreeNode, NearestNeighbo
 from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil
 from luma.interface.util import Clone
 
-from luma.classifier.discriminant import LDAClassifier, QDAClassifier, RDAClassifier
+from luma.classifier.discriminant import LDAClassifier, QDAClassifier, RDAClassifier, KDAClassifier
 from luma.classifier.logistic import LogisticRegressor, SoftmaxRegressor
 from luma.classifier.naive_bayes import GaussianNaiveBayes, BernoulliNaiveBayes
 from luma.classifier.svm import SVC, KernelSVC
@@ -51,7 +51,8 @@ from luma.preprocessing.encoder import LabelBinarizer
 from luma.preprocessing.imputer import SimpleImputer, KNNImputer, HotDeckImputer
 from luma.preprocessing.outlier import LocalOutlierFactor
 
-from luma.reduction.linear import PCA, KernelPCA, LDA, TruncatedSVD, FactorAnalysis
+from luma.reduction.linear import PCA, KernelPCA, LDA, KDA
+from luma.reduction.linear import TruncatedSVD, FactorAnalysis
 from luma.reduction.manifold import TSNE, SammonMapping, LaplacianEigenmap
 from luma.reduction.manifold import MDS, MetricMDS, LandmarkMDS
 from luma.reduction.manifold import LLE, ModifiedLLE, HessianLLE, LTSA
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     Clone
     
     # ----------------- [ luma.classifier ] --------------------
-    LDAClassifier, QDAClassifier, RDAClassifier
+    LDAClassifier, QDAClassifier, RDAClassifier, KDAClassifier
     
     LogisticRegressor, SoftmaxRegressor
     
@@ -169,7 +170,7 @@ if __name__ == '__main__':
     LocalOutlierFactor
     
     # ----------------- [ luma.reduction ] ---------------------
-    PCA, KernelPCA, LDA, TruncatedSVD, FactorAnalysis
+    PCA, KernelPCA, LDA, KDA, TruncatedSVD, FactorAnalysis
     
     TSNE, SammonMapping, LaplacianEigenmap,
     MDS, MetricMDS, LandmarkMDS,

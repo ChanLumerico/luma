@@ -48,6 +48,7 @@ class GridSearchCV(Optimizer):
     -----
     * An instance of the estimator must be passed to `estimator`
     * For `metric`, both class or instance are possible
+    * Only `Pipeline` is allowed for meta estimator
     
     Examples
     --------
@@ -96,8 +97,8 @@ class GridSearchCV(Optimizer):
             print(f'Fitting {self.cv} folds for {max_iter} candidates,',
                   f'totalling {self.cv * max_iter} fits.\n')
         
-        for i, params in enumerate(param_combinations, start=1):
-            self.estimator.set_params(**params)
+        for i, params in enumerate(param_combinations, start=1): 
+            self._set_params(params)
             cv_model = CrossValidator(estimator=self.estimator,
                                       metric=self.metric,
                                       cv=self.cv,
@@ -125,7 +126,7 @@ class GridSearchCV(Optimizer):
             print(f'[GridSearchCV] Best score: {self.best_score}')
         
         if self.refit:
-            self.estimator.set_params(**best_params)
+            self._set_params(best_params)
             self.estimator.fit(X, y)
         
         self._fitted = True
@@ -136,6 +137,12 @@ class GridSearchCV(Optimizer):
         param_combinations = Matrix(np.meshgrid(*values)).T.reshape(-1, len(keys))
         param_combinations = [dict(zip(keys, v)) for v in param_combinations]
         return param_combinations
+    
+    def _set_params(self, params: dict) -> None:
+        if isinstance(self.estimator, Estimator.Meta):
+            self.estimator.set_params(params)
+        else:
+            self.estimator.set_params(**params)
     
     @property
     def best_model(self) -> Estimator:
@@ -177,6 +184,7 @@ class RandomizedSearchCV(Optimizer):
     -----
     * An instance of the estimator must be passed to `estimator`
     * For `metric`, both class or instance are possible
+    * Only `Pipeline` is allowed for meta estimator
     * Type `DT` is a generic type for `scipy`'s distribution types
         (e.g. `rv_continuous`, `rv_discrete`)
     
@@ -230,7 +238,7 @@ class RandomizedSearchCV(Optimizer):
         
         for i in range(self.max_iter):
             params = self._sample_params()
-            self.estimator.set_params(**params)
+            self._set_params(params)
             
             cv_model = CrossValidator(estimator=self.estimator,
                                       metric=self.metric,
@@ -259,11 +267,17 @@ class RandomizedSearchCV(Optimizer):
             print(f'[RandomSearchCV] Best score: {self.best_score}')
         
         if self.refit:
-            self.estimator.set_params(**best_params)
+            self._set_params(best_params)
             self.estimator.fit(X, y)
         
         self._fitted = True
         return self.best_model
+
+    def _set_params(self, params: dict) -> None:
+        if isinstance(self.estimator, Estimator.Meta):
+            self.estimator.set_params(params)
+        else:
+            self.estimator.set_params(**params)
         
     def _sample_params(self) -> Dict[str, Any]:
         params = {}

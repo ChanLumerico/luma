@@ -1,4 +1,3 @@
-from typing import Literal
 import numpy as np
 
 from luma.interface.util import Matrix, Vector, KernelUtil
@@ -240,8 +239,7 @@ class KernelRidgeRegressor(Estimator, Supervised):
                  deg: int = 2,
                  gamma: float = 1.0,
                  coef: float = 1.0,
-                 kernel: Literal['linear', 'poly', 'rbf',
-                                 'tanh', 'laplacian'] = 'rbf') -> None:
+                 kernel: KernelUtil.kernel_type = 'rbf') -> None:
         self.alpha = alpha
         self.deg = deg
         self.gamma = gamma

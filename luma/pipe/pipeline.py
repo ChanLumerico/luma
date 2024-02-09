@@ -97,7 +97,7 @@ class Pipeline(Estimator, Estimator.Meta):
         self._X: Matrix
         self._y: Matrix
         self._fitted = False
-
+        
         for model in models:
             if isinstance(model, tuple):
                 _name, _model = model

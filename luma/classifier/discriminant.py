@@ -1,7 +1,7 @@
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
-from luma.interface.util import Matrix, Scalar, Vector
+from luma.interface.util import Matrix, Scalar, Vector, KernelUtil
 from luma.interface.exception import NotFittedError
 from luma.metric.classification import Accuracy
 
@@ -9,7 +9,8 @@ from luma.metric.classification import Accuracy
 __all__ = (
     'LDAClassifier',
     'QDAClassifier',
-    'RDAClassifier'
+    'RDAClassifier',
+    'KDAClassifier'
 )
 
 
@@ -217,6 +218,86 @@ class RDAClassifier(Estimator, Supervised):
             discs[i] = disc
         
         return self.classes[np.argmax(discs)]
+    
+    def score(self, X: Matrix, y: Matrix, 
+              metric: Evaluator = Accuracy) -> float:
+        X_pred = self.predict(X)
+        return metric.score(y_true=y, y_pred=X_pred)
+
+
+class KDAClassifier(Estimator, Supervised):
+    
+    """
+    A Kernel Discriminant Analysis (KDA) classifier is an extension of 
+    traditional discriminant analysis methods that incorporates kernel 
+    techniques to perform classification tasks in a transformed, 
+    high-dimensional feature space. By applying a kernel function, it 
+    enables the classifier to find nonlinear boundaries between classes, 
+    enhancing its ability to handle complex patterns that are not linearly 
+    separable. The KDA classifier operates by projecting input data into 
+    a space where classes are maximally distant from each other, using 
+    the calculated projections to classify new instances based on their 
+    proximity to class centroids.
+    
+    Parameters
+    ----------
+    `deg` : Polynomial degree of `poly` kernel
+    `gamma` : Shape parameter of `rbf`, `sigmoid`, `laplacian`
+    `coef` : Additional coefficient of `poly`, `sigmoid`
+    `kernel` : Type of kernel functions
+    
+    Notes
+    -----
+    * To use KDA for dimensionality reduction, refer to 
+        `luma.reduction.linear.KDA`
+    
+    """
+    
+    def __init__(self, 
+                 deg: int = 2,
+                 gamma: float = 1.0,
+                 alpha: float = 1.0,
+                 coef: int = 0.0,
+                 kernel: KernelUtil.kernel_type = 'rbf') -> None:
+        self.deg = deg
+        self.alpha = alpha
+        self.gamma = gamma
+        self.coef = coef
+        self.kernel = kernel
+        self.X_ = None
+        self._fitted = False
+        
+        self.kernel_params = {
+            'deg': self.deg,
+            'alpha': self.alpha,
+            'gamma': self.gamma,
+            'coef': self.coef
+        }
+    
+    def fit(self, X: Matrix, y: Vector) -> 'KDAClassifier':
+        m, _ = X.shape
+        self._X = X
+        self.classes = np.unique(y)
+        self.n_classes = len(self.classes)
+        
+        self.ku_ = KernelUtil(self.kernel, **self.kernel_params)
+        self.class_means = np.zeros((self.n_classes, m))
+        
+        self.K = self.ku_.kernel_func(X)
+        for i, cl in enumerate(self.classes):
+            self.class_means[i] = np.mean(self.K[y == cl], axis=0)
+        
+        self._fitted = False
+        return self
+    
+    def _project(self, X: Matrix) -> Vector:
+        K = self.ku_.kernel_func(X, self._X)
+        proj = np.dot(K, self.class_means.T)
+        return proj
+    
+    def predict(self, X: Matrix) -> Vector:
+        proj = self._project(X)
+        return self.classes[np.argmax(proj, axis=1)]
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:

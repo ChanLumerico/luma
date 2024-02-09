@@ -1,7 +1,6 @@
-from typing import Literal
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, KernelUtil
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError
@@ -116,7 +115,7 @@ class KernelSVR(Estimator, Supervised):
                  coef: float = 1.0,
                  learning_rate: float = 0.001,
                  max_iter: int = 1000,
-                 kernel: Literal['linear', 'poly', 'rbf', 'sigmoid'] = 'rbf',
+                 kernel: KernelUtil.kernel_type = 'rbf',
                  verbose: bool = False) -> None:
         self.C = C
         self.deg = deg

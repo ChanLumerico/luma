@@ -1,9 +1,8 @@
 from math import log
-from typing import Literal
 from scipy.linalg import svd, eigh
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.util import Matrix, Vector, KernelUtil
 from luma.core.super import Transformer, Unsupervised, Supervised
 from luma.interface.exception import (NotFittedError,
                                       NotConvergedError,
@@ -12,8 +11,9 @@ from luma.interface.exception import (NotFittedError,
 
 __all__ = (
     'PCA', 
-    'KernelPCA',
     'LDA', 
+    'KDA', 
+    'KernelPCA', 
     'TruncatedSVD', 
     'FactorAnalysis'
 )
@@ -78,7 +78,7 @@ class KernelPCA(Transformer, Unsupervised):
     Parameters
     ----------
     `n_components` : Number of principal components
-    `degree` : Polynomial degree of `poly` kernel
+    `deg` : Polynomial degree of `poly` kernel
     `gamma` : Shape parameter of `rbf`, `sigmoid`, `laplacian`
     `coef` : Additional coefficient of `poly`, `sigmoid`
     `kernel` : Type of kernel functions
@@ -88,13 +88,12 @@ class KernelPCA(Transformer, Unsupervised):
     
     def __init__(self, 
                  n_components: int = None,
-                 degree: int = 3,
+                 deg: int = 3,
                  gamma: float = 15.0,
                  coef: float = 1.0,
-                 kernel: Literal['linear', 'poly', 'rbf', 
-                                 'sigmoid', 'laplacian'] = 'linear') -> None:
+                 kernel: KernelUtil.kernel_type = 'rbf') -> None:
         self.n_components = n_components
-        self.degree = degree
+        self.deg = deg
         self.gamma = gamma
         self.coef = coef
         self.kernel = kernel
@@ -139,7 +138,7 @@ class KernelPCA(Transformer, Unsupervised):
         return np.dot(x, y)
     
     def _poly(self, x: Matrix, y: Matrix) -> Matrix:
-        return (np.dot(x, y) + self.coef) ** self.degree
+        return (np.dot(x, y) + self.coef) ** self.deg
     
     def _rbf(self, x: Matrix, y: Matrix) -> Matrix:
         if self.gamma is None: self.gamma = 1 / self.X.shape[1]
@@ -345,5 +344,90 @@ class FactorAnalysis(Transformer, Unsupervised):
     
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)
+        return self.transform(X)
+
+
+class KDA(Transformer, Supervised):
+    
+    """
+    Kernel Discriminant Analysis (KDA) is a machine learning technique for 
+    dimensionality reduction and classification that extends Linear 
+    Discriminant Analysis (LDA) to nonlinear feature spaces using kernel 
+    methods. It projects data into a lower-dimensional space where classes 
+    are more separable by maximizing the ratio of between-class variance 
+    to within-class variance. KDA utilizes kernel functions to implicitly 
+    map input data to a high-dimensional space without explicitly computing 
+    the coordinates in that space.
+    
+    Parameters
+    ----------
+    `n_components` : Number of principal components
+    `deg` : Polynomial degree of `poly` kernel
+    `gamma` : Shape parameter of `rbf`, `sigmoid`, `laplacian`
+    `coef` : Additional coefficient of `poly`, `sigmoid`
+    `kernel` : Type of kernel functions
+    
+    Notes
+    -----
+    * To use KDA for classification, refer to 
+        `luma.classifier.discriminant.KDAClassifier`
+    
+    """
+    
+    def __init__(self, 
+                 n_components: int = None, 
+                 deg: int = 2,
+                 alpha: float = 1.0,
+                 gamma: float = 1.0,
+                 coef: int = 0.0,
+                 kernel: KernelUtil.kernel_type = 'rbf') -> None:
+        self.n_components = n_components
+        self.deg = deg
+        self.alpha = alpha
+        self.gamma = gamma
+        self.coef = coef
+        self.kernel = kernel
+        self.X_ = None
+        self._fitted = False
+        
+        self.kernel_params = {
+            'deg': self.deg,
+            'alpha': self.alpha,
+            'gamma': self.gamma,
+            'coef': self.coef
+        }
+    
+    def fit(self, X: Matrix, y: Vector) -> 'KDA':
+        m, _ = X.shape
+        self.X_ = X
+        self.classes = np.unique(y)
+        self.ku_ = KernelUtil(self.kernel, **self.kernel_params)
+        
+        K = self.ku_.kernel_func(X)
+        M = np.mean(K, axis=0)
+        Sw = np.zeros((m, m))
+        Sb = np.zeros((m, m))
+        
+        for i in self.classes:
+            Xi = K[y == i]
+            Mi = np.mean(Xi, axis=0)
+            Ni = Xi.shape[0]
+            
+            Sw += np.dot((Xi - Mi).T, Xi - Mi)
+            Sb += Ni * np.outer(Mi - M, Mi - M)
+        
+        eigvals, eigvecs = np.linalg.eigh(np.linalg.pinv(Sw).dot(Sb))
+        indices = np.argsort(eigvals)[::-1]
+        self.eigvecs = eigvecs[:, indices[:self.n_components]]
+        
+        self._fitted = True
+        return self
+    
+    def transform(self, X: Matrix) -> Vector:
+        K = self.ku_.kernel_func(X, self.X_)
+        return K.dot(self.eigvecs)
+    
+    def fit_transform(self, X: Matrix, y: Vector) -> Vector:
+        self.fit(X, y)
         return self.transform(X)
 
