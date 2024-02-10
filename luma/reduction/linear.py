@@ -1,4 +1,4 @@
-from math import log
+from typing import Tuple
 from scipy.linalg import svd, eigh
 import numpy as np
 
@@ -13,6 +13,7 @@ __all__ = (
     'PCA', 
     'LDA', 
     'KDA', 
+    'CCA', 
     'KernelPCA', 
     'TruncatedSVD', 
     'FactorAnalysis'
@@ -268,7 +269,7 @@ class FactorAnalysis(Transformer, Unsupervised):
     
     Parameters
     ----------
-    `n_components` : Dimeensionality of low-space
+    `n_components` : Dimensionality of low-space
     `max_iter` : Number of iterations
     `tol` : Threshold for convergence
     `noise_variance` : Initial variances for noise of each features
@@ -293,7 +294,7 @@ class FactorAnalysis(Transformer, Unsupervised):
         self.mean = X.mean(axis=0)
         X -= self.mean
         
-        logL_const = n * log(2 * np.pi) * self.n_components
+        logL_const = n * np.log(2 * np.pi) * self.n_components
         variance = X.var(axis=0)
         psi = np.ones(n)
         if self.noise_variance:
@@ -361,7 +362,7 @@ class KDA(Transformer, Supervised):
     
     Parameters
     ----------
-    `n_components` : Number of principal components
+    `n_components` : Dimensionality of low-space
     `deg` : Polynomial degree of `poly` kernel
     `gamma` : Shape parameter of `rbf`, `sigmoid`, `laplacian`
     `coef` : Additional coefficient of `poly`, `sigmoid`
@@ -430,4 +431,81 @@ class KDA(Transformer, Supervised):
     def fit_transform(self, X: Matrix, y: Vector) -> Vector:
         self.fit(X, y)
         return self.transform(X)
+
+
+class CCA(Transformer, Unsupervised):
+    
+    """
+    Canonical Correlation Analysis (CCA) is a multivariate statistical method 
+    that finds linear combinations of two sets of variables with the highest 
+    correlation. It aims to uncover the underlying correlation structure 
+    between the two variable sets. CCA is an unsupervised technique, often 
+    used for exploring the relationships in complex data. The result is pairs 
+    of canonical variables (or components) that represent the maximal 
+    correlations between the sets.
+    
+    Parameters
+    ----------
+    `n_components` : Dimensionality of low-space
+    
+    Notes
+    -----
+    * `CCA` requires two distinct datasets `X` and `Y`, 
+        in which `Y` is not a target variable
+    * Due to its uniqueness in its parameters, 
+        `CCA` may not be compatible with several meta estimators
+    * `transform()` and `fit_transform()` returns a 2-tuple of `Matrix`
+        
+        ```py
+        def transform(self, X: Matrix, Y: Matrix) -> Tuple[Matrix, Matrix]
+        ```
+    """
+    
+    def __init__(self, n_components: int = None) -> None:
+        self.n_components = n_components
+        self.correlations_ = None
+        self._fitted = False
+    
+    def fit(self, X: Matrix, Y: Matrix) -> 'CCA':
+        _, n = X.shape
+        X -= X.mean(axis=0)
+        Y -= Y.mean(axis=0)
+        
+        Cxx = np.cov(X.T)
+        Cyy = np.cov(Y.T)
+        Cxy = np.cov(X.T, Y.T)[:n, n:]
+        
+        inv_Cxx = np.linalg.pinv(Cxx)
+        inv_Cyy = np.linalg.pinv(Cyy)
+        eigvals, x_weights = np.linalg.eig(inv_Cxx @ Cxy @ inv_Cyy @ Cxy.T)
+        
+        indices = eigvals.argsort()[::-1]
+        self.x_weights = x_weights[:, indices][:, :self.n_components]
+        self.y_weights = inv_Cyy @ Cxy.T @ self.x_weights 
+        self.y_weights /= eigvals[indices][:self.n_components]
+        
+        self.x_scores = X.dot(self.x_weights)
+        self.y_scores = Y.dot(self.y_weights)
+        
+        self.correlations_ = [np.corrcoef(self.x_scores[:, i], 
+                                          self.y_scores[:, i])[0, 1]
+                              for i in range(self.n_components)]
+        
+        self.x_loadings = Cxy.dot(self.y_weights)
+        self.y_loadings = Cxy.T.dot(self.x_weights)
+        
+        self._fitted = True
+        return self
+    
+    def transform(self, X: Matrix, Y: Matrix) -> Tuple[Matrix, Matrix]:
+        X -= X.mean(axis=0)
+        Y -= Y.mean(axis=0)
+        X_trans = X.dot(self.x_weights)
+        Y_trans = Y.dot(self.y_weights)
+        
+        return X_trans, Y_trans
+    
+    def fit_transform(self, X: Matrix, Y: Matrix) -> Tuple[Matrix, Matrix]:
+        self.fit(X, Y)
+        return self.transform(X, Y)
 
