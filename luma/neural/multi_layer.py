@@ -32,11 +32,15 @@ class MLPClassifier(Estimator, Supervised):
     (an `int` for a single hidden layer)
     `output_size` : Number of neurons in the output layer
     `max_epoch` :  Maximum number of epochs
+    `batch_size` : Size of a single batch
     `learning_rate` : Step size during the optimization process
     `lambda_` : L2 regularization strength
     `dropout_rate` : Dropout rate for each layer
     `activation` : Activation function for hidden layers
     (default `ReLU`)
+    `random_state` : Seed for various random sampling processes
+    `verbose` : Whether to log procedural details 
+    (an `int` to log for every specific amount of epochs, default 100)
     
     Properties
     ----------
@@ -45,9 +49,10 @@ class MLPClassifier(Estimator, Supervised):
         (property) weights: List[Matrix]
         (property) biases: List[Vector]
     ```
-    For getting losses of each epoch:
+    For getting losses of each epoch or batch:
     ```py
-        (property) losses_: List[float]
+        (property) epoch_losses_: List[float]
+        (property) batch_losses_: List[float]
     ```
     Methods
     -------
@@ -62,21 +67,28 @@ class MLPClassifier(Estimator, Supervised):
                  hidden_sizes: List[int] | int,
                  output_size: int,
                  max_epoch: int = 1000,
+                 batch_size: int = 100,
                  learning_rate: float = 0.001,
                  lambda_: float = 0.01,
                  dropout_rate: float = 0.1,
                  activation: ActivationUtil.func_type = 'relu',
+                 optimizer = None,
+                 random_state: int = None,
                  verbose: bool | int = False) -> None:
         self.input_size = input_size
         self.hidden_sizes = hidden_sizes
         self.output_size = output_size
         self.max_epoch = max_epoch
+        self.batch_size = batch_size
         self.learning_rate = learning_rate
         self.lambda_ = lambda_
         self.dropout_rate = dropout_rate
         self.activation = activation
+        self.optimizer = optimizer # TODO: Abstract various optimizers -> Optimizer()
+        self.random_state = random_state
         self.verbose = verbose
-        self.losses_ = []
+        self.batch_losses_ = []
+        self.epoch_losses_ = []
         self._fitted = False
     
     def fit(self, X: Matrix, y: Vector) -> 'MLPClassifier':
@@ -94,26 +106,41 @@ class MLPClassifier(Estimator, Supervised):
         
         act = ActivationUtil(self.activation)
         self.act_ = act.activation_type()
-        self.softmax = Softmax()
+        self.softmax_ = Softmax()
+        self.rs_ = np.random.RandomState(self.random_state)
         
         for i in range(self.n_layers):
-            weight_mat = np.random.randn(self.layer_sizes[i], 
-                                         self.layer_sizes[i + 1])
+            weight_mat = self.rs_.randn(self.layer_sizes[i], 
+                                        self.layer_sizes[i + 1])
             self.weights.append(weight_mat * 0.01)
             self.biases.append(np.zeros((1, self.layer_sizes[i + 1])))
         
+        m, _ = X.shape
         y = self._one_hot_encode(y)
         for epoch in range(self.max_epoch):
-            y_pred = self._forward_pass(X, is_train=True)
-            self._backpropagation(X, y)
+            indices = np.arange(m)
+            self.rs_.shuffle(indices)
+            X_shuffled = X[indices]
+            y_shuffled = y[indices]
             
-            loss = self._compute_loss(y, y_pred)
-            self.losses_.append(loss)
+            for start in range(0, m, self.batch_size):
+                end = min(start + self.batch_size, m)
+                X_batch = X_shuffled[start:end]
+                y_batch = y_shuffled[start:end]
+                
+                y_pred_batch = self._forward_pass(X_batch, is_train=True)
+                self._backpropagation(X_batch, y_batch)
+                
+                batch_loss = self._compute_loss(y_batch, y_pred_batch)
+                self.batch_losses_.append(batch_loss)
+            
+            epoch_loss = np.mean(self.batch_losses_[-(m // self.batch_size):])
+            self.epoch_losses_.append(epoch_loss)
             if self.verbose:
                 if isinstance(self.verbose, bool): step = 100
                 elif isinstance(self.verbose, int): step = self.verbose
                 if epoch % step == 0:
-                    print(f"[MLPClassifier] Epoch {epoch}, Loss: {loss}")
+                    print(f"[MLPClassifier] Epoch {epoch}, Loss: {epoch_loss}")
         
         self._fitted = True
         return self
@@ -140,12 +167,12 @@ class MLPClassifier(Estimator, Supervised):
             z = np.dot(a, self.weights[i]) + self.biases[i]
             a = self.act_.func(z)
             if is_train:
-                mask = np.random.binomial(1, 1 - self.dropout_rate, a.shape)
+                mask = self.rs_.binomial(1, 1 - self.dropout_rate, a.shape)
                 mask = mask.astype(float) / (1 - self.dropout_rate)
                 a *= mask
         
         z = np.dot(a, self.weights[-1]) + self.biases[-1]
-        a = self.softmax.func(z)
+        a = self.softmax_.func(z)
         return a
     
     def _backpropagation(self, X: Matrix, y: Matrix) -> None:
@@ -159,7 +186,7 @@ class MLPClassifier(Estimator, Supervised):
             zs_.append(z)
         
         z = np.dot(a, self.weights[-1]) + self.biases[-1]
-        a = self.softmax.func(z)
+        a = self.softmax_.func(z)
         as_.append(a)
         zs_.append(z)
         
@@ -198,8 +225,8 @@ class MLPClassifier(Estimator, Supervised):
     
     def dump(self, padding: int = 4) -> None:
         lines = []
-        lines.append("MLP Configuration")
-        lines.append(f"Input Size : {self.input_size}")
+        lines.append("MLP Classifier Configuration")
+        lines.append(f"Input Size: {self.input_size:,}")
         
         total_params = 0
         layers = self.layer_sizes
@@ -210,10 +237,11 @@ class MLPClassifier(Estimator, Supervised):
             total_params += params_
             
             type_ = "Hidden" if i < len(self.layer_sizes) - 2 else "Output"
-            lines.append(f"Layer {i + 1} ({type_}) : {in_} -> {out_}, " + 
-                         f"Parameters: {params_W} + {params_b} = {params_}")
+            lines.append(f"Layer {i + 1} ({type_}): {in_:,} -> {out_:,}, " + 
+                         f"Parameters: {params_W:,} + {params_b:,} = {params_:,}")
         
-        lines.append(f"Total Parameters: {total_params}")
+        lines.append(f"Output Size: {self.output_size:,}")
+        lines.append(f"Total Parameters: {total_params:,}")
         lines.append(f"Activation Function: {type(self.act_).__name__}")
         box_width = max(len(line) for line in lines) + 2 * padding
         print("+" + "-" * (box_width - 2) + "+")
