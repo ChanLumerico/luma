@@ -66,7 +66,7 @@ class MLPClassifier(Estimator, Supervised):
                  lambda_: float = 0.01,
                  dropout_rate: float = 0.1,
                  activation: ActivationUtil.func_type = 'relu',
-                 verbose: bool = False) -> None:
+                 verbose: bool | int = False) -> None:
         self.input_size = input_size
         self.hidden_sizes = hidden_sizes
         self.output_size = output_size
@@ -109,8 +109,11 @@ class MLPClassifier(Estimator, Supervised):
             
             loss = self._compute_loss(y, y_pred)
             self.losses_.append(loss)
-            if self.verbose and epoch % 100 == 0:
-                print(f"[MLPClassifier] Epoch {epoch}, Loss: {loss}")
+            if self.verbose:
+                if isinstance(self.verbose, bool): step = 100
+                elif isinstance(self.verbose, int): step = self.verbose
+                if epoch % step == 0:
+                    print(f"[MLPClassifier] Epoch {epoch}, Loss: {loss}")
         
         self._fitted = True
         return self
