@@ -341,7 +341,7 @@ class KernelAffinityPropagation(Estimator, Unsupervised):
                  damping: float = 0.7,
                  preference: Scalar | Vector | Literal['median', 'min'] = 'median',
                  tol: float = None,
-                 kernel: KernelUtil.kernel_type = 'rbf',
+                 kernel: KernelUtil.func_type = 'rbf',
                  gamma: float = 1.0,
                  verbose: bool = False) -> None:
         self.max_iter = max_iter

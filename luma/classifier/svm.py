@@ -129,7 +129,7 @@ class KernelSVC(Estimator, Supervised):
                  coef: float = 1.0,
                  learning_rate: float = 0.001,
                  max_iter: int = 1000,
-                 kernel: KernelUtil.kernel_type = 'rbf',
+                 kernel: KernelUtil.func_type = 'rbf',
                  verbose: bool = False) -> None:
         self.C = C
         self.deg = deg

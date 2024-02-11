@@ -6,7 +6,7 @@ from luma.core.super import Supervised, Unsupervised, Distance
 from luma.interface.exception import NotFittedError, NotConvergedError
 from luma.interface.exception import UnsupportedParameterError, ModelExtensionError
 from luma.interface.util import Matrix, Vector, Scalar, TreeNode, NearestNeighbors
-from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil
+from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil
 from luma.interface.util import Clone
 
 from luma.classifier.discriminant import LDAClassifier, QDAClassifier, RDAClassifier, KDAClassifier
@@ -32,7 +32,9 @@ from luma.ensemble.vote import VotingClassifier, VotingRegressor
 from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
 from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 
+from luma.neural.activation import ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
+from luma.neural.multi_layer import MLPClassifier
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
@@ -97,7 +99,7 @@ if __name__ == '__main__':
     UnsupportedParameterError, ModelExtensionError
     
     Matrix, Vector, Scalar, TreeNode, NearestNeighbors,
-    SilhouetteUtil, DBUtil, KernelUtil,
+    SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil,
     Clone
     
     # ----------------- [ luma.classifier ] --------------------
@@ -141,6 +143,10 @@ if __name__ == '__main__':
     
     # ------------------- [ luma.neural ] ----------------------
     PerceptronClassifier, PerceptronRegressor
+    
+    MLPClassifier
+    
+    ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
     
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

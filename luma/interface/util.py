@@ -3,6 +3,7 @@ import numpy as np
 
 from luma.core.super import Estimator, Transformer
 from luma.interface.exception import UnsupportedParameterError
+from luma.neural import activation
 
 
 __all__ = (
@@ -14,6 +15,7 @@ __all__ = (
     'SilhouetteUtil', 
     'DBUtil',
     'KernelUtil',
+    'ActivationUtil', 
     'Clone'
 )
 
@@ -247,11 +249,11 @@ class KernelUtil:
     
     """
     
-    kernel_type = Literal['lin' ,'linear',
-                          'poly', 'polynoimal',
-                          'rbf', 'gaussian', 'Gaussian',
-                          'tanh', 'sigmoid',
-                          'lap', 'laplacian']
+    func_type = Literal['lin' ,'linear',
+                        'poly', 'polynoimal',
+                        'rbf', 'gaussian', 'Gaussian',
+                        'tanh', 'sigmoid',
+                        'lap', 'laplacian']
     
     def __init__(self, 
                  kernel: str,
@@ -304,6 +306,53 @@ class KernelUtil:
             return self.laplacian_kernel
         else:
             raise UnsupportedParameterError(self.kernel)
+
+
+class ActivationUtil:
+    
+    """
+    Internal class for activaiton functions used in neural networks.
+    
+    Properties
+    ----------
+    For getting an activation function class:
+        ```py
+        @property
+        def activation_type(self) -> type
+        ```
+    
+    Examples
+    --------
+    >>> act = ActivationUtil(activation='relu')
+    >>> relu = act.activation_type
+    ReLU()
+    
+    """
+    
+    func_type = Literal['relu', 'ReLU',
+                        'leaky-relu', 'leaky-ReLU',
+                        'elu', 'ELU', 
+                        'tanh', 
+                        'sigmoid', 'sig',
+                        'softmax']
+    
+    def __init__(self, activation: str) -> None:
+        self.activation = activation
+    
+    @property
+    def activation_type(self) -> type:
+        if self.activation in ('relu', 'ReLU'): 
+            return activation.ReLU
+        elif self.activation in ('leaky-relu', 'leaky-ReLU'): 
+            return activation.LeakyReLU
+        elif self.activation in ('elu', 'ELU'): 
+            return activation.ELU
+        elif self.activation in ('tanh'): 
+            return activation.Tanh
+        elif self.activation in ('sigmoid', 'sig'): 
+            return activation.Sigmoid
+        elif self.activation in ('softmax'):
+            return activation.Softmax
 
 
 class Clone:

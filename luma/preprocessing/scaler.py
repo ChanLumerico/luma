@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class StandardScaler(Transformer, Transformer.Feature):
+class StandardScaler(Transformer):
     
     """
     Standard scaling is a data preprocessing technique to transform 
@@ -25,13 +25,14 @@ class StandardScaler(Transformer, Transformer.Feature):
 
     def fit(self, X: Matrix) -> 'StandardScaler':
         self.mean = np.mean(X, axis=0)
-        self.std = np.std(X, axis=0)
+        self.std = np.std(X, axis=0, ddof=1)
         self._fitted = True
         return self
 
     def transform(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
-        return (X - self.mean) / self.std
+        epsilon = 1e-8
+        return (X - self.mean) / (self.std + epsilon)
 
     def fit_transform(self, X: Matrix) -> Matrix:
         self.fit(X)

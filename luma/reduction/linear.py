@@ -92,7 +92,7 @@ class KernelPCA(Transformer, Unsupervised):
                  deg: int = 3,
                  gamma: float = 15.0,
                  coef: float = 1.0,
-                 kernel: KernelUtil.kernel_type = 'rbf') -> None:
+                 kernel: KernelUtil.func_type = 'rbf') -> None:
         self.n_components = n_components
         self.deg = deg
         self.gamma = gamma
@@ -381,7 +381,7 @@ class KDA(Transformer, Supervised):
                  alpha: float = 1.0,
                  gamma: float = 1.0,
                  coef: int = 0.0,
-                 kernel: KernelUtil.kernel_type = 'rbf') -> None:
+                 kernel: KernelUtil.func_type = 'rbf') -> None:
         self.n_components = n_components
         self.deg = deg
         self.alpha = alpha

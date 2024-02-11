@@ -258,7 +258,7 @@ class KDAClassifier(Estimator, Supervised):
                  gamma: float = 1.0,
                  alpha: float = 1.0,
                  coef: int = 0.0,
-                 kernel: KernelUtil.kernel_type = 'rbf') -> None:
+                 kernel: KernelUtil.func_type = 'rbf') -> None:
         self.deg = deg
         self.alpha = alpha
         self.gamma = gamma
