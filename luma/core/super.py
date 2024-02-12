@@ -1,8 +1,7 @@
 from typing import Any
 from abc import (ABCMeta, 
                  abstractmethod, 
-                 abstractstaticmethod, 
-                 abstractproperty)
+                 abstractstaticmethod)
 
 from luma.core.base import *
 
@@ -210,7 +209,6 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
     
     """
     
-    @abstractproperty
     def best_model(self) -> Estimator | Transformer: ...
 
 

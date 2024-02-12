@@ -33,6 +33,7 @@ from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
 from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 
 from luma.neural.activation import ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
+from luma.neural.optimizer import SGDOptimizer, MomentumOptimizer, RMSPropOptimizer
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.multi_layer import MLPClassifier
 
@@ -147,6 +148,8 @@ if __name__ == '__main__':
     MLPClassifier
     
     ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
+    
+    SGDOptimizer, MomentumOptimizer, RMSPropOptimizer
     
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

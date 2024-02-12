@@ -1,11 +1,12 @@
 from typing import List
 import numpy as np
 
-from luma.core.super import Estimator, Evaluator, Supervised
+from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
 from luma.interface.util import Matrix, Vector, ActivationUtil
 from luma.interface.exception import NotFittedError
 from luma.metric.classification import Accuracy
 from luma.neural.activation import Softmax
+from luma.neural.optimizer import SGDOptimizer
 
 
 __all__ = (
@@ -34,10 +35,14 @@ class MLPClassifier(Estimator, Supervised):
     `max_epoch` :  Maximum number of epochs
     `batch_size` : Size of a single batch
     `learning_rate` : Step size during the optimization process
+    `momentum` : Momentum parameter for `MomentumOptimizer`
+    `decay_rate` : Decay rate for `RMSPropOptimizer`
     `lambda_` : L2 regularization strength
     `dropout_rate` : Dropout rate for each layer
     `activation` : Activation function for hidden layers
     (default `ReLU`)
+    `optimizer` : An optimizing method for reducing the training loss
+    (default `SGDOptimizer`)
     `random_state` : Seed for various random sampling processes
     `verbose` : Whether to log procedural details 
     (an `int` to log for every specific amount of epochs, default 100)
@@ -60,6 +65,11 @@ class MLPClassifier(Estimator, Supervised):
         ```py
         def dump(self, padding: int = 4) -> None
         ```
+    Notes
+    -----
+    * An instance of an `Optimizer` must be passed to `optimizer`
+    * Optimizers of `luma.neural.optimizer` are only accepted
+    
     """
     
     def __init__(self, 
@@ -69,10 +79,12 @@ class MLPClassifier(Estimator, Supervised):
                  max_epoch: int = 1000,
                  batch_size: int = 100,
                  learning_rate: float = 0.001,
+                 momentum: float = 0.9, 
+                 decay_rate: float = 0.9, 
                  lambda_: float = 0.01,
                  dropout_rate: float = 0.1,
                  activation: ActivationUtil.func_type = 'relu',
-                 optimizer = None,
+                 optimizer: Optimizer = SGDOptimizer(),
                  random_state: int = None,
                  verbose: bool | int = False) -> None:
         self.input_size = input_size
@@ -81,10 +93,12 @@ class MLPClassifier(Estimator, Supervised):
         self.max_epoch = max_epoch
         self.batch_size = batch_size
         self.learning_rate = learning_rate
+        self.momentum = momentum
+        self.decay_rate = decay_rate
         self.lambda_ = lambda_
         self.dropout_rate = dropout_rate
         self.activation = activation
-        self.optimizer = optimizer # TODO: Abstract various optimizers -> Optimizer()
+        self.optimizer = optimizer
         self.random_state = random_state
         self.verbose = verbose
         self.batch_losses_ = []
@@ -108,6 +122,15 @@ class MLPClassifier(Estimator, Supervised):
         self.act_ = act.activation_type()
         self.softmax_ = Softmax()
         self.rs_ = np.random.RandomState(self.random_state)
+        
+        optimizer_params = {
+            'learning_rate': self.learning_rate,
+            'momentum': self.momentum,
+            'decay_rate': self.decay_rate
+        }
+        for param, val in optimizer_params.items():
+            if hasattr(self.optimizer, param):
+                setattr(self.optimizer, param, val)
         
         for i in range(self.n_layers):
             weight_mat = self.rs_.randn(self.layer_sizes[i], 
@@ -191,12 +214,13 @@ class MLPClassifier(Estimator, Supervised):
         zs_.append(z)
         
         delta = a - y
+        grad_weights, grad_biases = [], []
+        
         dW = np.dot(as_[-2].T, delta)
         dW += (self.lambda_ / m) * self.weights[-1]
         db = np.sum(delta, axis=0, keepdims=True) / m
-        
-        self.weights[-1] -= self.learning_rate * dW
-        self.biases[-1] -= self.learning_rate * db
+        grad_weights.append(dW)
+        grad_biases.append(db)
         
         for i in range(self.n_layers - 2, -1, -1):
             delta = np.dot(delta, self.weights[i + 1].T)
@@ -206,8 +230,12 @@ class MLPClassifier(Estimator, Supervised):
             dW += (self.lambda_ / m) * self.weights[i]
             db = np.sum(delta, axis=0, keepdims=True) / m
             
-            self.weights[i] -= self.learning_rate * dW
-            self.biases[i] -= self.learning_rate * db
+            grad_weights.insert(0, dW)
+            grad_biases.insert(0, db)
+        
+        self.weights, self.biases = self.optimizer.update(
+            self.weights, self.biases, grad_weights, grad_biases
+        )
     
     def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise NotFittedError(self)
@@ -243,6 +271,7 @@ class MLPClassifier(Estimator, Supervised):
         lines.append(f"Output Size: {self.output_size:,}")
         lines.append(f"Total Parameters: {total_params:,}")
         lines.append(f"Activation Function: {type(self.act_).__name__}")
+        lines.append(f"Optimizer: {type(self.optimizer).__name__}")
         box_width = max(len(line) for line in lines) + 2 * padding
         print("+" + "-" * (box_width - 2) + "+")
         
