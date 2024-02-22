@@ -3,6 +3,7 @@
 *.luma
 setup.sh
 token.key
+notion_template.md
 build/
 dist/
 example/
