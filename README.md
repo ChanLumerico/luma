@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <a href="https://lumerico284.notion.site/lumerico284/LUMA-76330376b0e64cc1b95874c469aeb327">
+        <a href="https://lumerico284.notion.site/LUMA-a467e4a9e885498f87b49c952d0abecd?pvs=74">
             <img src="https://github.com/ChanLumerico/luma/raw/main/others/luma.png" alt="logo" width="75" height="75">
         </a>
         <h1 class="main-title">LUMA</h1>
