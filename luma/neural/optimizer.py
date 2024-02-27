@@ -8,7 +8,8 @@ from luma.interface.util import Matrix
 __all__ = (
     'SGDOptimizer',
     'MomentumOptimizer',
-    'RMSPropOptimizer'
+    'RMSPropOptimizer',
+    'AdamOptimizer'
 )
 
 
@@ -114,5 +115,54 @@ class RMSPropOptimizer(Optimizer):
             for sq_g_b, grad_b in zip(self.sq_grad_biases, grad_biases)
         ]
         
+        return updated_weights, updated_biases
+
+
+class AdamOptimizer:
+    def __init__(self, 
+                 learning_rate: float = 0.001, 
+                 beta_1: float = 0.9, 
+                 beta_2: float = 0.999,
+                 epsilon: float = 1e-8):
+        self.learning_rate = learning_rate
+        self.beta_1 = beta_1
+        self.beta_2 = beta_2
+        self.epsilon = epsilon
+        self.m_weights = None  # First moment vector for weights
+        self.v_weights = None  # Second moment vector for weights
+        self.m_biases = None   # First moment vector for biases
+        self.v_biases = None   # Second moment vector for biases
+        self.t = 0  # Initialization of the timestep
+
+    def update(self, 
+               weights: Matrix, 
+               biases: Matrix, 
+               grad_weights: Matrix, 
+               grad_biases: Matrix) -> Tuple[Matrix, Matrix]:
+        if self.m_weights is None:
+            self.m_weights = [np.zeros_like(w) for w in weights]
+            self.v_weights = [np.zeros_like(w) for w in weights]
+        if self.m_biases is None:
+            self.m_biases = [np.zeros_like(b) for b in biases]
+            self.v_biases = [np.zeros_like(b) for b in biases]
+        
+        self.t += 1
+        updated_weights, updated_biases = [], []
+        
+        # Update parameters
+        for i in range(len(weights)):
+            self.m_weights[i] = self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * grad_weights[i]
+            self.v_weights[i] = self.beta_2 * self.v_weights[i] + (1 - self.beta_2) * np.square(grad_weights[i])
+            m_hat_w = self.m_weights[i] / (1 - self.beta_1 ** self.t)
+            v_hat_w = self.v_weights[i] / (1 - self.beta_2 ** self.t)
+            updated_weights.append(weights[i] - self.learning_rate * m_hat_w / (np.sqrt(v_hat_w) + self.epsilon))
+
+        for i in range(len(biases)):
+            self.m_biases[i] = self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * grad_biases[i]
+            self.v_biases[i] = self.beta_2 * self.v_biases[i] + (1 - self.beta_2) * np.square(grad_biases[i])
+            m_hat_b = self.m_biases[i] / (1 - self.beta_1 ** self.t)
+            v_hat_b = self.v_biases[i] / (1 - self.beta_2 ** self.t)
+            updated_biases.append(biases[i] - self.learning_rate * m_hat_b / (np.sqrt(v_hat_b) + self.epsilon))
+
         return updated_weights, updated_biases
 

@@ -4,148 +4,138 @@ import numpy as np
 from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
 from luma.core.super import Estimator, Evaluator, Supervised
-from luma.interface.util import TreeNode
+from luma.interface.util import DecisionTreeNode
 from luma.metric.regression import MeanSquaredError
 
 
 __all__ = (
-    'DecisionTreeRegressor'
+    'DecisionTreeRegressor',
 )
 
 
 class DecisionTreeRegressor(Estimator, Supervised):
     
     """
-    A Decision Tree Regressor is a supervised machine learning algorithm 
-    used for regression tasks. It works by recursively partitioning 
-    the input data into subsets based on the values of different features. 
-    At each node of the tree, a decision is made based on a specific feature, 
-    and the data is split into branches accordingly.
-
+    A Decision Tree Regressor is a machine learning algorithm used for 
+    predicting continuous values, unlike its counterpart, the Decision 
+    Tree Classifier, which is used for predicting categorical outcomes. 
+    The regressor works by splitting the data into distinct regions based 
+    on feature values. At each node of the tree, it chooses the split 
+    that minimizes the variance (or another specified criterion) of the 
+    target variable within the regions created by the split.
+    
     Parameters
     ----------
     `max_depth` : Maximum depth of the tree
-    `min_samples_split` : Minimum number of samples required to split a node
-    `sample_weights` : Weight of each sample (`1.0` if set to `None`)
-
+    `criterion` : Function used to measure the quality of a split
+    `min_samples_split` : Minimum samples required to split a node
+    `min_samples_leaf` : Minimum samples required to be at a leaf node
+    `max_features` : Number of features to consider
+    `min_impurity_decrease` : Minimum decrement of impurity for a split
+    `max_leaf_nodes` : Maximum amount of leaf nodes
+    `random_state` : The randomness seed of the estimator
+    
     """
     
-    def __init__(self,
-                 max_depth: int = 100,
+    def __init__(self, 
+                 max_depth: int = 10, 
                  min_samples_split: int = 2,
-                 sample_weights: Vector = None,
-                 verbose: bool = False) -> None:
+                 min_samples_leaf: int = 1, 
+                 max_features: int = None, 
+                 min_impurity_decrease: float = 0.01,
+                 max_leaf_nodes: int = None, 
+                 random_state: int = None) -> None:
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
-        self.sample_weights = sample_weights
-        self.verbose = verbose
+        self.min_samples_leaf = min_samples_leaf
+        self.max_features = max_features
+        self.min_impurity_decrease = min_impurity_decrease
+        self.max_leaf_nodes = max_leaf_nodes
+        self.random_state = random_state
         self.root = None
         self._fitted = False
-
-    def fit(self, X: Matrix, y: Matrix) -> 'DecisionTreeRegressor':
-        self.n_samples, self.n_features = X.shape
         
-        if self.sample_weights is None: 
-            self.sample_weights = np.ones(self.n_samples)
-        self.root = self._grow_tree(X, y, self.sample_weights)
-        
-        self.root = self._grow_tree(X, y, self.sample_weights, depth=0)
-
+        np.random.seed(random_state)
+    
+    def fit(self, X: Matrix, y: Vector) -> 'DecisionTreeRegressor':
+        self.root = self._build_tree(X, y, 0)
         self._fitted = True
         return self
 
-    def _grow_tree(self, X: Matrix, y: Matrix, w: Vector, 
-                   depth: int = 0) -> TreeNode:
-        _, n = X.shape
-        if self._stopping_criteria(X, depth):
-            leaf_value = np.mean(y)
-            return TreeNode(value=leaf_value)
-
-        feature_indices = np.arange(n)
-        best_feature, best_thresh = self._best_criteria(X, y, w, feature_indices)
-        left_indices, right_indices = self._split(X[:, best_feature], best_thresh)
+    def _build_tree(self, X: Matrix, y: Vector, depth: int = 0) -> DecisionTreeNode:
+        if len(y) <= self.min_samples_split or depth == self.max_depth:
+            return DecisionTreeNode(value=np.mean(y))
         
-        if len(left_indices) == 0 or len(right_indices) == 0:
-            leaf_value = np.mean(y)
-            return TreeNode(value=leaf_value)
+        split_idx, split_threshold = self._best_split(X, y)
+        if split_idx is None:
+            return DecisionTreeNode(value=np.mean(y))
+        
+        left = X[:, split_idx] <= split_threshold
+        right = X[:, split_idx] > split_threshold
+        left_X, right_X = X[left], X[right]
+        left_y, right_y = y[left], y[right]
+        
+        if len(left_y) < self.min_samples_leaf or \
+            len(right_y) < self.min_samples_leaf:
+            return DecisionTreeNode(value=np.mean(y))
+        
+        left_subtree = self._build_tree(left_X, left_y, depth + 1)
+        right_subtree = self._build_tree(right_X, right_y, depth + 1)
+        
+        return DecisionTreeNode(feature_index=split_idx, 
+                                threshold=split_threshold,
+                                left=left_subtree, 
+                                right=right_subtree)
 
-        left = self._grow_tree(X[left_indices], y[left_indices], 
-                               w[left_indices], depth + 1)
-        right = self._grow_tree(X[right_indices], y[right_indices], 
-                                w[right_indices], depth + 1)
+    def _calculate_var_reduction(self, 
+                                      y: Vector, 
+                                      left_y: Vector, 
+                                      right_y: Vector) -> float:
+        total_var = np.var(y)
+        weight_left = len(left_y) / len(y)
+        weight_right = len(right_y) / len(y)
+        
+        var_reduction = total_var
+        var_reduction -= weight_left * np.var(left_y)
+        var_reduction -= weight_right * np.var(right_y)
+        
+        return var_reduction
 
-        if self.verbose:
-            print(f'[DecisionTree] Depth {depth} reached -', end=' ')
-            print(f'best_feature: {best_feature}, best_threshold: {best_thresh}')
-
-        return TreeNode(best_feature, best_thresh, left, right)
-
-    def _stopping_criteria(self, X: Matrix, depth: int) -> bool:
-        if depth >= self.max_depth: return True
-        if X.shape[0] < self.min_samples_split: return True
-        return False
-
-    def _best_criteria(self, X: Matrix, y: Matrix, w: Vector, 
-                       indices: Matrix) -> Tuple[int, float]:
-        best_var = self._weighted_var(y, w)
-        split_idx, split_thresh = 0, 0.0
-        for idx in indices:
-            X_col = X[:, idx]
-            thresholds = np.unique(X_col)
+    def _best_split(self, X: Matrix, y: Vector) -> Tuple[int, float]:
+        best_reduction = -np.inf
+        split_idx, split_threshold = None, None
+        
+        for feature_index in range(X.shape[1]):
+            thresholds = np.unique(X[:, feature_index])
             for threshold in thresholds:
-                left_indices, right_indices = self._split(X_col, threshold)
-                if len(left_indices) == 0 or len(right_indices) == 0:
+                left = X[:, feature_index] <= threshold
+                right = X[:, feature_index] > threshold
+                
+                if np.sum(left) < self.min_samples_split or \
+                    np.sum(right) < self.min_samples_split:
                     continue
                 
-                var_left = self._weighted_var(y[left_indices], w[left_indices])
-                var_right = self._weighted_var(y[right_indices], w[right_indices])
-
-                n = np.sum(w)
-                n_l, n_r = np.sum(w[left_indices]), np.sum(w[right_indices])
-                weighted_var = (n_l / n) * var_left + (n_r / n) * var_right
-
-                if weighted_var < best_var:
-                    best_var = weighted_var
-                    split_idx = idx
-                    split_thresh = threshold
-
-        return split_idx, split_thresh
+                reduction = self._calculate_var_reduction(y, y[left], y[right])
+                if reduction > best_reduction and \
+                    reduction >= self.min_impurity_decrease:
+                    best_reduction = reduction
+                    split_idx, split_threshold = feature_index, threshold
+        
+        return split_idx, split_threshold
     
-    def _weighted_var(self, y: Matrix, w: Vector) -> float:
-        average = np.average(y, weights=w)
-        variance = np.average((y - average) ** 2, weights=w)
-        return variance
-
-    def _split(self, X_col: Matrix, thresh: float) -> Tuple[Matrix]:
-        left_indices = np.argwhere(X_col <= thresh).flatten()
-        right_indices = np.argwhere(X_col > thresh).flatten()
-        return left_indices, right_indices
-
-    def _traverse_tree(self, x: Matrix, node: TreeNode) -> float:
-        if node.isLeaf:
+    def _predict_single(self, node: DecisionTreeNode, x: Vector) -> float:
+        if node.value is not None: 
             return node.value
-        if x[node.feature] <= node.threshold:
-            return self._traverse_tree(x, node.left)
-        return self._traverse_tree(x, node.right)
-    
-    def print_tree(self) -> None:
-        if not self._fitted: raise NotFittedError(self)
-        self._print_tree_recursive(self.root, depth=0)
-    
-    def _print_tree_recursive(self, node: TreeNode, depth: int) -> None:
-        if node.isLeaf: print(f"{(' ' * 4 + '|') * depth}--- Leaf: {node.value}")
-        else:
-            print(f"{(' ' * 4 + '|') * depth}---", 
-                  f"Feature {node.feature} <= {node.threshold}")
-            self._print_tree_recursive(node.left, depth + 1)
-            self._print_tree_recursive(node.right, depth + 1)
+        if x[node.feature_index] <= node.threshold: 
+            return self._predict_single(node.left, x)
+        return self._predict_single(node.right, x)
 
-    def predict(self, X: Matrix) -> Matrix:
+    def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise NotFittedError(self)
-        return Matrix([self._traverse_tree(x, self.root) for x in X])
+        return np.array([self._predict_single(self.root, x) for x in X])
 
-    def score(self, X: Matrix, y: Matrix, 
+    def score(self, X: Matrix, y: Vector, 
               metric: Evaluator = MeanSquaredError) -> float:
-        X_pred = self.predict(X)
-        return metric.score(y_true=y, y_pred=X_pred)
+        predictions = self.predict(X)
+        return metric.score(y, predictions)
 

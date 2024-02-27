@@ -1,4 +1,4 @@
-from typing import *
+from typing import Literal
 import numpy as np
 
 from luma.interface.util import Matrix

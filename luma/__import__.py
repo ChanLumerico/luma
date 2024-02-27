@@ -5,7 +5,7 @@ from luma.core.super import Supervised, Unsupervised, Distance
 
 from luma.interface.exception import NotFittedError, NotConvergedError
 from luma.interface.exception import UnsupportedParameterError, ModelExtensionError
-from luma.interface.util import Matrix, Vector, Scalar, TreeNode, NearestNeighbors
+from luma.interface.util import Matrix, Vector, Scalar, DecisionTreeNode, NearestNeighbors
 from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil
 from luma.interface.util import Clone
 
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     NotFittedError, NotConvergedError,
     UnsupportedParameterError, ModelExtensionError
     
-    Matrix, Vector, Scalar, TreeNode, NearestNeighbors,
+    Matrix, Vector, Scalar, DecisionTreeNode, NearestNeighbors,
     SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil,
     Clone
     

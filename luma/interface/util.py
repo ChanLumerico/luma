@@ -10,7 +10,7 @@ __all__ = (
     'Matrix', 
     'Vector', 
     'Scalar', 
-    'TreeNode', 
+    'DecisionTreeNode', 
     'NearestNeighbors', 
     'SilhouetteUtil', 
     'DBUtil',
@@ -73,14 +73,14 @@ class Scalar:
         return float(value)
 
 
-class TreeNode:
+class DecisionTreeNode:
     
     """
     Internal class for node used in tree-based models.
     
     Parameters
     ----------
-    `feature` : Feature of node
+    `feature_index` : Feature of node
     `threshold` : Threshold for split point
     `left` : Left-child node
     `right` : Right-child node
@@ -89,12 +89,12 @@ class TreeNode:
     """
     
     def __init__(self,
-                 feature: int = None,
+                 feature_index: int = None,
                  threshold: float = None,
-                 left: 'TreeNode' = None,
-                 right: 'TreeNode' = None,
-                 value: int | float = None) -> None:
-        self.feature = feature
+                 left: 'DecisionTreeNode' = None,
+                 right: 'DecisionTreeNode' = None,
+                 value: Any = None) -> None:
+        self.feature_index = feature_index
         self.threshold = threshold
         self.left = left
         self.right = right

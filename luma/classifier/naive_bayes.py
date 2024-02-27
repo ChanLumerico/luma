@@ -1,7 +1,7 @@
 from typing import Any
 import numpy as np
 
-from luma.interface.util import Matrix, Scalar, Vector
+from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.classification import Accuracy

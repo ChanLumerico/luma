@@ -103,12 +103,9 @@ class SVC(Estimator, Supervised):
 class KernelSVC(Estimator, Supervised):
     
     """
-    Kernel Support Vector Classification (SVC) is an extension of the 
-    Support Vector Machine (SVM) algorithm that facilitates the classification 
-    of non-linearly separable data by mapping it into a higher-dimensional space
-    using a kernel function. The kernel function enables the algorithm to 
-    establish a linear decision boundary in the transformed space, allowing 
-    for more complex and flexible classification models. 
+    Kernel Support Vector Classification (SVC) with batch-based learning.
+    This approach processes the training data in batches, making it suitable
+    for large datasets that cannot fit into memory at once.
     
     Parameters
     ----------
@@ -118,7 +115,8 @@ class KernelSVC(Estimator, Supervised):
     `coef` : Coefficient for `poly`, `sigmoid` kernel
     `learning_rate` : Step-size for gradient descent update
     `max_iter` : Number of iteration
-    `kernel` : Type of kernel (e.g. `linear`, `poly`, `rbf`, `sigmoid`)
+    `batch_size`: Size of the batch for batch-based learning
+    `kernel` : Type of kernel (e.g., `linear`, `poly`, `rbf`, `sigmoid`)
     
     """
     
@@ -129,6 +127,7 @@ class KernelSVC(Estimator, Supervised):
                  coef: float = 1.0,
                  learning_rate: float = 0.001,
                  max_iter: int = 1000,
+                 batch_size: int = 100, 
                  kernel: KernelUtil.func_type = 'rbf',
                  verbose: bool = False) -> None:
         self.C = C
@@ -137,6 +136,7 @@ class KernelSVC(Estimator, Supervised):
         self.coef = coef
         self.learning_rate = learning_rate
         self.max_iter = max_iter
+        self.batch_size = batch_size
         self.kernel = kernel
         self.verbose = verbose
         self._kernel_func = None
@@ -151,7 +151,7 @@ class KernelSVC(Estimator, Supervised):
             binary_y = np.where(y == cl, 1, -1)
             self._binary_fit(X, binary_y, cl)
             if self.verbose:
-                print(f'[KernelSVC] Finished OvR fit for class {cl}\n')
+                print(f'[KernelSVC] Finished OvR fit for class {cl}')
         
         self._X = X
         self._y = y
@@ -160,27 +160,40 @@ class KernelSVC(Estimator, Supervised):
 
     def _binary_fit(self, X: Matrix, y: Matrix, label: int) -> None:
         m, _ = X.shape
-        self.alpha = np.random.random(m)
+        self.alpha = np.zeros(m)
         self.bias = 0
         
-        y_mul_kernel = np.outer(y, y) * self._kernel_func(X, X)
+        batch_size = min(self.batch_size, m)
         for i in range(self.max_iter):
-            gradient = np.ones(m) - y_mul_kernel.dot(self.alpha)
-            self.alpha += self.learning_rate * gradient
-            self.alpha = np.clip(self.alpha, 0, self.C)
+            for start in range(0, m, batch_size):
+                end = start + batch_size
+                X_batch = X[start:end]
+                y_batch = y[start:end]
+                
+                y_mul_kernel = np.outer(y_batch, y_batch) \
+                    * self._kernel_func(X_batch, X_batch)
+                
+                gradient = np.ones(y_batch.shape[0])
+                gradient -= y_mul_kernel.dot(self.alpha[start:end])
+                
+                self.alpha[start:end] += self.learning_rate * gradient
+                self.alpha[start:end] = np.clip(self.alpha[start:end], 0, self.C)
             
-            if self.verbose and i % 100 == 0 and i:
-                print(f'[KernelSVC] Finished iteration {i}/{self.max_iter}', end=' ')
-                print(f'with alpha-norm: {np.linalg.norm(self.alpha)}')
+            if self.verbose and i % 100 == 0:
+                print(f'[KernelSVC] Finished iteration {i}/{self.max_iter}',
+                      f'with alpha-norm: {np.linalg.norm(self.alpha)}')
         
+        self._update_bias(X, y)
+        self.models.append((label, X, y, self.alpha.copy(), self.bias))
+
+    def _update_bias(self, X: Matrix, y: Matrix) -> None:
         alpha_idx = np.where((self.alpha > 0) & (self.alpha < self.C))[0]
         bias_list = []
         for idx in alpha_idx:
             _append = y[idx] - (self.alpha * y).dot(self._kernel_func(X, X[idx]))
             bias_list.append(_append)
-        self.bias = np.mean(bias_list)
         
-        self.models.append((label, X, y, self.alpha.copy(), self.bias))
+        self.bias = np.mean(bias_list) if bias_list else 0
     
     def _linear_kernel(self, xi: Matrix, xj: Matrix) -> Matrix:
         return xi.dot(xj.T)

@@ -10,12 +10,7 @@ __all__ = (
     'Softmax'
 )
 
-class _Matrix: 
-    """
-    Temporary class for avoiding circular import
-    of `luma.interface.util.Matrix`
-    """
-    pass
+class _Matrix: pass
 
 Matrix = _Matrix
 
