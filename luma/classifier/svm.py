@@ -91,7 +91,7 @@ class SVC(Estimator, Supervised):
         for i, (_, weight, bias) in enumerate(self.models):
             pred = np.dot(X, weight) + bias
             scores[:, i] = pred
-
+        
         return np.argmax(scores, axis=1)
 
     def score(self, X: Matrix, y: Matrix, 

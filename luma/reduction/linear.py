@@ -103,52 +103,68 @@ class KernelPCA(Transformer, Unsupervised):
     
     def fit(self, X: Matrix) -> 'KernelPCA':
         self.X = X
+        self._select_kernel_function()
+        N = X.shape[0]
+        self.K = self._compute_kernel_matrix(X, X)
+        
+        one_n = np.ones((N, N)) / N
+        self.K_centered = self.K - one_n.dot(self.K) - self.K.dot(one_n)
+        self.K_centered += one_n.dot(self.K).dot(one_n)
+        
+        self.eigvals, self.eigvecs = eigh(self.K_centered)
+        self.eigvals, self.eigvecs = self.eigvals[::-1], self.eigvecs[:, ::-1]
+
+        self._fitted = True
+        return self
+    
+    def transform(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        
+        K_new = self._compute_kernel_matrix(X, self.X)
+        N = self.K.shape[0]
+        one_N = np.ones((N, N)) / N
+        one_new = np.ones((K_new.shape[0], N)) / N
+        
+        K_new_centered = K_new - one_new.dot(self.K)
+        K_new_centered += one_new.dot(one_N.dot(self.K))
+        K_new_centered -= K_new.dot(one_N.mean(axis=0))
+        
+        proj = K_new_centered.dot(self.eigvecs[:, :self.n_components])
+        return proj
+    
+    def fit_transform(self, X: Matrix) -> Matrix:
+        self.fit(X)
+        return self.transform(X)
+    
+    def _compute_kernel_matrix(self, X: Matrix, Y: Matrix) -> Matrix:
+        N, M = X.shape[0], Y.shape[0]
+        K = np.zeros((N, M))
+        for i in range(N):
+            for j in range(M):
+                K[i, j] = self.kernel_func(X[i], Y[j])
+        return K
+    
+    def _select_kernel_function(self):
         if self.kernel == 'linear': self.kernel_func = self._linear
         elif self.kernel == 'poly': self.kernel_func = self._poly
         elif self.kernel == 'rbf': self.kernel_func = self._rbf
         elif self.kernel == 'sigmoid': self.kernel_func = self._sigmoid
         elif self.kernel == 'laplacian': self.kernel_func = self._laplacian
         else: raise UnsupportedParameterError(self.kernel)
-
-        N = X.shape[0]
-        self.K = np.zeros((N, N))
-        for i in range(N):
-            for j in range(i, N):
-                kernel_value = self.kernel_func(X[i], X[j])
-                self.K[i, j] = kernel_value
-                self.K[j, i] = kernel_value
-        
-        one_n = np.ones((N, N)) / N
-        self.K = self.K - one_n.dot(self.K) - self.K.dot(one_n)
-        self.K += one_n.dot(self.K).dot(one_n)
-        self.eigvals, self.eigvecs = eigh(self.K)
-        self.eigvals, self.eigvecs = self.eigvals[::-1], self.eigvecs[:, ::-1]
-        
-        self._fitted =  True
-        return self
-
-    def transform(self) -> Matrix:
-        if not self._fitted: raise NotFittedError(self)
-        return np.column_stack([self.eigvecs[:, i] for i in range(self.n_components)])
-        
-    def fit_transform(self, X: Matrix) -> Matrix:
-        self.fit(X)
-        return self.transform()
     
-    def _linear(self, x: Matrix, y: Matrix) -> Matrix:
+    def _linear(self, x: Vector, y: Vector) -> float:
         return np.dot(x, y)
     
-    def _poly(self, x: Matrix, y: Matrix) -> Matrix:
+    def _poly(self, x: Vector, y: Vector) -> float:
         return (np.dot(x, y) + self.coef) ** self.deg
     
-    def _rbf(self, x: Matrix, y: Matrix) -> Matrix:
-        if self.gamma is None: self.gamma = 1 / self.X.shape[1]
+    def _rbf(self, x: Vector, y: Vector) -> float:
         return np.exp(-self.gamma * np.linalg.norm(x - y) ** 2)
     
-    def _sigmoid(self, x: Matrix, y: Matrix) -> Matrix:
+    def _sigmoid(self, x: Vector, y: Vector) -> float:
         return np.tanh(self.gamma * np.dot(x, y) + self.coef)
     
-    def _laplacian(self, x: Matrix, y: Matrix) -> Matrix:
+    def _laplacian(self, x: Vector, y: Vector) -> float:
         return np.exp(-self.gamma * np.linalg.norm(x - y))
 
 

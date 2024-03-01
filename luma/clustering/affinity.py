@@ -358,8 +358,8 @@ class KernelAffinityPropagation(Estimator, Unsupervised):
         self._X = X
         m, _ = X.shape
 
-        kernel_func = KernelUtil(self.kernel).kernel_func
-        X_trans = kernel_func(X, gamma=self.gamma)
+        kernel_func = KernelUtil(self.kernel, gamma=self.gamma).kernel_func
+        X_trans = kernel_func(X)
         
         S = self._compute_similarity(X_trans)
         S = self._assign_preference(S)

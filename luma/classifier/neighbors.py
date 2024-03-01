@@ -174,7 +174,7 @@ class WeightedKNNClassifier(Estimator, Supervised):
 
             predictions[i] = np.argmax(weighted_votes)
 
-        return predictions
+        return predictions.astype(int)
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:

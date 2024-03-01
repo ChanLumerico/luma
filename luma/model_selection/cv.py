@@ -91,4 +91,3 @@ class CrossValidator(Evaluator):
     def score(self, X: Matrix, y: Vector) -> Tuple[float, float]:
         self._fit(X, y)
         return np.mean(self.train_scores_), np.mean(self.test_scores_)
-

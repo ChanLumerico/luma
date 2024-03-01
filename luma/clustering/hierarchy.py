@@ -1,5 +1,7 @@
-from typing import Literal, Tuple
+from typing import Literal, Optional, Tuple
 from scipy.spatial.distance import pdist, squareform
+from scipy.cluster.hierarchy import linkage, dendrogram
+import matplotlib.pyplot as plt
 import numpy as np
 
 from luma.interface.util import Matrix
@@ -29,6 +31,15 @@ class AgglomerativeClustering(Estimator, Unsupervised):
     `n_clusters` : Number of clusters to estimate
     `linkage` : Linkage method (e.g. `single`, `complete`, `average`, `ward`)
     
+    Methods
+    -------
+    Plot hierarchical dendrogram:
+    ```py
+    def plot_dendrogram(self, 
+                        ax: Optional[plt.Axes] = None, 
+                        hide_indices: bool = True, 
+                        show: bool = False) -> plt.Axes
+    ```
     Examples
     --------
     >>> agg = AgglomerativeClustering()
@@ -39,8 +50,7 @@ class AgglomerativeClustering(Estimator, Unsupervised):
     
     def __init__(self, 
                  n_clusters: int = 2, 
-                 linkage: Literal['single', 'complete', 
-                                  'average', 'ward'] = 'single'):
+                 linkage: Literal['single', 'complete', 'average'] = 'single'):
         self.n_clusters = n_clusters
         self.linkage = linkage
         self._X = None
@@ -101,7 +111,6 @@ class AgglomerativeClustering(Estimator, Unsupervised):
                 raise UnsupportedParameterError(self.linkage)
             
             dist_matrix[i, k] = dist_matrix[k, i] = value
-            
         dist_matrix[i, i] = np.inf
 
     def _assign_labels(self, clusters: dict, n_samples: int) -> Matrix:
@@ -113,6 +122,27 @@ class AgglomerativeClustering(Estimator, Unsupervised):
                 labels[sample] = cluster_id
         
         return labels
+    
+    def plot_dendrogram(self, 
+                        ax: Optional[plt.Axes] = None,
+                        hide_indices: bool = True,
+                        show: bool = False) -> plt.Axes:
+        if ax is None:
+            _, ax = plt.subplots()
+            show = True
+        
+        m = self._X.shape[0]
+        labels = [''] * m if hide_indices else list(range(m))
+        Z = linkage(self._X, method=self.linkage)
+        dendrogram(Z, labels=labels)
+        
+        ax.set_xlabel('Samples')
+        ax.set_ylabel('Distance')
+        ax.set_title('Dendrogram')
+        ax.figure.tight_layout()
+        
+        if show: plt.show()
+        return ax
     
     @property
     def labels(self) -> Matrix:

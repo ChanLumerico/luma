@@ -67,7 +67,10 @@ class DecisionRegion(Visualizer):
         Z = self.estimator.predict(Matrix([xx1.ravel(), xx2.ravel()]).T)
         Z = Z.reshape(xx1.shape)
         
-        if ax is None: _, ax = plt.subplots()
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
+        
         ax.contourf(xx1, xx2, Z, 
                     alpha=self.alpha, 
                     cmap=self.cmap, 
@@ -115,7 +118,10 @@ class ClusterPlot(Visualizer):
     def plot(self, 
              ax: Optional[plt.Axes] = None, 
              show: bool = False) -> plt.Axes:
-        if ax is None: _, ax = plt.subplots()
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
+        
         ax.scatter(self.X[self.labels == -1, 0], 
                    self.X[self.labels == -1, 1],
                    marker='x',
@@ -136,7 +142,7 @@ class ClusterPlot(Visualizer):
         
         if len(self.X[self.labels == -1]): ax.legend()
         ax.figure.tight_layout()
-
+        
         if show: plt.show()
         return ax
 
@@ -152,7 +158,10 @@ class ROCCurve(Visualizer):
     def plot(self, 
              ax: Optional[plt.Axes] = None, 
              show: bool = False) -> plt.Axes:
-        if ax is None: _, ax = plt.subplots()
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
+        
         y_binary = LabelBinarizer().fit_transform(self.y_true)
         
         fprs, tprs = [], []
@@ -188,7 +197,7 @@ class ROCCurve(Visualizer):
         ax.set_title('ROC Curve')
         ax.legend(loc="lower right")
         ax.figure.tight_layout()
-
+        
         if show: plt.show()
         return ax
     
@@ -220,9 +229,11 @@ class PrecisionRecallCurve(Visualizer):
     def plot(self,
              ax: Optional[plt.Axes] = None,
              show: bool = False) -> plt.Axes:
-        if ax is None: _, ax = plt.subplots()
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
+        
         y_binary = LabelBinarizer().fit_transform(self.y_true)
-
         pres, recs = [], []
         for cl in range(self.n_classes):
             pre, rec = self._pre_rec(y_binary[:, cl], self.y_scores[:, cl])
@@ -255,7 +266,7 @@ class PrecisionRecallCurve(Visualizer):
         ax.set_title('Precision-Recall Curve')
         ax.legend(loc="lower left")
         ax.figure.tight_layout()
-
+        
         if show: plt.show()
         return ax
     
@@ -290,7 +301,9 @@ class ConfusionMatrix(Visualizer):
             self.labels = np.arange(len(np.unique(y_true)))
 
     def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
-        if ax is None: ax = plt.gca()
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
         
         cax = ax.imshow(self.conf_matrix, interpolation='nearest', cmap=self.cmap)
         ax.set_title('Confusion Matrix')
@@ -311,7 +324,7 @@ class ConfusionMatrix(Visualizer):
         ax.set_ylabel('True label')
         ax.set_xlabel('Predicted label')
         ax.set_aspect('equal', adjustable='box')
-
+        
         if show: plt.show()
         return ax
     
@@ -340,9 +353,11 @@ class ResidualPlot(Visualizer):
     def plot(self, 
              ax: Optional[plt.Axes] = None,
              show: bool = False) -> plt.Axes:
-        if ax is None: _, ax = plt.subplots()
-        resid = self._calculate_residuals()
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
         
+        resid = self._calculate_residuals()
         cax = ax.scatter(self.estimator.predict(self.X), 
                          resid, 
                          c=resid, 
@@ -363,7 +378,7 @@ class ResidualPlot(Visualizer):
         ax.figure.colorbar(cax)
         ax.legend()
         ax.figure.tight_layout()
-
+        
         if show: plt.show()
         return ax
 
@@ -483,7 +498,10 @@ class LearningCurve(Visualizer):
         test_mean = self.test_scores.mean(axis=1)
         test_std = self.test_scores.std(axis=1)
         
-        if ax is None: _, ax = plt.subplots()
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
+        
         ax.plot(self.train_sizes, train_mean,
                 'o-', color="royalblue", label=f"Training {metric_name}")
         ax.plot(self.train_sizes, test_mean,
@@ -508,7 +526,7 @@ class LearningCurve(Visualizer):
         ax.legend()
         ax.grid()
         ax.figure.tight_layout()
-
+        
         if show: plt.show()
         return ax
 
@@ -581,13 +599,16 @@ class ValidationCurve(Visualizer):
              xscale: str = None,
              show: bool = False) -> plt.Axes:
         self._evaluate()
-        if ax is None: _, ax = plt.subplots()
         metric_name = self.metric.__name__
 
         train_mean = self.train_scores.mean(axis=1)
         train_std = self.train_scores.std(axis=1)
         test_mean = self.test_scores.mean(axis=1)
         test_std = self.test_scores.std(axis=1)
+        
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
         
         ax.plot(self.param_range, train_mean,
                 'o-', color="royalblue", label=f"Training {metric_name}")
@@ -704,11 +725,14 @@ class ValidationHeatmap(Visualizer):
              log_yticks: bool = True,
              annotate: bool = True,
              show: bool = False) -> plt.Axes:
-        self._evaluate()
-        if ax is None: _, ax = plt.subplots()
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
+        
         cax = ax.imshow(self.scores, cmap=cmap)
         ax.figure.colorbar(cax)
         
+        self._evaluate()
         if annotate:
             for i in range(self.sizes_[0]):
                 for j in range(self.sizes_[1]):
@@ -735,6 +759,7 @@ class ValidationHeatmap(Visualizer):
         ax.set_title("Validation Heatmap")
         ax.figure.tight_layout()
 
+        if ax is None: show = True
         if show: plt.show()
         return ax
 

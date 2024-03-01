@@ -1,4 +1,4 @@
-from typing import Literal, Tuple, List
+from typing import Literal, Optional, Tuple, List
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import cdist
 import numpy as np
@@ -202,24 +202,32 @@ class OPTICS(Estimator, Unsupervised):
                 elif new_reach_dist < self.reachability[i]:
                     self.reachability[i] = new_reach_dist
     
-    def plot_reachability(self, color: str = 'royalblue') -> None:
+    def plot_reachability(self, 
+                          ax: Optional[plt.Axes] = None, 
+                          color: str = 'royalblue',
+                          show: bool = False) -> plt.Axes:
         m = range(len(self.ordered_points))
         vals = self.reachability[self.ordered_points]
         
-        plt.figure(figsize=(8, 5))
-        plt.plot(m, vals, color=color)
-        plt.fill_between(m, vals, color=color, alpha=0.5)
+        if ax is None: 
+            _, ax = plt.subplots()
+            show = True
         
-        plt.title('Reachability Plot')
-        plt.xlim(m[0], m[-1])
+        ax.plot(m, vals, color=color)
+        ax.fill_between(m, vals, color=color, alpha=0.5)
         
-        plt.xlabel('Order of Points')
-        plt.ylabel('Reachability Distance')
-        plt.tight_layout()
-        plt.show()
+        ax.set_title('Reachability Plot')
+        ax.set_xlim(m[0], m[-1])
+        
+        ax.set_xlabel('Order of Points')
+        ax.set_ylabel('Reachability Distance')
+        ax.figure.tight_layout()
+        
+        if show: plt.show()
+        return ax
     
     @property
-    def labels(self) -> Matrix:
+    def labels(self) -> Vector:
         if not self._fitted: raise NotFittedError(self)
         cluster_labels = np.full_like(self.reachability, -1, dtype=int)
         current_ = 0
@@ -228,8 +236,12 @@ class OPTICS(Estimator, Unsupervised):
             if self.reachability[point] <= self.threshold:
                 cluster_labels[point] = current_
             else: current_ += 1
-
-        return cluster_labels
+        
+        unique_labels = np.unique(cluster_labels[cluster_labels != -1])
+        mapping = {original: new for new, original in enumerate(unique_labels)}
+        labels = [mapping[label] if label != -1 else -1 for label in cluster_labels]
+        
+        return Vector(labels)
     
     def predict(self) -> None:
         raise Warning(f"{type(self).__name__} does not support prediction!")
@@ -377,8 +389,16 @@ class DENCLUE(Estimator, Unsupervised):
             if visited[node]: continue
             cluster = __dfs(node)
             clusters.append(cluster)
-
+    
         return clusters
+    
+    @property
+    def labels(self):
+        return self._labels
+
+    @labels.setter
+    def labels(self, value):
+        self._labels = value
 
     def predict(self) -> None:
         raise Warning(f"{type(self).__name__} does not support prediction!")
@@ -453,7 +473,13 @@ class MeanShiftClustering(Estimator, Unsupervised):
     
     def predict(self, X: Matrix) -> Vector:
         norm_ = np.linalg.norm(X[:, np.newaxis] - self.centers, axis=2)
-        return np.argmin(norm_, axis=1)
+        cluster_labels = np.argmin(norm_, axis=1)
+
+        unique_labels = np.unique(cluster_labels[cluster_labels != -1])
+        mapping = {original: new for new, original in enumerate(unique_labels)}
+        labels = [mapping[label] if label != -1 else -1 for label in cluster_labels]
+        
+        return Vector(labels)
     
     def score(self, metric: Evaluator = SilhouetteCoefficient) -> float:
         return metric.score(self._X, self.labels)

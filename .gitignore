@@ -3,11 +3,8 @@
 *.luma
 setup.sh
 token.key
-notion_template.md
 build/
 dist/
-example/
-test/
 luma_ml.egg-info/
 version_ico/
 __pycache__/

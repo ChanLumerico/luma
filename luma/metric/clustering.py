@@ -79,7 +79,7 @@ class SilhouetteCoefficient(Evaluator, Visualizer):
         sample_silhouette = self._individual_silhouette()
         y_lower = 10
         
-        for i in range(len(set(self.labels))):
+        for i in range(len(np.unique(self.labels))):
             values = sample_silhouette[self.labels == i]
             values.sort()
 
