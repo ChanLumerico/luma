@@ -13,7 +13,7 @@ from luma.metric.regression import MeanSquaredError
 
 __all__ = (
     'AdaBoostClassifier',
-    'AdaBoostRegressor'
+    'AdaBoostRegressor',
 )
 
 
