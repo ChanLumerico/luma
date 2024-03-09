@@ -204,11 +204,12 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
     ----------
     Get the best(optimized) estimator or transformer:
     ```py
-        @abstractproperty
+        @property
         def best_model(self) -> Estimator | Transformer
     
     """
     
+    @property
     def best_model(self) -> Estimator | Transformer: ...
 
 

@@ -12,7 +12,7 @@ __all__ = (
     'KMediansClustering', 
     'KMedoidsClustering',
     'MiniBatchKMeansClustering',
-    'FuzzyKMeansClustering'
+    'FuzzyCMeansClustering'
 )
 
 
@@ -363,10 +363,10 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
         return metric.score(X, X_pred)
 
 
-class FuzzyKMeansClustering(Estimator, Unsupervised):
+class FuzzyCMeansClustering(Estimator, Unsupervised):
     
     """
-    Fuzzy KMeans (FKM) is a clustering algorithm where each data point can 
+    Fuzzy C-Means (FCM) is a clustering algorithm where each data point can 
     belong to multiple clusters with varying degrees of membership. It 
     iteratively updates cluster centroids and membership levels based on the 
     distance of points to centroids, weighted by their membership. The 
@@ -400,7 +400,7 @@ class FuzzyKMeansClustering(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
-    def fit(self, X: Matrix) -> 'FuzzyKMeansClustering':
+    def fit(self, X: Matrix) -> 'FuzzyCMeansClustering':
         self._X = X
         m, _ = X.shape
 

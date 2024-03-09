@@ -126,7 +126,7 @@ class MultinomialMixture(Estimator, Unsupervised):
     probabilities and multinomial parameters. MMM is commonly applied in text 
     analysis and other scenarios involving discrete data, like document 
     clustering or topic modeling.
-    
+
     Parameters
     ----------
     `n_clusters` : Number of clusters to estimate
@@ -134,89 +134,92 @@ class MultinomialMixture(Estimator, Unsupervised):
     `tol` : Tolerance for early convergence
     
     """
-    
+
     def __init__(self, 
                  n_clusters: int, 
                  max_iter: int = 100, 
-                 tol: float = 1e-5,
+                 tol: float = 1e-5, 
                  verbose: bool = False):
         self.n_clusters = n_clusters
         self.max_iter = max_iter
         self.tol = tol
         self.verbose = verbose
-        self._X = None
+        self.pi = None
+        self.theta = None
+        self.X_ = None
         self._fitted = False
-        
+
     def fit(self, X: Matrix) -> 'MultinomialMixture':
-        self._X = X
-        m, _ = X.shape
-        
-        prev_logL = None
+        self.X_ = X
         self._initialize_parameters(X)
+        logL = None
+
         for i in range(self.max_iter):
             resp = self._E_step(X)
             self._M_step(X, resp)
-            
-            logL = 0
-            for i in range(m):
-                likelihoods = []
-                for j in range(self.n_clusters):
-                    cluster_likelihood = np.prod(self.theta[j] ** X[i, :])
-                    weighted_likelihood = self.pi[j] * cluster_likelihood
-                    likelihoods.append(weighted_likelihood)
 
-                L_sum = np.sum(likelihoods)
-                logL += np.log(L_sum)
+            log_prob_cluster = np.log(self.theta) @ X.T
+            log_prob_cluster += np.log(self.pi[:, np.newaxis])
+            log_prob_samples = self._logsumexp(log_prob_cluster, axis=0)
+            current_logL = np.sum(log_prob_samples)
+
+            if logL is not None and np.abs(current_logL - logL) < self.tol:
+                if self.verbose:
+                    print(f'EM converged at iteration {i+1}',
+                          f'with log-likelihood: {current_logL}')
+                break
             
-            if prev_logL is not None:
-                diff = np.abs(logL - prev_logL)
-                if self.verbose and i % 20 == 0 and i:
-                    print(f'[MMM] Finished iteration {i}/{self.max_iter}', end='')
-                    print(f' with delta-likelihood: {diff}')
-                    
-                if diff < self.tol:
-                    if self.verbose:
-                        print(f'[MMM] Early-convergence at {i}/{self.max_iter}', end='')
-                        print(f' with delta-likelihood: {diff}')
-                    break
-            
-            prev_logL = logL
-        
+            logL = current_logL
+            if self.verbose and (i + 1) % 10 == 0:
+                print(f'Iteration {i+1}, log-likelihood: {logL}')
+
         self._fitted = True
         return self
     
+    def _logsumexp(self, 
+                   a: Matrix, 
+                   axis: int = None, 
+                   keepdims: bool = False) -> Matrix:
+        a_max = np.max(a, axis=axis, keepdims=True)
+        tmp = np.exp(a - a_max)
+        s = np.sum(tmp, axis=axis, keepdims=keepdims)
+        out = np.log(s)
+        if not keepdims:
+            a_max = np.squeeze(a_max, axis=axis)
+        out += a_max
+        return out
+
     def _initialize_parameters(self, X: Matrix) -> None:
         _, n = X.shape
         self.pi = np.ones(self.n_clusters) / self.n_clusters
         self.theta = np.random.dirichlet(alpha=np.ones(n), size=self.n_clusters)
-    
+
     def _E_step(self, X: Matrix) -> Matrix:
-        n_samples = X.shape[0]
-        resp = np.zeros((n_samples, self.n_clusters))
+        log_prob = np.log(self.theta) @ X.T + np.log(self.pi[:, np.newaxis])
+        log_resp = log_prob - self._logsumexp(log_prob, axis=0, keepdims=True)
         
-        for j in range(self.n_clusters):
-            likelihood = np.prod(self.theta[j] ** X, axis=1)
-            resp[:, j] = self.pi[j] * likelihood
-        
-        resp /= resp.sum(axis=1, keepdims=True)
-        return resp
-    
-    def _M_step(self, X: Matrix, R: Matrix) -> None:
-        self.pi = R.mean(axis=0)
-        for j in range(self.n_clusters):
-            weighted_sum = np.dot(R[:, j], X)
-            self.theta[j] = weighted_sum / np.sum(R[:, j])
+        return np.exp(log_resp).T
+
+    def _M_step(self, X: Matrix, resp: Matrix) -> None:
+        nk = resp.sum(axis=0) + 10 * np.finfo(resp.dtype).eps
+        self.pi = nk / nk.sum()
+        self.theta = (resp.T @ X) / nk[:, np.newaxis]
 
     @property
     def labels(self) -> Vector:
-        return self.predict(self._X)
-    
+        return self.predict(self.X_)
+
     def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise NotFittedError(self)
-        R = self._E_step(X)
-        return np.argmax(R, axis=1)
-    
-    def score(self, X: Matrix, metric: Evaluator = SilhouetteCoefficient) -> float:
+        resp = self._E_step(X)
+        return np.argmax(resp, axis=1)
+
+    def fit_predict(self, X: Matrix) -> Vector:
+        self.fit(X)
+        return self.predict(X)
+
+    def score(self, X: Matrix, 
+              metric: Evaluator = SilhouetteCoefficient) -> float:
         X_pred = self.predict(X)
         return metric.score(X, X_pred)
 

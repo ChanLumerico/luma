@@ -33,6 +33,7 @@ class GridSearchCV(Optimizer):
     `param_grid` : Parameter grid for repetitive search
     `cv` : K-fold size for cross validation
     `metric` : Scoring metric for evaluation
+    `maximize` : Whether to optimize in a way of maximizing certain metric
     `refit` : Whether to re-fit the estimator with the best parameters found
     `random_state` : Seed for random sampling for cross validation
     
@@ -74,6 +75,7 @@ class GridSearchCV(Optimizer):
                  param_grid: dict, 
                  cv: int = 5, 
                  metric: Evaluator = None,
+                 maximize: bool = True, 
                  refit: bool = True, 
                  random_state: int = None,
                  verbose: bool = False) -> None:
@@ -81,6 +83,7 @@ class GridSearchCV(Optimizer):
         self.param_grid = param_grid
         self.cv = cv
         self.metric = metric
+        self.maximize = maximize
         self.refit = refit
         self.random_state = random_state
         self.verbose = verbose
@@ -114,9 +117,14 @@ class GridSearchCV(Optimizer):
                 print(f'[GridSearchCV] candidate {i}/{max_iter} {params_f}',
                       f'- score:{mean_score:.3f}')
             
-            if best_score is None or mean_score > best_score:
-                best_score = mean_score
-                best_params = params
+            if self.maximize:
+                if best_score is None or mean_score > best_score:
+                    best_score = mean_score
+                    best_params = params
+            else:
+                if best_score is None or mean_score < best_score:
+                    best_score = mean_score
+                    best_params = params
 
         self.best_score = best_score
         self.best_params = best_params
@@ -126,6 +134,7 @@ class GridSearchCV(Optimizer):
             print(f'[GridSearchCV] Best score: {self.best_score}')
         
         if self.refit:
+            self.estimator = type(self.estimator)()
             self._set_params(best_params)
             self.estimator.fit(X, y)
         
@@ -139,10 +148,7 @@ class GridSearchCV(Optimizer):
         return param_combinations
     
     def _set_params(self, params: dict) -> None:
-        if isinstance(self.estimator, Estimator.Meta):
-            self.estimator.set_params(params)
-        else:
-            self.estimator.set_params(**params)
+        self.estimator.set_params(**params)
     
     @property
     def best_model(self) -> Estimator:
@@ -168,6 +174,7 @@ class RandomizedSearchCV(Optimizer):
     `max_iter` : Number of parameter settings that are sampled
     `cv` : K-fold size for cross-validation
     `metric` : Scoring metric for evaluation
+    `maximize` : Whether to optimize in a way of maximizing certain metric
     `refit` : Whether to re-fit the estimator with the best parameters found
     `random_state` : Seed for random sampling for cross-validation and random search
     `verbose` : Whether to print progress messages
@@ -214,6 +221,7 @@ class RandomizedSearchCV(Optimizer):
                  max_iter: int = 100,
                  cv: int = 5,
                  metric: Evaluator = None,
+                 maximize: bool = True, 
                  refit: bool = True,
                  random_state: int = None,
                  verbose: bool = False) -> None:
@@ -222,6 +230,7 @@ class RandomizedSearchCV(Optimizer):
         self.max_iter = max_iter
         self.cv = cv
         self.metric = metric
+        self.maximize = maximize
         self.refit = refit
         self.random_state = random_state
         self.verbose = verbose
@@ -255,9 +264,14 @@ class RandomizedSearchCV(Optimizer):
                 print(f'[RandomSearchCV] candidate {i + 1}/{self.max_iter}',
                       f'{params_f} - score: {mean_score:.3f}')
             
-            if best_score is None or mean_score > best_score:
-                best_score = mean_score
-                best_params = params
+            if self.maximize:
+                if best_score is None or mean_score > best_score:
+                    best_score = mean_score
+                    best_params = params
+            else:
+                if best_score is None or mean_score < best_score:
+                    best_score = mean_score
+                    best_params = params
         
         self.best_score = best_score
         self.best_params = best_params
@@ -267,6 +281,7 @@ class RandomizedSearchCV(Optimizer):
             print(f'[RandomSearchCV] Best score: {self.best_score}')
         
         if self.refit:
+            self.estimator = type(self.estimator)()
             self._set_params(best_params)
             self.estimator.fit(X, y)
         
@@ -274,10 +289,7 @@ class RandomizedSearchCV(Optimizer):
         return self.best_model
 
     def _set_params(self, params: dict) -> None:
-        if isinstance(self.estimator, Estimator.Meta):
-            self.estimator.set_params(params)
-        else:
-            self.estimator.set_params(**params)
+        self.estimator.set_params(**params)
         
     def _sample_params(self) -> Dict[str, Any]:
         params = {}

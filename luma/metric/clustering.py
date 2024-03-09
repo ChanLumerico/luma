@@ -9,7 +9,8 @@ from luma.interface.util import Matrix, SilhouetteUtil, DBUtil
 
 __all__ = (
     'SilhouetteCoefficient', 
-    'DaviesBouldin'
+    'DaviesBouldin',
+    'Inertia'
 )
 
 
@@ -48,14 +49,14 @@ class SilhouetteCoefficient(Evaluator, Visualizer):
     def __init__(self, data: Matrix, labels: Matrix) -> None:
         self.data = data
         self.labels = labels
-        self.distances = squareform(pdist(self.data))
+        self.dist = squareform(pdist(self.data))
     
     @staticmethod
     def score(data: Matrix, labels: Matrix) -> Matrix[float]:
         scores = []
-        distances = squareform(pdist(data))
+        dist = squareform(pdist(data))
         for idx, label in enumerate(labels):
-            util = SilhouetteUtil(idx, label, labels, distances)
+            util = SilhouetteUtil(idx, label, labels, dist)
             a = util.avg_dist_within
             b = util.avg_dist_others
             score = (b - a) / max(a, b) if max(a, b) != 0 else 0
@@ -66,7 +67,7 @@ class SilhouetteCoefficient(Evaluator, Visualizer):
     def _individual_silhouette(self) -> Matrix:
         silhouette_values = []
         for idx, label in enumerate(self.labels):
-            util = SilhouetteUtil(idx, label, self.labels, self.distances)
+            util = SilhouetteUtil(idx, label, self.labels, self.dist)
             a = util.avg_dist_within
             b = util.avg_dist_others
             score = (b - a) / max(a, b) if max(a, b) != 0 else 0
@@ -141,4 +142,33 @@ class DaviesBouldin(Evaluator):
         db_index = np.mean(db_values)
         
         return db_index
+
+
+class Inertia(Evaluator):
+    
+    """
+    Inertia in clustering quantifies the compactness of clusters by measuring 
+    the sum of squared distances between data points and their respective 
+    cluster centroids. It serves as a key metric to evaluate the quality of 
+    cluster assignments in algorithms like K-means. A lower inertia value 
+    indicates more cohesive clusters, where data points are closer to their 
+    centroids. However, minimizing inertia excessively can lead to overfitting, 
+    with a large number of clusters.
+    
+    Parameters
+    ----------
+    `data` : Original data
+    `centroids`: Centroids(or medoids for certain algorithm)
+    
+    """
+    
+    @staticmethod
+    def score(data: Matrix, centroids: Matrix) -> float:
+        sq_dist = (data[:, np.newaxis, :] - centroids[np.newaxis, :, :]) ** 2
+        dist = np.sqrt(sq_dist.sum(axis=2))
+        
+        closest = np.argmin(dist, axis=1)
+        inertia = sum((dist[i, closest[i]] ** 2) for i in range(len(data)))
+
+        return inertia
 

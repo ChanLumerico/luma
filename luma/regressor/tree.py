@@ -42,8 +42,8 @@ class DecisionTreeRegressor(Estimator, Supervised):
                  min_samples_split: int = 2,
                  min_samples_leaf: int = 1, 
                  max_features: int = None, 
-                 min_impurity_decrease: float = 0.01,
-                 max_leaf_nodes: int = None, 
+                 min_impurity_decrease: float = 0.0,
+                 max_leaf_nodes: int = None,
                  random_state: int = None) -> None:
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
@@ -54,54 +54,83 @@ class DecisionTreeRegressor(Estimator, Supervised):
         self.random_state = random_state
         self.root = None
         self._fitted = False
-        
-        np.random.seed(random_state)
     
-    def fit(self, X: Matrix, y: Vector) -> 'DecisionTreeRegressor':
-        self.root = self._build_tree(X, y, 0)
+    def fit(self, 
+            X: Matrix, 
+            y: Vector, 
+            sample_weights: Vector = None) -> 'DecisionTreeRegressor':
+        if sample_weights is None: sample_weights = np.ones(len(y))
+        sample_weights = Vector(sample_weights)
+        np.random.seed(self.random_state)
+        
+        self.root = self._build_tree(X, y, 0, sample_weights)
         self._fitted = True
         return self
-
-    def _build_tree(self, X: Matrix, y: Vector, depth: int = 0) -> DecisionTreeNode:
-        if len(y) <= self.min_samples_split or depth == self.max_depth:
-            return DecisionTreeNode(value=np.mean(y))
+    
+    def _stopping_criteria(self, y: Vector, depth: int) -> bool:
+        if len(y) <= self.min_samples_split: return True
+        if depth == self.max_depth: return True
+        return False
+    
+    def _build_tree(self, 
+                    X: Matrix, 
+                    y: Vector, 
+                    depth: int, 
+                    sample_weights: Vector) -> DecisionTreeNode:
+        if self._stopping_criteria(y, depth):
+            return DecisionTreeNode(value=np.average(y, weights=sample_weights))
         
-        split_idx, split_threshold = self._best_split(X, y)
+        split_idx, split_threshold = self._best_split(X, y, sample_weights)
         if split_idx is None:
-            return DecisionTreeNode(value=np.mean(y))
+            return DecisionTreeNode(value=np.average(y, weights=sample_weights))
         
         left = X[:, split_idx] <= split_threshold
         right = X[:, split_idx] > split_threshold
-        left_X, right_X = X[left], X[right]
-        left_y, right_y = y[left], y[right]
         
-        if len(left_y) < self.min_samples_leaf or \
-            len(right_y) < self.min_samples_leaf:
-            return DecisionTreeNode(value=np.mean(y))
+        X_left, X_right = X[left], X[right]
+        y_left, y_right = y[left], y[right]
         
-        left_subtree = self._build_tree(left_X, left_y, depth + 1)
-        right_subtree = self._build_tree(right_X, right_y, depth + 1)
+        weights_left, weights_right = sample_weights[left], sample_weights[right]
+        
+        if np.sum(weights_left) < self.min_samples_leaf or \
+            np.sum(weights_right) < self.min_samples_leaf:
+            return DecisionTreeNode(value=np.average(y, weights=sample_weights))
+        
+        left_subtree = self._build_tree(X_left, y_left, depth + 1, weights_left)
+        right_subtree = self._build_tree(X_right, y_right, depth + 1, weights_right)
         
         return DecisionTreeNode(feature_index=split_idx, 
-                                threshold=split_threshold,
+                                threshold=split_threshold, 
                                 left=left_subtree, 
                                 right=right_subtree)
 
     def _calculate_var_reduction(self, 
-                                      y: Vector, 
-                                      left_y: Vector, 
-                                      right_y: Vector) -> float:
-        total_var = np.var(y)
-        weight_left = len(left_y) / len(y)
-        weight_right = len(right_y) / len(y)
+                                 y: Vector, 
+                                 y_left: Vector, 
+                                 y_right: Vector, 
+                                 sample_weights: Vector, 
+                                 weights_left: Vector, 
+                                 weights_right: Vector) -> float:
+        total_weight = np.sum(sample_weights)
+        y_avg = np.average(y, weights=sample_weights)
+        weighted_total_var = np.average((y - y_avg) ** 2, weights=sample_weights)
         
-        var_reduction = total_var
-        var_reduction -= weight_left * np.var(left_y)
-        var_reduction -= weight_right * np.var(right_y)
+        y_left_avg = np.average(y_left, weights=weights_left)
+        y_right_avg = np.average(y_right, weights=weights_right)
         
-        return var_reduction
+        left_var = np.average((y_left - y_left_avg) ** 2, weights=weights_left)
+        right_var = np.average((y_right - y_right_avg) ** 2, weights=weights_right)
+        
+        weighted_var_red = weighted_total_var
+        weighted_var_red -= (np.sum(weights_left) / total_weight) * left_var
+        weighted_var_red -= (np.sum(weights_right) / total_weight) * right_var
+        
+        return weighted_var_red
 
-    def _best_split(self, X: Matrix, y: Vector) -> Tuple[int, float]:
+    def _best_split(self, 
+                    X: Matrix, 
+                    y: Vector, 
+                    sample_weights: Vector) -> Tuple[int, float]:
         best_reduction = -np.inf
         split_idx, split_threshold = None, None
         
@@ -111,11 +140,15 @@ class DecisionTreeRegressor(Estimator, Supervised):
                 left = X[:, feature_index] <= threshold
                 right = X[:, feature_index] > threshold
                 
-                if np.sum(left) < self.min_samples_split or \
-                    np.sum(right) < self.min_samples_split:
+                if np.sum(sample_weights[left]) < self.min_samples_split or \
+                    np.sum(sample_weights[right]) < self.min_samples_split:
                     continue
                 
-                reduction = self._calculate_var_reduction(y, y[left], y[right])
+                reduction = self._calculate_var_reduction(
+                    y, y[left], y[right], sample_weights, 
+                    sample_weights[left], sample_weights[right]
+                )
+                
                 if reduction > best_reduction and \
                     reduction >= self.min_impurity_decrease:
                     best_reduction = reduction
@@ -128,6 +161,7 @@ class DecisionTreeRegressor(Estimator, Supervised):
             return node.value
         if x[node.feature_index] <= node.threshold: 
             return self._predict_single(node.left, x)
+        
         return self._predict_single(node.right, x)
 
     def predict(self, X: Matrix) -> Vector:

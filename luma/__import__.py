@@ -1,4 +1,4 @@
-from luma.core.main import LUMA
+from luma.core.main import Luma
 from luma.core.base import ModelBase, ParadigmBase, MetricBase, VisualBase
 from luma.core.super import Estimator, Transformer, Optimizer, Evaluator, Visualizer
 from luma.core.super import Supervised, Unsupervised, Distance
@@ -18,7 +18,7 @@ from luma.classifier.neighbors import KNNClassifier, AdaptiveKNNClassifier, Weig
 
 from luma.clustering.kmeans import KMeansClustering, KMeansClusteringPlus, KMediansClustering
 from luma.clustering.kmeans import KMedoidsClustering, MiniBatchKMeansClustering
-from luma.clustering.kmeans import FuzzyKMeansClustering
+from luma.clustering.kmeans import FuzzyCMeansClustering
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
 from luma.clustering.spectral import SpectralClustering, NormalizedSpectralClustering
 from luma.clustering.spectral import HierarchicalSpectralClustering, AdaptiveSpectralClustering
@@ -40,7 +40,7 @@ from luma.neural.multi_layer import MLPClassifier
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError
 from luma.metric.regression import MeanAbsolutePercentageError, RSquaredScore
-from luma.metric.clustering import SilhouetteCoefficient, DaviesBouldin
+from luma.metric.clustering import SilhouetteCoefficient, DaviesBouldin, Inertia
 from luma.metric.distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 
@@ -80,7 +80,7 @@ from luma.pipe.pipeline import Pipeline
 from luma.visual.eda import CorrelationBar, CorrelationHeatMap, JointPlot, MissingProportion
 from luma.visual.evaluation import DecisionRegion, ClusterPlot, ROCCurve, PrecisionRecallCurve
 from luma.visual.evaluation import ConfusionMatrix, ResidualPlot, LearningCurve
-from luma.visual.evaluation import ValidationCurve, ValidationHeatmap
+from luma.visual.evaluation import ValidationCurve, ValidationHeatmap, InertiaPlot
 
 from luma.migrate.port import ModelPorter
 
@@ -88,7 +88,7 @@ from luma.migrate.port import ModelPorter
 if __name__ == '__main__':
     
     # ------------------- [ luma.core ] ------------------------
-    LUMA
+    Luma
     
     ModelBase, ParadigmBase, MetricBase, VisualBase
     
@@ -119,7 +119,7 @@ if __name__ == '__main__':
     # ----------------- [ luma.clustering ] --------------------
     KMeansClustering, KMeansClusteringPlus, KMediansClustering,
     KMedoidsClustering, MiniBatchKMeansClustering,
-    FuzzyKMeansClustering
+    FuzzyCMeansClustering
     
     AgglomerativeClustering, DivisiveClustering
     
@@ -157,7 +157,7 @@ if __name__ == '__main__':
     MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError,
     MeanAbsolutePercentageError, RSquaredScore
     
-    SilhouetteCoefficient, DaviesBouldin
+    SilhouetteCoefficient, DaviesBouldin, Inertia
     
     Euclidean, Manhattan, Chebyshev, Minkowski,
     CosineSimilarity, Correlation, Mahalanobis
@@ -215,7 +215,7 @@ if __name__ == '__main__':
     
     DecisionRegion, ClusterPlot, ROCCurve, PrecisionRecallCurve, 
     ConfusionMatrix, ResidualPlot, LearningCurve,
-    ValidationCurve, ValidationHeatmap
+    ValidationCurve, ValidationHeatmap, InertiaPlot
     
     # ------------------ [ luma.migrate ] ----------------------
     ModelPorter

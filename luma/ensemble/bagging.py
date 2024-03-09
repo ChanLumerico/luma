@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -60,7 +61,8 @@ class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
                  bootstrap: bool = True,
                  bootstrap_feature: bool = False,
                  random_state: int = None,
-                 verbose: bool = False) -> None:
+                 verbose: bool = False,
+                 **kwargs: Dict[str, Any]) -> None:
         self.base_estimator = base_estimator
         self.n_estimators = n_estimators
         self.max_samples = max_samples
@@ -69,10 +71,12 @@ class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
         self.bootstrap_feature = bootstrap_feature
         self.random_state = random_state
         self.verbose = verbose
+        self._base_estimator_params = kwargs
         self._fitted = False
     
     def fit(self, X: Matrix, y: Vector) -> 'BaggingClassifier':
         np.random.seed(self.random_state)
+        self.base_estimator.set_params(**self._base_estimator_params)
         self.estimators_ = []
         
         m, n = X.shape
@@ -162,14 +166,15 @@ class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
     """
     
     def __init__(self, 
-                 base_estimator: Estimator = DecisionTreeRegressor,
+                 base_estimator: Estimator = DecisionTreeRegressor(),
                  n_estimators: int = 50,
                  max_samples: float | int = 1.0,
                  max_features: float | int = 1.0,
                  bootstrap: bool = True,
                  bootstrap_feature: bool = False,
                  random_state: int = None,
-                 verbose: bool = False) -> None:
+                 verbose: bool = False,
+                 **kwargs: Dict[str, Any]) -> None:
         self.base_estimator = base_estimator
         self.n_estimators = n_estimators
         self.max_samples = max_samples
@@ -178,10 +183,12 @@ class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
         self.bootstrap_feature = bootstrap_feature
         self.random_state = random_state
         self.verbose = verbose
+        self._base_estimator_params = kwargs
         self._fitted = False
     
     def fit(self, X: Matrix, y: Vector) -> 'BaggingRegressor':
         np.random.seed(self.random_state)
+        self.base_estimator.set_params(**self._base_estimator_params)
         self.estimators_ = []
         
         m, n = X.shape

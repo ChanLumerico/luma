@@ -3,11 +3,11 @@ import luma
 
 
 __all__ = (
-    'LUMA'
+    'Luma'
 )
 
 
-class LUMA:
+class Luma:
     def __validate__(self) -> None: self
     
     def __alloc__(self, *args, **kwargs) -> None: args, kwargs
@@ -17,5 +17,5 @@ class LUMA:
     def __doc__(self) -> str: return luma.__doc__
 
     if sys.version_info < (3, 10):
-        print("LUMA requires Python 3.10 or more", file=sys.stderr)
+        print("Luma requires Python 3.10 or more", file=sys.stderr)
 

@@ -1,6 +1,7 @@
-from typing import Literal
+from typing import Literal, Optional
 from scipy.spatial.distance import pdist, squareform
 from scipy.linalg import eigh
+import matplotlib.pyplot as plt
 import numpy as np
 
 from luma.clustering.kmeans import KMeansClusteringPlus
@@ -187,8 +188,7 @@ class HierarchicalSpectralClustering(Estimator, Unsupervised):
     def __init__(self, 
                  n_clusters: int, 
                  method: Literal['agglomerative', 'divisive'],
-                 linkage: Literal['single', 'complete', 
-                                  'average', 'ward'] = 'single',
+                 linkage: Literal['single', 'complete', 'average'] = 'single',
                  gamma: float = 1.0,):
         self.n_clusters = n_clusters
         self.method = method
@@ -230,6 +230,15 @@ class HierarchicalSpectralClustering(Estimator, Unsupervised):
     def _laplacian(self, W: Matrix) -> Matrix:
         D = np.diag(np.sum(W, axis=1))
         return D - W
+    
+    def plot_dendrogram(self,
+                        ax: Optional[plt.Axes],
+                        hide_indices: bool = True, 
+                        show: bool = False) -> plt.Axes:
+        if not self.method == 'agglomerative':
+            raise UnsupportedParameterError(self.method)
+        
+        return self._hierarchy_model.plot_dendrogram(ax, hide_indices, show)
 
     @property
     def labels(self) -> Matrix:
@@ -280,6 +289,8 @@ class AdaptiveSpectralClustering(Estimator, Unsupervised):
         kmeans = KMeansClusteringPlus(n_clusters=self.n_clusters)
         self.kmeans = kmeans.fit(V)
         
+        self.W = W
+        self.L = L
         self._fitted = True
         return self
 

@@ -1,6 +1,6 @@
 from typing import Any
 
-from luma.core.main import LUMA
+from luma.core.main import Luma
 
 
 __all__ = (
@@ -11,7 +11,7 @@ __all__ = (
 )
 
 
-class ModelBase(LUMA):
+class ModelBase(Luma):
     
     """
     The ModelBase class serves as a superclass for core machine learning components 
@@ -63,7 +63,7 @@ class ModelBase(LUMA):
                 print(f"'{type(self).__name__}' has no attribute '{key}'")
 
 
-class ParadigmBase(LUMA):
+class ParadigmBase(Luma):
     
     """
     The ParadigmBase class is a superclass for different learning paradigms in 
@@ -90,7 +90,7 @@ class ParadigmBase(LUMA):
         return super().__dealloc__()
 
 
-class MetricBase(LUMA):
+class MetricBase(Luma):
     
     """
     The MetricBase class serves as a superclass for evaluation metrics measures 
@@ -116,7 +116,7 @@ class MetricBase(LUMA):
         return super().__dealloc__()
 
 
-class VisualBase(LUMA):
+class VisualBase(Luma):
     
     """
     The VisualBase class is a superclass for visualization tools in machine 

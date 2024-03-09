@@ -40,11 +40,11 @@ class DecisionTreeClassifier(Estimator, Supervised):
     
     def __init__(self, 
                  max_depth: int = 10, 
-                 criterion: Literal['gini', 'entropy'] ='gini', 
+                 criterion: Literal['gini', 'entropy'] = 'gini', 
                  min_samples_split: int = 2,
                  min_samples_leaf: int = 1, 
                  max_features: int = None, 
-                 min_impurity_decrease: float = 0.01,
+                 min_impurity_decrease: float = 0.0,
                  max_leaf_nodes: int = None, 
                  random_state: int = None) -> None:
         self.max_depth = max_depth
@@ -60,122 +60,163 @@ class DecisionTreeClassifier(Estimator, Supervised):
         
         np.random.seed(random_state)
     
-    def fit(self, X: Matrix, y: Vector) -> 'DecisionTreeClassifier':
-        self.root = self._build_tree(X, y)
+    def fit(self, 
+            X: Matrix, 
+            y: Vector,
+            sample_weights: Vector = None) -> 'DecisionTreeClassifier':
+        if sample_weights is None: sample_weights = np.ones(len(y))
+        sample_weights = Vector(sample_weights)
+        
+        self.root = self._build_tree(X, y, 0, sample_weights)
         self._fitted = True
         return self
+
+    def _stopping_criteria(self, y: Vector, depth: int) -> bool:
+        if len(np.unique(y)) == 1: return True
+        if depth == self.max_depth: return True
+        if len(y) < self.min_samples_split: return True
+        return False
     
-    def _build_tree(self, X: Matrix, y: Vector, depth: int = 0) -> DecisionTreeNode:
+    def _build_tree(self, 
+                    X: Matrix, 
+                    y: Vector, 
+                    depth: int, 
+                    sample_weights: Vector) -> DecisionTreeNode:
         if self._stopping_criteria(y, depth):
-            unique, counts = np.unique(y, return_counts=True)
-            value = dict(zip(unique, counts))
-            return DecisionTreeNode(value=value)
+            leaf_value = self._calculate_leaf_value(y, sample_weights)
+            return DecisionTreeNode(value=leaf_value)
         
-        feature_index, threshold = self._best_split(X, y)
+        feature_index, threshold = self._best_split(X, y, sample_weights)
+        if feature_index is None:
+            leaf_value = self._calculate_leaf_value(y, sample_weights)
+            return DecisionTreeNode(value=leaf_value)
+
+        left_indices = X[:, feature_index] <= threshold
+        right_indices = X[:, feature_index] > threshold
         
-        if feature_index is None or \
-            (self.max_leaf_nodes is not None and self.max_leaf_nodes <= 1):
-            unique, counts = np.unique(y, return_counts=True)
-            value = dict(zip(unique, counts))
-            return DecisionTreeNode(value=value)
+        X_left, X_right = X[left_indices], X[right_indices]
+        y_left, y_right = y[left_indices], y[right_indices]
         
-        left = np.where(X[:, feature_index] <= threshold)
-        right = np.where(X[:, feature_index] > threshold)
+        weights_left = sample_weights[left_indices]
+        weights_right = sample_weights[right_indices]
         
-        if len(y[left]) < self.min_samples_leaf or \
-            len(y[right]) < self.min_samples_leaf:
-            unique, counts = np.unique(y, return_counts=True)
-            value = dict(zip(unique, counts))
-            return DecisionTreeNode(value=value)
-        
-        left_subtree = self._build_tree(X[left], y[left], depth + 1)
-        right_subtree = self._build_tree(X[right], y[right], depth + 1)
-        
+        left_subtree = self._build_tree(X_left, y_left, depth + 1, weights_left)
+        right_subtree = self._build_tree(X_right, y_right, depth + 1, weights_right)
+
         return DecisionTreeNode(feature_index=feature_index, 
                                 threshold=threshold, 
                                 left=left_subtree, 
                                 right=right_subtree)
 
-    def _calculate_gini(self, y: Vector) -> Vector:
-        _, counts = np.unique(y, return_counts=True)
-        probabilities = counts / counts.sum()
-        gini = 1 - np.sum(probabilities ** 2)
-        return gini
-
-    def _calculate_entropy(self, y: Vector) -> Vector:
-        _, counts = np.unique(y, return_counts=True)
-        probabilities = counts / counts.sum()
+    def _calculate_leaf_value(self, y: Vector, sample_weights: Vector) -> dict:
+        classes, counts = np.unique(y, return_counts=True)
+        weighted_counts = np.zeros_like(counts, dtype=np.float64)
         
-        if np.any(probabilities == 0): return 0.0
-        return -np.sum(probabilities * np.log2(probabilities))
-
-    def _calculate_information_gain(self, 
-                                    y: Vector, 
-                                    y_left: Vector, 
-                                    y_right: Vector) -> float:
-        weight_left = len(y_left) / len(y)
-        weight_right = len(y_right) / len(y)
+        for i, cl in enumerate(classes):
+            weighted_counts[i] = sample_weights[y == cl].sum()
         
-        if self.criterion == 'gini':
-            gain = self._calculate_gini(y)
-            gain -= weight_left * self._calculate_gini(y_left)
-            gain -= weight_right * self._calculate_gini(y_right)
-            
-        elif self.criterion == 'entropy':
-            gain = self._calculate_entropy(y)
-            gain -= weight_left * self._calculate_entropy(y_left)
-            gain -= weight_right * self._calculate_entropy(y_right)
-            
-        else: raise UnsupportedParameterError(self.criterion)
-        return gain
+        return dict(zip(classes, weighted_counts))
 
-    def _best_split(self, X: Matrix, y: Vector) -> Tuple[int, float]:
-        best_gain = -1
-        split_idx, split_threshold = None, None
-        n = X.shape[1] if self.max_features is None else self.max_features
-        
-        features = np.random.choice(X.shape[1], n, replace=False)
+    def _best_split(self, 
+                    X: Matrix, 
+                    y: Vector, 
+                    sample_weights: Vector) -> Tuple[int, float]:
+        best_gain = 0
+        best_feature, best_threshold = None, None
+        current_impurity = self._calculate_impurity(y, sample_weights)
 
-        for feature_index in features:
+        for feature_index in range(X.shape[1]):
             thresholds = np.unique(X[:, feature_index])
             for threshold in thresholds:
-                left = np.where(X[:, feature_index] <= threshold)
-                right = np.where(X[:, feature_index] > threshold)
+                left_indices = X[:, feature_index] <= threshold
+                right_indices = X[:, feature_index] > threshold
                 
-                if len(left[0]) < self.min_samples_split \
-                    or len(right[0]) < self.min_samples_split:
+                if np.sum(left_indices) < self.min_samples_split or \
+                    np.sum(right_indices) < self.min_samples_split:
                     continue
                 
-                gain = self._calculate_information_gain(
-                    y, y[left], y[right]
+                gain = self._calculate_gain(
+                    y, sample_weights, left_indices, right_indices, current_impurity
                 )
-                if gain > best_gain and gain >= self.min_impurity_decrease:
+                if gain > best_gain:
                     best_gain = gain
-                    split_idx, split_threshold = feature_index, threshold
-        
-        return split_idx, split_threshold
-    
-    def _stopping_criteria(self, y: Vector, depth: int) -> bool:
-        if len(np.unique(y)) == 1: return True
-        if self.max_depth is not None and depth >= self.max_depth: return True
-        if len(y) < self.min_samples_split: return True
-        
-        return False
+                    best_feature = feature_index
+                    best_threshold = threshold
 
-    def _predict_single(self, node: DecisionTreeNode, x: Vector) -> int:
-        if node.value is not None: 
-            return max(node.value, key=node.value.get)
-        if x[node.feature_index] <= node.threshold: 
-            return self._predict_single(node.left, x)
+        return best_feature, best_threshold
 
-        return self._predict_single(node.right, x)
+    def _calculate_impurity(self, y: Vector, sample_weights: Vector) -> float:
+        if self.criterion == 'gini':
+            return self._calculate_gini(y, sample_weights)
+        elif self.criterion == 'entropy':
+            return self._calculate_entropy(y, sample_weights)
+        else:
+            raise UnsupportedParameterError(self.criterion)
+
+    def _calculate_gini(self, y: Vector, sample_weights: Vector) -> float:
+        total_weight = np.sum(sample_weights)
+        _, counts = np.unique(y, return_counts=True)
+        weighted_counts = np.zeros_like(counts, dtype=np.float64)
+        
+        for i, cl in enumerate(np.unique(y)):
+            weighted_counts[i] = np.sum(sample_weights[y == cl])
+        
+        prob = weighted_counts / total_weight
+        gini = 1 - np.sum(prob ** 2)
+        
+        return gini
+
+    def _calculate_entropy(self, y: Vector, sample_weights: Vector) -> float:
+        total_weight = np.sum(sample_weights)
+        _, counts = np.unique(y, return_counts=True)
+        weighted_counts = np.zeros_like(counts, dtype=np.float64)
+        
+        for i, cl in enumerate(np.unique(y)):
+            weighted_counts[i] = np.sum(sample_weights[y == cl])
+        
+        prob = weighted_counts / total_weight
+        entropy = -np.sum(prob * np.log2(prob + np.finfo(float).eps))
+        
+        return entropy
+
+    def _calculate_gain(self, 
+                        y: Vector, 
+                        sample_weights: Vector, 
+                        left_indices: Vector, 
+                        right_indices: Vector, 
+                        current_impurity: float) -> float:
+        left_weight = np.sum(sample_weights[left_indices])
+        right_weight = np.sum(sample_weights[right_indices])
+        total_weight = left_weight + right_weight
+        
+        weights_left = sample_weights[left_indices]
+        weights_right = sample_weights[right_indices]
+
+        left_impurity = self._calculate_impurity(y[left_indices], weights_left)
+        right_impurity = self._calculate_impurity(y[right_indices], weights_right)
+
+        weighted_impurity = (left_weight / total_weight) * left_impurity
+        weighted_impurity += (right_weight / total_weight) * right_impurity
+        gain = current_impurity - weighted_impurity
+        
+        return gain
 
     def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise NotFittedError(self)
-        return np.array([self._predict_single(self.root, x) for x in X])
+        preds = [self._predict_single(self.root, x) for x in X]
+        
+        return np.array(preds)
 
-    def score(self, X: Matrix, y: Matrix, 
-              metric: Evaluator = Accuracy) -> float:
-        X_pred = self.predict(X)
-        return metric.score(y_true=y, y_pred=X_pred)
+    def _predict_single(self, node: DecisionTreeNode, x: Vector) -> int:
+        while node.value is None:
+            if x[node.feature_index] <= node.threshold:
+                node = node.left
+            else:
+                node = node.right
+        
+        return max(node.value, key=node.value.get)
+
+    def score(self, X: Matrix, y: Vector, metric: Evaluator = Accuracy) -> float:
+        preds = self.predict(X)
+        return metric.score(y_true=y, y_pred=preds)
 

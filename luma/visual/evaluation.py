@@ -21,7 +21,8 @@ __all__ = (
     'ResidualPlot',
     'LearningCurve',
     'ValidationCurve',
-    'ValidationHeatmap'
+    'ValidationHeatmap',
+    'InertiaPlot'
 )
 
 
@@ -324,6 +325,7 @@ class ConfusionMatrix(Visualizer):
         ax.set_ylabel('True label')
         ax.set_xlabel('Predicted label')
         ax.set_aspect('equal', adjustable='box')
+        ax.figure.tight_layout()
         
         if show: plt.show()
         return ax
@@ -758,8 +760,87 @@ class ValidationHeatmap(Visualizer):
         
         ax.set_title("Validation Heatmap")
         ax.figure.tight_layout()
+        
+        if show: plt.show()
+        return ax
 
-        if ax is None: show = True
+
+class InertiaPlot(Visualizer):
+    
+    """
+    An inertia plot in clustering visualizes the inertia against the number of 
+    clusters, helping to determine the optimal number of clusters by identifying 
+    the "elbow" point where the rate of decrease in inertia sharply changes. 
+    It reflects how well clusters are compact and separated, with lower inertia 
+    indicating better clustering. The plot aids in applying the elbow method for 
+    selecting a reasonable number of clusters in algorithms like K-means. The 
+    goal is to choose the number of clusters where inertia begins to decrease 
+    more slowly.
+    
+    Parameters
+    ----------
+    `inertia_list` : List of inertia values for various cluster sizes
+    `n_clusters_list` : List of the number of clusters
+    
+    Examples
+    --------
+    ```py
+    inertia_list = []
+    for i in range(2, 10):
+        km = KMeansClustering(n_clusters=i)
+        km.fit(data)
+        
+        inr = Inertia.score(data, km.centroids)
+        inertia_list.append(inr)
+    
+    inr_plot = InertiaPlot(inertia_list=inertia_list,
+                           n_clusters_list=list(range(2, 10)))
+    inr_plot.plot()
+    >>> plt.Axes
+    ```
+    """
+    
+    def __init__(self, 
+                 inertia_list: List[float],
+                 n_clusters_list: List[int]) -> None:
+        self.inertia_list = inertia_list
+        self.n_clusters_list = n_clusters_list
+    
+    def _derivate_inertia(self) -> Vector:
+        deriv = [0.0]
+        for i in range(1, len(self.n_clusters_list) - 1):
+            df = (self.inertia_list[i - 1] - self.inertia_list[i + 1]) / 2
+            deriv.append(df)
+        
+        deriv.append(0.0)
+        return np.abs(deriv)
+    
+    def plot(self, 
+             ax: Optional[plt.Axes] = None,
+             marker: str = 'o', 
+             linestyle: str = '-', 
+             show: bool = False) -> None:
+        if ax is None:
+            _, ax = plt.subplots()
+            show = True
+        
+        ax.plot(self.n_clusters_list, self.inertia_list, 
+                marker=marker,
+                linestyle=linestyle,
+                label='Inertia')
+        
+        ax.plot(self.n_clusters_list, self._derivate_inertia(),
+                marker=marker,
+                linestyle=linestyle,
+                label='Absolute Derivative')
+        
+        ax.set_title('Inertia Plot')
+        ax.set_xlabel('Number of Clusters')
+        ax.set_ylabel('Inertia / Deriv. of Inertia')
+        ax.legend()
+        ax.grid()
+        ax.figure.tight_layout()
+        
         if show: plt.show()
         return ax
 
