@@ -31,6 +31,7 @@ from luma.ensemble.forest import RandomForestClassifier, RandomForestRegressor
 from luma.ensemble.vote import VotingClassifier, VotingRegressor
 from luma.ensemble.bagging import BaggingClassifier, BaggingRegressor
 from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
+from luma.ensemble.boost import GradientBoostingClassifier, GradientBoostingRegressor
 
 from luma.neural.activation import ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
 from luma.neural.optimizer import SGDOptimizer, MomentumOptimizer, RMSPropOptimizer
@@ -140,7 +141,8 @@ if __name__ == '__main__':
     
     BaggingClassifier, BaggingRegressor
     
-    AdaBoostClassifier, AdaBoostRegressor
+    AdaBoostClassifier, AdaBoostRegressor,
+    GradientBoostingClassifier, GradientBoostingRegressor
     
     # ------------------- [ luma.neural ] ----------------------
     PerceptronClassifier, PerceptronRegressor

@@ -38,6 +38,7 @@ class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
     `bootstrap` : Whether to bootstrap data samples
     `bootstrap_feature`: Whether to bootstrap features
     `random_state` : Seed for random sampling
+    `**kwargs` : Additional parameters for base estimator (i.e. `max_depth`)
     
     Examples
     --------
@@ -150,6 +151,7 @@ class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
     `bootstrap` : Whether to bootstrap data samples
     `bootstrap_feature`: Whether to bootstrap features
     `random_state` : Seed for random sampling
+    `**kwargs` : Additional parameters for base estimator (i.e. `max_depth`)
     
     Examples
     --------
