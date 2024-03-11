@@ -31,7 +31,7 @@ class DecisionTreeRegressor(Estimator, Supervised):
     `min_samples_split` : Minimum samples required to split a node
     `min_samples_leaf` : Minimum samples required to be at a leaf node
     `max_features` : Number of features to consider
-    `min_impurity_decrease` : Minimum decrement of impurity for a split
+    `min_variance_decrease` : Minimum decrement of variance for a split
     `max_leaf_nodes` : Maximum amount of leaf nodes
     `random_state` : The randomness seed of the estimator
     
@@ -42,14 +42,14 @@ class DecisionTreeRegressor(Estimator, Supervised):
                  min_samples_split: int = 2,
                  min_samples_leaf: int = 1, 
                  max_features: int = None, 
-                 min_impurity_decrease: float = 0.0,
+                 min_variance_decrease: float = 0.0,
                  max_leaf_nodes: int = None,
                  random_state: int = None) -> None:
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
         self.min_samples_leaf = min_samples_leaf
         self.max_features = max_features
-        self.min_impurity_decrease = min_impurity_decrease
+        self.min_variance_decrease = min_variance_decrease
         self.max_leaf_nodes = max_leaf_nodes
         self.random_state = random_state
         self.root = None
@@ -150,7 +150,7 @@ class DecisionTreeRegressor(Estimator, Supervised):
                 )
                 
                 if reduction > best_reduction and \
-                    reduction >= self.min_impurity_decrease:
+                    reduction >= self.min_variance_decrease:
                     best_reduction = reduction
                     split_idx, split_threshold = feature_index, threshold
         

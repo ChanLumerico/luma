@@ -65,6 +65,31 @@ class Estimator(ModelBase, metaclass=ABCMeta):
         functionality, such as ensemble methods or pipelines.
         """
     
+    class TimeSeries:
+        
+        """
+        An inner class of `Estimator` dedicated to time series analysis.
+        
+        Time series analysis encompasses methods for analyzing time series 
+        data to extract meaningful statistics and characteristics. The 
+        `TimeSeries` class is specialized for handling and modeling 
+        time-dependent data, with a focus on identifying patterns, forecasting 
+        future values, and analyzing temporal dynamics. It serves as a base 
+        for models designed to work with ordered, time-stamped data, providing 
+        functionalities tailored to the unique needs of time series forecasting.
+        
+        Notes
+        -----
+        - Classes under `TimeSeries` are specifically designed for time 
+          series data and may not be directly compatible with classes 
+          under `Meta`, which are aimed at enhancing or combining 
+          estimators for improved performance or functionality. When 
+          integrating `TimeSeries` models with `Meta` estimators, 
+          special consideration is needed to ensure compatibility and 
+          effective integration.
+        
+        """
+    
     @abstractmethod
     def fit(self, *args) -> 'Estimator': ...
     

@@ -29,41 +29,66 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
     ----------
     `n_trees` : Number of trees in the forest
     `max_depth` :  Maximum depth of each trees
-    `min_samples_split` : Minimum number of samples required to split a node
+    `criterion` : Function used to measure the quality of a split
+    `min_samples_split` : Minimum samples required to split a node
+    `min_samples_leaf` : Minimum samples required to be at a leaf node
+    `max_features` : Number of features to consider
+    `min_impurity_decrease` : Minimum decrement of impurity for a split
+    `max_leaf_nodes` : Maximum amount of leaf nodes
     `bootstrap` : Whether to bootstrap the samples of dataset
     `bootstrap_feature` : Whether to bootstrap the features of each data
     `n_features` : Number of features to be sampled when bootstrapping features
-    `sample_weights` : Weight of each sample (`1.0` if set to `None`)
     
     """
     
     def __init__(self, 
                  n_trees: int = 10, 
                  max_depth: int = 100,
+                 criterion: Literal['gini', 'entropy'] = 'gini', 
                  min_samples_split: int = 2,
+                 min_samples_leaf: int = 1, 
+                 max_features: int = None, 
+                 min_impurity_decrease: float = 0.0, 
+                 max_leaf_nodes: int = None, 
                  bootstrap: bool = True,
                  bootstrap_feature: bool = False,
                  n_features: int | Literal['auto'] = 'auto',
-                 sample_weights: Vector = None,
                  verbose: bool = False) -> None:
         self.n_trees = n_trees
         self.max_depth = max_depth
+        self.criterion = criterion
         self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
+        self.max_features = max_features
+        self.min_impurity_decrease = min_impurity_decrease
+        self.max_leaf_nodes = max_leaf_nodes
         self.n_features = n_features
         self.bootstrap = bootstrap
         self.bootstrap_feature = bootstrap_feature
-        self.sample_weights = sample_weights
         self.verbose = verbose
         self.trees = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> 'RandomForestClassifier':
+    def fit(self, 
+            X: Matrix, 
+            y: Matrix, 
+            sample_weights: Vector = None) -> 'RandomForestClassifier':
         m, n = X.shape
         if self.n_features == 'auto': 
             self.n_features = int(n ** 0.5)
         else:
             if isinstance(self.n_features, str):
                 raise UnsupportedParameterError(self.n_features)
+        
+        _tree_params = {
+            'max_depth': self.max_depth,
+            'criterion': self.criterion,
+            'min_samples_split': self.min_samples_split,
+            'min_samples_leaf': self.min_samples_leaf,
+            'max_features': self.max_features,
+            'min_impurity_decrease': self.min_impurity_decrease,
+            'max_leaf_nodes': self.max_leaf_nodes
+        }
         
         self.trees = [DecisionTreeClassifier() for _ in range(self.n_trees)]
         for i, tree in enumerate(self.trees, start=1):
@@ -76,11 +101,8 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
                 bootstrap_feature = np.random.choice(n, self.n_features, replace=True)
                 X_sample = X_sample[:, bootstrap_feature]
             
-            tree.set_params(max_depth=self.max_depth, 
-                            min_samples_split=self.min_samples_split,
-                            sample_weights=self.sample_weights)
-            
-            tree.fit(X_sample, y_sample)
+            tree.set_params(**_tree_params)
+            tree.fit(X_sample, y_sample, sample_weights=sample_weights)
             
             if self.verbose:
                 print(f'[RandomForest] Finished fitting tree {i}/{self.n_trees}')
@@ -119,18 +141,25 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
     ----------
     `n_trees` : Number of trees in the forest
     `max_depth` :  Maximum depth of each trees
-    `min_samples_split` : Minimum number of samples required to split a node
+    `min_samples_split` : Minimum samples required to split a node
+    `min_samples_leaf` : Minimum samples required to be at a leaf node
+    `max_features` : Number of features to consider
+    `min_variance_decrease` : Minimum decrement of variance for a split
+    `max_leaf_nodes` : Maximum amount of leaf nodes
     `bootstrap` : Whether to bootstrap the samples of dataset
     `bootstrap_feature` : Whether to bootstrap the features of each data
     `n_features` : Number of features to be sampled when bootstrapping features
-    `sample_weights` : Weight of each sample (`1.0` if set to `None`)
     
     """
     
     def __init__(self, 
                  n_trees: int = 10, 
-                 max_depth: int = 100,
+                 max_depth: int = 10, 
                  min_samples_split: int = 2,
+                 min_samples_leaf: int = 1, 
+                 max_features: int = None, 
+                 min_variance_decrease: float = 0.0,
+                 max_leaf_nodes: int = None,
                  bootstrap: bool = True,
                  bootstrap_feature: bool = False,
                  n_features: int | Literal['auto'] = 'auto',
@@ -139,6 +168,10 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
         self.n_trees = n_trees
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
+        self.max_features = max_features
+        self.min_variance_decrease = min_variance_decrease
+        self.max_leaf_nodes = max_leaf_nodes
         self.n_features = n_features
         self.bootstrap = bootstrap
         self.bootstrap_feature = bootstrap_feature
@@ -155,6 +188,15 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
             if isinstance(self.n_features, str):
                 raise UnsupportedParameterError(self.n_features)
         
+        _tree_params = {
+            'max_depth': self.max_depth,
+            'min_samples_split': self.min_samples_split,
+            'min_samples_leaf': self.min_samples_leaf,
+            'max_features': self.max_features,
+            'min_variance_decrease': self.min_variance_decrease,
+            'max_leaf_nodes': self.max_leaf_nodes
+        }
+        
         self.trees = [DecisionTreeRegressor() for _ in range(self.n_trees)]
         for i, tree in enumerate(self.trees, start=1):
             X_sample, y_sample = X, y
@@ -166,11 +208,8 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
                 bootstrap_feature = np.random.choice(n, self.n_features, replace=True)
                 X_sample = X_sample[:, bootstrap_feature]
             
-            tree.set_params(max_depth=self.max_depth, 
-                            min_samples_split=self.min_samples_split,
-                            sample_weights=self.sample_weights)
-
-            tree.fit(X_sample, y_sample)
+            tree.set_params(**_tree_params)
+            tree.fit(X_sample, y_sample, sample_weights=self.sample_weights)
             
             if self.verbose:
                 print(f'[RandomForest] Finished fitting tree {i}/{self.n_trees}')

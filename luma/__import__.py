@@ -75,6 +75,7 @@ from luma.regressor.svm import SVR, KernelSVR
 from luma.regressor.tree import DecisionTreeRegressor
 from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor, WeightedKNNRegressor
 from luma.regressor.robust import RANSAC, MLESAC
+from luma.regressor.time_series import AutoRegressor
 
 from luma.pipe.pipeline import Pipeline
 
@@ -207,6 +208,8 @@ if __name__ == '__main__':
     KNNRegressor, AdaptiveKNNRegressor, WeightedKNNRegressor
     
     RANSAC, MLESAC
+    
+    AutoRegressor
     
     # -------------------- [ luma.pipe ] -----------------------
     Pipeline

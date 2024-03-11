@@ -459,7 +459,7 @@ class GradientBoostingRegressor(Estimator, Estimator.Meta, Supervised):
             return np.where(is_small_error, -diff, -self.delta * np.sign(diff))
         else:
             raise UnsupportedParameterError(self.loss)
-
+    
     def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise NotFittedError(self)
         preds = sum(self.learning_rate * est.predict(X) 
