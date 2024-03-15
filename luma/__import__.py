@@ -47,7 +47,7 @@ from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 
 from luma.model_selection.split import TrainTestSplit
 from luma.model_selection.search import GridSearchCV, RandomizedSearchCV
-from luma.model_selection.cv import CrossValidator
+from luma.model_selection.fold import KFold, CrossValidator
 
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
 from luma.preprocessing.encoder import OneHotEncoder, LabelEncoder, OrdinalEncoder
@@ -75,7 +75,6 @@ from luma.regressor.svm import SVR, KernelSVR
 from luma.regressor.tree import DecisionTreeRegressor
 from luma.regressor.neighbors import KNNRegressor, AdaptiveKNNRegressor, WeightedKNNRegressor
 from luma.regressor.robust import RANSAC, MLESAC
-from luma.regressor.time_series import AutoRegressor
 
 from luma.pipe.pipeline import Pipeline
 
@@ -208,8 +207,6 @@ if __name__ == '__main__':
     KNNRegressor, AdaptiveKNNRegressor, WeightedKNNRegressor
     
     RANSAC, MLESAC
-    
-    AutoRegressor
     
     # -------------------- [ luma.pipe ] -----------------------
     Pipeline

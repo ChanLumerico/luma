@@ -109,12 +109,6 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
         
         self._fitted = True
         return self
-    
-    def print_forest(self) -> None:
-        if not self._fitted: raise NotFittedError(self)
-        for i, tree in enumerate(self.trees, start=1):
-            print(f'[Tree {i}/{self.n_trees}]')
-            tree.print_tree()
 
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
@@ -127,6 +121,9 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
+    
+    def __gettiem__(self, index: int) -> DecisionTreeClassifier:
+        return self.trees[index]
 
 
 class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
@@ -216,12 +213,6 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
         
         self._fitted = True
         return self
-    
-    def print_forest(self) -> None:
-        if not self._fitted: raise NotFittedError(self)
-        for i, tree in enumerate(self.trees, start=1):
-            print(f'[Tree {i}/{self.n_trees}]')
-            tree.print_tree()
 
     def predict(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
@@ -234,4 +225,7 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
               metric: Evaluator = MeanSquaredError) -> float:
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
+    
+    def __gettiem__(self, index: int) -> DecisionTreeClassifier:
+        return self.trees[index]
 

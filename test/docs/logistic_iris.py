@@ -36,6 +36,7 @@ rand = RandomizedSearchCV(estimator=LogisticRegressor(),
                           max_iter=100,
                           cv=5,
                           refit=True,
+                          shuffle=True,
                           random_state=42)
 
 rand.fit(X_train_pca, y_train)

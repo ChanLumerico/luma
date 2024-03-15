@@ -30,7 +30,7 @@ class VotingClassifier(Estimator, Estimator.Meta, Supervised):
     Parameters
     ----------
     `estimators` : List of estimators to vote
-    `voting` : Voting critetion
+    `voting` : Voting criterion
     (`label` to vote the most frequent and `prob` to vote the most probable)
     `weights` : Weights for each classifier on voting
     (`None` for uniform weights)

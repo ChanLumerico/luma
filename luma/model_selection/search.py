@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, TypeVar
+from typing import Any, Dict, Generator, List, TypeVar
 from scipy.stats import rv_continuous, rv_discrete
 import numpy as np
 import random
@@ -6,7 +6,7 @@ import random
 from luma.interface.util import Matrix, Vector
 from luma.core.super import Estimator, Evaluator, Optimizer
 from luma.interface.exception import NotFittedError
-from luma.model_selection.cv import CrossValidator
+from luma.model_selection.fold import CrossValidator
 
 DT = TypeVar('DT', bound=rv_continuous | rv_discrete)
 
@@ -34,6 +34,9 @@ class GridSearchCV(Optimizer):
     `cv` : K-fold size for cross validation
     `metric` : Scoring metric for evaluation
     `maximize` : Whether to optimize in a way of maximizing certain metric
+    `shuffle` : Whether to shuffle the dataset
+    `fold_generator` : Generator for yielding a single fold
+    (uses `KFold`'s when set to `None`)
     `refit` : Whether to re-fit the estimator with the best parameters found
     `random_state` : Seed for random sampling for cross validation
     
@@ -77,6 +80,8 @@ class GridSearchCV(Optimizer):
                  metric: Evaluator = None,
                  maximize: bool = True, 
                  refit: bool = True, 
+                 shuffle: bool = True,
+                 fold_generator: Generator = None, 
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.estimator = estimator
@@ -85,6 +90,8 @@ class GridSearchCV(Optimizer):
         self.metric = metric
         self.maximize = maximize
         self.refit = refit
+        self.shuffle = shuffle
+        self.fold_generator = fold_generator
         self.random_state = random_state
         self.verbose = verbose
         self.scores_ = []
@@ -105,6 +112,8 @@ class GridSearchCV(Optimizer):
             cv_model = CrossValidator(estimator=self.estimator,
                                       metric=self.metric,
                                       cv=self.cv,
+                                      shuffle=self.shuffle,
+                                      fold_generator=self.fold_generator,
                                       random_state=self.random_state,
                                       verbose=self.verbose)
             
@@ -176,6 +185,9 @@ class RandomizedSearchCV(Optimizer):
     `metric` : Scoring metric for evaluation
     `maximize` : Whether to optimize in a way of maximizing certain metric
     `refit` : Whether to re-fit the estimator with the best parameters found
+    `shuffle` : Whether to shuffle the dataset
+    `fold_generator` : Generator for yielding a single fold
+    (uses `KFold`'s when set to `None`)
     `random_state` : Seed for random sampling for cross-validation and random search
     `verbose` : Whether to print progress messages
     
@@ -223,6 +235,8 @@ class RandomizedSearchCV(Optimizer):
                  metric: Evaluator = None,
                  maximize: bool = True, 
                  refit: bool = True,
+                 shuffle: bool = True,
+                 fold_generator: Generator = None,
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.estimator = estimator
@@ -232,6 +246,8 @@ class RandomizedSearchCV(Optimizer):
         self.metric = metric
         self.maximize = maximize
         self.refit = refit
+        self.shuffle = shuffle
+        self.fold_generator = fold_generator
         self.random_state = random_state
         self.verbose = verbose
         self.scores_ = []
@@ -252,6 +268,8 @@ class RandomizedSearchCV(Optimizer):
             cv_model = CrossValidator(estimator=self.estimator,
                                       metric=self.metric,
                                       cv=self.cv,
+                                      shuffle=self.shuffle,
+                                      fold_generator=self.fold_generator,
                                       random_state=self.random_state,
                                       verbose=self.verbose)
 

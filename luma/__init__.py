@@ -49,4 +49,3 @@ License
 Luma is released under the GPL-3.0 License. See `LICENSE` file for more details.
 
 """
-

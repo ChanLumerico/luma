@@ -19,6 +19,7 @@ class TrainTestSplit:
     `X` : Feature data
     `y` : Target data (as a 1-D `Vector`)
     `test_size` : Proportional size of the test set (e.g. `0.2`, `0.3`)
+    `shuffle` : Whether to shuffle the dataset
     `random_state` : Seed for random sampling for split
     
     Properties
@@ -35,10 +36,12 @@ class TrainTestSplit:
                  X: Matrix,
                  y: Vector,
                  test_size: int | float = 0.3,
+                 shuffle: bool = True,
                  random_state: int = None) -> None:
         self.X = X
         self.y = y
         self.test_size = test_size
+        self.shuffle = shuffle
         self.random_state = random_state
     
     @property
@@ -56,7 +59,8 @@ class TrainTestSplit:
         
         if self.random_state is not None:
             np.random.seed(self.random_state)
-        np.random.shuffle(indices)
+        if self.shuffle:
+            np.random.shuffle(indices)
 
         test_indices = indices[:num_test_samples]
         train_indices = indices[num_test_samples:]
