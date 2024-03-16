@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generator, List, TypeVar
+from typing import Any, Dict, List, TypeVar
 from scipy.stats import rv_continuous, rv_discrete
 import numpy as np
 import random
@@ -6,7 +6,8 @@ import random
 from luma.interface.util import Matrix, Vector
 from luma.core.super import Estimator, Evaluator, Optimizer
 from luma.interface.exception import NotFittedError
-from luma.model_selection.fold import CrossValidator
+from luma.model_selection.cv import CrossValidator
+from luma.model_selection.fold import FoldType, KFold
 
 DT = TypeVar('DT', bound=rv_continuous | rv_discrete)
 
@@ -35,8 +36,7 @@ class GridSearchCV(Optimizer):
     `metric` : Scoring metric for evaluation
     `maximize` : Whether to optimize in a way of maximizing certain metric
     `shuffle` : Whether to shuffle the dataset
-    `fold_generator` : Generator for yielding a single fold
-    (uses `KFold`'s when set to `None`)
+    `fold_type` : Fold type (Default `KFold`)
     `refit` : Whether to re-fit the estimator with the best parameters found
     `random_state` : Seed for random sampling for cross validation
     
@@ -81,7 +81,7 @@ class GridSearchCV(Optimizer):
                  maximize: bool = True, 
                  refit: bool = True, 
                  shuffle: bool = True,
-                 fold_generator: Generator = None, 
+                 fold_type: FoldType = KFold, 
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.estimator = estimator
@@ -91,7 +91,7 @@ class GridSearchCV(Optimizer):
         self.maximize = maximize
         self.refit = refit
         self.shuffle = shuffle
-        self.fold_generator = fold_generator
+        self.fold_type = fold_type
         self.random_state = random_state
         self.verbose = verbose
         self.scores_ = []
@@ -113,7 +113,7 @@ class GridSearchCV(Optimizer):
                                       metric=self.metric,
                                       cv=self.cv,
                                       shuffle=self.shuffle,
-                                      fold_generator=self.fold_generator,
+                                      fold_type=self.fold_type,
                                       random_state=self.random_state,
                                       verbose=self.verbose)
             
@@ -186,8 +186,7 @@ class RandomizedSearchCV(Optimizer):
     `maximize` : Whether to optimize in a way of maximizing certain metric
     `refit` : Whether to re-fit the estimator with the best parameters found
     `shuffle` : Whether to shuffle the dataset
-    `fold_generator` : Generator for yielding a single fold
-    (uses `KFold`'s when set to `None`)
+    `fold_type` : Fold type (Default `KFold`)
     `random_state` : Seed for random sampling for cross-validation and random search
     `verbose` : Whether to print progress messages
     
@@ -236,7 +235,7 @@ class RandomizedSearchCV(Optimizer):
                  maximize: bool = True, 
                  refit: bool = True,
                  shuffle: bool = True,
-                 fold_generator: Generator = None,
+                 fold_type: FoldType = KFold,
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.estimator = estimator
@@ -247,7 +246,7 @@ class RandomizedSearchCV(Optimizer):
         self.maximize = maximize
         self.refit = refit
         self.shuffle = shuffle
-        self.fold_generator = fold_generator
+        self.fold_type = fold_type
         self.random_state = random_state
         self.verbose = verbose
         self.scores_ = []
@@ -269,7 +268,7 @@ class RandomizedSearchCV(Optimizer):
                                       metric=self.metric,
                                       cv=self.cv,
                                       shuffle=self.shuffle,
-                                      fold_generator=self.fold_generator,
+                                      fold_type=self.fold_type,
                                       random_state=self.random_state,
                                       verbose=self.verbose)
 

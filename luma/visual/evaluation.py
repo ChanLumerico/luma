@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Any, Dict, Generator, List, Literal, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple
 from matplotlib.colors import ListedColormap 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,7 +9,8 @@ from luma.core.super import Evaluator, Visualizer, Estimator
 from luma.model_selection.split import TrainTestSplit
 from luma.preprocessing.encoder import LabelBinarizer
 from luma.metric.classification import Accuracy, Precision, Recall, Specificity
-from luma.model_selection.fold import CrossValidator
+from luma.model_selection.cv import CrossValidator
+from luma.model_selection.fold import FoldType, KFold
 
 
 __all__ = (
@@ -413,8 +414,8 @@ class LearningCurve(Visualizer):
     `test_size` : Proportional value for validation set size
     `cv` : Number of times for cross-validation
     `shuffle` : Whether to shuffle the dataset
-    `fold_generator` : Generator for yielding a single fold
-    (uses `KFold`'s when set to `None`)
+    `stratify` : Whether to perform stratified split
+    `fold_type` : Fold type (Default `KFold`)
     `metric` : Evaluation metric for scoring
     `random_state` : Seed for random sampling upon splitting samples
     
@@ -428,7 +429,8 @@ class LearningCurve(Visualizer):
                  test_size: float = 0.3,
                  cv: int = 5,
                  shuffle: bool = True,
-                 fold_generator: Generator = None,
+                 stratify: bool = False,
+                 fold_type: FoldType = KFold,
                  metric: Evaluator = Accuracy,
                  random_state: int = None,
                  verbose: bool = False):
@@ -439,7 +441,8 @@ class LearningCurve(Visualizer):
         self.test_size = test_size
         self.cv = cv
         self.shuffle = shuffle
-        self.fold_generator = fold_generator
+        self.stratify = stratify
+        self.fold_type = fold_type
         self.metric = metric
         self.random_state = random_state
         self.verbose = verbose
@@ -459,6 +462,7 @@ class LearningCurve(Visualizer):
                 self.y,
                 test_size=n_samples,
                 shuffle=self.shuffle,
+                stratify=self.stratify,
                 random_state=self.random_state
             ).get
             
@@ -471,7 +475,7 @@ class LearningCurve(Visualizer):
                 self.estimator,
                 self.metric,
                 self.cv,
-                self.fold_generator,
+                self.fold_type,
                 self.shuffle,
                 self.random_state,
                 self.verbose
@@ -560,8 +564,7 @@ class ValidationCurve(Visualizer):
     `param_range` : Range of values for the hyperparameter
     `cv` : Number of times for cross-validation
     `shuffle` : Whether to shuffle the dataset
-    `fold_generator` : Generator for yielding a single fold
-    (uses `KFold`'s when set to `None`)
+    `fold_type` : Fold type (Default `KFold`)
     `metric` : Evaluation metric for scoring
     `random_state` : Seed for random sampling upon splitting samples
     
@@ -575,7 +578,7 @@ class ValidationCurve(Visualizer):
                  param_range: Vector, 
                  cv: int = 5, 
                  shuffle: bool = True,
-                 fold_generator: Generator = None,
+                 fold_type: FoldType = KFold,
                  metric: Evaluator = Accuracy, 
                  random_state: int = None,
                  verbose: bool = False):
@@ -586,7 +589,7 @@ class ValidationCurve(Visualizer):
         self.param_range = param_range
         self.cv = cv
         self.shuffle = shuffle
-        self.fold_generator = fold_generator
+        self.fold_type = fold_type
         self.metric = metric
         self.random_state = random_state
         self.verbose = verbose
@@ -597,12 +600,12 @@ class ValidationCurve(Visualizer):
             setattr(self.estimator, self.param_name, param_value)
             
             cv_model = CrossValidator(estimator=self.estimator,
-                                       metric=self.metric,
-                                       cv=self.cv,
-                                       shuffle=self.shuffle,
-                                       fold_generator=self.fold_generator,
-                                       random_state=self.random_state,
-                                       verbose=self.verbose)
+                                      metric=self.metric,
+                                      cv=self.cv,
+                                      shuffle=self.shuffle,
+                                      fold_type=self.fold_type,
+                                      random_state=self.random_state,
+                                      verbose=self.verbose)
             
             cv_model._fit(self.X, self.y)
             self.train_scores.append(cv_model.train_scores_)
@@ -681,8 +684,7 @@ class ValidationHeatmap(Visualizer):
     `param_dict` : Dictionary with two hyperparameters and their respective ranges
     `cv` : Number of times for cross-validation
     `shuffle` : Whether to shuffle the dataset
-    `fold_generator` : Generator for yielding a single fold
-    (uses `KFold`'s when set to `None`)
+    `fold_type` : Fold type (Default `KFold`)
     `metric` : Evaluation metric for scoring
     `random_state` : Seed for random sampling upon splitting samples
     
@@ -695,7 +697,7 @@ class ValidationHeatmap(Visualizer):
                  param_dict: Dict[str, Any],
                  cv: int = 5, 
                  shuffle: bool = True,
-                 fold_generator: Generator = None,
+                 fold_type: FoldType = KFold,
                  metric: Evaluator = Accuracy, 
                  random_state: int = None,
                  verbose: bool = False) -> None:
@@ -705,7 +707,7 @@ class ValidationHeatmap(Visualizer):
         self.param_dict = param_dict
         self.cv = cv
         self.shuffle = shuffle
-        self.fold_generator = fold_generator
+        self.fold_type = fold_type
         self.metric = metric
         self.random_state = random_state
         self.verbose = verbose
@@ -736,7 +738,7 @@ class ValidationHeatmap(Visualizer):
                                       metric=self.metric,
                                       cv=self.cv,
                                       shuffle=self.shuffle,
-                                      fold_generator=self.fold_generator,
+                                      fold_type=self.fold_type,
                                       random_state=self.random_state,
                                       verbose=False)
             

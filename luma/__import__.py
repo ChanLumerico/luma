@@ -47,7 +47,8 @@ from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 
 from luma.model_selection.split import TrainTestSplit
 from luma.model_selection.search import GridSearchCV, RandomizedSearchCV
-from luma.model_selection.fold import KFold, CrossValidator
+from luma.model_selection.cv import CrossValidator
+from luma.model_selection.fold import KFold, StratifiedKFold 
 
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
 from luma.preprocessing.encoder import OneHotEncoder, LabelEncoder, OrdinalEncoder
@@ -170,6 +171,8 @@ if __name__ == '__main__':
     GridSearchCV, RandomizedSearchCV
     
     CrossValidator
+    
+    KFold, StratifiedKFold
     
     # ---------------- [ luma.preprocessing ] ------------------
     StandardScaler, MinMaxScaler

@@ -1,12 +1,13 @@
 from itertools import combinations
-from typing import Generator, Tuple
+from typing import Tuple
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Transformer, Supervised
 from luma.interface.util import Matrix, Vector, Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.model_selection.split import TrainTestSplit
-from luma.model_selection.fold import CrossValidator
+from luma.model_selection.cv import CrossValidator
+from luma.model_selection.fold import FoldType, KFold
 
 
 __all__ = (
@@ -34,8 +35,8 @@ class SBS(Transformer, Transformer.Feature, Supervised):
     `test_size` : Proportional size of the validation set
     `cv` : K-fold size for cross validation (`0` to disable CV)
     `shuffle` : Whether to shuffle the dataset
-    `fold_generator` : Generator for yielding a single fold
-    (uses `KFold`'s when set to `None`)
+    `stratify` : Whether to perform stratified split
+    `fold_type` : Fold type (Default `KFold`)
     `random_state` : Seed for splitting the data
     
     Notes
@@ -63,7 +64,8 @@ class SBS(Transformer, Transformer.Feature, Supervised):
                  test_size: float = 0.2,
                  cv: int = 5,
                  shuffle: bool = True,
-                 fold_generator: Generator = None,
+                 stratify: bool = False,
+                 fold_type: FoldType = KFold,
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.estimator = estimator
@@ -72,7 +74,8 @@ class SBS(Transformer, Transformer.Feature, Supervised):
         self.test_size = test_size
         self.cv = cv
         self.shuffle = shuffle
-        self.fold_generator = fold_generator
+        self.stratify = stratify
+        self.fold_type = fold_type
         self.random_state = random_state
         self.verbose = verbose
         self._fitted = False
@@ -91,12 +94,13 @@ class SBS(Transformer, Transformer.Feature, Supervised):
                                       metric=self.metric, 
                                       cv=self.cv,
                                       shuffle=self.shuffle,
-                                      fold_generator=self.fold_generator,
+                                      fold_type=self.fold_type,
                                       random_state=self.random_state)
         else:
             Xy_split = TrainTestSplit(X, y, 
                                       test_size=self.test_size,
                                       shuffle=self.shuffle,
+                                      stratify=self.stratify,
                                       random_state=self.random_state).get
             X_train, X_test, y_train, y_test = Xy_split
 
@@ -173,8 +177,8 @@ class SFS(Transformer, Transformer.Feature, Supervised):
     `test_size` : Proportional size of the validation set
     `cv` : K-fold size for cross validation (`0` to disable CV)
     `shuffle` : Whether to shuffle the dataset
-    `fold_generator` : Generator for yielding a single fold
-    (uses `KFold`'s when set to `None`)
+    `stratify` : Whether to perform stratified split
+    `fold_type` : Fold type (Default `KFold`)
     `random_state` : Seed for splitting the data
     
     Notes
@@ -204,7 +208,8 @@ class SFS(Transformer, Transformer.Feature, Supervised):
                  test_size: float = 0.2,
                  cv: int = 5,
                  shuffle: bool = True,
-                 fold_generator: Generator = None,
+                 stratify: bool = False,
+                 fold_type: FoldType = KFold,
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.estimator = estimator
@@ -213,7 +218,8 @@ class SFS(Transformer, Transformer.Feature, Supervised):
         self.test_size = test_size
         self.cv = cv
         self.shuffle = shuffle
-        self.fold_generator = fold_generator
+        self.stratify = stratify
+        self.fold_type = fold_type
         self.random_state = random_state
         self.verbose = verbose
         self._fitted = False
@@ -232,12 +238,13 @@ class SFS(Transformer, Transformer.Feature, Supervised):
                                       metric=self.metric, 
                                       cv=self.cv,
                                       shuffle=self.shuffle,
-                                      fold_generator=self.fold_generator,
+                                      fold_type=self.fold_type,
                                       random_state=self.random_state)
         else:
             Xy_split = TrainTestSplit(X, y, 
                                       test_size=self.test_size,
                                       shuffle=self.shuffle,
+                                      stratify=self.stratify,
                                       random_state=self.random_state).get
             X_train, X_test, y_train, y_test = Xy_split
 
@@ -309,8 +316,7 @@ class RFE(Transformer, Transformer.Feature, Supervised):
     `step_size` : Number of features to eliminate in each step
     `cv` : K-fold size for cross validation (`0` to disable CV)
     `shuffle` : Whether to shuffle the dataset
-    `fold_generator` : Generator for yielding a single fold
-    (uses `KFold`'s when set to `None`)
+    `fold_type` : Fold type (Default `KFold`)
     `random_state` : Seed for splitting the data
     
     Notes
@@ -340,7 +346,7 @@ class RFE(Transformer, Transformer.Feature, Supervised):
                  step_size: int = 1,
                  cv: int = 5,
                  shuffle: bool = True,
-                 fold_generator: Generator = None,
+                 fold_type: FoldType = KFold,
                  random_state: int = None,
                  verbose: bool = False) -> None:
         self.estimator = estimator
@@ -349,7 +355,7 @@ class RFE(Transformer, Transformer.Feature, Supervised):
         self.step_size = step_size
         self.cv = cv
         self.shuffle = shuffle
-        self.fold_generator = fold_generator
+        self.fold_type = fold_type
         self.random_state = random_state
         self.verbose = verbose
         self._fitted = False
@@ -367,7 +373,7 @@ class RFE(Transformer, Transformer.Feature, Supervised):
                                        metric=self.metric,
                                        cv=self.cv,
                                        shuffle=self.shuffle,
-                                       fold_generator=self.fold_generator,
+                                       fold_type=self.fold_type,
                                        random_state=self.random_state)
 
         self.support = np.ones(n, dtype=bool)
