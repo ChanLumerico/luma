@@ -205,16 +205,31 @@ class DecisionTreeClassifier(Estimator, Supervised):
         if not self._fitted: raise NotFittedError(self)
         preds = [self._predict_single(self.root, x) for x in X]
         
-        return np.array(preds)
+        return Vector(preds)
 
     def _predict_single(self, node: DecisionTreeNode, x: Vector) -> int:
         while node.value is None:
-            if x[node.feature_index] <= node.threshold:
-                node = node.left
-            else:
-                node = node.right
+            if x[node.feature_index] <= node.threshold: node = node.left
+            else: node = node.right
         
         return max(node.value, key=node.value.get)
+    
+    def predict_proba(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        proba_preds = [self._predict_proba_single(self.root, x) for x in X]
+        
+        return Matrix(proba_preds)
+
+    def _predict_proba_single(self, node: DecisionTreeNode, x: Vector) -> Vector:
+        while node.value is None:
+            if x[node.feature_index] <= node.threshold: node = node.left
+            else: node = node.right
+        
+        total_samples = sum(node.value.values())
+        cl_probs = {cl: count / total_samples for cl, count in node.value.items()}
+        
+        probabilities = Matrix([cl_probs.get(cl, 0.0) for cl in np.unique(self._y)])
+        return probabilities
 
     def score(self, X: Matrix, y: Vector, metric: Evaluator = Accuracy) -> float:
         preds = self.predict(X)

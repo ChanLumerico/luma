@@ -77,10 +77,13 @@ class GaussianNaiveBayes(Estimator, Supervised):
             for i, c in enumerate(self.classes):
                 prior = self._calculate_prior(c)
                 likelihood = self._calculate_likelihood(x, *self.parameters[i])
+                
                 posterior = prior * likelihood
                 posteriors.append(posterior)
+            
             posteriors = Vector(posteriors)
-            probabilities.append(posteriors / np.sum(posteriors))          
+            probabilities.append(posteriors / np.sum(posteriors))  
+                
         return Matrix(probabilities)
     
     def score(self, X: Matrix, y: Matrix, 
@@ -129,12 +132,13 @@ class BernoulliNaiveBayes(Estimator, Supervised):
             predictions.append(predicted_class)
         
         return Matrix(predictions)
-
+    
     def predict_proba(self, X: Matrix) -> Matrix:
         if not self._fitted: raise NotFittedError(self)
         probas = []
         for x in X:
             class_probs = np.zeros(len(self.classes))
+            
             for i, _ in enumerate(self.classes):
                 class_probs[i] = np.log(self.class_probs[i])
                 for j, feature in enumerate(x):
@@ -143,6 +147,7 @@ class BernoulliNaiveBayes(Estimator, Supervised):
 
             exp_class_probs = np.exp(class_probs - np.max(class_probs))
             probas.append(exp_class_probs / exp_class_probs.sum())
+        
         return Matrix(probas)
     
     def score(self, X: Matrix, y: Matrix, 

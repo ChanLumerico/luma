@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.special import softmax
+from scipy.stats import multivariate_normal
 
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.util import Matrix, Scalar, Vector, KernelUtil
@@ -65,7 +67,14 @@ class LDAClassifier(Estimator, Supervised):
     def predict(self, X: Matrix) -> Vector:
         if not self._fitted: raise not NotFittedError(self)
         scores = np.dot(X, self.coef_.T) + self.intercept_
+        
         return np.argmax(scores, axis=1)
+    
+    def predict_proba(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        scores = np.dot(X, self.coef_.T) + self.intercept_
+        
+        return softmax(scores, axis=1)
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
@@ -129,6 +138,20 @@ class QDAClassifier(Estimator, Supervised):
             discs[i] = disc
         
         return self.classes[np.argmax(discs)]
+    
+    def predict_proba(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        log_probs = np.array([self._log_proba_sample(x) for x in X])
+        
+        return softmax(log_probs, axis=1)
+    
+    def _log_proba_sample(self, x: Vector) -> Vector:
+        log_probs = np.zeros(len(self.classes))
+        for i, _ in enumerate(self.classes):
+            mvn = multivariate_normal(mean=self.means[i], cov=self.covs[i])
+            log_probs[i] = mvn.logpdf(x) + np.log(self.priors[i])
+        
+        return log_probs
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
@@ -219,6 +242,20 @@ class RDAClassifier(Estimator, Supervised):
         
         return self.classes[np.argmax(discs)]
     
+    def predict_proba(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        log_probs = np.array([self._log_proba_sample(x) for x in X])
+        
+        return softmax(log_probs, axis=1)
+    
+    def _log_proba_sample(self, x: Vector) -> Vector:
+        log_probs = np.zeros(len(self.classes))
+        for i, _ in enumerate(self.classes):
+            mvn = multivariate_normal(mean=self.means[i], cov=self.covs[i])
+            log_probs[i] = mvn.logpdf(x) + np.log(self.priors[i])
+        
+        return log_probs
+    
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
         X_pred = self.predict(X)
@@ -296,8 +333,16 @@ class KDAClassifier(Estimator, Supervised):
         return proj
     
     def predict(self, X: Matrix) -> Vector:
+        if not self._fitted: raise NotFittedError(self)
         proj = self._project(X)
+        
         return self.classes[np.argmax(proj, axis=1)]
+    
+    def predict_proba(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        proj = self._project(X)
+        
+        return softmax(proj, axis=1)
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:

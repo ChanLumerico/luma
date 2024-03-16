@@ -52,10 +52,28 @@ class KNNClassifier(Estimator, Supervised):
             distances = np.linalg.norm(self._neighbors.data - x, axis=1)
             nearest_neighbor_ids = np.argsort(distances)[:self.n_neighbors]
             nearest_neighbor_labels = self._y[nearest_neighbor_ids]
+            
             most_common_label = np.bincount(nearest_neighbor_labels).argmax()
             predictions.append(most_common_label)
 
         return Matrix(predictions)
+    
+    def predict_proba(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        proba = []
+        
+        for x in X:
+            distances = np.linalg.norm(self._neighbors - x, axis=1)
+            nearest_neighbor_ids = np.argsort(distances)[:self.n_neighbors]
+            nearest_neighbor_labels = self._y[nearest_neighbor_ids]
+            
+            class_votes = np.bincount(nearest_neighbor_labels, 
+                                      minlength=np.max(self._y) + 1)
+            
+            class_probabilities = class_votes / self.n_neighbors
+            proba.append(class_probabilities)
+        
+        return Matrix(proba)
 
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
@@ -124,6 +142,25 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
             predictions.append(most_common)
 
         return Matrix(predictions)
+    
+    def predict_proba(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        dist_matrix = distance_matrix(X, self._X)
+        
+        proba_predictions = []
+        for i, point_distances in enumerate(dist_matrix):
+            nearest_indices = np.argsort(point_distances)
+            k_value = min(self.k_values[i], len(nearest_indices))
+            nearest_indices = nearest_indices[:k_value]
+            
+            votes = np.zeros(np.max(self._y) + 1)
+            for idx in nearest_indices:
+                votes[self._y[idx]] += 1
+            
+            class_probabilities = votes / votes.sum()
+            proba_predictions.append(class_probabilities)
+
+        return Matrix(proba_predictions)
 
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
@@ -175,6 +212,27 @@ class WeightedKNNClassifier(Estimator, Supervised):
             predictions[i] = np.argmax(weighted_votes)
 
         return predictions.astype(int)
+    
+    def predict_proba(self, X: Matrix) -> Matrix:
+        if not self._fitted: raise NotFittedError(self)
+        proba_predictions = []
+        
+        for x in X:
+            distances = np.linalg.norm(self._X - x, axis=1)
+            nearest_neighbor_indices = np.argsort(distances)[:self.n_neighbors]
+            
+            weights = 1 / (distances[nearest_neighbor_indices] + 1e-5)
+            all_classes = np.unique(self._y)
+            weighted_votes = np.zeros(len(all_classes))
+            
+            for i, cl in enumerate(all_classes):
+                class_weights = weights[self._y[nearest_neighbor_indices] == cl]
+                weighted_votes[i] = np.sum(class_weights)
+            
+            class_probabilities = weighted_votes / np.sum(weighted_votes)
+            proba_predictions.append(class_probabilities)
+        
+        return Matrix(proba_predictions)
     
     def score(self, X: Matrix, y: Matrix, 
               metric: Evaluator = Accuracy) -> float:
