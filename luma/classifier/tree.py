@@ -56,6 +56,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
         self.max_leaf_nodes = max_leaf_nodes
         self.random_state = random_state
         self.root = None
+        self.classes_ = None
         self._fitted = False
         
         np.random.seed(random_state)
@@ -67,6 +68,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
         if sample_weights is None: sample_weights = np.ones(len(y))
         sample_weights = Vector(sample_weights)
         
+        self.classes_ = np.unique(y)
         self.root = self._build_tree(X, y, 0, sample_weights)
         self._fitted = True
         return self
@@ -228,7 +230,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
         total_samples = sum(node.value.values())
         cl_probs = {cl: count / total_samples for cl, count in node.value.items()}
         
-        probabilities = Matrix([cl_probs.get(cl, 0.0) for cl in np.unique(self._y)])
+        probabilities = Matrix([cl_probs.get(cl, 0.0) for cl in self.classes_])
         return probabilities
 
     def score(self, X: Matrix, y: Vector, metric: Evaluator = Accuracy) -> float:

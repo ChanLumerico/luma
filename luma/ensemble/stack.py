@@ -17,7 +17,52 @@ __all__ = (
 class StackingClassifier(Estimator, Transformer, Supervised):
     
     """
+    A stacking classifier is a machine learning model that combines multiple 
+    classification models into a single predictive model by stacking the output 
+    of individual classifiers as input to a final classifier. This final 
+    classifier, often called a meta-classifier, is trained to make a final 
+    prediction based on the outputs of the base classifiers. Stacking aims to 
+    leverage the strengths of each base model to improve overall prediction 
+    accuracy.
     
+    Parameters
+    ----------
+    `estimators` : List of base estimators
+    `final_estimator` : Final meta-estimator (Default `SoftmaxRegressor`)
+    `pass_original` : Whether to pass the original data to final estimator
+    `drop_threshold` : Omitting threshold for base estimators
+    (`None` not to omit any estimators)
+    `method` : Methods called for each base estimator
+    `cv` : Number of folds for cross-validation
+    `fold_type` : Fold type (Default `KFold`)
+    `shuffle` : Whether to shuffle the dataset when cross-validating
+    `random_state` : Seed for random splitting
+    `**kwargs` : Additional parameters for final estimator
+    (i.e. `learning_rate`)
+    
+    Notes
+    -----
+    `StackingClassifier` can also be utilized as `Transformer`.
+    
+    - The method `transform` returns class labels or probabilities by each 
+        base estimator as a stacked form:
+    
+        ```py
+        def transform(self, X: Matrix) -> Matrix
+        ```
+    
+    Examples
+    --------
+    ```py
+    stack = StackingClassifier(estimators=[...],
+                               final_estimator=SoftmaxRegressor(),
+                               method='label',
+                               cv=5,
+                               fold_type=KFold)
+    stack.fit(X, y)
+    X_new = stack.transform(X)
+    y_pred = stack.predict(X)
+    ```
     """
 
     def __init__(self, 
@@ -29,8 +74,8 @@ class StackingClassifier(Estimator, Transformer, Supervised):
                  cv: int = 5,
                  fold_type: FoldType = KFold, 
                  shuffle: bool = True,
-                 verbose: bool = False, 
                  random_state: int = None,
+                 verbose: bool = False, 
                  **kwargs: Dict[str, Any]) -> None:
         self.estimators = estimators
         self.final_estimator = final_estimator
@@ -40,8 +85,8 @@ class StackingClassifier(Estimator, Transformer, Supervised):
         self.cv = cv
         self.fold_type = fold_type
         self.shuffle = shuffle
-        self.verbose = verbose
         self.random_state = random_state
+        self.verbose = verbose
         self._final_estimator_params = kwargs
         self._base_estimators: List[Estimator] = []
         self._fitted = False
@@ -65,7 +110,7 @@ class StackingClassifier(Estimator, Transformer, Supervised):
             if self.method == 'label': preds = np.zeros(m)
             else: preds = np.zeros((m, self.n_classes))
             
-            for train_indices, test_indices in fold.split():
+            for train_indices, test_indices in fold.split:
                 X_train, y_train = X[train_indices], y[train_indices]
                 X_test = X[test_indices]
                 

@@ -63,7 +63,7 @@ class KNNClassifier(Estimator, Supervised):
         proba = []
         
         for x in X:
-            distances = np.linalg.norm(self._neighbors - x, axis=1)
+            distances = np.linalg.norm(self._neighbors.data - x, axis=1)
             nearest_neighbor_ids = np.argsort(distances)[:self.n_neighbors]
             nearest_neighbor_labels = self._y[nearest_neighbor_ids]
             
