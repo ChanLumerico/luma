@@ -5,6 +5,7 @@ setup.sh
 token.key
 build/
 dist/
+test/
 luma_ml.egg-info/
 version_ico/
 __pycache__/
