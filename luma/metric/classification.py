@@ -4,13 +4,7 @@ from luma.interface.util import Matrix
 from luma.core.super import Evaluator
 
 
-__all__ = (
-    'Accuracy', 
-    'Precision', 
-    'Recall', 
-    'F1Score', 
-    'Specificity'
-)
+__all__ = ("Accuracy", "Precision", "Recall", "F1Score", "Specificity")
 
 
 class Accuracy(Evaluator):
@@ -49,4 +43,3 @@ class Specificity(Evaluator):
         true_negatives = np.sum((y_true == 0) & (y_pred == 0))
         false_positives = np.sum((y_true == 0) & (y_pred == 1))
         return true_negatives / (true_negatives + false_positives)
-

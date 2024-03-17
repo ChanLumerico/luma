@@ -1,16 +1,12 @@
 import numpy as np
 
 
-__all__ = (
-    'ReLU',
-    'LeakyReLU',
-    'ELU',
-    'Tanh', 
-    'Sigmoid',
-    'Softmax'
-)
+__all__ = ("ReLU", "LeakyReLU", "ELU", "Tanh", "Sigmoid", "Softmax")
 
-class _Matrix: pass
+
+class _Matrix:
+    pass
+
 
 Matrix = _Matrix
 
@@ -18,7 +14,7 @@ Matrix = _Matrix
 class ReLU:
     def func(self, X: Matrix) -> Matrix:
         return np.maximum(0, X)
-    
+
     def derivative(self, X: Matrix) -> Matrix:
         return (X > 0).astype(float)
 
@@ -70,13 +66,14 @@ class Softmax:
         m, n = X.shape
         soft_out = self.func(X)
         jacobian = np.zeros((m, n, n))
-        
+
         for i in range(len(soft_out)):
             for j in range(len(soft_out[i])):
                 for k in range(len(soft_out[i])):
-                    if j == k: val = soft_out[i, j] * (1 - soft_out[i, j])
-                    else: val = -soft_out[i, j] * soft_out[i, k]
+                    if j == k:
+                        val = soft_out[i, j] * (1 - soft_out[i, j])
+                    else:
+                        val = -soft_out[i, j] * soft_out[i, k]
                     jacobian[i, j, k] = val
 
         return jacobian
-

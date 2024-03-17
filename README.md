@@ -8,8 +8,9 @@
         <p class="subtitle">A Comprehensive Python Module for Machine Learning and Data Science</p>
         <img alt="pypi-version" src="https://img.shields.io/pypi/v/luma-ml?logo=python&logoColor=white&color=blue">
         <img alt="pypi-downloads" src="https://img.shields.io/pypi/dm/luma-ml">
-        <img src="https://img.shields.io/badge/total downloads-3.8k-red">
+        <img src="https://img.shields.io/badge/total downloads-4.0k-red">
         <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/ChanLumerico/luma?color=yellow">
+        <img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg">
         <div class="module">
             <h3 class="module-header">Submodules</h3>
             <table>
@@ -92,7 +93,7 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>0.6.3</td>
+                    <td>0.6.4</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
@@ -109,7 +110,7 @@
                 <tr>
                     <td>Documentation</td>
                     <td>
-                        <a href="https://lumerico284.notion.site/LUMA-76330376b0e64cc1b95874c469aeb327?pvs=4">LUMA Notion Document</a>
+                        <a href="https://lumerico284.notion.site/LUMA-a467e4a9e885498f87b49c952d0abecd?pvs=74">LUMA Notion Document</a>
                     </td>
                 </tr>
             </table>

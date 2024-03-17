@@ -1,6 +1,6 @@
 from itertools import product
 from typing import Any, Dict, List, Literal, Optional, Tuple
-from matplotlib.colors import ListedColormap 
+from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,29 +14,31 @@ from luma.model_selection.fold import FoldType, KFold
 
 
 __all__ = (
-    'DecisionRegion', 
-    'ClusterPlot',
-    'ROCCurve',
-    'PrecisionRecallCurve',
-    'ConfusionMatrix',
-    'ResidualPlot',
-    'LearningCurve',
-    'ValidationCurve',
-    'ValidationHeatmap',
-    'InertiaPlot'
+    "DecisionRegion",
+    "ClusterPlot",
+    "ROCCurve",
+    "PrecisionRecallCurve",
+    "ConfusionMatrix",
+    "ResidualPlot",
+    "LearningCurve",
+    "ValidationCurve",
+    "ValidationHeatmap",
+    "InertiaPlot",
 )
 
 
 class DecisionRegion(Visualizer):
-    def __init__(self, 
-                 estimator: Estimator,
-                 X: Matrix, 
-                 y: Optional[Matrix] = None, 
-                 title: str | Literal['auto'] = 'auto', 
-                 xlabel: str = r'$x_1$', 
-                 ylabel: str = r'$x_2$',
-                 cmap: ListedColormap = 'rainbow',
-                 alpha: float = 0.4) -> None:
+    def __init__(
+        self,
+        estimator: Estimator,
+        X: Matrix,
+        y: Optional[Matrix] = None,
+        title: str | Literal["auto"] = "auto",
+        xlabel: str = r"$x_1$",
+        ylabel: str = r"$x_2$",
+        cmap: ListedColormap = "rainbow",
+        alpha: float = 0.4,
+    ) -> None:
         self.estimator = estimator
         self.X = X
         self.y = y
@@ -45,66 +47,74 @@ class DecisionRegion(Visualizer):
         self.ylabel = ylabel
         self.cmap = cmap
         self.alpha = alpha
-        
-        if self.title == 'auto':
+
+        if self.title == "auto":
             self.title = type(self.estimator).__name__
 
-        if self.y is None and hasattr(self.estimator, 'labels'):
+        if self.y is None and hasattr(self.estimator, "labels"):
             self.y = self.estimator.labels
 
-    def plot(self, 
-             ax: Optional[plt.Axes] = None, 
-             size: float = 250, 
-             scale: float = 10.0, 
-             show: bool = False) -> plt.Axes:
+    def plot(
+        self,
+        ax: Optional[plt.Axes] = None,
+        size: float = 250,
+        scale: float = 10.0,
+        show: bool = False,
+    ) -> plt.Axes:
         x1_min, x1_max = self.X[:, 0].min(), self.X[:, 0].max()
         x2_min, x2_max = self.X[:, 1].min(), self.X[:, 1].max()
         delta_1, delta_2 = (x1_max - x1_min) / size, (x2_max - x2_min) / size
-        
+
         x1_min, x1_max = x1_min - delta_1 * scale, x1_max + delta_1 * scale
         x2_min, x2_max = x2_min - delta_2 * scale, x2_max + delta_2 * scale
-        xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, delta_1), 
-                               np.arange(x2_min, x2_max, delta_2))
-        
+        xx1, xx2 = np.meshgrid(
+            np.arange(x1_min, x1_max, delta_1), np.arange(x2_min, x2_max, delta_2)
+        )
+
         Z = self.estimator.predict(Matrix([xx1.ravel(), xx2.ravel()]).T)
         Z = Z.reshape(xx1.shape)
-        
-        if ax is None: 
+
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
-        ax.contourf(xx1, xx2, Z, 
-                    alpha=self.alpha, 
-                    cmap=self.cmap, 
-                    levels=len(np.unique(self.y)))
-        
+
+        ax.contourf(
+            xx1, xx2, Z, alpha=self.alpha, cmap=self.cmap, levels=len(np.unique(self.y))
+        )
+
         ax.set_xlim(xx1.min(), xx1.max())
         ax.set_ylim(xx2.min(), xx2.max())
 
-        ax.scatter(self.X[:, 0], self.X[:, 1], 
-                   c=self.y, 
-                   cmap=self.cmap, 
-                   alpha=0.8, 
-                   edgecolors='black')
-        
+        ax.scatter(
+            self.X[:, 0],
+            self.X[:, 1],
+            c=self.y,
+            cmap=self.cmap,
+            alpha=0.8,
+            edgecolors="black",
+        )
+
         ax.set_xlabel(self.xlabel)
         ax.set_ylabel(self.ylabel)
         ax.set_title(self.title)
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
 
 
 class ClusterPlot(Visualizer):
-    def __init__(self,
-                 estimator: Estimator,
-                 X: Matrix,
-                 title: str | Literal['auto'] = 'auto',
-                 xlabel: str = r'$x_1$',
-                 ylabel: str = r'$x_2$',
-                 cmap: ListedColormap = 'rainbow',
-                 alpha: float = 0.8) -> None:
+    def __init__(
+        self,
+        estimator: Estimator,
+        X: Matrix,
+        title: str | Literal["auto"] = "auto",
+        xlabel: str = r"$x_1$",
+        ylabel: str = r"$x_2$",
+        cmap: ListedColormap = "rainbow",
+        alpha: float = 0.8,
+    ) -> None:
         self.estimator = estimator
         self.X = X
         self.title = title
@@ -113,96 +123,97 @@ class ClusterPlot(Visualizer):
         self.cmap = cmap
         self.alpha = alpha
         self.labels = self.estimator.labels
-        
-        if self.title == 'auto':
+
+        if self.title == "auto":
             self.title = type(self.estimator).__name__
-    
-    def plot(self, 
-             ax: Optional[plt.Axes] = None, 
-             show: bool = False) -> plt.Axes:
-        if ax is None: 
+
+    def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
-        ax.scatter(self.X[self.labels == -1, 0], 
-                   self.X[self.labels == -1, 1],
-                   marker='x',
-                   c='black', 
-                   label='Noise')
-        
-        ax.scatter(self.X[self.labels != -1, 0], 
-                   self.X[self.labels != -1, 1], 
-                   marker='o',
-                   c=self.labels[self.labels != -1],
-                   cmap=self.cmap,
-                   alpha=self.alpha,
-                   edgecolors='black')
-        
+
+        ax.scatter(
+            self.X[self.labels == -1, 0],
+            self.X[self.labels == -1, 1],
+            marker="x",
+            c="black",
+            label="Noise",
+        )
+
+        ax.scatter(
+            self.X[self.labels != -1, 0],
+            self.X[self.labels != -1, 1],
+            marker="o",
+            c=self.labels[self.labels != -1],
+            cmap=self.cmap,
+            alpha=self.alpha,
+            edgecolors="black",
+        )
+
         ax.set_title(self.title)
         ax.set_xlabel(self.xlabel)
         ax.set_ylabel(self.ylabel)
-        
-        if len(self.X[self.labels == -1]): ax.legend()
+
+        if len(self.X[self.labels == -1]):
+            ax.legend()
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
 
 
 class ROCCurve(Visualizer):
-    def __init__(self,
-                 y_true: Vector,
-                 y_scores: Matrix) -> None:
+    def __init__(self, y_true: Vector, y_scores: Matrix) -> None:
         self.y_true = y_true
         self.y_scores = y_scores
         self.n_classes = y_scores.shape[1]
-    
-    def plot(self, 
-             ax: Optional[plt.Axes] = None, 
-             show: bool = False) -> plt.Axes:
-        if ax is None: 
+
+    def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
+
         y_binary = LabelBinarizer().fit_transform(self.y_true)
-        
+
         fprs, tprs = [], []
         for cl in range(self.n_classes):
             fpr, tpr = self._fpr_tpr(y_binary[:, cl], self.y_scores[:, cl])
             fprs.append(fpr)
             tprs.append(tpr)
-            
+
             auc = self._auc(fpr, tpr)
-            ax.plot(fpr, tpr, 
-                    linewidth=2,
-                    label=f'ROC Curve {cl} (area = {auc:.2f})')
-        
+            ax.plot(fpr, tpr, linewidth=2, label=f"ROC Curve {cl} (area = {auc:.2f})")
+
         mean_fpr, mean_tpr = np.mean(fprs, axis=0), np.mean(tprs, axis=0)
         mean_auc = self._auc(mean_fpr, mean_tpr)
-        
-        ax.plot(mean_fpr, mean_tpr,
-                color='dimgray', 
-                linewidth=2,
-                linestyle='--', 
-                label=f'Mean ROC (area = {mean_auc:.2f})')
-        
-        ax.plot([0, 1], [0, 1], 
-                color='darkgray', 
-                linestyle=':', 
-                label='Random Guessing')
-        
+
+        ax.plot(
+            mean_fpr,
+            mean_tpr,
+            color="dimgray",
+            linewidth=2,
+            linestyle="--",
+            label=f"Mean ROC (area = {mean_auc:.2f})",
+        )
+
+        ax.plot(
+            [0, 1], [0, 1], color="darkgray", linestyle=":", label="Random Guessing"
+        )
+
         ax.set_xlim([-0.05, 1.05])
         ax.set_ylim([-0.05, 1.05])
-        ax.set_xlabel('False Positive Rate')
-        
-        ax.set_ylabel('True Positive Rate')
-        ax.set_title('ROC Curve')
+        ax.set_xlabel("False Positive Rate")
+
+        ax.set_ylabel("True Positive Rate")
+        ax.set_title("ROC Curve")
         ax.legend(loc="lower right")
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
-    
+
     def _fpr_tpr(self, y_true: Vector, y_score: Vector) -> Tuple[Vector, Vector]:
         thresholds = np.sort(y_score)[::-1]
         fpr, tpr = [], []
@@ -210,9 +221,9 @@ class ROCCurve(Visualizer):
             y_pred = y_score >= threshold
             tpr.append(Recall.score(y_true, y_pred))
             fpr.append(1 - Specificity.score(y_true, y_pred))
-        
+
         return Vector(fpr), Vector(tpr)
-    
+
     def _auc(self, fpr: Vector, tpr: Vector) -> float:
         auc = 0
         for i in range(1, len(fpr)):
@@ -221,20 +232,16 @@ class ROCCurve(Visualizer):
 
 
 class PrecisionRecallCurve(Visualizer):
-    def __init__(self,
-                 y_true: Vector,
-                 y_scores: Matrix) -> None:
+    def __init__(self, y_true: Vector, y_scores: Matrix) -> None:
         self.y_true = y_true
         self.y_scores = y_scores
         self.n_classes = y_scores.shape[1]
 
-    def plot(self,
-             ax: Optional[plt.Axes] = None,
-             show: bool = False) -> plt.Axes:
-        if ax is None: 
+    def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
+
         y_binary = LabelBinarizer().fit_transform(self.y_true)
         pres, recs = [], []
         for cl in range(self.n_classes):
@@ -243,35 +250,36 @@ class PrecisionRecallCurve(Visualizer):
             recs.append(rec)
 
             ap = self._average_precision(pre, rec)
-            ax.plot(rec, pre,
-                    linewidth=2,
-                    label=f'PR Curve {cl} (AP = {ap:.2f})')
+            ax.plot(rec, pre, linewidth=2, label=f"PR Curve {cl} (AP = {ap:.2f})")
 
         mean_pre, mean_rec = np.mean(pres, axis=0), np.mean(recs, axis=0)
         mean_ap = self._average_precision(mean_pre, mean_rec)
 
-        ax.plot(mean_rec, mean_pre,
-                color='dimgray',
-                linewidth=2,
-                linestyle='--',
-                label=f'Mean PR (AP = {mean_ap:.2f})')
-        
-        ax.plot([1, 0], [0, 1], 
-                color='darkgray', 
-                linestyle=':', 
-                label='Random Guessing')
+        ax.plot(
+            mean_rec,
+            mean_pre,
+            color="dimgray",
+            linewidth=2,
+            linestyle="--",
+            label=f"Mean PR (AP = {mean_ap:.2f})",
+        )
+
+        ax.plot(
+            [1, 0], [0, 1], color="darkgray", linestyle=":", label="Random Guessing"
+        )
 
         ax.set_xlim([-0.05, 1.05])
         ax.set_ylim([-0.05, 1.05])
-        ax.set_xlabel('Recall')
-        ax.set_ylabel('Precision')
-        ax.set_title('Precision-Recall Curve')
+        ax.set_xlabel("Recall")
+        ax.set_ylabel("Precision")
+        ax.set_title("Precision-Recall Curve")
         ax.legend(loc="lower left")
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
-    
+
     def _pre_rec(self, y_true: Vector, y_score: Vector) -> Tuple[Vector, Vector]:
         thresholds = np.sort(y_score)[::-1]
         pre, rec = [], []
@@ -281,7 +289,7 @@ class PrecisionRecallCurve(Visualizer):
             rec.append(Recall.score(y_true, y_pred))
 
         return Vector(pre), Vector(rec)
-    
+
     def _average_precision(self, pre: Vector, rec: Vector) -> float:
         ap = 0
         for i in range(1, len(rec)):
@@ -290,25 +298,27 @@ class PrecisionRecallCurve(Visualizer):
 
 
 class ConfusionMatrix(Visualizer):
-    def __init__(self, 
-                 y_true: Vector, 
-                 y_pred: Vector, 
-                 labels: List[str] | None = None,
-                 cmap: ListedColormap = 'Blues') -> None:
+    def __init__(
+        self,
+        y_true: Vector,
+        y_pred: Vector,
+        labels: List[str] | None = None,
+        cmap: ListedColormap = "Blues",
+    ) -> None:
         self.cmap = cmap
         self.conf_matrix = self._confusion_matrix(y_true, y_pred)
         self.labels = labels
-        
+
         if labels is None:
             self.labels = np.arange(len(np.unique(y_true)))
 
     def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
-        if ax is None: 
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
-        cax = ax.imshow(self.conf_matrix, interpolation='nearest', cmap=self.cmap)
-        ax.set_title('Confusion Matrix')
+
+        cax = ax.imshow(self.conf_matrix, interpolation="nearest", cmap=self.cmap)
+        ax.set_title("Confusion Matrix")
         plt.colorbar(cax, ax=ax)
 
         tick_marks = np.arange(len(self.labels))
@@ -317,94 +327,99 @@ class ConfusionMatrix(Visualizer):
         ax.set_yticks(tick_marks)
         ax.set_yticklabels(self.labels)
 
-        thresh = self.conf_matrix.max() / 2.
+        thresh = self.conf_matrix.max() / 2.0
         for i, j in np.ndindex(self.conf_matrix.shape):
-            ax.text(j, i, format(self.conf_matrix[i, j], 'd'),
-                    horizontalalignment="center",
-                    color="white" if self.conf_matrix[i, j] > thresh else "black")
+            ax.text(
+                j,
+                i,
+                format(self.conf_matrix[i, j], "d"),
+                horizontalalignment="center",
+                color="white" if self.conf_matrix[i, j] > thresh else "black",
+            )
 
-        ax.set_ylabel('True label')
-        ax.set_xlabel('Predicted label')
-        ax.set_aspect('equal', adjustable='box')
+        ax.set_ylabel("True label")
+        ax.set_xlabel("Predicted label")
+        ax.set_aspect("equal", adjustable="box")
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
-    
+
     def _confusion_matrix(self, y_true: Vector, y_pred: Vector) -> Matrix:
         unique_labels = np.unique(np.concatenate((y_true, y_pred)))
         matrix = np.zeros((len(unique_labels), len(unique_labels)), dtype=int)
         for true, pred in zip(y_true, y_pred):
             matrix[true, pred] += 1
-        
+
         return matrix
 
 
 class ResidualPlot(Visualizer):
-    def __init__(self, 
-                 estimator: Estimator,
-                 X: Matrix,
-                 y: Vector,
-                 alpha: float = 0.8,
-                 cmap: ListedColormap = 'RdYlBu') -> None:
+    def __init__(
+        self,
+        estimator: Estimator,
+        X: Matrix,
+        y: Vector,
+        alpha: float = 0.8,
+        cmap: ListedColormap = "RdYlBu",
+    ) -> None:
         self.estimator = estimator
         self.X = X
         self.y = y
         self.alpha = alpha
         self.cmap = cmap
-    
-    def plot(self, 
-             ax: Optional[plt.Axes] = None,
-             show: bool = False) -> plt.Axes:
-        if ax is None: 
+
+    def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
-        resid = self._calculate_residuals()
-        cax = ax.scatter(self.estimator.predict(self.X), 
-                         resid, 
-                         c=resid, 
-                         s=20, 
-                         cmap=self.cmap, 
-                         alpha=self.alpha)
 
-        ax.axhline(y=0, c='black', 
-                   lw=2, label='Perfect Fit')
-        
-        ax.axhline(y=resid.mean(), c='gray', ls='--', 
-                   lw=2, label='Average Residual')
-        
-        ax.set_xlabel('Predicted Values')
-        ax.set_ylabel('Residuals')
-        ax.set_title(f'Residual Plot of {type(self.estimator).__name__}')
-        
+        resid = self._calculate_residuals()
+        cax = ax.scatter(
+            self.estimator.predict(self.X),
+            resid,
+            c=resid,
+            s=20,
+            cmap=self.cmap,
+            alpha=self.alpha,
+        )
+
+        ax.axhline(y=0, c="black", lw=2, label="Perfect Fit")
+
+        ax.axhline(y=resid.mean(), c="gray", ls="--", lw=2, label="Average Residual")
+
+        ax.set_xlabel("Predicted Values")
+        ax.set_ylabel("Residuals")
+        ax.set_title(f"Residual Plot of {type(self.estimator).__name__}")
+
         ax.figure.colorbar(cax)
         ax.legend()
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
 
     def _calculate_residuals(self) -> Vector:
-        if not self.estimator._fitted: 
+        if not self.estimator._fitted:
             self.estimator.fit(self.X, self.y)
-        
+
         predictions = self.estimator.predict(self.X)
         residuals = self.y - predictions
         return residuals
 
 
 class LearningCurve(Visualizer):
-    
     """
-    A learning curve in machine learning is a graph that compares the performance 
-    of a model on training and validation data over a series of training iterations. 
-    It helps to diagnose problems like overfitting or underfitting by showing how 
-    the model's error changes as it learns. A steep learning curve indicates rapid 
+    A learning curve in machine learning is a graph that compares the performance
+    of a model on training and validation data over a series of training iterations.
+    It helps to diagnose problems like overfitting or underfitting by showing how
+    the model's error changes as it learns. A steep learning curve indicates rapid
     learning, while a plateau suggests no further learning. The ideal curve shows
-    decreasing error on both training and validation datasets, converging to a 
+    decreasing error on both training and validation datasets, converging to a
     low level.
-    
+
     Parameters
     ----------
     `estimator` : An estimator to evaluate
@@ -418,22 +433,24 @@ class LearningCurve(Visualizer):
     `fold_type` : Fold type (Default `KFold`)
     `metric` : Evaluation metric for scoring
     `random_state` : Seed for random sampling upon splitting samples
-    
+
     """
-    
-    def __init__(self, 
-                 estimator: Estimator, 
-                 X: Matrix, 
-                 y: Vector, 
-                 train_sizes: Vector = None, 
-                 test_size: float = 0.3,
-                 cv: int = 5,
-                 shuffle: bool = True,
-                 stratify: bool = False,
-                 fold_type: FoldType = KFold,
-                 metric: Evaluator = Accuracy,
-                 random_state: int = None,
-                 verbose: bool = False):
+
+    def __init__(
+        self,
+        estimator: Estimator,
+        X: Matrix,
+        y: Vector,
+        train_sizes: Vector = None,
+        test_size: float = 0.3,
+        cv: int = 5,
+        shuffle: bool = True,
+        stratify: bool = False,
+        fold_type: FoldType = KFold,
+        metric: Evaluator = Accuracy,
+        random_state: int = None,
+        verbose: bool = False,
+    ):
         self.estimator = estimator
         self.X = X
         self.y = y
@@ -446,30 +463,30 @@ class LearningCurve(Visualizer):
         self.metric = metric
         self.random_state = random_state
         self.verbose = verbose
-        
+
         if train_sizes is None:
             self.train_sizes = np.linspace(0.1, 1.0, 5)
-    
+
     def _evaluate(self) -> None:
         m, _ = self.X.shape
         self.train_scores, self.test_scores = [], []
-        
+
         for train_size in self.train_sizes:
             n_samples = int(train_size * m)
-            
+
             X_train, X_val, y_train, y_val = TrainTestSplit(
                 self.X,
                 self.y,
                 test_size=n_samples,
                 shuffle=self.shuffle,
                 stratify=self.stratify,
-                random_state=self.random_state
+                random_state=self.random_state,
             ).get
-            
+
             if n_samples == len(self.X):
                 X_train = X_val = self.X
                 y_train = y_val = self.y
-            
+
             self.estimator.fit(X_train, y_train)
             cv_param = (
                 self.estimator,
@@ -478,62 +495,75 @@ class LearningCurve(Visualizer):
                 self.fold_type,
                 self.shuffle,
                 self.random_state,
-                self.verbose
+                self.verbose,
             )
-            
+
             if self.verbose:
-                print(f'Starting CV for training set with {self.cv} folds')
-            
+                print(f"Starting CV for training set with {self.cv} folds")
+
             cv_train = CrossValidator(*cv_param)
             cv_train._fit(X_train, y_train)
             self.train_scores.append(cv_train.test_scores_)
-            
+
             if self.verbose:
-                print(f'Starting CV for validation set with {self.cv} folds')
-            
+                print(f"Starting CV for validation set with {self.cv} folds")
+
             cv_test = CrossValidator(*cv_param)
             cv_test._fit(X_val, y_val)
             self.test_scores.append(cv_test.test_scores_)
-            
+
             if self.verbose:
-                print(f'[LearningCurve] Finished evaluating for',
-                      f'{n_samples} samples')
-        
+                print(
+                    f"[LearningCurve] Finished evaluating for", f"{n_samples} samples"
+                )
+
         self.train_scores = Matrix(self.train_scores)
         self.test_scores = Matrix(self.test_scores)
-    
-    def plot(self, 
-             ax: Optional[plt.Axes] = None, 
-             show: bool = False) -> plt.Axes:
+
+    def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
         self._evaluate()
         self.train_sizes = (self.train_sizes * self.X.shape[0]).astype(int)
         metric_name = self.metric.__name__
-        
+
         train_mean = self.train_scores.mean(axis=1)
         train_std = self.train_scores.std(axis=1)
         test_mean = self.test_scores.mean(axis=1)
         test_std = self.test_scores.std(axis=1)
-        
-        if ax is None: 
+
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
-        ax.plot(self.train_sizes, train_mean,
-                'o-', color="royalblue", label=f"Training {metric_name}")
-        ax.plot(self.train_sizes, test_mean,
-                'o--', color="seagreen", label=f"Validation {metric_name}")
 
-        ax.fill_between(self.train_sizes, 
-                        train_mean + train_std, 
-                        train_mean - train_std, 
-                        color='royalblue', 
-                        alpha=0.2)
-        
-        ax.fill_between(self.train_sizes, 
-                        test_mean + test_std, 
-                        test_mean - test_std, 
-                        color='seagreen', 
-                        alpha=0.2)
+        ax.plot(
+            self.train_sizes,
+            train_mean,
+            "o-",
+            color="royalblue",
+            label=f"Training {metric_name}",
+        )
+        ax.plot(
+            self.train_sizes,
+            test_mean,
+            "o--",
+            color="seagreen",
+            label=f"Validation {metric_name}",
+        )
+
+        ax.fill_between(
+            self.train_sizes,
+            train_mean + train_std,
+            train_mean - train_std,
+            color="royalblue",
+            alpha=0.2,
+        )
+
+        ax.fill_between(
+            self.train_sizes,
+            test_mean + test_std,
+            test_mean - test_std,
+            color="seagreen",
+            alpha=0.2,
+        )
 
         ax.set_title(f"Learning Curve")
         ax.set_xlabel("Number of Training Examples")
@@ -542,19 +572,19 @@ class LearningCurve(Visualizer):
         ax.legend()
         ax.grid()
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
 
 
 class ValidationCurve(Visualizer):
-    
     """
     A validation curve in machine learning is a graph that compares the performance
-    of a model on training and validation data over a range of values for a specific 
+    of a model on training and validation data over a range of values for a specific
     hyperparameter. It helps to diagnose the best hyperparameter setting by showing
     how the model's error changes as the value of the hyperparameter changes.
-    
+
     Parameters
     ----------
     `estimator` : An estimator to evaluate
@@ -567,21 +597,23 @@ class ValidationCurve(Visualizer):
     `fold_type` : Fold type (Default `KFold`)
     `metric` : Evaluation metric for scoring
     `random_state` : Seed for random sampling upon splitting samples
-    
+
     """
-    
-    def __init__(self, 
-                 estimator: Estimator, 
-                 X: Matrix, 
-                 y: Vector, 
-                 param_name: str, 
-                 param_range: Vector, 
-                 cv: int = 5, 
-                 shuffle: bool = True,
-                 fold_type: FoldType = KFold,
-                 metric: Evaluator = Accuracy, 
-                 random_state: int = None,
-                 verbose: bool = False):
+
+    def __init__(
+        self,
+        estimator: Estimator,
+        X: Matrix,
+        y: Vector,
+        param_name: str,
+        param_range: Vector,
+        cv: int = 5,
+        shuffle: bool = True,
+        fold_type: FoldType = KFold,
+        metric: Evaluator = Accuracy,
+        random_state: int = None,
+        verbose: bool = False,
+    ):
         self.estimator = estimator
         self.X = X
         self.y = y
@@ -593,35 +625,38 @@ class ValidationCurve(Visualizer):
         self.metric = metric
         self.random_state = random_state
         self.verbose = verbose
-    
+
     def _evaluate(self) -> None:
         self.train_scores, self.test_scores = [], []
         for param_value in self.param_range:
             setattr(self.estimator, self.param_name, param_value)
-            
-            cv_model = CrossValidator(estimator=self.estimator,
-                                      metric=self.metric,
-                                      cv=self.cv,
-                                      shuffle=self.shuffle,
-                                      fold_type=self.fold_type,
-                                      random_state=self.random_state,
-                                      verbose=self.verbose)
-            
+
+            cv_model = CrossValidator(
+                estimator=self.estimator,
+                metric=self.metric,
+                cv=self.cv,
+                shuffle=self.shuffle,
+                fold_type=self.fold_type,
+                random_state=self.random_state,
+                verbose=self.verbose,
+            )
+
             cv_model._fit(self.X, self.y)
             self.train_scores.append(cv_model.train_scores_)
             self.test_scores.append(cv_model.test_scores_)
 
             if self.verbose:
-                print(f'[ValidationCurve] Finished evaluating for',
-                      f'{self.param_name}={param_value}')
-        
+                print(
+                    f"[ValidationCurve] Finished evaluating for",
+                    f"{self.param_name}={param_value}",
+                )
+
         self.train_scores = Matrix(self.train_scores)
         self.test_scores = Matrix(self.test_scores)
 
-    def plot(self, 
-             ax: Optional[plt.Axes] = None, 
-             xscale: str = None,
-             show: bool = False) -> plt.Axes:
+    def plot(
+        self, ax: Optional[plt.Axes] = None, xscale: str = None, show: bool = False
+    ) -> plt.Axes:
         self._evaluate()
         metric_name = self.metric.__name__
 
@@ -629,51 +664,65 @@ class ValidationCurve(Visualizer):
         train_std = self.train_scores.std(axis=1)
         test_mean = self.test_scores.mean(axis=1)
         test_std = self.test_scores.std(axis=1)
-        
-        if ax is None: 
+
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
-        ax.plot(self.param_range, train_mean,
-                'o-', color="royalblue", label=f"Training {metric_name}")
-        ax.plot(self.param_range, test_mean,
-                'o--', color="seagreen", label=f"Validation {metric_name}")
-        
-        ax.fill_between(self.param_range, 
-                        train_mean + train_std, 
-                        train_mean - train_std, 
-                        color='royalblue', 
-                        alpha=0.2)
-        
-        ax.fill_between(self.param_range, 
-                        test_mean + test_std, 
-                        test_mean - test_std, 
-                        color='seagreen', 
-                        alpha=0.2)
-        
+
+        ax.plot(
+            self.param_range,
+            train_mean,
+            "o-",
+            color="royalblue",
+            label=f"Training {metric_name}",
+        )
+        ax.plot(
+            self.param_range,
+            test_mean,
+            "o--",
+            color="seagreen",
+            label=f"Validation {metric_name}",
+        )
+
+        ax.fill_between(
+            self.param_range,
+            train_mean + train_std,
+            train_mean - train_std,
+            color="royalblue",
+            alpha=0.2,
+        )
+
+        ax.fill_between(
+            self.param_range,
+            test_mean + test_std,
+            test_mean - test_std,
+            color="seagreen",
+            alpha=0.2,
+        )
+
         ax.set_title(f"Validation Curve for '{self.param_name}'")
         ax.set_xlabel(self.param_name)
         ax.set_ylabel(metric_name)
-        
-        ax.set_xscale(xscale if xscale else 'linear')
+
+        ax.set_xscale(xscale if xscale else "linear")
         ax.set_ylim(0.0, 1.1)
         ax.legend()
         ax.grid()
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
 
 
 class ValidationHeatmap(Visualizer):
-    
     """
-    A validation heatmap in machine learning is a graphical representation that 
-    illustrates the performance of a model on a validation dataset for different 
-    combinations of two hyperparameters. Each cell in the heatmap corresponds to a 
-    specific combination of the hyperparameters' values, and the color intensity 
-    represents the performance metric score. This visualization is useful for 
-    identifying the interaction between two hyperparameters and selecting the best 
+    A validation heatmap in machine learning is a graphical representation that
+    illustrates the performance of a model on a validation dataset for different
+    combinations of two hyperparameters. Each cell in the heatmap corresponds to a
+    specific combination of the hyperparameters' values, and the color intensity
+    represents the performance metric score. This visualization is useful for
+    identifying the interaction between two hyperparameters and selecting the best
     combination for model tuning.
 
     Parameters
@@ -687,20 +736,22 @@ class ValidationHeatmap(Visualizer):
     `fold_type` : Fold type (Default `KFold`)
     `metric` : Evaluation metric for scoring
     `random_state` : Seed for random sampling upon splitting samples
-    
+
     """
-    
-    def __init__(self, 
-                 estimator: Estimator, 
-                 X: Matrix, 
-                 y: Vector, 
-                 param_dict: Dict[str, Any],
-                 cv: int = 5, 
-                 shuffle: bool = True,
-                 fold_type: FoldType = KFold,
-                 metric: Evaluator = Accuracy, 
-                 random_state: int = None,
-                 verbose: bool = False) -> None:
+
+    def __init__(
+        self,
+        estimator: Estimator,
+        X: Matrix,
+        y: Vector,
+        param_dict: Dict[str, Any],
+        cv: int = 5,
+        shuffle: bool = True,
+        fold_type: FoldType = KFold,
+        metric: Evaluator = Accuracy,
+        random_state: int = None,
+        verbose: bool = False,
+    ) -> None:
         self.estimator = estimator
         self.X = X
         self.y = y
@@ -711,107 +762,125 @@ class ValidationHeatmap(Visualizer):
         self.metric = metric
         self.random_state = random_state
         self.verbose = verbose
-        
+
         self.names_ = list(self.param_dict.keys())
-        
-        self.sizes_ = (len(self.param_dict[self.names_[0]]), 
-                       len(self.param_dict[self.names_[1]]))
-        
-        self.values_ = (self.param_dict[self.names_[0]],
-                        self.param_dict[self.names_[1]])
-        
+
+        self.sizes_ = (
+            len(self.param_dict[self.names_[0]]),
+            len(self.param_dict[self.names_[1]]),
+        )
+
+        self.values_ = (
+            self.param_dict[self.names_[0]],
+            self.param_dict[self.names_[1]],
+        )
+
         self.scores = np.zeros(self.sizes_)
-    
+
     def _evaluate(self) -> None:
         param_combs = list(product(*self.param_dict.values()))
         max_iter = len(param_combs)
-        
+
         if self.verbose:
-            print(f'Fitting {self.cv} folds for {max_iter} candidates,',
-                  f'totalling {self.cv * max_iter} fits.\n')
+            print(
+                f"Fitting {self.cv} folds for {max_iter} candidates,",
+                f"totalling {self.cv * max_iter} fits.\n",
+            )
 
         for idx, params in enumerate(param_combs):
             param_values = dict(zip(self.names_, params))
             self.estimator.set_params(**param_values)
 
-            cv_model = CrossValidator(estimator=self.estimator,
-                                      metric=self.metric,
-                                      cv=self.cv,
-                                      shuffle=self.shuffle,
-                                      fold_type=self.fold_type,
-                                      random_state=self.random_state,
-                                      verbose=False)
-            
+            cv_model = CrossValidator(
+                estimator=self.estimator,
+                metric=self.metric,
+                cv=self.cv,
+                shuffle=self.shuffle,
+                fold_type=self.fold_type,
+                random_state=self.random_state,
+                verbose=False,
+            )
+
             _, score = cv_model.score(self.X, self.y)
             i, j = idx // self.sizes_[1], idx % self.sizes_[1]
             self.scores[i, j] = score
-            
+
             if self.verbose:
-                print(f'[ValidationHeatmap] candidate {idx + 1}/{max_iter}',
-                      f'{param_values} - score: {score:.3f}')
-    
-    def plot(self, 
-             ax: Optional[plt.Axes] = None, 
-             cmap: ListedColormap = 'RdYlGn',
-             log_xticks: bool = True,
-             log_yticks: bool = True,
-             annotate: bool = True,
-             show: bool = False) -> plt.Axes:
-        if ax is None: 
+                print(
+                    f"[ValidationHeatmap] candidate {idx + 1}/{max_iter}",
+                    f"{param_values} - score: {score:.3f}",
+                )
+
+    def plot(
+        self,
+        ax: Optional[plt.Axes] = None,
+        cmap: ListedColormap = "RdYlGn",
+        log_xticks: bool = True,
+        log_yticks: bool = True,
+        annotate: bool = True,
+        show: bool = False,
+    ) -> plt.Axes:
+        if ax is None:
             _, ax = plt.subplots()
             show = True
-        
+
         cax = ax.imshow(self.scores, cmap=cmap)
         ax.figure.colorbar(cax)
-        
+
         self._evaluate()
         if annotate:
             for i in range(self.sizes_[0]):
                 for j in range(self.sizes_[1]):
                     score = self.scores[i, j]
-                    ax.text(j, i, f'{score:.2f}', 
-                            ha='center', 
-                            va='center', 
-                            color='white',
-                            alpha=0.7)
-        
+                    ax.text(
+                        j,
+                        i,
+                        f"{score:.2f}",
+                        ha="center",
+                        va="center",
+                        color="white",
+                        alpha=0.7,
+                    )
+
         ax.set_xticks(range(self.sizes_[0]), np.round(self.values_[0], 2))
         ax.set_yticks(range(self.sizes_[1]), np.round(self.values_[1], 2))
-        
+
         if log_xticks:
-            ax.set_xticklabels([r'$10^{' + f'{np.log10(n):.1f}' + r'}$' 
-                                for n in self.values_[0]])
+            ax.set_xticklabels(
+                [r"$10^{" + f"{np.log10(n):.1f}" + r"}$" for n in self.values_[0]]
+            )
         if log_yticks:
-            ax.set_yticklabels([r'$10^{' + f'{np.log10(n):.1f}' + r'}$' 
-                                for n in self.values_[1]])
-        
+            ax.set_yticklabels(
+                [r"$10^{" + f"{np.log10(n):.1f}" + r"}$" for n in self.values_[1]]
+            )
+
         ax.set_xlabel(self.names_[1])
         ax.set_ylabel(self.names_[0])
-        
+
         ax.set_title("Validation Heatmap")
         ax.figure.tight_layout()
-        
-        if show: plt.show()
+
+        if show:
+            plt.show()
         return ax
 
 
 class InertiaPlot(Visualizer):
-    
     """
-    An inertia plot in clustering visualizes the inertia against the number of 
-    clusters, helping to determine the optimal number of clusters by identifying 
-    the "elbow" point where the rate of decrease in inertia sharply changes. 
-    It reflects how well clusters are compact and separated, with lower inertia 
-    indicating better clustering. The plot aids in applying the elbow method for 
-    selecting a reasonable number of clusters in algorithms like K-means. The 
-    goal is to choose the number of clusters where inertia begins to decrease 
+    An inertia plot in clustering visualizes the inertia against the number of
+    clusters, helping to determine the optimal number of clusters by identifying
+    the "elbow" point where the rate of decrease in inertia sharply changes.
+    It reflects how well clusters are compact and separated, with lower inertia
+    indicating better clustering. The plot aids in applying the elbow method for
+    selecting a reasonable number of clusters in algorithms like K-means. The
+    goal is to choose the number of clusters where inertia begins to decrease
     more slowly.
-    
+
     Parameters
     ----------
     `inertia_list` : List of inertia values for various cluster sizes
     `n_clusters_list` : List of the number of clusters
-    
+
     Examples
     --------
     ```py
@@ -819,58 +888,64 @@ class InertiaPlot(Visualizer):
     for i in range(2, 10):
         km = KMeansClustering(n_clusters=i)
         km.fit(data)
-        
+
         inr = Inertia.score(data, km.centroids)
         inertia_list.append(inr)
-    
+
     inr_plot = InertiaPlot(inertia_list=inertia_list,
                            n_clusters_list=list(range(2, 10)))
     inr_plot.plot()
     >>> plt.Axes
     ```
     """
-    
-    def __init__(self, 
-                 inertia_list: List[float],
-                 n_clusters_list: List[int]) -> None:
+
+    def __init__(self, inertia_list: List[float], n_clusters_list: List[int]) -> None:
         self.inertia_list = inertia_list
         self.n_clusters_list = n_clusters_list
-    
+
     def _derivate_inertia(self) -> Vector:
         deriv = [0.0]
         for i in range(1, len(self.n_clusters_list) - 1):
             df = (self.inertia_list[i - 1] - self.inertia_list[i + 1]) / 2
             deriv.append(df)
-        
+
         deriv.append(0.0)
         return np.abs(deriv)
-    
-    def plot(self, 
-             ax: Optional[plt.Axes] = None,
-             marker: str = 'o', 
-             linestyle: str = '-', 
-             show: bool = False) -> None:
+
+    def plot(
+        self,
+        ax: Optional[plt.Axes] = None,
+        marker: str = "o",
+        linestyle: str = "-",
+        show: bool = False,
+    ) -> None:
         if ax is None:
             _, ax = plt.subplots()
             show = True
-        
-        ax.plot(self.n_clusters_list, self.inertia_list, 
-                marker=marker,
-                linestyle=linestyle,
-                label='Inertia')
-        
-        ax.plot(self.n_clusters_list, self._derivate_inertia(),
-                marker=marker,
-                linestyle=linestyle,
-                label='Absolute Derivative')
-        
-        ax.set_title('Inertia Plot')
-        ax.set_xlabel('Number of Clusters')
-        ax.set_ylabel('Inertia / Deriv. of Inertia')
+
+        ax.plot(
+            self.n_clusters_list,
+            self.inertia_list,
+            marker=marker,
+            linestyle=linestyle,
+            label="Inertia",
+        )
+
+        ax.plot(
+            self.n_clusters_list,
+            self._derivate_inertia(),
+            marker=marker,
+            linestyle=linestyle,
+            label="Absolute Derivative",
+        )
+
+        ax.set_title("Inertia Plot")
+        ax.set_xlabel("Number of Clusters")
+        ax.set_ylabel("Inertia / Deriv. of Inertia")
         ax.legend()
         ax.grid()
         ax.figure.tight_layout()
-        
-        if show: plt.show()
-        return ax
 
+        if show:
+            plt.show()
+        return ax

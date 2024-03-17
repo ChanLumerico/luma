@@ -6,11 +6,11 @@ from luma.core.super import Evaluator
 
 
 __all__ = (
-    'MeanAbsoluteError', 
-    'MeanSquaredError', 
-    'RootMeanSquaredError',
-    'MeanAbsolutePercentageError', 
-    'RSquaredScore'
+    "MeanAbsoluteError",
+    "MeanSquaredError",
+    "RootMeanSquaredError",
+    "MeanAbsolutePercentageError",
+    "RSquaredScore",
 )
 
 
@@ -46,4 +46,3 @@ class RSquaredScore(Evaluator):
         residual_sum_of_squares = np.sum((y_true - y_pred) ** 2)
         r2 = 1 - (residual_sum_of_squares / total_sum_of_squares)
         return r2
-
