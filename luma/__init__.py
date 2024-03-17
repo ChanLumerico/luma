@@ -30,7 +30,7 @@ import Luma
 ```
 For detailed documentation, tutorials, and examples, please refer to:
 - GitHub: https://github.com/ChanLumerico/luma
-- Notion: https://lumerico284.notion.site/Luma
+- Notion: https://lumerico284.notion.site/LUMA
 - PyPI: https://pypi.org/project/luma-ml
 
 For real-world applications, please refer to:
