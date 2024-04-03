@@ -95,6 +95,9 @@ class GridSearchCV(Optimizer):
         self.scores_ = []
         self._fitted = False
 
+        self.set_param_ranges({"cv": ("0,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Vector) -> Estimator:
         best_score = None
         best_params = None
@@ -259,6 +262,9 @@ class RandomizedSearchCV(Optimizer):
         self.verbose = verbose
         self.scores_ = []
         self._fitted = False
+
+        self.set_param_ranges({"cv": ("0,+inf", int), "max_iter": ("0<,+inf", int)})
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> Estimator:
         best_score = None

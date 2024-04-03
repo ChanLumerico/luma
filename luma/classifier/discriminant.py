@@ -184,6 +184,9 @@ class RDAClassifier(Estimator, Supervised):
         self.covs = None
         self._fitted = False
 
+        self.set_param_ranges({"alpha": ("0,+1", None), "gamma": ("0<,+inf", None)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Vector) -> "RDAClassifier":
         m, n = X.shape
         self.classes = np.unique(y)
@@ -286,12 +289,10 @@ class KDAClassifier(Estimator, Supervised):
         self,
         deg: int = 2,
         gamma: float = 1.0,
-        alpha: float = 1.0,
         coef: int = 0.0,
-        kernel: KernelUtil.func_type = "rbf",
+        kernel: KernelUtil.FuncType = "rbf",
     ) -> None:
         self.deg = deg
-        self.alpha = alpha
         self.gamma = gamma
         self.coef = coef
         self.kernel = kernel
@@ -304,6 +305,9 @@ class KDAClassifier(Estimator, Supervised):
             "gamma": self.gamma,
             "coef": self.coef,
         }
+
+        self.set_param_ranges({"deg": ("0,+inf", int), "gamma": ("0<,+inf", None)})
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "KDAClassifier":
         m, _ = X.shape

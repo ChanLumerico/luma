@@ -303,11 +303,13 @@ class ConfusionMatrix(Visualizer):
         y_true: Vector,
         y_pred: Vector,
         labels: List[str] | None = None,
+        title: str | Literal["auto"] = "auto",
         cmap: ListedColormap = "Blues",
     ) -> None:
         self.cmap = cmap
         self.conf_matrix = self._confusion_matrix(y_true, y_pred)
         self.labels = labels
+        self.title = title
 
         if labels is None:
             self.labels = np.arange(len(np.unique(y_true)))
@@ -318,7 +320,11 @@ class ConfusionMatrix(Visualizer):
             show = True
 
         cax = ax.imshow(self.conf_matrix, interpolation="nearest", cmap=self.cmap)
-        ax.set_title("Confusion Matrix")
+        if self.title == "auto":
+            ax.set_title("Confusion Matrix")
+        else:
+            ax.set_title(self.title)
+
         plt.colorbar(cax, ax=ax)
 
         tick_marks = np.arange(len(self.labels))
@@ -937,6 +943,16 @@ class InertiaPlot(Visualizer):
             marker=marker,
             linestyle=linestyle,
             label="Absolute Derivative",
+        )
+
+        best_idx = np.argmax(self._derivate_inertia())
+        best_n_clusters = self.n_clusters_list[best_idx]
+        ax.axvspan(
+            best_n_clusters - 0.25,
+            best_n_clusters + 0.25,
+            color="orange",
+            alpha=0.2,
+            label="Best Number of Clusters",
         )
 
         ax.set_title("Inertia Plot")

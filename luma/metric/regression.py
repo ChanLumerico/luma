@@ -11,6 +11,7 @@ __all__ = (
     "RootMeanSquaredError",
     "MeanAbsolutePercentageError",
     "RSquaredScore",
+    "AdjustedRSquaredScore",
 )
 
 
@@ -42,7 +43,19 @@ class RSquaredScore(Evaluator):
     @staticmethod
     def score(y_true: Matrix, y_pred: Matrix) -> float:
         y_bar = np.mean(y_true)
-        total_sum_of_squares = np.sum((y_true - y_bar) ** 2)
-        residual_sum_of_squares = np.sum((y_true - y_pred) ** 2)
-        r2 = 1 - (residual_sum_of_squares / total_sum_of_squares)
+        sst = np.sum((y_true - y_bar) ** 2)
+        ssr = np.sum((y_true - y_pred) ** 2)
+        r2 = 1 - (ssr / sst)
         return r2
+
+
+class AdjustedRSquaredScore(Evaluator):
+    @staticmethod
+    def score(y_true: Matrix, y_pred: Matrix, n_predictors: int) -> float:
+        m = len(y_true)
+        y_bar = np.mean(y_true)
+        sst = np.sum((y_true - y_bar) ** 2)
+        ssr = np.sum((y_true - y_pred) ** 2)
+        r2 = 1 - (ssr / sst)
+        r2_adj = 1 - ((1 - r2) * (m - 1) / (m - n_predictors - 1))
+        return r2_adj

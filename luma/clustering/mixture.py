@@ -43,6 +43,14 @@ class GaussianMixture(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "n_clusters": ("0<,+inf", int),
+                "max_iter": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "GaussianMixture":
         self._X = X
         self._initialize_params(X)
@@ -148,6 +156,14 @@ class MultinomialMixture(Estimator, Unsupervised):
         self.theta = None
         self.X_ = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_clusters": ("0<,+inf", int),
+                "max_iter": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "MultinomialMixture":
         self.X_ = X

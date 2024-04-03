@@ -1,6 +1,7 @@
-from typing import Any
+from typing import Any, Dict
 
 from luma.core.main import Luma
+from luma.interface.util import ParamRange
 
 
 __all__ = ("ModelBase", "ParadigmBase", "MetricBase", "VisualBase")
@@ -32,6 +33,11 @@ class ModelBase(Luma):
     If an attribute corresponding to a given keyword does not exist,
     a message is printed indicating that the attribute was not found.
 
+    Notes
+    -----
+    Upon the call of `set_params`, the method `check_param_ranges` is
+    automatically called after resetting the parameters.
+
     Inheritances
     ------------
     `Estimator`, `Transformer`, `Optimizer`
@@ -56,6 +62,21 @@ class ModelBase(Luma):
                 setattr(self, key, val)
             else:
                 print(f"'{type(self).__name__}' has no attribute '{key}'")
+        self.check_param_ranges()
+
+    def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:
+        self._param_range_dict = {
+            name_: ParamRange(range_, type_)
+            for name_, (range_, type_) in range_dict.items()
+        }
+
+    def check_param_ranges(self) -> None:
+        if not hasattr(self, "_param_range_dict"):
+            return
+        for name, val in self.__dict__.items():
+            if name not in self._param_range_dict:
+                continue
+            self._param_range_dict[name].check(param_name=name, param_value=val)
 
 
 class ParadigmBase(Luma):

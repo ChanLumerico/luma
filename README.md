@@ -11,6 +11,7 @@
         <img src="https://img.shields.io/badge/total downloads-4.0k-red">
         <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/ChanLumerico/luma?color=yellow">
         <img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg">
+        <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/ChanLumerico/luma?color=purple">
         <div class="module">
             <h3 class="module-header">Submodules</h3>
             <table>

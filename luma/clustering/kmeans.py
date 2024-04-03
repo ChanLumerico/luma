@@ -40,6 +40,11 @@ class KMeansClustering(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {"n_clusters": ("0<,+inf", int), "max_iter": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "KMeansClustering":
         init_indices = np.random.choice(X.shape[0], self.n_clusters, replace=False)
         self.centroids = X[init_indices]
@@ -108,6 +113,11 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
         self.verbose = verbose
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {"n_clusters": ("0<,+inf", int), "max_iter": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
 
     def _initialize_centroids(self, X: Matrix) -> None:
         self.centroids = [X[np.random.choice(X.shape[0])]]
@@ -181,6 +191,11 @@ class KMediansClustering(Estimator, Unsupervised):
         self.verbose = verbose
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {"n_clusters": ("0<,+inf", int), "max_iter": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "KMediansClustering":
         self._X = X
@@ -259,6 +274,11 @@ class KMedoidsClustering(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {"n_clusters": ("0<,+inf", int), "max_iter": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "KMedoidsClustering":
         self._X = X
         m, _ = X.shape
@@ -331,13 +351,22 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
 
     def __init__(
         self, n_clusters: int = None, batch_size: int = 100, max_iter: int = 100
-    ):
+    ) -> None:
         self.n_clusters = n_clusters
         self.batch_size = batch_size
         self.max_iter = max_iter
         self.centroids = None
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_clusters": ("0<,+inf", int),
+                "max_iter": ("0<,+inf", int),
+                "batch_size": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "MiniBatchKMeansClustering":
         m, _ = X.shape
@@ -413,6 +442,15 @@ class FuzzyCMeansClustering(Estimator, Unsupervised):
         self.verbose = verbose
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_clusters": ("0<,+inf", int),
+                "max_iter": ("0<,+inf", int),
+                "m": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "FuzzyCMeansClustering":
         self._X = X

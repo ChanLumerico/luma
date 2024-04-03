@@ -50,6 +50,11 @@ class SpectralClustering(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {"n_clusters": ("0<,+inf", int), "gamma": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "SpectralClustering":
         self._X = X
         W = self._similarity_matrix(X)
@@ -115,6 +120,11 @@ class NormalizedSpectralClustering(Estimator, Unsupervised):
         self.strategy = strategy
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {"n_clusters": ("0<,+inf", int), "gamma": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "NormalizedSpectralClustering":
         self._X = X
@@ -198,6 +208,11 @@ class HierarchicalSpectralClustering(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {"n_clusters": ("0<,+inf", int), "gamma": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "HierarchicalSpectralClustering":
         self._X = X
         W = self._similarity_matrix(X)
@@ -273,6 +288,11 @@ class AdaptiveSpectralClustering(Estimator, Unsupervised):
         self.max_clusters = max_clusters
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {"max_clusters": ("0<,+inf", int), "gamma": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "AdaptiveSpectralClustering":
         self._X = X

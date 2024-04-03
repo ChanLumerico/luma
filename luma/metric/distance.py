@@ -1,4 +1,3 @@
-from typing import *
 import numpy as np
 
 from luma.interface.util import Matrix
@@ -39,7 +38,6 @@ class Minkowski(Distance):
     def compute(x: Matrix, y: Matrix, p: int | float) -> float:
         if p is None:
             raise ValueError("[Minkowski] Empty p-value!")
-            return
         return np.power(np.sum(np.abs(x - y) ** p), 1 / p)
 
 

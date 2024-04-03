@@ -12,6 +12,46 @@ __all__ = "ModelPorter"
 
 
 class ModelPorter:
+    """
+    A utility class for exporting and importing machine learning models,
+    specifically designed to handle `Estimator` and `Transformer` instances
+    within the `luma` framework. It supports saving models to disk with
+    automatic naming and enforcing model extension, as well as loading models
+    ensuring the correct file extension is used.
+
+    Methods
+    -------
+    To save(export) models:
+    ```py
+    def save(self, model, path, filename, replace) -> str
+    ```
+    It saves a given model to the specified path with an optional filename.
+    If the model is not yet fitted, a warning will be printed. The method
+    enforces the use of the correct model file extension and handles file
+    existence checks based on the `replace` parameter.
+
+    To load(import) models:
+    ```py
+    def load(self, filepath) -> Estimator | Transformer
+    ```
+    Loads a model from the given file path, ensuring that the file has the
+    correct model extension(`.luma`) before proceeding.
+
+    Raises
+    ------
+    - `ModelExtensionError` : If the file does not have `.luma` file extension.
+
+    Examples
+    --------
+    ```py
+    model = AnyModel()
+    port = ModelPorter()
+
+    model_path = port.save(model=model, path='...', filename='auto') # Export
+    new_model = port.load(filepath=model_path) # Import
+    ```
+    """
+
     def __init__(self) -> None:
         self._import_filepath = None
         self._export_filepath = None

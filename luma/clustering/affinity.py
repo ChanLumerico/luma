@@ -65,6 +65,9 @@ class AffinityPropagation(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges({"max_iter": ("0<,+inf", int), "damping": ("0,1", None)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "AffinityPropagation":
         self._X = X
         m, _ = X.shape
@@ -213,6 +216,15 @@ class AdaptiveAffinityPropagation(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "max_iter": ("0<,+inf", int),
+                "damping": ("0,1", None),
+                "lambda_param": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "AdaptiveAffinityPropagation":
         self._X = X
         m, _ = X.shape
@@ -356,7 +368,7 @@ class KernelAffinityPropagation(Estimator, Unsupervised):
         damping: float = 0.7,
         preference: Scalar | Vector | Literal["median", "min"] = "median",
         tol: float = None,
-        kernel: KernelUtil.func_type = "rbf",
+        kernel: KernelUtil.FuncType = "rbf",
         gamma: float = 1.0,
         verbose: bool = False,
     ) -> None:
@@ -369,6 +381,15 @@ class KernelAffinityPropagation(Estimator, Unsupervised):
         self.verbose = verbose
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "max_iter": ("0<,+inf", int),
+                "damping": ("0,1", None),
+                "gamma": ("0<,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "KernelAffinityPropagation":
         self._X = X

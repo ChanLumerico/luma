@@ -73,6 +73,8 @@ class SilhouetteCoefficient(Evaluator, Visualizer):
     def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
         if ax is None:
             _, ax = plt.subplots()
+            show = True
+
         sample_silhouette = self._individual_silhouette()
         y_lower = 10
 

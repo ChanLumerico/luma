@@ -51,6 +51,11 @@ class DBSCAN(Estimator, Unsupervised):
         else:
             raise UnsupportedParameterError(self.metric)
 
+        self.set_param_ranges(
+            {"epsilon": ("0<,+inf", None), "min_points": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "DBSCAN":
         self._X = X
         clusters = [0] * X.shape[0]
@@ -144,6 +149,15 @@ class OPTICS(Estimator, Unsupervised):
         self.verbose = verbose
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "epsilon": ("0<,+inf", None),
+                "min_points": ("0<,+inf", int),
+                "threshold": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "OPTICS":
         self._X = X
@@ -302,6 +316,11 @@ class DENCLUE(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {"max_climb": ("0<,+inf", int), "min_density": ("0,+inf", None)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "DENCLUE":
         self._m, self._n = X.shape
 
@@ -452,6 +471,11 @@ class MeanShiftClustering(Estimator, Unsupervised):
         self.verbose = verbose
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {"bandwidth": ("0<,+inf", None), "max_iter": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "MeanShiftClustering":
         self._X = X

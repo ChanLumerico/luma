@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Dict
 from abc import ABCMeta, abstractmethod, abstractstaticmethod
 
 from luma.core.base import *
@@ -96,6 +96,12 @@ class Estimator(ModelBase, metaclass=ABCMeta):
 
     def set_params(self, **kwargs) -> None:
         return super().set_params(**kwargs)
+
+    def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:
+        return super().set_param_ranges(range_dict)
+
+    def check_param_ranges(self) -> None:
+        return super().check_param_ranges()
 
 
 class Transformer(ModelBase, metaclass=ABCMeta):
@@ -204,6 +210,12 @@ class Transformer(ModelBase, metaclass=ABCMeta):
     def set_params(self, **kwargs) -> None:
         return super().set_params(**kwargs)
 
+    def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:
+        return super().set_param_ranges(range_dict)
+
+    def check_param_ranges(self) -> None:
+        return super().check_param_ranges()
+
 
 class Optimizer(ModelBase, metaclass=ABCMeta):
     """
@@ -226,6 +238,18 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
 
     @property
     def best_model(self) -> Estimator | Transformer: ...
+    
+    def fit(self, **kwargs) -> Any:
+        return super().fit(**kwargs)
+
+    def set_params(self, **kwargs) -> None:
+        return super().set_params(**kwargs)
+
+    def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:
+        return super().set_param_ranges(range_dict)
+
+    def check_param_ranges(self) -> None:
+        return super().check_param_ranges()
 
 
 class Evaluator(MetricBase, metaclass=ABCMeta):

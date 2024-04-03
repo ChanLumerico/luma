@@ -43,6 +43,11 @@ class LocalOutlierFactor(Transformer, Transformer.Both, Supervised):
         self.neighbors_ = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {"n_neighbors": ("0<,+inf", int), "threshold": ("0,+inf", None)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, _=None) -> "LocalOutlierFactor":
         n_samples = len(X)
         self.lrd_ = np.zeros(n_samples)

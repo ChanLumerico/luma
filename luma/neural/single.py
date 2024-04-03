@@ -54,6 +54,16 @@ class PerceptronClassifier(Estimator, Supervised):
         self.weights_ = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "alpha": ("0,+inf", None),
+                "l1_ratio": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Vector) -> "PerceptronClassifier":
         m, n = X.shape
         np.random.seed(self.random_state)
@@ -156,6 +166,16 @@ class PerceptronRegressor(Estimator, Supervised):
         self.verbose = verbose
         self.weights_ = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "alpha": ("0,+inf", None),
+                "l1_ratio": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "PerceptronRegressor":
         m, n = X.shape

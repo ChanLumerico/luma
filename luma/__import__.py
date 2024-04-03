@@ -4,7 +4,11 @@ from luma.core.super import Estimator, Transformer, Optimizer, Evaluator, Visual
 from luma.core.super import Supervised, Unsupervised, Distance
 
 from luma.interface.exception import NotFittedError, NotConvergedError
-from luma.interface.exception import UnsupportedParameterError, ModelExtensionError
+from luma.interface.exception import (
+    UnsupportedParameterError,
+    ModelExtensionError,
+    InvalidRangeError,
+)
 from luma.interface.util import (
     Matrix,
     Vector,
@@ -13,7 +17,7 @@ from luma.interface.util import (
     NearestNeighbors,
 )
 from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil
-from luma.interface.util import Clone
+from luma.interface.util import Clone, ParamRange
 
 from luma.classifier.discriminant import (
     LDAClassifier,
@@ -66,8 +70,10 @@ from luma.metric.regression import (
     MeanAbsoluteError,
     MeanSquaredError,
     RootMeanSquaredError,
+    MeanAbsolutePercentageError,
+    RSquaredScore,
+    AdjustedRSquaredScore,
 )
-from luma.metric.regression import MeanAbsolutePercentageError, RSquaredScore
 from luma.metric.clustering import SilhouetteCoefficient, DaviesBouldin, Inertia
 from luma.metric.distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
@@ -144,11 +150,12 @@ if __name__ == "__main__":
 
     # ----------------- [ luma.interface ] ---------------------
     NotFittedError, NotConvergedError,
-    UnsupportedParameterError, ModelExtensionError
+    UnsupportedParameterError, ModelExtensionError,
+    InvalidRangeError
 
     Matrix, Vector, Scalar, DecisionTreeNode, NearestNeighbors,
     SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil,
-    Clone
+    Clone, ParamRange
 
     # ----------------- [ luma.classifier ] --------------------
     LDAClassifier, QDAClassifier, RDAClassifier, KDAClassifier
@@ -205,7 +212,8 @@ if __name__ == "__main__":
     Accuracy, Precision, Recall, F1Score, Specificity
 
     MeanAbsoluteError, MeanSquaredError, RootMeanSquaredError,
-    MeanAbsolutePercentageError, RSquaredScore
+    MeanAbsolutePercentageError, RSquaredScore,
+    AdjustedRSquaredScore
 
     SilhouetteCoefficient, DaviesBouldin, Inertia
 

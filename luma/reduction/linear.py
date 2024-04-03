@@ -30,6 +30,9 @@ class PCA(Transformer, Unsupervised):
         self.n_components = n_components
         self._fitted = False
 
+        self.set_param_ranges({"n_components": ("0<,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "PCA":
         self.mean = np.mean(X, axis=0)
         X_centered = X - self.mean
@@ -84,9 +87,9 @@ class KernelPCA(Transformer, Unsupervised):
         self,
         n_components: int = None,
         deg: int = 3,
-        gamma: float = 15.0,
+        gamma: float = 1.0,
         coef: float = 1.0,
-        kernel: KernelUtil.func_type = "rbf",
+        kernel: KernelUtil.FuncType = "rbf",
     ) -> None:
         self.n_components = n_components
         self.deg = deg
@@ -95,6 +98,15 @@ class KernelPCA(Transformer, Unsupervised):
         self.kernel = kernel
         self.X = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_components": ("0<,+inf", int),
+                "deg": ("0,+inf", int),
+                "gamma": ("0<,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "KernelPCA":
         self.X = X
@@ -192,6 +204,9 @@ class LDA(Transformer, Supervised):
         self.n_components = n_components
         self._fitted = False
 
+        self.set_param_ranges({"n_components": ("0<,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Matrix) -> "LDA":
         self.classes = np.unique(y)
         self.class_means = [np.mean(X[y == c], axis=0) for c in self.classes]
@@ -254,6 +269,9 @@ class TruncatedSVD(Transformer, Unsupervised):
         self.n_components = n_components
         self._fitted = False
 
+        self.set_param_ranges({"n_components": ("0<,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "TruncatedSVD":
         mean = np.mean(X, axis=0)
         X_centered = X - mean
@@ -308,6 +326,11 @@ class FactorAnalysis(Transformer, Unsupervised):
         self.noise_variance = noise_variance
         self.verbose = verbose
         self._fitted = False
+
+        self.set_param_ranges(
+            {"n_components": ("0<,+inf", int), "max_iter": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "FactorAnalysis":
         m, n = X.shape
@@ -403,14 +426,12 @@ class KDA(Transformer, Supervised):
         self,
         n_components: int = None,
         deg: int = 2,
-        alpha: float = 1.0,
         gamma: float = 1.0,
         coef: int = 0.0,
-        kernel: KernelUtil.func_type = "rbf",
+        kernel: KernelUtil.FuncType = "rbf",
     ) -> None:
         self.n_components = n_components
         self.deg = deg
-        self.alpha = alpha
         self.gamma = gamma
         self.coef = coef
         self.kernel = kernel
@@ -419,10 +440,18 @@ class KDA(Transformer, Supervised):
 
         self.kernel_params = {
             "deg": self.deg,
-            "alpha": self.alpha,
             "gamma": self.gamma,
             "coef": self.coef,
         }
+
+        self.set_param_ranges(
+            {
+                "n_components": ("0<,+inf", int),
+                "deg": ("0,+inf", int),
+                "gamma": ("0<,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "KDA":
         m, _ = X.shape
@@ -490,6 +519,9 @@ class CCA(Transformer, Unsupervised):
         self.n_components = n_components
         self.correlations_ = None
         self._fitted = False
+
+        self.set_param_ranges({"n_components": ("0<,+inf", int)})
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, Y: Matrix) -> "CCA":
         _, n = X.shape

@@ -1,8 +1,7 @@
-from typing import Any, Callable, Literal
+from typing import Any, AnyStr, Callable, Literal, Type, TypeGuard
 import numpy as np
 
-from luma.core.super import Estimator, Transformer
-from luma.interface.exception import UnsupportedParameterError
+from luma.interface.exception import UnsupportedParameterError, InvalidRangeError
 from luma.neural import activation
 
 
@@ -17,6 +16,7 @@ __all__ = (
     "KernelUtil",
     "ActivationUtil",
     "Clone",
+    "ParamRange",
 )
 
 
@@ -26,7 +26,7 @@ class Matrix(np.ndarray):
 
     This class provides a way to create matrix objects that have
     all the capabilities of numpy arrays with the potential for
-    additional functionalities and readability.s
+    additional functionalities and readability.
 
     Example
     -------
@@ -36,7 +36,7 @@ class Matrix(np.ndarray):
     """
 
     def __new__(cls, array_like: Any) -> "Matrix":
-        if isinstance(array_like, list):
+        if isinstance(array_like, (list, np.matrix)):
             obj = np.array(array_like)
         else:
             obj = array_like
@@ -246,7 +246,7 @@ class KernelUtil:
 
     """
 
-    func_type = Literal[
+    FuncType = Literal[
         "lin",
         "linear",
         "poly",
@@ -340,7 +340,7 @@ class ActivationUtil:
 
     """
 
-    func_type = Literal[
+    FuncType = Literal[
         "relu",
         "ReLU",
         "leaky-relu",
@@ -394,14 +394,12 @@ class Clone:
 
     """
 
-    def __init__(
-        self, model: Estimator | Transformer = None, pass_fitted: bool = False
-    ) -> None:
+    def __init__(self, model: object = None, pass_fitted: bool = False) -> None:
         self.model = model
         self.pass_fitted = pass_fitted
 
     @property
-    def get(self) -> Estimator | Transformer:
+    def get(self) -> object:
         model_cls = type(self.model)
         new_model = model_cls()
 
@@ -415,3 +413,107 @@ class Clone:
             new_model._fitted = self.model._fitted
 
         return new_model
+
+
+class ParamRange:
+    """
+    A utility class for setting and checking the range of a specific parameter.
+
+    This class provides a user-friendly functionality which checks whether
+    a certain parameter value falls within its preferred numerical range
+    depending on its algorithm.
+
+    Parameters
+    ----------
+    `param_range` : An interval of a parameter (customizable)
+    `param_type` : Data type of a parameter to be forced to have
+    (`None` for both `int` and `float` types)
+
+    Method
+    ------
+    To check its validity:
+    ```py
+    def check(self, param_value: Any) -> None
+    ```
+    Raises
+    ------
+    - `InvalidRangeError` :
+        When the parameter does not fall in its preferred range
+    - `UnsupportedParameterError` :
+        When the parameter is not numeric or has wrong numeric type
+
+    Examples
+    --------
+    ```py
+    class SomeModel:
+        def __init__(self, a: int) -> None:
+            self.a = a
+            a_range = ParamRange(param_range="0,+inf", param_type=int)
+            a_range.check(param_value=self.a)
+    ```
+    Notes
+    -----
+    - When setting a custom range for `param_range`, it must follow the form of
+        "lower_bound,upper_bound". (i.e. `-inf,20`, `-5,5`)
+    - For open intervals, add '<' inside the range. (i.e. `0<,+inf`, `0<,<10`)
+    """
+
+    Ranges = Literal["-inf,+inf", "-inf,0", "-1,0", "-1,1", "0,1", "0,+inf"]
+
+    def __init__(
+        self, param_range: Ranges | AnyStr, param_type: Type[Scalar] = None
+    ) -> None:
+        self.param_range = param_range
+
+        if param_type is None:
+            self.param_type = int | float
+        else:
+            if not ParamRange.validate_type(param_type):
+                raise UnsupportedParameterError(param_type)
+            self.param_type = param_type
+
+    @classmethod
+    def validate_type(cls, param_type) -> TypeGuard[Scalar]:
+        return param_type in (int, float)
+
+    def check(self, param_name: str, param_value: Any) -> None:
+        if param_value is None:
+            return
+        self._type_check(param_value)
+        if not self.condition(param_value):
+            raise InvalidRangeError(param_value, param_name, self.param_range)
+
+    def _type_check(self, param_value: Any) -> None:
+        if not isinstance(param_value, self.param_type):
+            raise UnsupportedParameterError(param_value)
+
+    @property
+    def condition(self) -> Callable[[Scalar], bool]:
+        try:
+            left, right = self.param_range.split(",")
+        except:
+            raise UnsupportedParameterError(self.param_range)
+
+        lower_open, upper_open = False, False
+        if left[-1] == "<":
+            lower_open = True
+            lower = np.float64(left[:-1])
+        else:
+            lower = np.float64(left)
+
+        if right[0] == "<":
+            upper_open = True
+            upper = np.float64(right[1:])
+        else:
+            upper = np.float64(right)
+
+        if lower_open and not upper_open:
+            return lambda x: lower < x <= upper
+        elif lower_open and upper_open:
+            return lambda x: lower < x < upper
+        elif not lower_open and upper_open:
+            return lambda x: lower <= x < upper
+        elif not lower_open and not upper_open:
+            return lambda x: lower <= x <= upper
+        else:
+            NotImplemented

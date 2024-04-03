@@ -81,7 +81,7 @@ class MLPClassifier(Estimator, Supervised):
         decay_rate: float = 0.9,
         lambda_: float = 0.01,
         dropout_rate: float = 0.1,
-        activation: ActivationUtil.func_type = "relu",
+        activation: ActivationUtil.FuncType = "relu",
         optimizer: Optimizer = SGDOptimizer(),
         random_state: int = None,
         verbose: bool | int = False,
@@ -103,6 +103,21 @@ class MLPClassifier(Estimator, Supervised):
         self.batch_losses_ = []
         self.epoch_losses_ = []
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "input_size": ("0<,+inf", int),
+                "output_size": ("0<,+inf", int),
+                "max_epoch": ("0<,+inf", int),
+                "batch_size": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+                "momentum": ("0,1", None),
+                "decay_rate": ("0,1", None),
+                "lambda_": ("0,+inf", None),
+                "dropout_rate": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "MLPClassifier":
         if isinstance(self.hidden_sizes, int):

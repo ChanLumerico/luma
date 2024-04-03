@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="luma-ml",
-    version='0.6.4',
+    version="0.6.4",
     author="ChanLumerico",
     author_email="greensox284@gmail.com",
     description="A Comprehensive Python Module for Machine Learning and Data Science",
@@ -19,12 +19,6 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.10',
-    install_requires=[
-        'numpy',
-        'scipy',
-        'pandas',
-        'matplotlib',
-        'seaborn'
-    ]
+    python_requires=">=3.10",
+    install_requires=["numpy", "scipy", "pandas", "matplotlib", "seaborn"],
 )

@@ -73,6 +73,9 @@ class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
         self._base_estimator_params = kwargs
         self._fitted = False
 
+        self.set_param_ranges({"n_estimators": ("0<,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Vector) -> "BaggingClassifier":
         np.random.seed(self.random_state)
         self.base_estimator.set_params(**self._base_estimator_params)
@@ -195,6 +198,9 @@ class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
         self.verbose = verbose
         self._base_estimator_params = kwargs
         self._fitted = False
+
+        self.set_param_ranges({"n_estimators": ("0<,+inf", int)})
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "BaggingRegressor":
         np.random.seed(self.random_state)

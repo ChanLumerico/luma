@@ -69,6 +69,11 @@ class AdaBoostClassifier(Estimator, Estimator.Meta, Supervised):
         self._base_estimator_params = kwargs
         self._fitted = False
 
+        self.set_param_ranges(
+            {"n_estimators": ("0<,+inf", int), "learning_rate": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Matrix) -> "AdaBoostClassifier":
         self.classes_ = np.unique(y)
 
@@ -191,6 +196,11 @@ class AdaBoostRegressor(Estimator, Estimator.Meta, Supervised):
         self.estimator_errors_: List[float] = []
         self._base_estimator_params = kwargs
         self._fitted = False
+
+        self.set_param_ranges(
+            {"n_estimators": ("0<,+inf", int), "learning_rate": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "AdaBoostRegressor":
         m, _ = X.shape
@@ -325,6 +335,15 @@ class GradientBoostingClassifier(Estimator, Estimator.Meta, Supervised):
         self._base_estimator_params = kwargs
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "n_estimators": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+                "subsample": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Vector) -> "GradientBoostingClassifier":
         self._initialize(y)
         m, _ = X.shape
@@ -440,6 +459,16 @@ class GradientBoostingRegressor(Estimator, Estimator.Meta, Supervised):
         self.estimators_ = []
         self._base_estimator_params = kwargs
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_estimators": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+                "subsample": ("0,1", None),
+                "delta": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "GradientBoostingRegressor":
         self.init_pred_ = self._initial_prediction(y)

@@ -44,6 +44,16 @@ class LogisticRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "l1_ratio": ("0,1", None),
+                "alpha": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
     def sigmoid(self, z: Matrix) -> Matrix:
         return 1 / (1 + np.exp(-z))
 
@@ -134,6 +144,16 @@ class SoftmaxRegressor(Estimator, Supervised):
         self.regularization = regularization
         self.verbose = verbose
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "l1_ratio": ("0,1", None),
+                "alpha": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def softmax(self, z: Matrix) -> Matrix:
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))

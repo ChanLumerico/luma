@@ -250,7 +250,7 @@ class KernelRidgeRegressor(Estimator, Supervised):
         deg: int = 2,
         gamma: float = 1.0,
         coef: float = 1.0,
-        kernel: KernelUtil.func_type = "rbf",
+        kernel: KernelUtil.FuncType = "rbf",
     ) -> None:
         self.alpha = alpha
         self.deg = deg

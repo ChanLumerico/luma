@@ -61,6 +61,16 @@ class TSNE(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "n_components": ("0<,+inf", int),
+                "max_iter": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", int),
+                "perplexity": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "TSNE":
         size = X.shape[0]
         P = self._P_joint_probabilities(X)
@@ -191,6 +201,9 @@ class MDS(Transformer, Unsupervised):
         self.n_components = n_components
         self._fitted = False
 
+        self.set_param_ranges({"n_components": ("0<,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "MDS":
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
@@ -264,6 +277,11 @@ class MetricMDS(Transformer, Unsupervised):
         self.metric = metric
         self.p = p
         self._fitted = False
+
+        self.set_param_ranges(
+            {"n_components": ("0<,+inf", int), "p": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "MetricMDS":
         D = self._compute_dissimilarity(X)
@@ -356,6 +374,11 @@ class LandmarkMDS(Transformer, Unsupervised):
         self.method = method
         self.verbose = verbose
         self._fitted = False
+
+        self.set_param_ranges(
+            {"n_components": ("0<,+inf", int), "n_landmarks": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "LandmarkMDS":
         self.landmarks = self._initialize_landmarks(X)
@@ -451,6 +474,11 @@ class LLE(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {"n_components": ("0<,+inf", int), "n_neighbors": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "LLE":
         m, _ = X.shape
         distances = np.zeros((m, m))
@@ -519,6 +547,15 @@ class ModifiedLLE(Transformer, Unsupervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "n_components": ("0<,+inf", int),
+                "n_neighbors": ("0<,+inf", int),
+                "regularization": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "ModifiedLLE":
         m, _ = X.shape
         distances = np.zeros((m, m))
@@ -584,6 +621,15 @@ class HessianLLE(Transformer, Unsupervised):
         self.regularization = regularization
         self.verbose = verbose
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_components": ("0<,+inf", int),
+                "n_neighbors": ("0<,+inf", int),
+                "regularization": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "HessianLLE":
         m, _ = X.shape
@@ -694,6 +740,15 @@ class SammonMapping(Transformer, Unsupervised):
         self.initialize = initialize
         self.verbose = verbose
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_components": ("0<,+inf", int),
+                "max_iter": ("0<,+inf", int),
+                "max_halves": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "SammonMapping":
         m, _ = X.shape
@@ -811,6 +866,11 @@ class LaplacianEigenmap(Transformer, Unsupervised):
         self.embedding = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {"n_components": ("0<,+inf", int), "sigma": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "LaplacianEigenmap":
         pairwise = cdist(X, X)
         weights = np.exp(-pairwise / (2 * self.sigma**2))
@@ -878,6 +938,11 @@ class Isomap(Transformer, Unsupervised):
         self.algorithm = algorithm
         self.metric = metric
         self._fitted = False
+
+        self.set_param_ranges(
+            {"n_components": ("0<,+inf", int), "epsilon": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "Isomap":
         self.adj = self._make_adjacency(X)
@@ -949,6 +1014,11 @@ class ConformalIsomap(Transformer, Unsupervised):
         self.epsilon = epsilon
         self.algorithm = algorithm
         self._fitted = False
+        
+        self.set_param_ranges(
+            {"n_components": ("0<,+inf", int), "epsilon": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "ConformalIsomap":
         self.adj = self._make_adjacency(X)
@@ -1019,6 +1089,11 @@ class LTSA(Transformer, Unsupervised):
         self.n_components = n_components
         self.n_neighbors = n_neighbors
         self._fitted = False
+        
+        self.set_param_ranges(
+            {"n_components": ("0<,+inf", int), "n_neighbors": ("0<,+inf", int)}
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "LTSA":
         m, n = X.shape

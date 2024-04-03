@@ -58,6 +58,16 @@ class DecisionTreeClassifier(Estimator, Supervised):
         self.classes_ = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "max_depth": ("0<,+inf", int),
+                "min_samples_split": ("0,+inf", int),
+                "min_samples_leaf": ("0,+inf", int),
+                "min_impurity_decrease": ("0,+inf", None),
+                "max_leaf_nodes": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
         np.random.seed(random_state)
 
     def fit(

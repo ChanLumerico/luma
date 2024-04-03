@@ -80,6 +80,9 @@ class KNNImputer(Transformer, Transformer.Feature):
         self.distances = None
         self._fitted = False
 
+        self.set_param_ranges({"n_neighbors": ("0<,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "KNNImputer":
         if np.isnan(X).any():
             self.distances = self._compute_distances(X)

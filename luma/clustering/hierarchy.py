@@ -54,6 +54,9 @@ class AgglomerativeClustering(Estimator, Unsupervised):
         self._X = None
         self._fitted = False
 
+        self.set_param_ranges({"n_clusters": ("0<,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix) -> "AgglomerativeClustering":
         self._X = X
         n_samples = X.shape[0]
@@ -184,6 +187,9 @@ class DivisiveClustering(Estimator, Unsupervised):
         self.clusters = []
         self._X = None
         self._fitted = False
+
+        self.set_param_ranges({"n_clusters": ("0<,+inf", int)})
+        self.check_param_ranges()
 
     def fit(self, X: Matrix) -> "DivisiveClustering":
         initial_cluster = [0] * X.shape[0]

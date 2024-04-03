@@ -41,6 +41,16 @@ class SVC(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "C": ("0,+inf", None),
+                "batch_size": ("0<,+int", int),
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Matrix) -> "SVC":
         classes = np.unique(y)
         self.models = []
@@ -127,7 +137,7 @@ class KernelSVC(Estimator, Supervised):
         learning_rate: float = 0.001,
         max_iter: int = 1000,
         batch_size: int = 100,
-        kernel: KernelUtil.func_type = "rbf",
+        kernel: KernelUtil.FuncType = "rbf",
         verbose: bool = False,
     ) -> None:
         self.C = C
@@ -141,6 +151,18 @@ class KernelSVC(Estimator, Supervised):
         self.verbose = verbose
         self._kernel_func = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "C": ("0,+inf", None),
+                "batch_size": ("0<,+int", int),
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0,+inf", int),
+                "deg": ("0,+inf", int),
+                "gamma": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Matrix) -> "KernelSVC":
         classes = np.unique(y)

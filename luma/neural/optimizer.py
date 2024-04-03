@@ -12,6 +12,9 @@ class SGDOptimizer(Optimizer):
     def __init__(self, learning_rate: float = 0.01) -> None:
         self.learning_rate = learning_rate
 
+        self.set_param_ranges({"learning_rate": ("0<,+inf", None)})
+        self.check_param_ranges()
+
     def update(
         self,
         weights: List[Matrix],
@@ -38,6 +41,11 @@ class MomentumOptimizer(Optimizer):
         self.momentum = momentum
         self.vel_weights = None
         self.vel_biases = None
+
+        self.set_param_ranges(
+            {"learning_rate": ("0<,+inf", None), "momentum": ("0,1", None)}
+        )
+        self.check_param_ranges()
 
     def update(
         self,
@@ -81,6 +89,11 @@ class RMSPropOptimizer(Optimizer):
         self.sq_grad_weights = None
         self.sq_grad_biases = None
 
+        self.set_param_ranges(
+            {"learning_rate": ("0<,+inf", None), "decay_rate": ("0,1", None)}
+        )
+        self.check_param_ranges()
+
     def update(
         self,
         weights: List[Matrix],
@@ -119,7 +132,7 @@ class RMSPropOptimizer(Optimizer):
         return updated_weights, updated_biases
 
 
-class AdamOptimizer:
+class AdamOptimizer(Optimizer):
     def __init__(
         self,
         learning_rate: float = 0.001,
@@ -131,11 +144,20 @@ class AdamOptimizer:
         self.beta_1 = beta_1
         self.beta_2 = beta_2
         self.epsilon = epsilon
-        self.m_weights = None  # First moment vector for weights
-        self.v_weights = None  # Second moment vector for weights
-        self.m_biases = None  # First moment vector for biases
-        self.v_biases = None  # Second moment vector for biases
-        self.t = 0  # Initialization of the timestep
+        self.m_weights = None
+        self.v_weights = None
+        self.m_biases = None
+        self.v_biases = None
+        self.t = 0
+
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "beta_1": ("0,1", None),
+                "beta_2": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
 
     def update(
         self, weights: Matrix, biases: Matrix, grad_weights: Matrix, grad_biases: Matrix
@@ -150,7 +172,6 @@ class AdamOptimizer:
         self.t += 1
         updated_weights, updated_biases = [], []
 
-        # Update parameters
         for i in range(len(weights)):
             self.m_weights[i] = (
                 self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * grad_weights[i]

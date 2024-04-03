@@ -101,6 +101,9 @@ class StackingClassifier(Estimator, Transformer, Supervised):
         if self.method not in ("label", "prob"):
             raise UnsupportedParameterError(self.method)
 
+        self.set_param_ranges({"cv": ("0,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Vector) -> "StackingClassifier":
         m, _ = X.shape
         self.n_classes = len(np.unique(y))
@@ -306,6 +309,9 @@ class StackingRegressor(Estimator, Transformer, Supervised):
         self._final_estimator_params = kwargs
         self._base_estimators: List[Estimator] = []
         self._fitted = False
+
+        self.set_param_ranges({"cv": ("0,+inf", int)})
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "StackingClassifier":
         m, _ = X.shape

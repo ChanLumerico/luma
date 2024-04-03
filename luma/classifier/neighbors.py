@@ -33,6 +33,9 @@ class KNNClassifier(Estimator, Supervised):
         self._y = None
         self._fitted = False
 
+        self.set_param_ranges({"n_neighbors": ("0,+inf", int)})
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Matrix) -> "KNNClassifier":
         self._neighbors = NearestNeighbors(X, self.n_neighbors)
         self._y = y
@@ -105,6 +108,15 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
         self._X = None
         self._y = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_density": ("0<,+int", int),
+                "min_neighbors": ("0<,+int", int),
+                "max_neighbors": ("0<,+int", int),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Matrix) -> "AdaptiveKNNClassifier":
         self._X = X
@@ -187,6 +199,9 @@ class WeightedKNNClassifier(Estimator, Supervised):
         self._X = None
         self._y = None
         self._fitted = False
+
+        self.set_param_ranges({"n_neighbors": ("0,+inf", int)})
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Matrix) -> "WeightedKNNClassifier":
         self._X = X

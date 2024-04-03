@@ -67,6 +67,17 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
         self.trees = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "n_trees": ("0<,+inf", int),
+                "max_depth": ("0<,+inf", int),
+                "min_samples_split": ("0<,+inf", int),
+                "max_samples_leaf": ("0<,+inf", int),
+                "min_impurity_decrease": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(
         self, X: Matrix, y: Matrix, sample_weights: Vector = None
     ) -> "RandomForestClassifier":
@@ -174,6 +185,17 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
         self.verbose = verbose
         self.trees = None
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_trees": ("0<,+inf", int),
+                "max_depth": ("0<,+inf", int),
+                "min_samples_split": ("0<,+inf", int),
+                "max_samples_leaf": ("0<,+inf", int),
+                "min_variance_decrease": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Matrix) -> "RandomForestRegressor":
         m, n = X.shape
