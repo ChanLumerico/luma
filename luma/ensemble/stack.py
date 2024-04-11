@@ -1,4 +1,4 @@
-from typing import Any, List, Dict, Literal
+from typing import Any, List, Dict, Literal, Self
 import numpy as np
 
 from luma.core.super import Estimator, Transformer, Evaluator, Supervised
@@ -104,7 +104,7 @@ class StackingClassifier(Estimator, Transformer, Supervised):
         self.set_param_ranges({"cv": ("0,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "StackingClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, _ = X.shape
         self.n_classes = len(np.unique(y))
 
@@ -313,7 +313,7 @@ class StackingRegressor(Estimator, Transformer, Supervised):
         self.set_param_ranges({"cv": ("0,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "StackingClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, _ = X.shape
         self.n_classes = len(np.unique(y))
 

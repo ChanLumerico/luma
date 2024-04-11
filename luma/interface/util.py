@@ -458,11 +458,9 @@ class ParamRange:
     - For open intervals, add '<' inside the range. (i.e. `0<,+inf`, `0<,<10`)
     """
 
-    Ranges = Literal["-inf,+inf", "-inf,0", "-1,0", "-1,1", "0,1", "0,+inf"]
+    type RangeStr = AnyStr
 
-    def __init__(
-        self, param_range: Ranges | AnyStr, param_type: Type[Scalar] = None
-    ) -> None:
+    def __init__(self, param_range: RangeStr, param_type: Type[Scalar] = None) -> None:
         self.param_range = param_range
 
         if param_type is None:

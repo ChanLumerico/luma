@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -64,7 +64,7 @@ class PerceptronClassifier(Estimator, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "PerceptronClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, n = X.shape
         np.random.seed(self.random_state)
         n_classes = len(np.unique(y))
@@ -177,7 +177,7 @@ class PerceptronRegressor(Estimator, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "PerceptronRegressor":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, n = X.shape
         np.random.seed(self.random_state)
 

@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Self, Tuple
 from scipy.linalg import svd, eigh
 import numpy as np
 
@@ -33,7 +33,7 @@ class PCA(Transformer, Unsupervised):
         self.set_param_ranges({"n_components": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "PCA":
+    def fit(self, X: Matrix) -> Self:
         self.mean = np.mean(X, axis=0)
         X_centered = X - self.mean
         covariance_matrix = np.cov(X_centered, rowvar=False)
@@ -108,7 +108,7 @@ class KernelPCA(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "KernelPCA":
+    def fit(self, X: Matrix) -> Self:
         self.X = X
         self._select_kernel_function()
         N = X.shape[0]
@@ -207,7 +207,7 @@ class LDA(Transformer, Supervised):
         self.set_param_ranges({"n_components": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Matrix) -> "LDA":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self.classes = np.unique(y)
         self.class_means = [np.mean(X[y == c], axis=0) for c in self.classes]
 
@@ -272,7 +272,7 @@ class TruncatedSVD(Transformer, Unsupervised):
         self.set_param_ranges({"n_components": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "TruncatedSVD":
+    def fit(self, X: Matrix) -> Self:
         mean = np.mean(X, axis=0)
         X_centered = X - mean
         U, S, VT = np.linalg.svd(X_centered, full_matrices=False)
@@ -332,7 +332,7 @@ class FactorAnalysis(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "FactorAnalysis":
+    def fit(self, X: Matrix) -> Self:
         m, n = X.shape
         self.mean = X.mean(axis=0)
         X -= self.mean
@@ -453,7 +453,7 @@ class KDA(Transformer, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "KDA":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, _ = X.shape
         self.X_ = X
         self.classes = np.unique(y)
@@ -523,7 +523,7 @@ class CCA(Transformer, Unsupervised):
         self.set_param_ranges({"n_components": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, Y: Matrix) -> "CCA":
+    def fit(self, X: Matrix, Y: Matrix) -> Self:
         _, n = X.shape
         X -= X.mean(axis=0)
         Y -= Y.mean(axis=0)

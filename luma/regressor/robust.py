@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Self, Tuple
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -60,7 +60,17 @@ class RANSAC(Estimator, Supervised):
         self.inliers_ = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Vector) -> "RANSAC":
+        self.set_param_ranges(
+            {
+                "min_points": ("0,+inf", int),
+                "max_iter": ("0<,+inf", int),
+                "min_inliers": ("0,+inf", None),
+                "threshold": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, _ = X.shape
         best_err = np.inf
         best_indices = None
@@ -193,7 +203,17 @@ class MLESAC(Estimator, Supervised):
         self.inliers_ = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Vector) -> "MLESAC":
+        self.set_param_ranges(
+            {
+                "min_points": ("0,+inf", int),
+                "max_iter": ("0<,+inf", int),
+                "min_inliers": ("0,+inf", None),
+                "threshold": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, _ = X.shape
         best_likelihood = -np.inf
         best_indices = None

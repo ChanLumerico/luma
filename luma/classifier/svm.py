@@ -1,3 +1,4 @@
+from typing import Self
 import numpy as np
 
 from luma.interface.util import Matrix, KernelUtil
@@ -51,7 +52,7 @@ class SVC(Estimator, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Matrix) -> "SVC":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         classes = np.unique(y)
         self.models = []
         for cl in classes:
@@ -155,7 +156,7 @@ class KernelSVC(Estimator, Supervised):
         self.set_param_ranges(
             {
                 "C": ("0,+inf", None),
-                "batch_size": ("0<,+int", int),
+                "batch_size": ("0<,+inf", int),
                 "learning_rate": ("0<,+inf", None),
                 "max_iter": ("0,+inf", int),
                 "deg": ("0,+inf", int),
@@ -164,7 +165,7 @@ class KernelSVC(Estimator, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Matrix) -> "KernelSVC":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         classes = np.unique(y)
         self.models = []
         self._set_kernel_func()

@@ -1,4 +1,4 @@
-from typing import Literal, Tuple
+from typing import Literal, Self, Tuple
 import numpy as np
 
 from luma.interface.util import Matrix, Vector
@@ -70,9 +70,7 @@ class DecisionTreeClassifier(Estimator, Supervised):
         self.check_param_ranges()
         np.random.seed(random_state)
 
-    def fit(
-        self, X: Matrix, y: Vector, sample_weights: Vector = None
-    ) -> "DecisionTreeClassifier":
+    def fit(self, X: Matrix, y: Vector, sample_weights: Vector = None) -> Self:
         if sample_weights is None:
             sample_weights = np.ones(len(y))
         sample_weights = Vector(sample_weights)

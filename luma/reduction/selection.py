@@ -77,6 +77,15 @@ class SBS(Transformer, Transformer.Feature, Supervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "n_features": ("0<,+inf", None),
+                "test_size": ("0,1", float),
+                "cv": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Vector) -> "SBS":
         _, n = X.shape
         self.estimator = Clone(self.estimator).get
@@ -241,6 +250,15 @@ class SFS(Transformer, Transformer.Feature, Supervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "n_features": ("0<,+inf", None),
+                "test_size": ("0,1", float),
+                "cv": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
     def fit(self, X: Matrix, y: Vector) -> "SFS":
         _, n = X.shape
         self.estimator = Clone(self.estimator).get
@@ -393,6 +411,15 @@ class RFE(Transformer, Transformer.Feature, Supervised):
         self.random_state = random_state
         self.verbose = verbose
         self._fitted = False
+
+        self.set_param_ranges(
+            {
+                "n_features": ("0<,+inf", None),
+                "step_size": ("0<,+inf", int),
+                "cv": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> "RFE":
         _, n = X.shape

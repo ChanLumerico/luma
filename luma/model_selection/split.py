@@ -47,9 +47,6 @@ class TrainTestSplit:
         self.stratify = stratify
         self.random_state = random_state
 
-        self.set_param_ranges({"test_size": ("0<,+inf", int)})
-        self.check_param_ranges()
-
     @property
     def get(self) -> Tuple[Matrix, Matrix, Vector, Vector]:
         if self.X.shape[0] != self.y.shape[0]:

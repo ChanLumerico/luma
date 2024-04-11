@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Self
 import numpy as np
 
 from luma.interface.util import Matrix
@@ -38,17 +38,28 @@ class PolynomialRegressor(Estimator):
         self.regularization = regularization
         self._fitted = False
 
-    def _generate_polynomial_features(self, X):
+        self.set_param_ranges(
+            {
+                "deg": ("0<,+inf", int),
+                "alpha": ("0,+inf", None),
+                "l1_ratio": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+    def _generate_polynomial_features(self, X: Matrix) -> Matrix:
         X_poly = X.copy()
         for d in range(2, self.deg + 1):
             X_poly = np.hstack((X_poly, X**d))
         return X_poly
 
-    def fit(self, X: Matrix, y: Matrix) -> "PolynomialRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X_poly = self._generate_polynomial_features(X)
         reg_matrix = self._regularization_matrix(X_poly.shape[1])
+
         augmented_matrix = np.vstack([X_poly, np.sqrt(self.alpha) * reg_matrix])
         augmented_target = np.hstack([y, np.zeros(X_poly.shape[1])])
+
         self.coef_ = np.linalg.lstsq(augmented_matrix, augmented_target, rcond=None)[0]
         self._fitted = True
         return self

@@ -1,3 +1,4 @@
+from typing import Self
 import numpy as np
 
 from luma.interface.util import Matrix, Vector, KernelUtil
@@ -34,7 +35,10 @@ class RidgeRegressor(Estimator, Supervised):
         self.alpha = alpha
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "RidgeRegressor":
+        self.set_param_ranges({"alpha": ("0,+inf", None)})
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         identity_matrix = np.identity(X.shape[1])
         self.coef_ = np.linalg.inv(X.T.dot(X) + self.alpha * identity_matrix)
@@ -85,10 +89,19 @@ class LassoRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "alpha": ("0,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
     def _soft_threshold(self, x: Matrix, threshold: float) -> Matrix:
         return np.sign(x) * np.maximum(0, np.abs(x) - threshold)
 
-    def fit(self, X: Matrix, y: Matrix) -> "LassoRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         self.coef_ = np.zeros(X.shape[1])
 
@@ -153,10 +166,20 @@ class ElasticNetRegressor(Estimator, Supervised):
         self.coef_ = None
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "alpha": ("0,+inf", None),
+                "l1_ratio": ("0,1", None),
+                "max_iter": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
     def _soft_threshold(self, x: Matrix, alpha: float) -> Matrix:
         return np.sign(x) * np.maximum(np.abs(x) - alpha, 0)
 
-    def fit(self, X: Matrix, y: Matrix) -> "ElasticNetRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         N, p = X.shape
         self.coef_ = np.zeros(p)
 
@@ -203,7 +226,7 @@ class LinearRegressor(Estimator, Supervised):
         self.coef_ = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "LinearRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.hstack([np.ones((X.shape[0], 1)), X])
         X_T = np.transpose(X)
         self.coef_ = np.linalg.inv(X_T.dot(X)).dot(X_T).dot(y)
@@ -267,7 +290,17 @@ class KernelRidgeRegressor(Estimator, Supervised):
             "coef": self.coef,
         }
 
-    def fit(self, X: Matrix, y: Vector) -> "KernelRidgeRegressor":
+        self.set_param_ranges(
+            {
+                "alpha": ("0,+inf", None),
+                "deg": ("0<,+inf", int),
+                "gamma": ("0<,+inf", None),
+                "coef": ("-inf,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, _ = X.shape
         self._X = X
         self.ku_ = KernelUtil(self.kernel, **self.kernel_params)
@@ -313,7 +346,12 @@ class BayesianRidgeRegressor(Estimator, Supervised):
         self.lambda_init = lambda_init
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Vector) -> "BayesianRidgeRegressor":
+        self.set_param_ranges(
+            {"alpha_init": ("0<,+inf", None), "lambda_init": ("0<,+inf", None)}
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Vector) -> Self:
         if self.alpha_init is None:
             self.alpha_init = 1 / np.var(y)
         if self.lambda_init is None:

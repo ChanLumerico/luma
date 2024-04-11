@@ -1,3 +1,4 @@
+from typing import Self
 from scipy.spatial import distance_matrix
 import numpy as np
 
@@ -36,7 +37,7 @@ class KNNClassifier(Estimator, Supervised):
         self.set_param_ranges({"n_neighbors": ("0,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Matrix) -> "KNNClassifier":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self._neighbors = NearestNeighbors(X, self.n_neighbors)
         self._y = y
         self._fitted = True
@@ -118,7 +119,7 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Matrix) -> "AdaptiveKNNClassifier":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self._X = X
         self._y = y
 
@@ -203,7 +204,7 @@ class WeightedKNNClassifier(Estimator, Supervised):
         self.set_param_ranges({"n_neighbors": ("0,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Matrix) -> "WeightedKNNClassifier":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self._X = X
         self._y = y
 

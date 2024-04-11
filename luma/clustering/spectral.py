@@ -1,4 +1,4 @@
-from typing import Literal, Optional
+from typing import Literal, Optional, Self
 from scipy.spatial.distance import pdist, squareform
 from scipy.linalg import eigh
 import matplotlib.pyplot as plt
@@ -55,7 +55,7 @@ class SpectralClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "SpectralClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         W = self._similarity_matrix(X)
         L = self._laplacian(W)
@@ -126,7 +126,7 @@ class NormalizedSpectralClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "NormalizedSpectralClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         W = self._similarity_matrix(X)
         L_norm = self._normalize_laplacian(W)
@@ -213,7 +213,7 @@ class HierarchicalSpectralClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "HierarchicalSpectralClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         W = self._similarity_matrix(X)
         L = self._laplacian(W)
@@ -294,7 +294,7 @@ class AdaptiveSpectralClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "AdaptiveSpectralClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         W = self._similarity_matrix(X)
         L = self._laplacian(W)

@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Self
 from scipy.special import psi
 import numpy as np
 
@@ -52,10 +52,20 @@ class PoissonRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "l1_ratio": ("0,1", None),
+                "alpha": ("0<,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
     def link_funciton(self, X: Matrix) -> Matrix:
         return np.exp(np.dot(X, self.weights))
 
-    def fit(self, X: Matrix, y: Matrix) -> "PoissonRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.zeros(n)
@@ -143,10 +153,21 @@ class NegativeBinomialRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "alpha": ("0,+inf", None),
+                "l1_ratio": ("0,1", None),
+                "phi": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
     def link_function(self, X: Matrix) -> Matrix:
         return np.log(1 + np.exp(np.dot(X, self.weights)))
 
-    def fit(self, X: Matrix, y: Matrix) -> "NegativeBinomialRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.zeros(n)
@@ -239,7 +260,19 @@ class GammaRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "GammaRegressor":
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "reg_strength": ("0,+inf", None),
+                "l1_ratio": ("0,1", None),
+                "alpha": ("-inf,inf", None),
+                "beta": ("-inf,inf", None),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.alpha = np.ones(n) * self.alpha
@@ -338,7 +371,19 @@ class BetaRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "BetaRegressor":
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "reg_strength": ("0,+inf", None),
+                "l1_ratio": ("0,1", None),
+                "alpha": ("-inf,inf", None),
+                "beta": ("-inf,inf", None),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.alpha = np.ones(n) * self.alpha
@@ -433,7 +478,18 @@ class InverseGaussianRegressor(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "InverseGaussianRegressor":
+        self.set_param_ranges(
+            {
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+                "phi": ("0<,+inf", None),
+                "l1_ratio": ("0,1", None),
+                "alpha": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.column_stack((np.ones(X.shape[0]), X))
         m, n = X.shape
         self.weights = np.ones(n)

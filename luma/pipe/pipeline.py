@@ -1,4 +1,4 @@
-from typing import Dict, Literal, Tuple, List, TypeVar, Any
+from typing import Dict, Literal, Self, Tuple, List, Any
 
 from luma.core.super import Estimator, Transformer, Evaluator
 from luma.core.super import Supervised
@@ -7,13 +7,13 @@ from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.classification import Accuracy
 from luma.metric.regression import MeanSquaredError
 
-MT = TypeVar("MT", bound=Estimator | Transformer)
+type Model = Estimator | Transformer
 
 
 __all__ = "Pipeline"
 
 
-class Pipeline(Estimator, Estimator.Meta):
+class Pipeline(Estimator, Estimator.Meta, Transformer):
     """
     A pipeline is a sequence of steps to process data and build a model.
     It includes data collection and preprocessing, model selection and training,
@@ -80,17 +80,16 @@ class Pipeline(Estimator, Estimator.Meta):
 
     * More than one estimator might cause procedural failure
     * Not all the models are compatible with `Pipeline`
-    * Type `MT` is a generic type for `Estimator` and `Transformer`
 
     """
 
     def __init__(
         self,
-        models: List[Tuple[str, MT]] | List[MT],
+        models: List[Tuple[str, Model]] | List[Model],
         param_dict: Dict[str, Any] = dict(),
         verbose: bool = False,
     ) -> None:
-        self.models: Dict[MT] = dict()
+        self.models: Dict[Model] = dict()
         self.param_dict = param_dict
         self.verbose = verbose
         self._X: Matrix
@@ -106,7 +105,7 @@ class Pipeline(Estimator, Estimator.Meta):
 
         self.set_params(param_dict)
 
-    def fit(self, X: Matrix, y: Matrix) -> "Pipeline":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self._X, self._y = self.fit_transform(X, y)
         model = self.estimator
         if hasattr(model, "verbose"):
@@ -217,12 +216,12 @@ class Pipeline(Estimator, Estimator.Meta):
     def transformed_data(self) -> Tuple[Matrix, Matrix]:
         return self._X, self._y
 
-    def __getitem__(self, index: int) -> MT:
+    def __getitem__(self, index: int) -> Model:
         for i, model in enumerate(self.models.values()):
             if index == i:
                 return model
         else:
             raise IndexError("Model index out of bounds!")
 
-    def __setitem__(self, label: str, model: MT):
+    def __setitem__(self, label: str, model: Model):
         self.models[label] = model

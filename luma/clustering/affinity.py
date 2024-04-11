@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Self
 import numpy as np
 
 from luma.interface.util import Matrix, Vector, Scalar, KernelUtil
@@ -68,7 +68,7 @@ class AffinityPropagation(Estimator, Unsupervised):
         self.set_param_ranges({"max_iter": ("0<,+inf", int), "damping": ("0,1", None)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "AffinityPropagation":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         m, _ = X.shape
 
@@ -225,7 +225,7 @@ class AdaptiveAffinityPropagation(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "AdaptiveAffinityPropagation":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         m, _ = X.shape
 
@@ -391,7 +391,7 @@ class KernelAffinityPropagation(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "KernelAffinityPropagation":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         m, _ = X.shape
 

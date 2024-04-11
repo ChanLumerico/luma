@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Literal, Tuple
+from typing import Any, Dict, List, Literal, Self, Tuple
 from scipy.special import softmax
 import numpy as np
 
@@ -74,7 +74,7 @@ class AdaBoostClassifier(Estimator, Estimator.Meta, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Matrix) -> "AdaBoostClassifier":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self.classes_ = np.unique(y)
 
         m, _ = X.shape
@@ -202,7 +202,7 @@ class AdaBoostRegressor(Estimator, Estimator.Meta, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "AdaBoostRegressor":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, _ = X.shape
         sample_weights = np.ones(m)
 
@@ -344,7 +344,7 @@ class GradientBoostingClassifier(Estimator, Estimator.Meta, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "GradientBoostingClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         self._initialize(y)
         m, _ = X.shape
         Fm = np.zeros((m, self.n_classes_)) + self.initial_preds_
@@ -470,7 +470,7 @@ class GradientBoostingRegressor(Estimator, Estimator.Meta, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "GradientBoostingRegressor":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         self.init_pred_ = self._initial_prediction(y)
         self.estimators_ = []
         m, _ = X.shape

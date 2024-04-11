@@ -1,5 +1,5 @@
-from typing import Any, Dict
-from abc import ABCMeta, abstractmethod, abstractstaticmethod
+from typing import Any, Dict, Self
+from abc import ABCMeta, abstractmethod
 
 from luma.core.base import *
 
@@ -31,7 +31,7 @@ class Estimator(ModelBase, metaclass=ABCMeta):
     For training:
     ```py
         @abstractmethod
-        def fit(self, *args) -> Estimator
+        def fit(self, *args) -> Self
     ```
 
     For prediction:
@@ -86,7 +86,7 @@ class Estimator(ModelBase, metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def fit(self, *args) -> "Estimator": ...
+    def fit(self, *args) -> Self: ...
 
     @abstractmethod
     def predict(self, *args) -> Any: ...
@@ -120,7 +120,7 @@ class Transformer(ModelBase, metaclass=ABCMeta):
     For fitting:
     ```py
         @abstractmethod
-        def fit(self, *args) -> Transformer
+        def fit(self, *args) -> Self
     ```
 
     For transformation:
@@ -199,7 +199,7 @@ class Transformer(ModelBase, metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def fit(self, *args) -> "Transformer": ...
+    def fit(self, *args) -> Self: ...
 
     @abstractmethod
     def transform(self, *args) -> Any: ...
@@ -236,9 +236,25 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
 
     """
 
+    class Neural:
+        """
+        An inner class of `Optimizer` dedicated to neural optimizing techniques.
+
+        Methods
+        -------
+        For updating weights:
+        ```py
+        @abstractmethod
+        def update(self, **kwargs) -> tuple
+        ```
+        """
+
+        @abstractmethod
+        def update(self, **kwargs) -> tuple: ...
+
     @property
     def best_model(self) -> Estimator | Transformer: ...
-    
+
     def fit(self, **kwargs) -> Any:
         return super().fit(**kwargs)
 
@@ -263,12 +279,14 @@ class Evaluator(MetricBase, metaclass=ABCMeta):
     -------
     For scoring:
     ```py
-        @abstractstaticmethod
+        @staticmethod
+        @abstractmethod
         def score(*args) -> float
     ```
     """
 
-    @abstractstaticmethod
+    @staticmethod
+    @abstractmethod
     def score(*args) -> float: ...
 
 
@@ -337,10 +355,12 @@ class Distance(MetricBase, metaclass=ABCMeta):
     -------
     For computing the distance:
     ```py
-        @abstractstaticmethod
+        @staticmethod
+        @abstractmethod
         def compute(*args) -> float
     ```
     """
 
-    @abstractstaticmethod
+    @staticmethod
+    @abstractmethod
     def compute(*args) -> float: ...

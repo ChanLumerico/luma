@@ -1,3 +1,4 @@
+from typing import Self
 import numpy as np
 
 from luma.interface.util import Matrix
@@ -19,7 +20,7 @@ class StandardScaler(Transformer):
         self.std = None
         self._fitted = False
 
-    def fit(self, X: Matrix) -> "StandardScaler":
+    def fit(self, X: Matrix) -> Self:
         self.mean = np.mean(X, axis=0)
         self.std = np.std(X, axis=0, ddof=1)
         self._fitted = True
@@ -60,7 +61,7 @@ class MinMaxScaler(Transformer, Transformer.Feature):
         self.max = None
         self._fitted = False
 
-    def fit(self, X: Matrix) -> "MinMaxScaler":
+    def fit(self, X: Matrix) -> Self:
         self.min = np.min(X, axis=0)
         self.max = np.max(X, axis=0)
         self._fitted = True

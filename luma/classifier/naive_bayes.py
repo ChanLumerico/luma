@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Self
 import numpy as np
 
 from luma.interface.util import Matrix, Vector
@@ -20,7 +20,7 @@ class GaussianNaiveBayes(Estimator, Supervised):
     def __init__(self) -> None:
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "GaussianNaiveBayes":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self.classes = np.unique(y)
         self.parameters = []
         self.priors = []
@@ -99,7 +99,7 @@ class BernoulliNaiveBayes(Estimator, Supervised):
     def __init__(self) -> None:
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "BernoulliNaiveBayes":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self.classes = np.unique(y)
         self.class_probs = np.zeros(len(self.classes))
         self.feature_probs = np.zeros((len(self.classes), X.shape[1]))

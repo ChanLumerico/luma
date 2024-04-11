@@ -59,6 +59,7 @@ class DecisionRegion(Visualizer):
         ax: Optional[plt.Axes] = None,
         size: float = 250,
         scale: float = 10.0,
+        grid: bool = True,
         show: bool = False,
     ) -> plt.Axes:
         x1_min, x1_max = self.X[:, 0].min(), self.X[:, 0].max()
@@ -97,8 +98,10 @@ class DecisionRegion(Visualizer):
         ax.set_xlabel(self.xlabel)
         ax.set_ylabel(self.ylabel)
         ax.set_title(self.title)
-        ax.figure.tight_layout()
+        if grid:
+            ax.grid(alpha=0.2)
 
+        ax.figure.tight_layout()
         if show:
             plt.show()
         return ax

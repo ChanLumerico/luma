@@ -9,9 +9,8 @@
         <img alt="pypi-version" src="https://img.shields.io/pypi/v/luma-ml?logo=python&logoColor=white&color=blue">
         <img alt="pypi-downloads" src="https://img.shields.io/pypi/dm/luma-ml">
         <img src="https://img.shields.io/badge/total downloads-4.3k-red">
-        <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/ChanLumerico/luma?color=yellow">
+        <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/ChanLumerico/luma?color=yellow">
         <img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg">
-        <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/ChanLumerico/luma?color=purple">
         <div class="module">
             <h3 class="module-header">Submodules</h3>
             <table>
@@ -102,7 +101,7 @@
                 </tr>
                 <tr>
                     <td>Requirement</td>
-                    <td>Python 3.10 or later</td>
+                    <td>Python 3.12 or later</td>
                 </tr>
                 <tr>
                     <td>Dependencies</td>

@@ -63,7 +63,7 @@ from luma.ensemble.stack import StackingClassifier, StackingRegressor
 from luma.neural.activation import ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
 from luma.neural.optimizer import SGDOptimizer, MomentumOptimizer, RMSPropOptimizer
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
-from luma.neural.multi_layer import MLPClassifier
+from luma.neural.network import MLPClassifier
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (

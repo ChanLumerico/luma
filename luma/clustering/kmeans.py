@@ -1,3 +1,4 @@
+from typing import Self
 import numpy as np
 
 from luma.interface.util import Matrix, Vector
@@ -45,7 +46,7 @@ class KMeansClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "KMeansClustering":
+    def fit(self, X: Matrix) -> Self:
         init_indices = np.random.choice(X.shape[0], self.n_clusters, replace=False)
         self.centroids = X[init_indices]
         self._X = X
@@ -131,7 +132,7 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
             next_centroid = np.random.choice(X.shape[0], p=probs)
             self.centroids.append(X[next_centroid])
 
-    def fit(self, X: Matrix) -> "KMeansClusteringPlus":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         self._initialize_centroids(X)
 
@@ -197,7 +198,7 @@ class KMediansClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "KMediansClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         self.medians = X[np.random.choice(X.shape[0], self.n_clusters, replace=False)]
 
@@ -279,7 +280,7 @@ class KMedoidsClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "KMedoidsClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         m, _ = X.shape
         np.random.seed(self.random_state)
@@ -368,7 +369,7 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "MiniBatchKMeansClustering":
+    def fit(self, X: Matrix) -> Self:
         m, _ = X.shape
         self._X = X
 
@@ -452,7 +453,7 @@ class FuzzyCMeansClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "FuzzyCMeansClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         m, _ = X.shape
 

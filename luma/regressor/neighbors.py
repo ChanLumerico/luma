@@ -1,3 +1,4 @@
+from typing import Self
 from scipy.spatial import distance_matrix
 import numpy as np
 
@@ -34,7 +35,10 @@ class KNNRegressor(Estimator, Supervised):
         self._y = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "KNNRegressor":
+        self.set_param_ranges({"n_neighbors": ("0<,+inf", int)})
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self._neighbors = NearestNeighbors(X, self.n_neighbors)
         self._y = y
         self._fitted = True
@@ -88,7 +92,16 @@ class AdaptiveKNNRegressor(Estimator, Supervised):
         self._y = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "AdaptiveKNNRegressor":
+        self.set_param_ranges(
+            {
+                "n_density": ("0<,+inf", int),
+                "min_neighbors": ("0<,+inf", int),
+                "max_neighbors": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self._X = X
         self._y = y
         self.dist_matrix = distance_matrix(X, X)
@@ -147,7 +160,10 @@ class WeightedKNNRegressor(Estimator, Supervised):
         self._y = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "WeightedKNNRegressor":
+        self.set_param_ranges({"n_neighbors": ("0<,+inf", int)})
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         self._X = X
         self._y = y
 

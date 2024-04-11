@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Tuple, List
+from typing import Literal, Optional, Self, Tuple, List
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import cdist
 import numpy as np
@@ -56,7 +56,7 @@ class DBSCAN(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "DBSCAN":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         clusters = [0] * X.shape[0]
         curPt = 0
@@ -159,7 +159,7 @@ class OPTICS(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "OPTICS":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         m, _ = X.shape
 
@@ -321,7 +321,7 @@ class DENCLUE(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "DENCLUE":
+    def fit(self, X: Matrix) -> Self:
         self._m, self._n = X.shape
 
         attractors: Vector = np.zeros((self._m, self._n))
@@ -477,7 +477,7 @@ class MeanShiftClustering(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "MeanShiftClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         m, _ = X.shape
 

@@ -1,3 +1,4 @@
+from typing import Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Unsupervised
@@ -51,7 +52,7 @@ class GaussianMixture(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "GaussianMixture":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         self._initialize_params(X)
         for i in range(self.max_iter):
@@ -165,7 +166,7 @@ class MultinomialMixture(Estimator, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "MultinomialMixture":
+    def fit(self, X: Matrix) -> Self:
         self.X_ = X
         self._initialize_parameters(X)
         logL = None

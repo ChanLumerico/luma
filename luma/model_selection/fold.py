@@ -69,9 +69,6 @@ class KFold:
         self.random_state = random_state
         self.n_folds = n_folds
 
-        self.set_param_ranges({"n_folds": ("0,+inf", int)})
-        self.check_param_ranges()
-
     @property
     def split(self) -> Generator[Tuple[Vector, Vector], None, None]:
         np.random.seed(self.random_state)
@@ -147,9 +144,6 @@ class StratifiedKFold:
         self.n_folds = n_folds
         self.shuffle = shuffle
         self.random_state = random_state
-
-        self.set_param_ranges({"n_folds": ("0,+inf", int)})
-        self.check_param_ranges()
 
     @property
     def split(self) -> Generator[Tuple[Vector, Vector], None, None]:
@@ -241,9 +235,6 @@ class GroupKFold:
         self.n_folds = n_folds
         self.shuffle = shuffle
         self.random_state = random_state
-
-        self.set_param_ranges({"n_folds": ("0,+inf", int)})
-        self.check_param_ranges()
 
     @property
     def split(self) -> Generator[Tuple[Vector, Vector], None, None]:

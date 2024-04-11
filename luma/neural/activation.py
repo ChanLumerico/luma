@@ -4,11 +4,7 @@ import numpy as np
 __all__ = ("ReLU", "LeakyReLU", "ELU", "Tanh", "Sigmoid", "Softmax")
 
 
-class _Matrix:
-    pass
-
-
-Matrix = _Matrix
+type Matrix = np.ndarray
 
 
 class ReLU:

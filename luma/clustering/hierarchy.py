@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Tuple
+from typing import Literal, Optional, Self, Tuple
 from scipy.spatial.distance import pdist, squareform
 from scipy.cluster.hierarchy import linkage, dendrogram
 import matplotlib.pyplot as plt
@@ -57,7 +57,7 @@ class AgglomerativeClustering(Estimator, Unsupervised):
         self.set_param_ranges({"n_clusters": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "AgglomerativeClustering":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         n_samples = X.shape[0]
         dist_matrix = squareform(pdist(X, metric="euclidean"))
@@ -191,7 +191,7 @@ class DivisiveClustering(Estimator, Unsupervised):
         self.set_param_ranges({"n_clusters": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "DivisiveClustering":
+    def fit(self, X: Matrix) -> Self:
         initial_cluster = [0] * X.shape[0]
         self._X = X
         self.clusters.append(initial_cluster)

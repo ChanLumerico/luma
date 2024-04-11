@@ -134,6 +134,8 @@ class GridSearchCV(Optimizer):
                     f"[GridSearchCV] candidate {i}/{max_iter} {params_f}",
                     f"- score:{mean_score:.3f}",
                 )
+            if np.isnan(mean_score):
+                continue
 
             if self.maximize:
                 if best_score is None or mean_score > best_score:
@@ -302,6 +304,8 @@ class RandomizedSearchCV(Optimizer):
                     f"[RandomSearchCV] candidate {i + 1}/{self.max_iter}",
                     f"{params_f} - score: {mean_score:.3f}",
                 )
+            if np.isnan(mean_score):
+                continue
 
             if self.maximize:
                 if best_score is None or mean_score > best_score:

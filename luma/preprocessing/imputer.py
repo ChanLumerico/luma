@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Self
 from scipy.spatial.distance import cdist
 from scipy.stats import mode
 import numpy as np
@@ -18,7 +18,7 @@ class SimpleImputer(Transformer, Transformer.Feature):
         self.statistics = None
         self._fitted = False
 
-    def fit(self, X: Matrix) -> "SimpleImputer":
+    def fit(self, X: Matrix) -> Self:
         if self.strategy == "mean":
             self.statistics = np.nanmean(X, axis=0)
         elif self.strategy == "median":
@@ -83,7 +83,7 @@ class KNNImputer(Transformer, Transformer.Feature):
         self.set_param_ranges({"n_neighbors": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "KNNImputer":
+    def fit(self, X: Matrix) -> Self:
         if np.isnan(X).any():
             self.distances = self._compute_distances(X)
 
@@ -132,7 +132,7 @@ class HotDeckImputer(Transformer, Transformer.Feature):
         self._similar_rows = None
         self._fitted = False
 
-    def fit(self, X: Matrix) -> "HotDeckImputer":
+    def fit(self, X: Matrix) -> Self:
         self._X = X
         self._similar_rows = [self._find_similar_row(row) for row in self._X]
 

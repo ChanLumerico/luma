@@ -62,9 +62,6 @@ class CrossValidator(Evaluator):
         self.train_scores_ = []
         self.test_scores_ = []
 
-        self.set_param_ranges({"cv": ("0,+inf", int)})
-        self.check_param_ranges()
-
     def _fit(self, X: Matrix, y: Vector) -> None:
         fold = self.fold_type(
             X, y, n_folds=self.cv, shuffle=self.shuffle, random_state=self.random_state

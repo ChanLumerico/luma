@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
@@ -66,7 +66,7 @@ class MLPClassifier(Estimator, Supervised):
     -----
     * An instance of an `Optimizer` must be passed to `optimizer`
     * Optimizers of `luma.neural.optimizer` are only accepted
-
+        (`Optimizer.Neural`)
     """
 
     def __init__(
@@ -119,7 +119,7 @@ class MLPClassifier(Estimator, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "MLPClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         if isinstance(self.hidden_sizes, int):
             self.hidden_sizes = [self.hidden_sizes]
 

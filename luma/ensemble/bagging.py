@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -76,7 +76,7 @@ class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
         self.set_param_ranges({"n_estimators": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "BaggingClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         np.random.seed(self.random_state)
         self.base_estimator.set_params(**self._base_estimator_params)
         self.estimators_ = []
@@ -202,7 +202,7 @@ class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
         self.set_param_ranges({"n_estimators": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "BaggingRegressor":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         np.random.seed(self.random_state)
         self.base_estimator.set_params(**self._base_estimator_params)
         self.estimators_ = []

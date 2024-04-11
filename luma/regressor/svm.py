@@ -1,3 +1,4 @@
+from typing import Self
 import numpy as np
 
 from luma.interface.util import Matrix, KernelUtil
@@ -43,7 +44,18 @@ class SVR(Estimator, Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "SVR":
+        self.set_param_ranges(
+            {
+                "C": ("0,+inf", None),
+                "epsilon": ("0,+inf", None),
+                "batch_size": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         m, n = X.shape
         id = np.arange(m)
         np.random.shuffle(id)
@@ -130,7 +142,19 @@ class KernelSVR(Estimator, Supervised):
         self._kernel_func = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Matrix) -> "KernelSVR":
+        self.set_param_ranges(
+            {
+                "C": ("0<,+inf", None),
+                "deg": ("0<,+inf", int),
+                "gamma": ("0<,+inf", None),
+                "coef": ("-inf,+inf", None),
+                "learning_rate": ("0<,+inf", None),
+                "max_iter": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         m, _ = X.shape
         self._set_kernel_func()
         self.alpha = np.random.random(m)

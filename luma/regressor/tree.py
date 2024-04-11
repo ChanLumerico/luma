@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Self, Tuple
 import numpy as np
 
 from luma.interface.util import Matrix, Vector
@@ -24,7 +24,6 @@ class DecisionTreeRegressor(Estimator, Supervised):
     Parameters
     ----------
     `max_depth` : Maximum depth of the tree
-    `criterion` : Function used to measure the quality of a split
     `min_samples_split` : Minimum samples required to split a node
     `min_samples_leaf` : Minimum samples required to be at a leaf node
     `max_features` : Number of features to consider
@@ -54,9 +53,19 @@ class DecisionTreeRegressor(Estimator, Supervised):
         self.root = None
         self._fitted = False
 
-    def fit(
-        self, X: Matrix, y: Vector, sample_weights: Vector = None
-    ) -> "DecisionTreeRegressor":
+        self.set_param_ranges(
+            {
+                "max_depth": ("0<,+inf", int),
+                "min_samples_split": ("0,+inf", int),
+                "min_samples_leaf": ("0<,+inf", int),
+                "max_features": ("0<,+inf", int),
+                "min_variance_decrese": ("0,+inf", None),
+                "max_leaf_nodes": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
+    def fit(self, X: Matrix, y: Vector, sample_weights: Vector = None) -> Self:
         if sample_weights is None:
             sample_weights = np.ones(len(y))
         sample_weights = Vector(sample_weights)

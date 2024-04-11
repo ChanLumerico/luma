@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Self
 import numpy as np
 
 from luma.interface.util import Matrix
@@ -57,7 +57,7 @@ class LogisticRegressor(Estimator, Supervised):
     def sigmoid(self, z: Matrix) -> Matrix:
         return 1 / (1 + np.exp(-z))
 
-    def fit(self, X: Matrix, y: Matrix) -> "LogisticRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.insert(X, 0, 1, axis=1)
         m, n = X.shape
         self.theta = np.zeros(n)
@@ -159,7 +159,7 @@ class SoftmaxRegressor(Estimator, Supervised):
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
         return exp_z / exp_z.sum(axis=1, keepdims=True)
 
-    def fit(self, X: Matrix, y: Matrix) -> "SoftmaxRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X = np.insert(X, 0, 1, axis=1)
         m, n = X.shape
         num_classes = len(np.unique(y))

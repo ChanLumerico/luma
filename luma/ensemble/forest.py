@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Self
 from scipy.stats import mode
 import numpy as np
 
@@ -78,9 +78,7 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(
-        self, X: Matrix, y: Matrix, sample_weights: Vector = None
-    ) -> "RandomForestClassifier":
+    def fit(self, X: Matrix, y: Matrix, sample_weights: Vector = None) -> Self:
         m, n = X.shape
         if self.n_features == "auto":
             self.n_features = int(n**0.5)
@@ -197,7 +195,7 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Matrix) -> "RandomForestRegressor":
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         m, n = X.shape
         if self.n_features == "auto":
             self.n_features = int(n**0.5)

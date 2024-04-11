@@ -1,6 +1,7 @@
-import numpy as np
+from typing import Self
 from scipy.special import softmax
 from scipy.stats import multivariate_normal
+import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.util import Matrix, Scalar, Vector, KernelUtil
@@ -33,7 +34,7 @@ class LDAClassifier(Estimator, Supervised):
         self.covs = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Vector) -> "LDAClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, n = X.shape
         class_labels = np.unique(y)
         n_classes = len(class_labels)
@@ -96,7 +97,7 @@ class QDAClassifier(Estimator, Supervised):
         self.classes = None
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Vector) -> "QDAClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, n = X.shape
         self.classes = np.unique(y)
         n_classes = len(self.classes)
@@ -187,7 +188,7 @@ class RDAClassifier(Estimator, Supervised):
         self.set_param_ranges({"alpha": ("0,+1", None), "gamma": ("0<,+inf", None)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "RDAClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, n = X.shape
         self.classes = np.unique(y)
         n_classes = len(self.classes)
@@ -309,7 +310,7 @@ class KDAClassifier(Estimator, Supervised):
         self.set_param_ranges({"deg": ("0,+inf", int), "gamma": ("0<,+inf", None)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "KDAClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         m, _ = X.shape
         self._X = X
         self.classes = np.unique(y)

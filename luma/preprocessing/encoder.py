@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Self
 import numpy as np
 
 from luma.core.super import Transformer
@@ -15,7 +15,7 @@ class OneHotEncoder(Transformer, Transformer.Feature):
         self.features = features
         self._fitted = False
 
-    def fit(self, X: Matrix) -> "OneHotEncoder":
+    def fit(self, X: Matrix) -> Self:
         if self.features is None:
             self.features = range(X.shape[1])
 
@@ -58,7 +58,7 @@ class LabelEncoder(Transformer, Transformer.Target):
         self.classes = None
         self._fitted = False
 
-    def fit(self, y: Matrix) -> "LabelEncoder":
+    def fit(self, y: Matrix) -> Self:
         self.classes = np.unique(y)
         self._fitted = True
         return self
@@ -96,7 +96,7 @@ class OrdinalEncoder(Transformer, Transformer.Feature):
         self.strategy = strategy
         self._fitted = False
 
-    def fit(self, X: Matrix) -> "OrdinalEncoder":
+    def fit(self, X: Matrix) -> Self:
         if self.strategy == "occur":
             self.categories = [np.unique(col, return_index=True)[0] for col in X.T]
         elif self.strategy == "alpha":
@@ -135,7 +135,7 @@ class LabelBinarizer(Transformer, Transformer.Target):
         self.classes_ = None
         self._fitted = False
 
-    def fit(self, y: Vector) -> "LabelBinarizer":
+    def fit(self, y: Vector) -> Self:
         self.classes_ = np.unique(y)
         self._fitted = True
         return self

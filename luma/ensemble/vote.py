@@ -1,4 +1,4 @@
-from typing import List, Literal
+from typing import List, Literal, Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -55,7 +55,7 @@ class VotingClassifier(Estimator, Estimator.Meta, Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Vector) -> "VotingClassifier":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         if self.voting not in ("label", "prob"):
             raise UnsupportedParameterError(self.voting)
 
@@ -150,7 +150,7 @@ class VotingRegressor(Estimator, Estimator.Meta, Supervised):
         self.verbose = verbose
         self._fitted = False
 
-    def fit(self, X: Matrix, y: Vector) -> "VotingRegressor":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         if self.weights and len(self.weights) != len(self.estimators):
             raise ValueError(f"Size mismatch between 'weights' and 'estimators'!")
 

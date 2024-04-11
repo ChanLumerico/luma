@@ -1,4 +1,4 @@
-from typing import Any, Callable, Literal
+from typing import Any, Callable, Literal, Self
 
 from scipy.spatial.distance import pdist, cdist, squareform
 from scipy.sparse.csgraph import shortest_path
@@ -71,7 +71,7 @@ class TSNE(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "TSNE":
+    def fit(self, X: Matrix) -> Self:
         size = X.shape[0]
         P = self._P_joint_probabilities(X)
         y = np.random.normal(0.0, 1e-4, (size, self.n_components))
@@ -204,7 +204,7 @@ class MDS(Transformer, Unsupervised):
         self.set_param_ranges({"n_components": ("0<,+inf", int)})
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "MDS":
+    def fit(self, X: Matrix) -> Self:
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
         H = np.eye(n) - np.ones((n, n)) / n
@@ -283,7 +283,7 @@ class MetricMDS(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "MetricMDS":
+    def fit(self, X: Matrix) -> Self:
         D = self._compute_dissimilarity(X)
         n = D.shape[0]
         H = np.eye(n) - np.ones((n, n)) / n
@@ -380,7 +380,7 @@ class LandmarkMDS(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "LandmarkMDS":
+    def fit(self, X: Matrix) -> Self:
         self.landmarks = self._initialize_landmarks(X)
         D = self._compute_dissimilarity(self.landmarks)
         n = D.shape[0]
@@ -479,7 +479,7 @@ class LLE(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "LLE":
+    def fit(self, X: Matrix) -> Self:
         m, _ = X.shape
         distances = np.zeros((m, m))
         for i in range(m):
@@ -556,7 +556,7 @@ class ModifiedLLE(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "ModifiedLLE":
+    def fit(self, X: Matrix) -> Self:
         m, _ = X.shape
         distances = np.zeros((m, m))
         for i in range(m):
@@ -631,7 +631,7 @@ class HessianLLE(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "HessianLLE":
+    def fit(self, X: Matrix) -> Self:
         m, _ = X.shape
         dp = self.n_components * (self.n_components + 1) // 2
 
@@ -750,7 +750,7 @@ class SammonMapping(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "SammonMapping":
+    def fit(self, X: Matrix) -> Self:
         m, _ = X.shape
         X_dist = cdist(X, X)
         scale = 0.5 / X_dist.sum()
@@ -871,7 +871,7 @@ class LaplacianEigenmap(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "LaplacianEigenmap":
+    def fit(self, X: Matrix) -> Self:
         pairwise = cdist(X, X)
         weights = np.exp(-pairwise / (2 * self.sigma**2))
         np.fill_diagonal(weights, 0)
@@ -944,7 +944,7 @@ class Isomap(Transformer, Unsupervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "Isomap":
+    def fit(self, X: Matrix) -> Self:
         self.adj = self._make_adjacency(X)
         if np.isinf(self.adj).any():
             print(f"[Isomap] Too narrow bin size with epsilon of {self.epsilon}!")
@@ -1014,13 +1014,13 @@ class ConformalIsomap(Transformer, Unsupervised):
         self.epsilon = epsilon
         self.algorithm = algorithm
         self._fitted = False
-        
+
         self.set_param_ranges(
             {"n_components": ("0<,+inf", int), "epsilon": ("0<,+inf", None)}
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "ConformalIsomap":
+    def fit(self, X: Matrix) -> Self:
         self.adj = self._make_adjacency(X)
         if np.isinf(self.adj).any():
             print(f"[C-Isomap] Too narrow bin size with epsilon of {self.epsilon}!")
@@ -1089,13 +1089,13 @@ class LTSA(Transformer, Unsupervised):
         self.n_components = n_components
         self.n_neighbors = n_neighbors
         self._fitted = False
-        
+
         self.set_param_ranges(
             {"n_components": ("0<,+inf", int), "n_neighbors": ("0<,+inf", int)}
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix) -> "LTSA":
+    def fit(self, X: Matrix) -> Self:
         m, n = X.shape
         self.neighbors, self.neighbor_indices = self._compute_neighborhood(X)
         M = np.zeros((m, m))

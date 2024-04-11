@@ -1,8 +1,8 @@
-from typing import Tuple
+from typing import Self, Tuple
 from scipy.spatial.distance import cdist
 import numpy as np
 
-from luma.core.super import Transformer, Supervised
+from luma.core.super import Transformer
 from luma.interface.util import Matrix, Vector
 from luma.interface.exception import NotFittedError
 
@@ -10,7 +10,7 @@ from luma.interface.exception import NotFittedError
 __all__ = "LocalOutlierFactor"
 
 
-class LocalOutlierFactor(Transformer, Transformer.Both, Supervised):
+class LocalOutlierFactor(Transformer, Transformer.Both):
     """
     The Local Outlier Factor (LOF) algorithm identifies outliers by comparing
     the local density of a data point with the densities of its neighbors.
@@ -22,6 +22,7 @@ class LocalOutlierFactor(Transformer, Transformer.Both, Supervised):
     Parameters
     ----------
     `n_neighbors` : Number of neighbors to estimate the local densities
+    `threshold` : Cutoff value deciding whether a point is considered an outlier
 
     Examples
     --------
@@ -48,7 +49,7 @@ class LocalOutlierFactor(Transformer, Transformer.Both, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, _=None) -> "LocalOutlierFactor":
+    def fit(self, X: Matrix, _=None) -> Self:
         n_samples = len(X)
         self.lrd_ = np.zeros(n_samples)
         self.neighbors_ = []
