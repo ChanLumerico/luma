@@ -61,7 +61,16 @@ from luma.ensemble.boost import GradientBoostingClassifier, GradientBoostingRegr
 from luma.ensemble.stack import StackingClassifier, StackingRegressor
 
 from luma.neural.activation import ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
-from luma.neural.optimizer import SGDOptimizer, MomentumOptimizer, RMSPropOptimizer
+from luma.neural.optimizer import (
+    SGDOptimizer,
+    MomentumOptimizer,
+    RMSPropOptimizer,
+    AdamOptimizer,
+    AdaGradOptimizer,
+    AdaDeltaOptimizer,
+    AdaMaxOptimizer,
+    AdamWOptimizer,
+)
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.network import MLPClassifier
 
@@ -206,7 +215,9 @@ if __name__ == "__main__":
 
     ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
 
-    SGDOptimizer, MomentumOptimizer, RMSPropOptimizer
+    SGDOptimizer, MomentumOptimizer, RMSPropOptimizer,
+    AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
+    AdaMaxOptimizer, AdamWOptimizer
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity
