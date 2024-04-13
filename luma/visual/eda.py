@@ -6,10 +6,10 @@ import pandas as pd
 from luma.core.super import Visualizer
 
 
-__all__ = ("CorrelationHeatMap", "CorrelationBar", "JointPlot", "MissingProportion")
+__all__ = ("CorrelationHeatmap", "CorrelationBar", "JointPlot", "MissingProportion")
 
 
-class CorrelationHeatMap(Visualizer):
+class CorrelationHeatmap(Visualizer):
     def __init__(self, data: pd.DataFrame) -> None:
         self.data = data
         self.corr = data.corr()
@@ -26,6 +26,7 @@ class CorrelationHeatMap(Visualizer):
             n_features = self.data.shape[1]
             size = n_features / 2 if n_features < 20 else 10
             _, ax = plt.subplots(figsize=(size + 1, size))
+            show = True
 
         sns.heatmap(
             self.corr, ax=ax, cmap=colorMap, annot=annotate, cbar=colorBar, fmt="0.2f"
@@ -47,6 +48,8 @@ class CorrelationBar(Visualizer):
     def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
         if ax is None:
             _, ax = plt.subplots()
+            show = True
+
         corr_bar = [
             abs(self.data[col].corr(self.data[self.target])) for col in self.data
         ]
@@ -87,6 +90,8 @@ class MissingProportion(Visualizer):
     def plot(self, ax: Optional[plt.Axes] = None, show: bool = False) -> plt.Axes:
         if ax is None:
             _, ax = plt.subplots()
+            show = True
+
         nan_props = self.nan_proportions()
         sns.barplot(x=nan_props.index, y=nan_props.values, hue=self.data.columns, ax=ax)
 

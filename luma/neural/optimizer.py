@@ -4,8 +4,6 @@ import numpy as np
 from luma.core.super import Optimizer
 from luma.interface.util import Matrix
 
-type MultiLayer = List[Matrix]
-
 
 __all__ = (
     "SGDOptimizer",
@@ -29,11 +27,11 @@ class SGDOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         updated_weights = []
         for w, grad_w in zip(weights, grad_weights):
             new_weight = w - self.learning_rate * grad_w
@@ -61,11 +59,11 @@ class MomentumOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         if self.vel_weights is None:
             self.vel_weights = [np.zeros_like(w) for w in weights]
         if self.vel_biases is None:
@@ -108,11 +106,11 @@ class RMSPropOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         if self.sq_grad_weights is None:
             self.sq_grad_weights = [np.zeros_like(w) for w in weights]
         if self.sq_grad_biases is None:
@@ -175,11 +173,11 @@ class AdamOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         if self.m_weights is None:
             self.m_weights = [np.zeros_like(w) for w in weights]
             self.v_weights = [np.zeros_like(w) for w in weights]
@@ -232,11 +230,11 @@ class AdaGradOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         if self.grad_accum_weights is None:
             self.grad_accum_weights = [np.zeros_like(w) for w in weights]
             self.grad_accum_biases = [np.zeros_like(b) for b in biases]
@@ -273,11 +271,11 @@ class AdaDeltaOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         if self.accum_grads_w is None:
             self.accum_grads_w = [np.zeros_like(w) for w in weights]
             self.accum_updates_w = [np.zeros_like(w) for w in weights]
@@ -354,11 +352,11 @@ class AdaMaxOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         if self.m_weights is None:
             self.m_weights = [np.zeros_like(w) for w in weights]
             self.v_weights = [np.zeros_like(w) for w in weights]
@@ -433,11 +431,11 @@ class AdamWOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         if self.m_weights is None:
             self.m_weights = [np.zeros_like(w) for w in weights]
             self.v_weights = [np.zeros_like(w) for w in weights]
@@ -513,11 +511,11 @@ class NAdamOptimizer(Optimizer, Optimizer.Neural):
 
     def update(
         self,
-        weights: MultiLayer,
-        biases: MultiLayer,
-        grad_weights: MultiLayer,
-        grad_biases: MultiLayer,
-    ) -> Tuple[MultiLayer, MultiLayer]:
+        weights: List[Matrix],
+        biases: List[Matrix],
+        grad_weights: List[Matrix],
+        grad_biases: List[Matrix],
+    ) -> Tuple[List[Matrix], List[Matrix]]:
         if self.m_weights is None:
             self.m_weights = [np.zeros_like(w) for w in weights]
             self.v_weights = [np.zeros_like(w) for w in weights]

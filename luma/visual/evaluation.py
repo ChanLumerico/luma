@@ -1,5 +1,4 @@
-from itertools import product
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import List, Literal, Optional, Tuple
 from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +21,6 @@ __all__ = (
     "ResidualPlot",
     "LearningCurve",
     "ValidationCurve",
-    "ValidationHeatmap",
     "InertiaPlot",
 )
 
@@ -622,7 +620,7 @@ class ValidationCurve(Visualizer):
         metric: Evaluator = Accuracy,
         random_state: int = None,
         verbose: bool = False,
-    ):
+    ) -> None:
         self.estimator = estimator
         self.X = X
         self.y = y
@@ -717,156 +715,6 @@ class ValidationCurve(Visualizer):
         ax.set_ylim(0.0, 1.1)
         ax.legend()
         ax.grid()
-        ax.figure.tight_layout()
-
-        if show:
-            plt.show()
-        return ax
-
-
-class ValidationHeatmap(Visualizer):
-    """
-    A validation heatmap in machine learning is a graphical representation that
-    illustrates the performance of a model on a validation dataset for different
-    combinations of two hyperparameters. Each cell in the heatmap corresponds to a
-    specific combination of the hyperparameters' values, and the color intensity
-    represents the performance metric score. This visualization is useful for
-    identifying the interaction between two hyperparameters and selecting the best
-    combination for model tuning.
-
-    Parameters
-    ----------
-    `estimator` : An estimator to evaluate
-    `X` : Feature data for training
-    `y` : Target data for training
-    `param_dict` : Dictionary with two hyperparameters and their respective ranges
-    `cv` : Number of times for cross-validation
-    `shuffle` : Whether to shuffle the dataset
-    `fold_type` : Fold type (Default `KFold`)
-    `metric` : Evaluation metric for scoring
-    `random_state` : Seed for random sampling upon splitting samples
-
-    """
-
-    def __init__(
-        self,
-        estimator: Estimator,
-        X: Matrix,
-        y: Vector,
-        param_dict: Dict[str, Any],
-        cv: int = 5,
-        shuffle: bool = True,
-        fold_type: FoldType = KFold,
-        metric: Evaluator = Accuracy,
-        random_state: int = None,
-        verbose: bool = False,
-    ) -> None:
-        self.estimator = estimator
-        self.X = X
-        self.y = y
-        self.param_dict = param_dict
-        self.cv = cv
-        self.shuffle = shuffle
-        self.fold_type = fold_type
-        self.metric = metric
-        self.random_state = random_state
-        self.verbose = verbose
-
-        self.names_ = list(self.param_dict.keys())
-
-        self.sizes_ = (
-            len(self.param_dict[self.names_[0]]),
-            len(self.param_dict[self.names_[1]]),
-        )
-
-        self.values_ = (
-            self.param_dict[self.names_[0]],
-            self.param_dict[self.names_[1]],
-        )
-
-        self.scores = np.zeros(self.sizes_)
-
-    def _evaluate(self) -> None:
-        param_combs = list(product(*self.param_dict.values()))
-        max_iter = len(param_combs)
-
-        if self.verbose:
-            print(
-                f"Fitting {self.cv} folds for {max_iter} candidates,",
-                f"totalling {self.cv * max_iter} fits.\n",
-            )
-
-        for idx, params in enumerate(param_combs):
-            param_values = dict(zip(self.names_, params))
-            self.estimator.set_params(**param_values)
-
-            cv_model = CrossValidator(
-                estimator=self.estimator,
-                metric=self.metric,
-                cv=self.cv,
-                shuffle=self.shuffle,
-                fold_type=self.fold_type,
-                random_state=self.random_state,
-                verbose=False,
-            )
-
-            _, score = cv_model.score(self.X, self.y)
-            i, j = idx // self.sizes_[1], idx % self.sizes_[1]
-            self.scores[i, j] = score
-
-            if self.verbose:
-                print(
-                    f"[ValidationHeatmap] candidate {idx + 1}/{max_iter}",
-                    f"{param_values} - score: {score:.3f}",
-                )
-
-    def plot(
-        self,
-        ax: Optional[plt.Axes] = None,
-        cmap: ListedColormap = "RdYlGn",
-        log_xticks: bool = True,
-        log_yticks: bool = True,
-        annotate: bool = True,
-        show: bool = False,
-    ) -> plt.Axes:
-        if ax is None:
-            _, ax = plt.subplots()
-            show = True
-
-        cax = ax.imshow(self.scores, cmap=cmap)
-        ax.figure.colorbar(cax)
-
-        self._evaluate()
-        if annotate:
-            for i in range(self.sizes_[0]):
-                for j in range(self.sizes_[1]):
-                    score = self.scores[i, j]
-                    ax.text(
-                        j,
-                        i,
-                        f"{score:.2f}",
-                        ha="center",
-                        va="center",
-                        color="white",
-                        alpha=0.7,
-                    )
-
-        ax.set_xticks(range(self.sizes_[0]), np.round(self.values_[0], 2))
-        ax.set_yticks(range(self.sizes_[1]), np.round(self.values_[1], 2))
-
-        if log_xticks:
-            ax.set_xticklabels(
-                [r"$10^{" + f"{np.log10(n):.1f}" + r"}$" for n in self.values_[0]]
-            )
-        if log_yticks:
-            ax.set_yticklabels(
-                [r"$10^{" + f"{np.log10(n):.1f}" + r"}$" for n in self.values_[1]]
-            )
-
-        ax.set_xlabel(self.names_[1])
-        ax.set_ylabel(self.names_[0])
-
-        ax.set_title("Validation Heatmap")
         ax.figure.tight_layout()
 
         if show:

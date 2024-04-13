@@ -70,6 +70,7 @@ from luma.neural.optimizer import (
     AdaDeltaOptimizer,
     AdaMaxOptimizer,
     AdamWOptimizer,
+    NAdamOptimizer,
 )
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.network import MLPClassifier
@@ -131,7 +132,7 @@ from luma.pipe.pipeline import Pipeline
 
 from luma.visual.eda import (
     CorrelationBar,
-    CorrelationHeatMap,
+    CorrelationHeatmap,
     JointPlot,
     MissingProportion,
 )
@@ -142,7 +143,7 @@ from luma.visual.evaluation import (
     PrecisionRecallCurve,
 )
 from luma.visual.evaluation import ConfusionMatrix, ResidualPlot, LearningCurve
-from luma.visual.evaluation import ValidationCurve, ValidationHeatmap, InertiaPlot
+from luma.visual.evaluation import ValidationCurve, InertiaPlot
 
 from luma.migrate.port import ModelPorter
 
@@ -217,7 +218,7 @@ if __name__ == "__main__":
 
     SGDOptimizer, MomentumOptimizer, RMSPropOptimizer,
     AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
-    AdaMaxOptimizer, AdamWOptimizer
+    AdaMaxOptimizer, AdamWOptimizer, NAdamOptimizer
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity
@@ -281,12 +282,12 @@ if __name__ == "__main__":
     Pipeline
 
     # ------------------- [ luma.visual ] ----------------------
-    CorrelationBar, CorrelationHeatMap, JointPlot,
+    CorrelationBar, CorrelationHeatmap, JointPlot,
     MissingProportion
 
     DecisionRegion, ClusterPlot, ROCCurve, PrecisionRecallCurve,
     ConfusionMatrix, ResidualPlot, LearningCurve,
-    ValidationCurve, ValidationHeatmap, InertiaPlot
+    ValidationCurve, InertiaPlot
 
     # ------------------ [ luma.migrate ] ----------------------
     ModelPorter
