@@ -12,6 +12,7 @@ from luma.interface.exception import (
 from luma.interface.util import (
     Matrix,
     Vector,
+    Tensor,
     Scalar,
     DecisionTreeNode,
     NearestNeighbors,
@@ -74,6 +75,7 @@ from luma.neural.optimizer import (
 )
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.network import MLPClassifier, MLPRegressor
+from luma.neural.layer import Convolution
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -163,7 +165,8 @@ if __name__ == "__main__":
     UnsupportedParameterError, ModelExtensionError,
     InvalidRangeError
 
-    Matrix, Vector, Scalar, DecisionTreeNode, NearestNeighbors,
+    Matrix, Vector, Tensor, Scalar,
+    DecisionTreeNode, NearestNeighbors,
     SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil,
     Clone, ParamRange
 
@@ -219,6 +222,8 @@ if __name__ == "__main__":
     SGDOptimizer, MomentumOptimizer, RMSPropOptimizer,
     AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
     AdaMaxOptimizer, AdamWOptimizer, NAdamOptimizer
+
+    Convolution
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

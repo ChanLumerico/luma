@@ -8,6 +8,7 @@ from luma.neural import activation
 __all__ = (
     "Matrix",
     "Vector",
+    "Tensor",
     "Scalar",
     "DecisionTreeNode",
     "NearestNeighbors",
@@ -22,7 +23,7 @@ __all__ = (
 
 class Matrix(np.ndarray):
     """
-    Internal class that extends `numpy.ndarray`.
+    Internal class for matrices(2D-array) that extends `numpy.ndarray`.
 
     This class provides a way to create matrix objects that have
     all the capabilities of numpy arrays with the potential for
@@ -49,7 +50,7 @@ class Matrix(np.ndarray):
 
 class Vector(Matrix):
     """
-    Internal class for vector that extends `Matrix`.
+    Internal class for vectors(1D-array) that extends `Matrix`.
 
     This class represents a single row/column vector with its
     type of `numpy.ndarray` or `Matrix`.
@@ -57,6 +58,23 @@ class Vector(Matrix):
     """
 
     def __new__(cls, array_like: Any) -> "Vector":
+        if isinstance(array_like, list):
+            obj = Matrix(array_like)
+        else:
+            obj = array_like
+        return obj
+
+
+class Tensor(Matrix):
+    """
+    Internal class for tensors(>=3D-arrray) that extends `Matrix`.
+
+    This class provides a way to create tensor objects that have
+    all the capabilities of numpy arrays with the potential for
+    additional functionalities and readability.
+    """
+
+    def __new__(cls, array_like: Any) -> "Tensor":
         if isinstance(array_like, list):
             obj = Matrix(array_like)
         else:

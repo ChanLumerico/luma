@@ -85,6 +85,19 @@ class Estimator(ModelBase, metaclass=ABCMeta):
 
         """
 
+    class NeuralNet:
+        """
+        An inner class of `Estimator` dedicated to neural networks.
+
+        Neural networks are computational models inspired by the human brain,
+        consisting of layers of interconnected nodes (neurons) that process
+        information through weighted connections. These models include an input
+        layer to receive data, hidden layers that perform computations, and an
+        output layer to deliver results.
+        """
+
+        def dump(self, **kwargs) -> None: ...
+
     @abstractmethod
     def fit(self, *args) -> Self: ...
 
@@ -94,8 +107,8 @@ class Estimator(ModelBase, metaclass=ABCMeta):
     @abstractmethod
     def score(self, *args) -> float: ...
 
-    def set_params(self, ignore_missing: bool = False, **kwargs) -> None:
-        return super().set_params(ignore_missing=ignore_missing, **kwargs)
+    def set_params(self, **kwargs) -> None:
+        return super().set_params(**kwargs)
 
     def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:
         return super().set_param_ranges(range_dict)
@@ -207,8 +220,8 @@ class Transformer(ModelBase, metaclass=ABCMeta):
     @abstractmethod
     def fit_transform(self, *args) -> Any: ...
 
-    def set_params(self, ignore_missing: bool = False, **kwargs) -> None:
-        return super().set_params(ignore_missing=ignore_missing, **kwargs)
+    def set_params(self, **kwargs) -> None:
+        return super().set_params(**kwargs)
 
     def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:
         return super().set_param_ranges(range_dict)
@@ -229,7 +242,7 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
 
     Properties
     ----------
-    Get the best(optimized) estimator or transformer:
+    Get the best(optimized) estimator or transformer (not for `Neural`):
     ```py
         @property
         def best_model(self) -> Estimator | Transformer

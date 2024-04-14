@@ -13,7 +13,7 @@ from luma.neural.optimizer import SGDOptimizer
 __all__ = ("MLPClassifier", "MLPRegressor")
 
 
-class MLPClassifier(Estimator, Supervised):
+class MLPClassifier(Estimator, Estimator.NeuralNet, Supervised):
     """
     An MLP (Multilayer Perceptron) is a type of neural network composed
     of one input layer, one or more hidden layers, and one output layer,
@@ -119,7 +119,7 @@ class MLPClassifier(Estimator, Supervised):
         self.biases = []
 
         act = ActivationUtil(self.activation)
-        self.act_ = act.activation_type()
+        self.act_ = act.activation_type
         self.softmax_ = Softmax()
         self.rs_ = np.random.RandomState(self.random_state)
 
@@ -252,7 +252,7 @@ class MLPClassifier(Estimator, Supervised):
         return metric.score(y_true=y, y_pred=X_pred)
 
 
-class MLPRegressor(Estimator, Supervised):
+class MLPRegressor(Estimator, Estimator.NeuralNet, Supervised):
     """
     Multilayer Perceptron for regression tasks. It employs a network similar
     to the MLP classifier, but the output layer uses a linear activation function
@@ -352,7 +352,7 @@ class MLPRegressor(Estimator, Supervised):
         self.biases = []
 
         act = ActivationUtil(self.activation)
-        self.act_ = act.activation_type()
+        self.act_ = act.activation_type
         self.rs_ = np.random.RandomState(self.random_state)
 
         self.optimizer.set_params(
