@@ -119,7 +119,7 @@ class MLPClassifier(Estimator, Estimator.NeuralNet, Supervised):
         self.biases = []
 
         act = ActivationUtil(self.activation)
-        self.act_ = act.activation_type
+        self.act_ = act.activation_type()
         self.softmax_ = Softmax()
         self.rs_ = np.random.RandomState(self.random_state)
 
@@ -352,7 +352,7 @@ class MLPRegressor(Estimator, Estimator.NeuralNet, Supervised):
         self.biases = []
 
         act = ActivationUtil(self.activation)
-        self.act_ = act.activation_type
+        self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(self.random_state)
 
         self.optimizer.set_params(
