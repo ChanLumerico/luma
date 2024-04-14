@@ -9,11 +9,52 @@ __all__ = "Convolution"
 
 
 class Layer:
-    def forward(self, **kwargs): ...
-    def backward(self, **kwargs): ...
+    """
+    An internal class for layers in neural networks.
+
+    Neural network layers are composed of interconnected nodes,
+    each performing computations on input data. Common types include
+    fully connected, convolutional, and recurrent layers, each
+    serving distinct roles in learning from data.
+    """
+
+    def forward(self) -> Tensor: ...
+
+    def backward(self) -> Tuple[Tensor, Tensor]: ...
 
 
 class Convolution(Layer):
+    """
+    A convolutional layer in a neural network convolves learnable filters
+    across input data, detecting patterns like edges or textures, producing
+    feature maps essential for tasks such as image recognition within CNNs.
+    By sharing parameters, it efficiently extracts hierarchical representations,
+    enabling the network to learn complex visual features.
+
+    Parameters
+    ----------
+    `n_filters` : Number of filters(kernels) to use
+    `size`: Size of each filter
+    `stride` : Step size for filters during convolution
+    `padding` : Padding stratagies
+    (`valid` for no padding, `same` for typical 0-padding)
+    `activation` : Type of activation function
+
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
+    - Method `backward` returns gradients w.r.t. the input and
+        the weights(filters) respectively.
+
+        ```py
+        def backward(self, ...) -> Tuple[Tensor, Tensor]
+        ```
+    """
+
     def __init__(
         self,
         n_filters: int,
@@ -43,16 +84,7 @@ class Convolution(Layer):
                 self.n_filters, channels, self.size, self.size
             )
 
-        if self.padding == "same":
-            pad_h = pad_w = (self.size - 1) // 2
-            padded_height = height + 2 * pad_h
-            padded_width = width + 2 * pad_w
-        elif self.padding == "valid":
-            pad_h = pad_w = 0
-            padded_height = height
-            padded_width = width
-        else:
-            raise UnsupportedParameterError(self.padding)
+        pad_h, pad_w, padded_height, padded_width = self._get_padding_dim(height, width)
 
         out_height = ((padded_height - self.size) // self.stride) + 1
         out_width = ((padded_width - self.size) // self.stride) + 1
@@ -82,16 +114,7 @@ class Convolution(Layer):
 
     def backward(self, X: Tensor, d_out: Tensor) -> Tuple[Tensor, Tensor]:
         batch_size, channels, height, width = X.shape
-
-        if self.padding == "same":
-            pad_h = pad_w = (self.size - 1) // 2
-        elif self.padding == "valid":
-            pad_h = pad_w = 0
-        else:
-            raise UnsupportedParameterError(self.padding)
-
-        padded_height = height + 2 * pad_h
-        padded_width = width + 2 * pad_w
+        pad_h, pad_w, padded_height, padded_width = self._get_padding_dim(height, width)
 
         dX_padded = np.zeros((batch_size, channels, padded_height, padded_width))
         dW = np.zeros_like(self.filters_)
@@ -129,3 +152,17 @@ class Convolution(Layer):
 
         dX = self.act_.derivative(dX)
         return dX, dW
+
+    def _get_padding_dim(self, height: int, width: int) -> Tuple[int, int, int, int]:
+        if self.padding == "same":
+            pad_h = pad_w = (self.size - 1) // 2
+            padded_height = height + 2 * pad_h
+            padded_width = width + 2 * pad_w
+        elif self.padding == "valid":
+            pad_h = pad_w = 0
+            padded_height = height
+            padded_width = width
+        else:
+            raise UnsupportedParameterError(self.padding)
+
+        return pad_h, pad_w, padded_height, padded_width
