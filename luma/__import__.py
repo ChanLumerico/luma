@@ -73,7 +73,7 @@ from luma.neural.optimizer import (
     NAdamOptimizer,
 )
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
-from luma.neural.network import MLPClassifier
+from luma.neural.network import MLPClassifier, MLPRegressor
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     # ------------------- [ luma.neural ] ----------------------
     PerceptronClassifier, PerceptronRegressor
 
-    MLPClassifier
+    MLPClassifier, MLPRegressor
 
     ReLU, LeakyReLU, ELU, Tanh, Sigmoid, Softmax
 

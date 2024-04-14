@@ -94,8 +94,8 @@ class Estimator(ModelBase, metaclass=ABCMeta):
     @abstractmethod
     def score(self, *args) -> float: ...
 
-    def set_params(self, **kwargs) -> None:
-        return super().set_params(**kwargs)
+    def set_params(self, ignore_missing: bool = False, **kwargs) -> None:
+        return super().set_params(ignore_missing=ignore_missing, **kwargs)
 
     def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:
         return super().set_param_ranges(range_dict)
@@ -207,8 +207,8 @@ class Transformer(ModelBase, metaclass=ABCMeta):
     @abstractmethod
     def fit_transform(self, *args) -> Any: ...
 
-    def set_params(self, **kwargs) -> None:
-        return super().set_params(**kwargs)
+    def set_params(self, ignore_missing: bool = False, **kwargs) -> None:
+        return super().set_params(ignore_missing=ignore_missing, **kwargs)
 
     def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:
         return super().set_param_ranges(range_dict)

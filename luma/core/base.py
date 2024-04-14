@@ -56,12 +56,14 @@ class ModelBase(Luma):
     def fit(self, **kwargs) -> Any:
         kwargs
 
-    def set_params(self, **kwargs) -> None:
+    def set_params(self, ignore_missing: bool = False, **kwargs) -> None:
         for key, val in kwargs.items():
             if hasattr(self, key):
                 setattr(self, key, val)
             else:
-                print(f"'{type(self).__name__}' has no attribute '{key}'")
+                if not ignore_missing:
+                    print(f"'{type(self).__name__}' has no attribute '{key}'")
+
         self.check_param_ranges()
 
     def set_param_ranges(self, range_dict: Dict[str, tuple]) -> None:

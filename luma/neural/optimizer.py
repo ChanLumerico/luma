@@ -19,7 +19,7 @@ __all__ = (
 
 
 class SGDOptimizer(Optimizer, Optimizer.Neural):
-    def __init__(self, learning_rate: float = 0.01) -> None:
+    def __init__(self, learning_rate: float = 0.001) -> None:
         self.learning_rate = learning_rate
 
         self.set_param_ranges({"learning_rate": ("0<,+inf", None)})
@@ -46,7 +46,7 @@ class SGDOptimizer(Optimizer, Optimizer.Neural):
 
 
 class MomentumOptimizer(Optimizer, Optimizer.Neural):
-    def __init__(self, learning_rate: float = 0.01, momentum: float = 0.9) -> None:
+    def __init__(self, learning_rate: float = 0.001, momentum: float = 0.9) -> None:
         self.learning_rate = learning_rate
         self.momentum = momentum
         self.vel_weights = None
@@ -93,7 +93,7 @@ class MomentumOptimizer(Optimizer, Optimizer.Neural):
 
 
 class RMSPropOptimizer(Optimizer, Optimizer.Neural):
-    def __init__(self, learning_rate: float = 0.01, decay_rate: float = 0.9) -> None:
+    def __init__(self, learning_rate: float = 0.001, decay_rate: float = 0.9) -> None:
         self.learning_rate = learning_rate
         self.decay_rate = decay_rate
         self.sq_grad_weights = None
@@ -220,7 +220,7 @@ class AdamOptimizer(Optimizer, Optimizer.Neural):
 
 
 class AdaGradOptimizer(Optimizer, Optimizer.Neural):
-    def __init__(self, learning_rate: float = 0.01) -> None:
+    def __init__(self, learning_rate: float = 0.001) -> None:
         self.learning_rate = learning_rate
         self.grad_accum_weights = None
         self.grad_accum_biases = None
@@ -404,7 +404,7 @@ class AdamWOptimizer(Optimizer, Optimizer.Neural):
         beta_1: float = 0.9,
         beta_2: float = 0.999,
         epsilon: float = 1e-8,
-        weight_decay: float = 0.01,
+        weight_decay: float = 0.001,
     ):
         self.learning_rate = learning_rate
         self.beta_1 = beta_1
