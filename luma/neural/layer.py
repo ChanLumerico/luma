@@ -5,7 +5,7 @@ from luma.interface.util import Tensor, ActivationUtil
 from luma.interface.exception import UnsupportedParameterError
 
 
-__all__ = "Convolution"
+__all__ = ("Layer", "Convolution", "Pooling")
 
 
 class Layer:
@@ -20,7 +20,7 @@ class Layer:
 
     def forward(self) -> Tensor: ...
 
-    def backward(self) -> Tuple[Tensor, Tensor]: ...
+    def backward(self) -> Tensor | Tuple[Tensor, ...]: ...
 
 
 class Convolution(Layer):
@@ -47,11 +47,11 @@ class Convolution(Layer):
         ```py
         X.shape = (batch_size, channels, height, width)
         ```
-    - Method `backward` returns gradients w.r.t. the input and
-        the weights(filters) respectively.
+    - `backward` returns gradients w.r.t. the input, the weights(filters),
+        and the biases respectively.
 
         ```py
-        def backward(self, ...) -> Tuple[Tensor, Tensor]
+        def backward(self, ...) -> Tuple[Tensor, Tensor, Tensor]
         ```
     """
 
@@ -73,7 +73,9 @@ class Convolution(Layer):
         act = ActivationUtil(self.activation)
         self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(random_state)
+
         self.filters_ = None
+        self.biases_ = np.zeros(self.n_filters)
 
     def forward(self, X: Tensor) -> Tensor:
         assert len(X.shape) == 4, "X must have the form of 4D-array!"
@@ -88,7 +90,7 @@ class Convolution(Layer):
 
         out_height = ((padded_height - self.size) // self.stride) + 1
         out_width = ((padded_width - self.size) // self.stride) + 1
-        out = np.zeros((batch_size, self.n_filters, out_height, out_width))
+        out: Tensor = np.zeros((batch_size, self.n_filters, out_height, out_width))
 
         X_padded = np.pad(
             X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
@@ -109,21 +111,26 @@ class Convolution(Layer):
                 ]
                 out[i, f] = sampled_result[:out_height, :out_width]
 
+        out += self.biases_[:, np.newaxis, np.newaxis]
         out = self.act_.func(out)
         return out
 
-    def backward(self, X: Tensor, d_out: Tensor) -> Tuple[Tensor, Tensor]:
+    def backward(self, X: Tensor, d_out: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
         batch_size, channels, height, width = X.shape
         pad_h, pad_w, padded_height, padded_width = self._get_padding_dim(height, width)
 
         dX_padded = np.zeros((batch_size, channels, padded_height, padded_width))
         dW = np.zeros_like(self.filters_)
+        dB = np.zeros(self.n_filters)
 
         X_padded = np.pad(
             X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
         )
         X_fft = np.fft.rfftn(X_padded, s=(padded_height, padded_width), axes=[2, 3])
         d_out_fft = np.fft.rfftn(d_out, s=(padded_height, padded_width), axes=[2, 3])
+
+        for f in range(self.n_filters):
+            dB[f] = np.sum(d_out[:, f, :, :])
 
         for f in range(self.n_filters):
             for c in range(channels):
@@ -151,7 +158,7 @@ class Convolution(Layer):
         )
 
         dX = self.act_.derivative(dX)
-        return dX, dW
+        return dX, dW, dB
 
     def _get_padding_dim(self, height: int, width: int) -> Tuple[int, int, int, int]:
         if self.padding == "same":
@@ -166,3 +173,63 @@ class Convolution(Layer):
             raise UnsupportedParameterError(self.padding)
 
         return pad_h, pad_w, padded_height, padded_width
+
+
+class Pooling(Layer):
+    def __init__(
+        self, size: int = 2, stride: int = 2, mode: Literal["max", "avg"] = "max"
+    ) -> None:
+        self.size = size
+        self.stride = stride
+        self.mode = mode
+
+    def forward(self, X: Tensor) -> Tensor:
+        batch_size, channels, height, width = X.shape
+        out_height = 1 + (height - self.size) // self.stride
+        out_width = 1 + (width - self.size) // self.stride
+
+        out: Tensor = np.zeros((batch_size, channels, out_height, out_width))
+        for i in range(out_height):
+            for j in range(out_width):
+                h_start, h_end, w_start, w_end = self._get_height_width(i, j)
+                window = X[:, :, h_start:h_end, w_start:w_end]
+
+                if self.mode == "max":
+                    out[:, :, i, j] = np.max(window, axis=(2, 3))
+                elif self.mode == "avg":
+                    out[:, :, i, j] = np.mean(window, axis=(2, 3))
+                else:
+                    raise UnsupportedParameterError(self.mode)
+
+        return out
+
+    def backward(self, X: Tensor, d_out: Tensor) -> Tensor:
+        _, _, out_height, out_width = d_out.shape
+        dX = np.zeros_like(X)
+
+        for i in range(out_height):
+            for j in range(out_width):
+                h_start, h_end, w_start, w_end = self._get_height_width(i, j)
+                window = X[:, :, h_start:h_end, w_start:w_end]
+
+                if self.mode == "max":
+                    max_vals = np.max(window, axis=(2, 3), keepdims=True)
+                    mask = window == max_vals
+                    dX[:, :, h_start:h_end, w_start:w_end] += (
+                        mask * d_out[:, :, i : i + 1, j : j + 1]
+                    )
+                elif self.mode == "avg":
+                    avg_grad = d_out[:, :, i, j] / (self.size**2)
+                    dX[:, :, h_start:h_end, w_start:w_end] += (
+                        np.ones((1, 1, self.size, self.size)) * avg_grad
+                    )
+
+        return dX
+
+    def _get_height_width(self, cur_h: int, cur_w: int) -> Tuple[int, int, int, int]:
+        h_start = cur_h * self.stride
+        w_start = cur_w * self.stride
+        h_end = h_start + self.size
+        w_end = w_start + self.size
+
+        return h_start, h_end, w_start, w_end
