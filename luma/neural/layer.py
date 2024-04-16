@@ -176,6 +176,23 @@ class Convolution(Layer):
 
 
 class Pooling(Layer):
+    """
+    A pooling layer in a neural network reduces the spatial dimensions of
+    feature maps, reducing computational complexity. It aggregates neighboring
+    values, typically through operations like max pooling or average pooling,
+    to extract dominant features. Pooling helps in achieving translation invariance
+    and reducing overfitting by summarizing the presence of features in local
+    regions. It downsamples feature maps, preserving important information while
+    discarding redundant details.
+
+    Parameters
+    ----------
+    `size` : Size of pooling filter
+    `stride` : Step size of filter during pooling
+    `mode` : Pooling strategy (i.e. max, average)
+
+    """
+
     def __init__(
         self, size: int = 2, stride: int = 2, mode: Literal["max", "avg"] = "max"
     ) -> None:
