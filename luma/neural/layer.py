@@ -5,7 +5,7 @@ from luma.interface.util import Tensor, ActivationUtil
 from luma.interface.exception import UnsupportedParameterError
 
 
-__all__ = ("Layer", "Convolution", "Pooling")
+__all__ = ("Layer", "Convolution", "Pooling", "Dense")
 
 
 class Layer:
@@ -82,7 +82,7 @@ class Convolution(Layer):
         batch_size, channels, height, width = X.shape
 
         if self.filters_ is None:
-            self.filters_ = 0.1 * self.rs_.randn(
+            self.filters_ = 0.01 * self.rs_.randn(
                 self.n_filters, channels, self.size, self.size
             )
 
@@ -250,3 +250,7 @@ class Pooling(Layer):
         w_end = w_start + self.size
 
         return h_start, h_end, w_start, w_end
+
+
+class Dense(Layer):
+    NotImplemented
