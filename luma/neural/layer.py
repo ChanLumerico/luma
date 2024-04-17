@@ -27,6 +27,7 @@ class Convolution(Layer):
     (`valid` for no padding, `same` for typical 0-padding)
     `activation` : Type of activation function
     `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
+    `lambda_` : L2-regularization strength
     `random_state` : Seed for various random sampling processes
 
     Notes
@@ -46,6 +47,7 @@ class Convolution(Layer):
         padding: Literal["valid", "same"] = "same",
         activation: ActivationUtil.FuncType = "relu",
         optimizer: Optimizer = SGDOptimizer(),
+        lambda_: float = 0.1,
         random_state: int = None,
     ) -> None:
         super().__init__()
@@ -55,6 +57,7 @@ class Convolution(Layer):
         self.padding = padding
         self.activation = activation
         self.optimizer = optimizer
+        self.lambda_ = lambda_
 
         act = ActivationUtil(self.activation)
         self.act_ = act.activation_type()
@@ -124,6 +127,8 @@ class Convolution(Layer):
                 self.dW[f, c] = np.fft.irfftn(
                     filter_d_out_fft, s=(padded_height, padded_width)
                 )[pad_h : pad_h + self.size, pad_w : pad_w + self.size]
+
+        self.dW += 2 * self.lambda_ * self.weights_
 
         for i in range(batch_size):
             for c in range(channels):

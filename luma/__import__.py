@@ -75,7 +75,7 @@ from luma.neural.optimizer import (
 )
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.network import MLPClassifier, MLPRegressor
-from luma.neural.layer import Convolution, Pooling, Dense
+from luma.neural.layer import Convolution, Pooling, Dense, Dropout, Flatten
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
     AdaMaxOptimizer, AdamWOptimizer, NAdamOptimizer
 
-    Convolution, Pooling, Dense
+    Convolution, Pooling, Dense, Dropout, Flatten
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity
