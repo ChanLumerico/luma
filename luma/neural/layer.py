@@ -1,26 +1,13 @@
 from typing import Literal, Tuple
 import numpy as np
 
-from luma.interface.util import Tensor, ActivationUtil
+from luma.core.super import Optimizer
+from luma.interface.util import Layer, Vector, Matrix, Tensor, ActivationUtil
 from luma.interface.exception import UnsupportedParameterError
+from luma.neural.optimizer import SGDOptimizer
 
 
-__all__ = ("Layer", "Convolution", "Pooling", "Dense")
-
-
-class Layer:
-    """
-    An internal class for layers in neural networks.
-
-    Neural network layers are composed of interconnected nodes,
-    each performing computations on input data. Common types include
-    fully connected, convolutional, and recurrent layers, each
-    serving distinct roles in learning from data.
-    """
-
-    def forward(self) -> Tensor: ...
-
-    def backward(self) -> Tensor | Tuple[Tensor, ...]: ...
+__all__ = ("Convolution", "Pooling", "Dense")
 
 
 class Convolution(Layer):
@@ -39,6 +26,7 @@ class Convolution(Layer):
     `padding` : Padding stratagies
     (`valid` for no padding, `same` for typical 0-padding)
     `activation` : Type of activation function
+    `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
 
     Notes
     -----
@@ -62,27 +50,29 @@ class Convolution(Layer):
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
         activation: ActivationUtil.FuncType = "relu",
+        optimizer: Optimizer = SGDOptimizer(),
         random_state: int = None,
     ) -> None:
+        super().__init__()
         self.n_filters = n_filters
         self.size = size
         self.stride = stride
         self.padding = padding
         self.activation = activation
+        self.optimizer = optimizer
 
         act = ActivationUtil(self.activation)
         self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(random_state)
 
-        self.filters_ = None
-        self.biases_ = np.zeros(self.n_filters)
+        self.biases_: Vector = np.zeros(self.n_filters)
 
     def forward(self, X: Tensor) -> Tensor:
         assert len(X.shape) == 4, "X must have the form of 4D-array!"
         batch_size, channels, height, width = X.shape
 
-        if self.filters_ is None:
-            self.filters_ = 0.01 * self.rs_.randn(
+        if self.weights_ is None:
+            self.weights_ = 0.01 * self.rs_.randn(
                 self.n_filters, channels, self.size, self.size
             )
 
@@ -97,7 +87,7 @@ class Convolution(Layer):
         )
         X_fft = np.fft.rfftn(X_padded, s=(padded_height, padded_width), axes=[2, 3])
         filter_fft = np.fft.rfftn(
-            self.filters_, s=(padded_height, padded_width), axes=[2, 3]
+            self.weights_, s=(padded_height, padded_width), axes=[2, 3]
         )
 
         for i in range(batch_size):
@@ -120,8 +110,8 @@ class Convolution(Layer):
         pad_h, pad_w, padded_height, padded_width = self._get_padding_dim(height, width)
 
         dX_padded = np.zeros((batch_size, channels, padded_height, padded_width))
-        dW = np.zeros_like(self.filters_)
-        dB = np.zeros(self.n_filters)
+        self.dW = np.zeros_like(self.weights_)
+        self.dB = np.zeros_like(self.biases_)
 
         X_padded = np.pad(
             X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
@@ -130,12 +120,12 @@ class Convolution(Layer):
         d_out_fft = np.fft.rfftn(d_out, s=(padded_height, padded_width), axes=[2, 3])
 
         for f in range(self.n_filters):
-            dB[f] = np.sum(d_out[:, f, :, :])
+            self.dB[f] = np.sum(d_out[:, f, :, :])
 
         for f in range(self.n_filters):
             for c in range(channels):
                 filter_d_out_fft = np.sum(X_fft[:, c] * d_out_fft[:, f].conj(), axis=0)
-                dW[f, c] = np.fft.irfftn(
+                self.dW[f, c] = np.fft.irfftn(
                     filter_d_out_fft, s=(padded_height, padded_width)
                 )[pad_h : pad_h + self.size, pad_w : pad_w + self.size]
 
@@ -146,19 +136,18 @@ class Convolution(Layer):
                 )
                 for f in range(self.n_filters):
                     filter_fft = np.fft.rfftn(
-                        self.filters_[f, c], s=(padded_height, padded_width)
+                        self.weights_[f, c], s=(padded_height, padded_width)
                     )
                     temp += filter_fft * d_out_fft[i, f]
                 dX_padded[i, c] = np.fft.irfftn(temp, s=(padded_height, padded_width))
 
-        dX = (
+        self.dX = (
             dX_padded[:, :, pad_h:-pad_h, pad_w:-pad_w]
             if pad_h > 0 or pad_w > 0
             else dX_padded
         )
-
-        dX = self.act_.derivative(dX)
-        return dX, dW, dB
+        self.dX = self.act_.derivative(self.dX)
+        return self.dX
 
     def _get_padding_dim(self, height: int, width: int) -> Tuple[int, int, int, int]:
         if self.padding == "same":
@@ -191,11 +180,24 @@ class Pooling(Layer):
     `stride` : Step size of filter during pooling
     `mode` : Pooling strategy (i.e. max, average)
 
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
+    - `backward` returns gradients w.r.t. the input.
+
+        ```py
+        def backward(self, ...) -> Tensor
+        ```
     """
 
     def __init__(
         self, size: int = 2, stride: int = 2, mode: Literal["max", "avg"] = "max"
     ) -> None:
+        super().__init__()
         self.size = size
         self.stride = stride
         self.mode = mode
@@ -222,7 +224,7 @@ class Pooling(Layer):
 
     def backward(self, X: Tensor, d_out: Tensor) -> Tensor:
         _, _, out_height, out_width = d_out.shape
-        dX = np.zeros_like(X)
+        self.dX = np.zeros_like(X)
 
         for i in range(out_height):
             for j in range(out_width):
@@ -232,16 +234,16 @@ class Pooling(Layer):
                 if self.mode == "max":
                     max_vals = np.max(window, axis=(2, 3), keepdims=True)
                     mask = window == max_vals
-                    dX[:, :, h_start:h_end, w_start:w_end] += (
+                    self.dX[:, :, h_start:h_end, w_start:w_end] += (
                         mask * d_out[:, :, i : i + 1, j : j + 1]
                     )
                 elif self.mode == "avg":
                     avg_grad = d_out[:, :, i, j] / (self.size**2)
-                    dX[:, :, h_start:h_end, w_start:w_end] += (
+                    self.dX[:, :, h_start:h_end, w_start:w_end] += (
                         np.ones((1, 1, self.size, self.size)) * avg_grad
                     )
 
-        return dX
+        return self.dX
 
     def _get_height_width(self, cur_h: int, cur_w: int) -> Tuple[int, int, int, int]:
         h_start = cur_h * self.stride
@@ -253,4 +255,48 @@ class Pooling(Layer):
 
 
 class Dense(Layer):
-    NotImplemented
+    """
+    A dense layer, also known as a fully connected layer, connects each
+    neuron in one layer to every neuron in the next layer. It performs a
+    linear transformation followed by a nonlinear activation function,
+    enabling complex relationships between input and output. Dense layers
+    are fundamental in deep learning models for learning representations from
+    data. They play a crucial role in capturing intricate patterns and
+    features during the training process.
+
+    Parameters
+    ----------
+    - `input_size` : Number of input neurons
+    - `output_size`:  Number of output neurons
+    - `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
+
+    """
+
+    def __init__(
+        self, input_size: int, output_size: int, optimizer: Optimizer = SGDOptimizer()
+    ) -> None:
+        super().__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.optimizer = optimizer
+
+        self.weights_: Matrix = 0.01 * np.random.randn(
+            self.input_size, self.output_size
+        )
+        self.biases_: Vector = np.zeros(self.output_size)
+
+    def forward(self, X: Tensor | Matrix) -> Tensor:
+        X = self._flatten(X)
+        out = np.dot(X, self.weights_) + self.biases_
+        return out
+
+    def backward(self, X: Tensor, d_out: Tensor) -> Tensor:
+        X = self._flatten(X)
+        self.dX = np.dot(d_out, self.weights_.T)
+        self.dW = np.dot(X.T, d_out)
+        self.dB = np.sum(d_out, axis=0, keepdims=True)
+
+        return self.dX
+
+    def _flatten(self, X: Tensor) -> Matrix:
+        return X.reshape(X.shape[0], -1) if len(X.shape) > 2 else X

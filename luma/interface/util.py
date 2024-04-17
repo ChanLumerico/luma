@@ -1,4 +1,4 @@
-from typing import Any, AnyStr, Callable, Literal, Type, TypeGuard
+from typing import Any, AnyStr, Callable, Literal, Self, Type, TypeGuard
 import numpy as np
 
 from luma.interface.exception import UnsupportedParameterError, InvalidRangeError
@@ -18,6 +18,7 @@ __all__ = (
     "ActivationUtil",
     "Clone",
     "ParamRange",
+    "Layer",
 )
 
 
@@ -36,7 +37,7 @@ class Matrix(np.ndarray):
 
     """
 
-    def __new__(cls, array_like: Any) -> "Matrix":
+    def __new__(cls, array_like: Any) -> Self:
         if isinstance(array_like, (list, np.matrix)):
             obj = np.array(array_like)
         else:
@@ -57,7 +58,7 @@ class Vector(Matrix):
 
     """
 
-    def __new__(cls, array_like: Any) -> "Vector":
+    def __new__(cls, array_like: Any) -> Self:
         if isinstance(array_like, list):
             obj = Matrix(array_like)
         else:
@@ -74,7 +75,10 @@ class Tensor(Matrix):
     additional functionalities and readability.
     """
 
-    def __new__(cls, array_like: Any) -> "Tensor":
+    type Tensor_3D = "Tensor"
+    type Tensor_4D = "Tensor"
+
+    def __new__(cls, array_like: Any) -> Self:
         if isinstance(array_like, list):
             obj = Matrix(array_like)
         else:
@@ -89,7 +93,7 @@ class Scalar:
     This class encompasses `int` and `float`.
     """
 
-    def __new__(cls, value: int | float) -> "Scalar":
+    def __new__(cls, value: int | float) -> Self:
         return float(value)
 
 
@@ -533,3 +537,45 @@ class ParamRange:
             return lambda x: lower <= x <= upper
         else:
             NotImplemented
+
+
+class Layer:
+    """
+    An internal class for layers in neural networks.
+
+    Neural network layers are composed of interconnected nodes,
+    each performing computations on input data. Common types include
+    fully connected, convolutional, and recurrent layers, each
+    serving distinct roles in learning from data.
+
+    Attributes
+    ----------
+    - `weights_` : Weight tensor
+    - `biases_` : Bias tensor
+    - `dX` : Gradient w.r.t. the input
+    - `dW` : Gradient w.r.t. the weights
+    - `dB` : Gradient w.r.t. the biases
+    - `optimizer` : Optimizer for certain layer
+
+    """
+
+    def __init__(self) -> None:
+        self.weights_: Tensor | Matrix = None
+        self.biases_: Vector = None
+
+        self.dX: Tensor | Matrix = None
+        self.dW: Tensor | Matrix = None
+        self.dB: Vector = None
+
+        self.optimizer: object = None
+
+    def forward(self) -> Tensor: ...
+
+    def backward(self) -> Tensor: ...
+
+    def update(self) -> None:
+        if self.optimizer is None:
+            return
+        self.weights_, self.biases_ = self.optimizer.update(
+            self.weights_, self.biases_, self.dW, self.dB
+        )

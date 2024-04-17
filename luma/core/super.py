@@ -262,8 +262,19 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
         ```
         """
 
-        @abstractmethod
-        def update(self, **kwargs) -> tuple: ...
+        def __init__(self) -> None:
+            self.updated_weights = None
+            self.updated_biases = None
+
+        def update(self, weights, biases, grad_weights, grad_biases) -> None:
+            if weights is not None:
+                self.updated_weights = self._update_weights(weights, grad_weights)
+            if biases is not None:
+                self.updated_biases = self._update_biases(biases, grad_biases)
+
+        def _update_weights(self) -> Any: ...
+
+        def _update_biases(self) -> Any: ...
 
     @property
     def best_model(self) -> Estimator | Transformer: ...

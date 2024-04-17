@@ -1,8 +1,8 @@
-from typing import List, Tuple
+from typing import Tuple, Any
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.util import Matrix
+from luma.interface.util import Tensor
 
 
 __all__ = (
@@ -20,33 +20,36 @@ __all__ = (
 
 class SGDOptimizer(Optimizer, Optimizer.Neural):
     def __init__(self, learning_rate: float = 0.001) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
 
         self.set_param_ranges({"learning_rate": ("0<,+inf", None)})
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
-        updated_weights = []
-        for w, grad_w in zip(weights, grad_weights):
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
+
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
+        updated = []
+        for w, grad_w in zip(W, dW):
             new_weight = w - self.learning_rate * grad_w
-            updated_weights.append(new_weight)
+            updated.append(new_weight)
+        return updated
 
-        updated_biases = []
-        for b, grad_b in zip(biases, grad_biases):
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        updated = []
+        for b, grad_b in zip(B, dB):
             new_bias = b - self.learning_rate * grad_b
-            updated_biases.append(new_bias)
-
-        return updated_weights, updated_biases
+            updated.append(new_bias)
+        return updated
 
 
 class MomentumOptimizer(Optimizer, Optimizer.Neural):
     def __init__(self, learning_rate: float = 0.001, momentum: float = 0.9) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.momentum = momentum
         self.vel_weights = None
@@ -58,42 +61,45 @@ class MomentumOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
+
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
         if self.vel_weights is None:
-            self.vel_weights = [np.zeros_like(w) for w in weights]
-        if self.vel_biases is None:
-            self.vel_biases = [np.zeros_like(b) for b in biases]
+            self.vel_weights = [np.zeros_like(w) for w in W]
 
-        updated_weights = []
-        for w, v_w, grad_w in zip(weights, self.vel_weights, grad_weights):
+        updated = []
+        for w, v_w, grad_w in zip(W, self.vel_weights, dW):
             v_w = self.momentum * v_w - self.learning_rate * grad_w
-            updated_weights.append(w + v_w)
-
-        updated_biases = []
-        for b, v_b, grad_b in zip(biases, self.vel_biases, grad_biases):
-            v_b = self.momentum * v_b - self.learning_rate * grad_b
-            updated_biases.append(b + v_b)
+            updated.append(w + v_w)
 
         self.vel_weights = [
             self.momentum * v_w - self.learning_rate * grad_w
-            for v_w, grad_w in zip(self.vel_weights, grad_weights)
+            for v_w, grad_w in zip(self.vel_weights, dW)
         ]
+        return updated
+
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        if self.vel_biases is None:
+            self.vel_biases = [np.zeros_like(b) for b in B]
+
+        updated = []
+        for b, v_b, grad_b in zip(B, self.vel_biases, dB):
+            v_b = self.momentum * v_b - self.learning_rate * grad_b
+            updated.append(b + v_b)
 
         self.vel_biases = [
             self.momentum * v_b - self.learning_rate * grad_b
-            for v_b, grad_b in zip(self.vel_biases, grad_biases)
+            for v_b, grad_b in zip(self.vel_biases, dB)
         ]
-
-        return updated_weights, updated_biases
+        return updated
 
 
 class RMSPropOptimizer(Optimizer, Optimizer.Neural):
     def __init__(self, learning_rate: float = 0.001, decay_rate: float = 0.9) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.decay_rate = decay_rate
         self.sq_grad_weights = None
@@ -105,41 +111,44 @@ class RMSPropOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
-        if self.sq_grad_weights is None:
-            self.sq_grad_weights = [np.zeros_like(w) for w in weights]
-        if self.sq_grad_biases is None:
-            self.sq_grad_biases = [np.zeros_like(b) for b in biases]
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
 
-        updated_weights = []
-        for w, sq_g_w, grad_w in zip(weights, self.sq_grad_weights, grad_weights):
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
+        if self.sq_grad_weights is None:
+            self.sq_grad_weights = [np.zeros_like(w) for w in W]
+
+        updated = []
+        for w, sq_g_w, grad_w in zip(W, self.sq_grad_weights, dW):
             sq_g_w *= self.decay_rate
             sq_g_w += (1 - self.decay_rate) * np.square(grad_w)
             w -= self.learning_rate * grad_w / (np.sqrt(sq_g_w) + 1e-8)
-            updated_weights.append(w)
-
-        updated_biases = []
-        for b, sq_g_b, grad_b in zip(biases, self.sq_grad_biases, grad_biases):
-            sq_g_b *= self.decay_rate
-            sq_g_b += (1 - self.decay_rate) * np.square(grad_b)
-            b -= self.learning_rate * grad_b / (np.sqrt(sq_g_b) + 1e-8)
-            updated_biases.append(b)
+            updated.append(w)
 
         self.sq_grad_weights = [
             self.decay_rate * sq_g_w + (1 - self.decay_rate) * np.square(grad_w)
-            for sq_g_w, grad_w in zip(self.sq_grad_weights, grad_weights)
+            for sq_g_w, grad_w in zip(self.sq_grad_weights, dW)
         ]
+        return updated
+
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        if self.sq_grad_biases is None:
+            self.sq_grad_biases = [np.zeros_like(b) for b in B]
+
+        updated = []
+        for b, sq_g_b, grad_b in zip(B, self.sq_grad_biases, dB):
+            sq_g_b *= self.decay_rate
+            sq_g_b += (1 - self.decay_rate) * np.square(grad_b)
+            b -= self.learning_rate * grad_b / (np.sqrt(sq_g_b) + 1e-8)
+            updated.append(b)
+
         self.sq_grad_biases = [
             self.decay_rate * sq_g_b + (1 - self.decay_rate) * np.square(grad_b)
-            for sq_g_b, grad_b in zip(self.sq_grad_biases, grad_biases)
+            for sq_g_b, grad_b in zip(self.sq_grad_biases, dB)
         ]
-
-        return updated_weights, updated_biases
+        return updated
 
 
 class AdamOptimizer(Optimizer, Optimizer.Neural):
@@ -150,6 +159,7 @@ class AdamOptimizer(Optimizer, Optimizer.Neural):
         beta_2: float = 0.999,
         epsilon: float = 1e-8,
     ):
+        super().__init__()
         self.learning_rate = learning_rate
         self.beta_1 = beta_1
         self.beta_2 = beta_2
@@ -172,55 +182,58 @@ class AdamOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        if not (weights is None and biases is None):
+            self.t += 1
+
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
+
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
         if self.m_weights is None:
-            self.m_weights = [np.zeros_like(w) for w in weights]
-            self.v_weights = [np.zeros_like(w) for w in weights]
-        if self.m_biases is None:
-            self.m_biases = [np.zeros_like(b) for b in biases]
-            self.v_biases = [np.zeros_like(b) for b in biases]
+            self.m_weights = [np.zeros_like(w) for w in W]
+            self.v_weights = [np.zeros_like(w) for w in W]
 
-        self.t += 1
-        updated_weights, updated_biases = [], []
-
-        for i in range(len(weights)):
+        updated = []
+        for i in range(len(W)):
             self.m_weights[i] = (
-                self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * grad_weights[i]
+                self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * dW[i]
             )
             self.v_weights[i] = self.beta_2 * self.v_weights[i] + (
                 1 - self.beta_2
-            ) * np.square(grad_weights[i])
+            ) * np.square(dW[i])
             m_hat_w = self.m_weights[i] / (1 - self.beta_1**self.t)
             v_hat_w = self.v_weights[i] / (1 - self.beta_2**self.t)
-            updated_weights.append(
-                weights[i]
-                - self.learning_rate * m_hat_w / (np.sqrt(v_hat_w) + self.epsilon)
+            updated.append(
+                W[i] - self.learning_rate * m_hat_w / (np.sqrt(v_hat_w) + self.epsilon)
             )
+        return updated
 
-        for i in range(len(biases)):
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        if self.m_biases is None:
+            self.m_biases = [np.zeros_like(b) for b in B]
+            self.v_biases = [np.zeros_like(b) for b in B]
+
+        updated = []
+        for i in range(len(B)):
             self.m_biases[i] = (
-                self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * grad_biases[i]
+                self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * dB[i]
             )
             self.v_biases[i] = self.beta_2 * self.v_biases[i] + (
                 1 - self.beta_2
-            ) * np.square(grad_biases[i])
+            ) * np.square(dB[i])
             m_hat_b = self.m_biases[i] / (1 - self.beta_1**self.t)
             v_hat_b = self.v_biases[i] / (1 - self.beta_2**self.t)
-            updated_biases.append(
-                biases[i]
-                - self.learning_rate * m_hat_b / (np.sqrt(v_hat_b) + self.epsilon)
+            updated.append(
+                B[i] - self.learning_rate * m_hat_b / (np.sqrt(v_hat_b) + self.epsilon)
             )
-
-        return updated_weights, updated_biases
+        return updated
 
 
 class AdaGradOptimizer(Optimizer, Optimizer.Neural):
     def __init__(self, learning_rate: float = 0.001) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.grad_accum_weights = None
         self.grad_accum_biases = None
@@ -229,35 +242,41 @@ class AdaGradOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
-        if self.grad_accum_weights is None:
-            self.grad_accum_weights = [np.zeros_like(w) for w in weights]
-            self.grad_accum_biases = [np.zeros_like(b) for b in biases]
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
 
-        updated_weights = []
-        for w, grad_w, accum_w in zip(weights, grad_weights, self.grad_accum_weights):
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
+        if self.grad_accum_weights is None:
+            self.grad_accum_weights = [np.zeros_like(w) for w in W]
+
+        updated = []
+        for w, grad_w, accum_w in zip(W, dW, self.grad_accum_weights):
             accum_w += grad_w**2
             adjusted_lr = self.learning_rate / (np.sqrt(accum_w) + 1e-8)
-            new_weight = w - adjusted_lr * grad_w
-            updated_weights.append(new_weight)
 
-        updated_biases = []
-        for b, grad_b, accum_b in zip(biases, grad_biases, self.grad_accum_biases):
+            new_weight = w - adjusted_lr * grad_w
+            updated.append(new_weight)
+        return updated
+
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        if self.grad_accum_biases is None:
+            self.grad_accum_biases = [np.zeros_like(b) for b in B]
+
+        updated = []
+        for b, grad_b, accum_b in zip(B, dB, self.grad_accum_biases):
             accum_b += grad_b**2
             adjusted_lr = self.learning_rate / (np.sqrt(accum_b) + 1e-8)
-            new_bias = b - adjusted_lr * grad_b
-            updated_biases.append(new_bias)
 
-        return updated_weights, updated_biases
+            new_bias = b - adjusted_lr * grad_b
+            updated.append(new_bias)
+        return updated
 
 
 class AdaDeltaOptimizer(Optimizer, Optimizer.Neural):
     def __init__(self, rho: float = 0.95, epsilon: float = 1e-8) -> None:
+        super().__init__()
         self.rho = rho
         self.epsilon = epsilon
 
@@ -270,55 +289,60 @@ class AdaDeltaOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
-        if self.accum_grads_w is None:
-            self.accum_grads_w = [np.zeros_like(w) for w in weights]
-            self.accum_updates_w = [np.zeros_like(w) for w in weights]
-            self.accum_grads_b = [np.zeros_like(b) for b in biases]
-            self.accum_updates_b = [np.zeros_like(b) for b in biases]
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
 
-        updated_weights = []
-        for i in range(len(weights)):
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
+        if self.accum_grads_w is None:
+            self.accum_grads_w = [np.zeros_like(w) for w in W]
+            self.accum_updates_w = [np.zeros_like(w) for w in W]
+
+        updated = []
+        for i in range(len(W)):
             self.accum_grads_w[i] = self.rho * self.accum_grads_w[i] + (
                 1 - self.rho
-            ) * (grad_weights[i] ** 2)
+            ) * (dW[i] ** 2)
             update_w = (
                 -np.sqrt(
                     (self.accum_updates_w[i] + self.epsilon)
                     / (self.accum_grads_w[i] + self.epsilon)
                 )
-                * grad_weights[i]
+                * dW[i]
             )
             self.accum_updates_w[i] = self.rho * self.accum_updates_w[i] + (
                 1 - self.rho
             ) * (update_w**2)
-            new_weight = weights[i] + update_w
-            updated_weights.append(new_weight)
+            new_weight = W[i] + update_w
+            updated.append(new_weight)
 
-        updated_biases = []
-        for i in range(len(biases)):
+        return updated
+
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        if self.accum_grads_b is None:
+            self.accum_grads_b = [np.zeros_like(b) for b in B]
+            self.accum_updates_b = [np.zeros_like(b) for b in B]
+
+        updated = []
+        for i in range(len(B)):
             self.accum_grads_b[i] = self.rho * self.accum_grads_b[i] + (
                 1 - self.rho
-            ) * (grad_biases[i] ** 2)
+            ) * (dB[i] ** 2)
             update_b = (
                 -np.sqrt(
                     (self.accum_updates_b[i] + self.epsilon)
                     / (self.accum_grads_b[i] + self.epsilon)
                 )
-                * grad_biases[i]
+                * dB[i]
             )
             self.accum_updates_b[i] = self.rho * self.accum_updates_b[i] + (
                 1 - self.rho
             ) * (update_b**2)
-            new_bias = biases[i] + update_b
-            updated_biases.append(new_bias)
+            new_bias = B[i] + update_b
+            updated.append(new_bias)
 
-        return updated_weights, updated_biases
+        return updated
 
 
 class AdaMaxOptimizer(Optimizer, Optimizer.Neural):
@@ -329,6 +353,7 @@ class AdaMaxOptimizer(Optimizer, Optimizer.Neural):
         beta_2: float = 0.999,
         epsilon: float = 1e-8,
     ) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.beta_1 = beta_1
         self.beta_2 = beta_2
@@ -351,50 +376,51 @@ class AdaMaxOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        if not (weights is None and biases is None):
+            self.t += 1
+
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
+
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
         if self.m_weights is None:
-            self.m_weights = [np.zeros_like(w) for w in weights]
-            self.v_weights = [np.zeros_like(w) for w in weights]
+            self.m_weights = [np.zeros_like(w) for w in W]
+            self.v_weights = [np.zeros_like(w) for w in W]
 
-        if self.m_biases is None:
-            self.m_biases = [np.zeros_like(b) for b in biases]
-            self.v_biases = [np.zeros_like(b) for b in biases]
-
-        self.t += 1
-        updated_weights, updated_biases = [], []
-
-        for i in range(len(weights)):
+        updated = []
+        for i in range(len(W)):
             self.m_weights[i] = (
-                self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * grad_weights[i]
+                self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * dW[i]
             )
             self.v_weights[i] = np.maximum(
-                self.beta_2 * self.v_weights[i], np.abs(grad_weights[i])
+                self.beta_2 * self.v_weights[i], np.abs(dW[i])
             )
             m_hat_w = self.m_weights[i] / (1 - self.beta_1**self.t)
-            updated_weights.append(
-                weights[i]
+            updated.append(
+                W[i]
                 - (self.learning_rate / (self.v_weights[i] + self.epsilon)) * m_hat_w
             )
+        return updated
 
-        for i in range(len(biases)):
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        if self.m_biases is None:
+            self.m_biases = [np.zeros_like(b) for b in B]
+            self.v_biases = [np.zeros_like(b) for b in B]
+
+        updated = []
+        for i in range(len(B)):
             self.m_biases[i] = (
-                self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * grad_biases[i]
+                self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * dB[i]
             )
-            self.v_biases[i] = np.maximum(
-                self.beta_2 * self.v_biases[i], np.abs(grad_biases[i])
-            )
+            self.v_biases[i] = np.maximum(self.beta_2 * self.v_biases[i], np.abs(dB[i]))
             m_hat_b = self.m_biases[i] / (1 - self.beta_1**self.t)
-            updated_biases.append(
-                biases[i]
+            updated.append(
+                B[i]
                 - (self.learning_rate / (self.v_biases[i] + self.epsilon)) * m_hat_b
             )
-
-        return updated_weights, updated_biases
+        return updated
 
 
 class AdamWOptimizer(Optimizer, Optimizer.Neural):
@@ -405,7 +431,8 @@ class AdamWOptimizer(Optimizer, Optimizer.Neural):
         beta_2: float = 0.999,
         epsilon: float = 1e-8,
         weight_decay: float = 0.001,
-    ):
+    ) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.beta_1 = beta_1
         self.beta_2 = beta_2
@@ -430,54 +457,56 @@ class AdamWOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        if not (weights is None and biases is None):
+            self.t += 1
+
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
+
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
         if self.m_weights is None:
-            self.m_weights = [np.zeros_like(w) for w in weights]
-            self.v_weights = [np.zeros_like(w) for w in weights]
+            self.m_weights = [np.zeros_like(w) for w in W]
+            self.v_weights = [np.zeros_like(w) for w in W]
 
-        if self.m_biases is None:
-            self.m_biases = [np.zeros_like(b) for b in biases]
-            self.v_biases = [np.zeros_like(b) for b in biases]
-
-        self.t += 1
-        updated_weights, updated_biases = [], []
-
-        for i in range(len(weights)):
+        updated = []
+        for i in range(len(W)):
             self.m_weights[i] = (
-                self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * grad_weights[i]
+                self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * dW[i]
             )
             self.v_weights[i] = self.beta_2 * self.v_weights[i] + (
                 1 - self.beta_2
-            ) * np.square(grad_weights[i])
+            ) * np.square(dW[i])
             m_hat_w = self.m_weights[i] / (1 - self.beta_1**self.t)
             v_hat_w = self.v_weights[i] / (1 - self.beta_2**self.t)
-            weight_decay_term = self.weight_decay * weights[i]
-            updated_weights.append(
-                weights[i]
+            weight_decay_term = self.weight_decay * W[i]
+            updated.append(
+                W[i]
                 - self.learning_rate
                 * (m_hat_w / (np.sqrt(v_hat_w) + self.epsilon) + weight_decay_term)
             )
+        return updated
 
-        for i in range(len(biases)):
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        if self.m_biases is None:
+            self.m_biases = [np.zeros_like(b) for b in B]
+            self.v_biases = [np.zeros_like(b) for b in B]
+
+        updated = []
+        for i in range(len(B)):
             self.m_biases[i] = (
-                self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * grad_biases[i]
+                self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * dB[i]
             )
             self.v_biases[i] = self.beta_2 * self.v_biases[i] + (
                 1 - self.beta_2
-            ) * np.square(grad_biases[i])
+            ) * np.square(dB[i])
             m_hat_b = self.m_biases[i] / (1 - self.beta_1**self.t)
             v_hat_b = self.v_biases[i] / (1 - self.beta_2**self.t)
-            updated_biases.append(
-                biases[i]
-                - self.learning_rate * m_hat_b / (np.sqrt(v_hat_b) + self.epsilon)
+            updated.append(
+                B[i] - self.learning_rate * m_hat_b / (np.sqrt(v_hat_b) + self.epsilon)
             )
-
-        return updated_weights, updated_biases
+        return updated
 
 
 class NAdamOptimizer(Optimizer, Optimizer.Neural):
@@ -488,6 +517,7 @@ class NAdamOptimizer(Optimizer, Optimizer.Neural):
         beta_2: float = 0.999,
         epsilon: float = 1e-8,
     ) -> None:
+        super().__init__()
         self.learning_rate = learning_rate
         self.beta_1 = beta_1
         self.beta_2 = beta_2
@@ -510,59 +540,62 @@ class NAdamOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self,
-        weights: List[Matrix],
-        biases: List[Matrix],
-        grad_weights: List[Matrix],
-        grad_biases: List[Matrix],
-    ) -> Tuple[List[Matrix], List[Matrix]]:
+        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+    ) -> Tuple[Tensor, Tensor]:
+        if not (weights is None and biases is None):
+            self.t += 1
+
+        super().update(weights, biases, grad_weights, grad_biases)
+        return self.updated_weights, self.updated_biases
+
+    def _update_weights(self, W: Tensor, dW: Tensor) -> Tensor:
         if self.m_weights is None:
-            self.m_weights = [np.zeros_like(w) for w in weights]
-            self.v_weights = [np.zeros_like(w) for w in weights]
+            self.m_weights = [np.zeros_like(w) for w in W]
+            self.v_weights = [np.zeros_like(w) for w in W]
 
-        if self.m_biases is None:
-            self.m_biases = [np.zeros_like(b) for b in biases]
-            self.v_biases = [np.zeros_like(b) for b in biases]
-
-        self.t += 1
-        updated_weights, updated_biases = [], []
-
-        for i in range(len(weights)):
+        updated = []
+        for i in range(len(W)):
             self.m_weights[i] = (
-                self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * grad_weights[i]
+                self.beta_1 * self.m_weights[i] + (1 - self.beta_1) * dW[i]
             )
             self.v_weights[i] = self.beta_2 * self.v_weights[i] + (
                 1 - self.beta_2
-            ) * np.square(grad_weights[i])
+            ) * np.square(dW[i])
 
             m_hat_w = self.m_weights[i] / (1 - self.beta_1 ** (self.t + 1))
             v_hat_w = self.v_weights[i] / (1 - self.beta_2**self.t)
 
-            nadam_update_w = self.beta_1 * m_hat_w + (1 - self.beta_1) * grad_weights[
-                i
-            ] / (1 - self.beta_1**self.t)
-            updated_weights.append(
-                weights[i]
+            nadam_update_w = self.beta_1 * m_hat_w + (1 - self.beta_1) * dW[i] / (
+                1 - self.beta_1**self.t
+            )
+            updated.append(
+                W[i]
                 - self.learning_rate * nadam_update_w / np.sqrt(v_hat_w + self.epsilon)
             )
+        return updated
 
-        for i in range(len(biases)):
+    def _update_biases(self, B: Tensor, dB: Tensor) -> Tensor:
+        if self.m_biases is None:
+            self.m_biases = [np.zeros_like(b) for b in B]
+            self.v_biases = [np.zeros_like(b) for b in B]
+
+        updated = []
+        for i in range(len(B)):
             self.m_biases[i] = (
-                self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * grad_biases[i]
+                self.beta_1 * self.m_biases[i] + (1 - self.beta_1) * dB[i]
             )
             self.v_biases[i] = self.beta_2 * self.v_biases[i] + (
                 1 - self.beta_2
-            ) * np.square(grad_biases[i])
+            ) * np.square(dB[i])
 
             m_hat_b = self.m_biases[i] / (1 - self.beta_1 ** (self.t + 1))
             v_hat_b = self.v_biases[i] / (1 - self.beta_2**self.t)
 
-            nadam_update_b = self.beta_1 * m_hat_b + (1 - self.beta_1) * grad_biases[
-                i
-            ] / (1 - self.beta_1**self.t)
-            updated_biases.append(
-                biases[i]
+            nadam_update_b = self.beta_1 * m_hat_b + (1 - self.beta_1) * dB[i] / (
+                1 - self.beta_1**self.t
+            )
+            updated.append(
+                B[i]
                 - self.learning_rate * nadam_update_b / np.sqrt(v_hat_b + self.epsilon)
             )
-
-        return updated_weights, updated_biases
+        return updated
