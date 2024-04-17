@@ -560,12 +560,13 @@ class Layer:
     """
 
     def __init__(self) -> None:
-        self.weights_: Tensor | Matrix = None
+        self.input_: Tensor = None
+        self.weights_: Tensor = None
         self.biases_: Vector = None
 
-        self.dX: Tensor | Matrix = None
-        self.dW: Tensor | Matrix = None
-        self.dB: Vector = None
+        self.dX: Tensor = None
+        self.dW: Tensor = None
+        self.dB: Tensor = None
 
         self.optimizer: object = None
 

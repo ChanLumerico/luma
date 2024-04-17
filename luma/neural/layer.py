@@ -2,12 +2,12 @@ from typing import Literal, Tuple
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.util import Layer, Vector, Matrix, Tensor, ActivationUtil
+from luma.interface.util import Layer, Matrix, Tensor, ActivationUtil
 from luma.interface.exception import UnsupportedParameterError
 from luma.neural.optimizer import SGDOptimizer
 
 
-__all__ = ("Convolution", "Pooling", "Dense")
+__all__ = ("Convolution", "Pooling", "Dense", "Dropout")
 
 
 class Convolution(Layer):
@@ -27,6 +27,7 @@ class Convolution(Layer):
     (`valid` for no padding, `same` for typical 0-padding)
     `activation` : Type of activation function
     `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
+    `random_state` : Seed for various random sampling processes
 
     Notes
     -----
@@ -59,10 +60,10 @@ class Convolution(Layer):
         self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(random_state)
 
-        self.biases_: Vector = np.zeros(self.n_filters)
+        self.biases_: Matrix = np.zeros((1, self.n_filters))
 
     def forward(self, X: Tensor) -> Tensor:
-        assert len(X.shape) == 4, "X must have the form of 4D-array!"
+        self.input_ = X
         batch_size, channels, height, width = X.shape
 
         if self.weights_ is None:
@@ -95,11 +96,12 @@ class Convolution(Layer):
                 ]
                 out[i, f] = sampled_result[:out_height, :out_width]
 
-        out += self.biases_[:, np.newaxis, np.newaxis]
+        out += self.biases_[:, :, np.newaxis, np.newaxis]
         out = self.act_.func(out)
         return out
 
-    def backward(self, X: Tensor, d_out: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
+    def backward(self, d_out: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
+        X = self.input_
         batch_size, channels, height, width = X.shape
         pad_h, pad_w, padded_height, padded_width = self._get_padding_dim(height, width)
 
@@ -114,7 +116,7 @@ class Convolution(Layer):
         d_out_fft = np.fft.rfftn(d_out, s=(padded_height, padded_width), axes=[2, 3])
 
         for f in range(self.n_filters):
-            self.dB[f] = np.sum(d_out[:, f, :, :])
+            self.dB[:, f] = np.sum(d_out[:, f, :, :])
 
         for f in range(self.n_filters):
             for c in range(channels):
@@ -148,6 +150,7 @@ class Convolution(Layer):
             pad_h = pad_w = (self.size - 1) // 2
             padded_height = height + 2 * pad_h
             padded_width = width + 2 * pad_w
+
         elif self.padding == "valid":
             pad_h = pad_w = 0
             padded_height = height
@@ -192,6 +195,7 @@ class Pooling(Layer):
         self.mode = mode
 
     def forward(self, X: Tensor) -> Tensor:
+        self.input_ = X
         batch_size, channels, height, width = X.shape
         out_height = 1 + (height - self.size) // self.stride
         out_width = 1 + (width - self.size) // self.stride
@@ -211,7 +215,8 @@ class Pooling(Layer):
 
         return out
 
-    def backward(self, X: Tensor, d_out: Tensor) -> Tensor:
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
         _, _, out_height, out_width = d_out.shape
         self.dX = np.zeros_like(X)
 
@@ -222,9 +227,9 @@ class Pooling(Layer):
 
                 if self.mode == "max":
                     max_vals = np.max(window, axis=(2, 3), keepdims=True)
-                    mask = window == max_vals
+                    mask_ = window == max_vals
                     self.dX[:, :, h_start:h_end, w_start:w_end] += (
-                        mask * d_out[:, :, i : i + 1, j : j + 1]
+                        mask_ * d_out[:, :, i : i + 1, j : j + 1]
                     )
                 elif self.mode == "avg":
                     avg_grad = d_out[:, :, i, j] / (self.size**2)
@@ -255,9 +260,12 @@ class Dense(Layer):
 
     Parameters
     ----------
-    - `input_size` : Number of input neurons
-    - `output_size`:  Number of output neurons
-    - `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
+    `input_size` : Number of input neurons
+    `output_size`:  Number of output neurons
+    `activation` : Activation function (Use `Sigmoid` for final dense layer)
+    `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
+    `lambda_` : L2-regularization strength
+    `random_state` : Seed for various random sampling processes
 
     Notes
     -----
@@ -266,33 +274,99 @@ class Dense(Layer):
         ```py
         X.shape = (batch_size, n_features)
         ```
+    - Enabling `reshape` in `backward` forces the returning gradient
+        to have the shape of the original input. (default = True)
+
     """
 
     def __init__(
-        self, input_size: int, output_size: int, optimizer: Optimizer = SGDOptimizer()
+        self,
+        input_size: int,
+        output_size: int,
+        activation: ActivationUtil.FuncType = "relu",
+        optimizer: Optimizer = SGDOptimizer(),
+        lambda_: float = 0.1,
+        random_state: int = None,
     ) -> None:
         super().__init__()
         self.input_size = input_size
         self.output_size = output_size
+        self.activation = activation
         self.optimizer = optimizer
+        self.lambda_ = lambda_
+        self.random_state = random_state
 
-        self.weights_: Matrix = 0.01 * np.random.randn(
-            self.input_size, self.output_size
-        )
-        self.biases_: Vector = np.zeros(self.output_size)
+        act = ActivationUtil(self.activation)
+        self.act_ = act.activation_type()
+        self.rs_ = np.random.RandomState(self.random_state)
+
+        self.weights_: Matrix = 0.01 * self.rs_.randn(self.input_size, self.output_size)
+        self.biases_: Matrix = np.zeros((1, self.output_size))
 
     def forward(self, X: Tensor | Matrix) -> Tensor:
+        self.input_ = X
         X = self._flatten(X)
+
         out = np.dot(X, self.weights_) + self.biases_
+        out = self.act_.func(out)
         return out
 
-    def backward(self, X: Tensor, d_out: Tensor) -> Tensor:
-        X = self._flatten(X)
+    def backward(self, d_out: Tensor, reshape: bool = True) -> Tensor:
+        X = self._flatten(self.input_)
+        d_out = self.act_.derivative(d_out)
+
         self.dX = np.dot(d_out, self.weights_.T)
         self.dW = np.dot(X.T, d_out)
         self.dB = np.sum(d_out, axis=0, keepdims=True)
 
-        return self.dX
+        self.dW += 2 * self.lambda_ * self.weights_
+
+        if reshape:
+            return self.dX.reshape(*self.input_.shape)
+        else:
+            return self.dX
 
     def _flatten(self, X: Tensor) -> Matrix:
         return X.reshape(X.shape[0], -1) if len(X.shape) > 2 else X
+
+
+class Dropout(Layer):
+    """
+    Dropout is a regularization technique used during training to prevent
+    overfitting by randomly setting a fraction of input units to zero during
+    the forward pass. This helps in reducing co-adaptation of neurons and
+    encourages the network to learn more robust features.
+
+    Parameters
+    ----------
+    `dropout_rate` : The fraction of input units to drop during training
+    `random_state` : Seed for various random sampling processes
+
+    Notes
+    -----
+    - During inference, dropout is typically turned off, and the layer behaves
+      as the identity function.
+
+    """
+
+    def __init__(self, dropout_rate: float = 0.1, random_state: int = None) -> None:
+        super().__init__()
+        self.dropout_rate = dropout_rate
+        self.random_state = random_state
+
+        self.mask_: Tensor = None
+        self.rs_ = np.random.RandomState(self.random_state)
+
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        self.input_ = X
+        if is_train:
+            self.mask_ = (
+                self.rs_.rand(*X.shape) < self.dropout_rate
+            ) / self.dropout_rate
+            return X * self.mask_
+        else:
+            return X
+
+    def backward(self, d_out: Tensor) -> Tensor:
+        dX = d_out * self.mask_ if self.mask_ is not None else d_out
+        return dX

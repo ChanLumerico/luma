@@ -1,4 +1,4 @@
-from typing import Tuple, Any
+from typing import Tuple
 import numpy as np
 
 from luma.core.super import Optimizer
