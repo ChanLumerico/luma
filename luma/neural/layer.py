@@ -35,12 +35,6 @@ class Convolution(Layer):
         ```py
         X.shape = (batch_size, channels, height, width)
         ```
-    - `backward` returns gradients w.r.t. the input, the weights(filters),
-        and the biases respectively.
-
-        ```py
-        def backward(self, ...) -> Tuple[Tensor, Tensor, Tensor]
-        ```
     """
 
     def __init__(
@@ -187,11 +181,6 @@ class Pooling(Layer):
         ```py
         X.shape = (batch_size, channels, height, width)
         ```
-    - `backward` returns gradients w.r.t. the input.
-
-        ```py
-        def backward(self, ...) -> Tensor
-        ```
     """
 
     def __init__(
@@ -270,6 +259,13 @@ class Dense(Layer):
     - `output_size`:  Number of output neurons
     - `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
 
+    Notes
+    -----
+    - The input `X` must have the form of 2D-array(`Matrix`).
+
+        ```py
+        X.shape = (batch_size, n_features)
+        ```
     """
 
     def __init__(

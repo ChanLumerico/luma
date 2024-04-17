@@ -576,6 +576,8 @@ class Layer:
     def update(self) -> None:
         if self.optimizer is None:
             return
-        self.weights_, self.biases_ = self.optimizer.update(
+        weights_, biases_ = self.optimizer.update(
             self.weights_, self.biases_, self.dW, self.dB
         )
+        self.weights_ = Tensor(weights_)
+        self.biases_ = Tensor(biases_)
