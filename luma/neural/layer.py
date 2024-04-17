@@ -7,7 +7,7 @@ from luma.interface.exception import UnsupportedParameterError
 from luma.neural.optimizer import SGDOptimizer
 
 
-__all__ = ("Convolution", "Pooling", "Dense", "Dropout")
+__all__ = ("Convolution", "Pooling", "Dense", "Dropout", "Flatten")
 
 
 class Convolution(Layer):
@@ -305,14 +305,13 @@ class Dense(Layer):
 
     def forward(self, X: Tensor | Matrix) -> Tensor:
         self.input_ = X
-        X = self._flatten(X)
 
         out = np.dot(X, self.weights_) + self.biases_
         out = self.act_.func(out)
         return out
 
     def backward(self, d_out: Tensor, reshape: bool = True) -> Tensor:
-        X = self._flatten(self.input_)
+        X = self.input_
         d_out = self.act_.derivative(d_out)
 
         self.dX = np.dot(d_out, self.weights_.T)
@@ -325,9 +324,6 @@ class Dense(Layer):
             return self.dX.reshape(*self.input_.shape)
         else:
             return self.dX
-
-    def _flatten(self, X: Tensor) -> Matrix:
-        return X.reshape(X.shape[0], -1) if len(X.shape) > 2 else X
 
 
 class Dropout(Layer):
@@ -369,4 +365,27 @@ class Dropout(Layer):
 
     def backward(self, d_out: Tensor) -> Tensor:
         dX = d_out * self.mask_ if self.mask_ is not None else d_out
+        return dX
+
+
+class Flatten(Layer):
+    """
+    A flatten layer reshapes the input tensor into a 2D array(`Matrix`),
+    collapsing all dimensions except the batch dimension.
+
+    Notes
+    -----
+    - Use this class when using `Dense` layer.
+        Flatten the tensor into matrix in order to feed-forward dense layer(s).
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def forward(self, X: Tensor) -> Matrix:
+        self.input_ = X
+        return X.reshape(X.shape[0], -1)
+
+    def backward(self, d_out: Matrix) -> Tensor:
+        dX = d_out.reshape(self.input_.shape)
         return dX
