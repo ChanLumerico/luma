@@ -1,4 +1,4 @@
-from typing import Any, Dict, NoReturn, Self
+from typing import Any, Dict, Self
 from abc import ABCMeta, abstractmethod
 
 from luma.core.base import *
@@ -266,7 +266,7 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
             self.updated_weights = None
             self.updated_biases = None
 
-        def update(self, weights, biases, grad_weights, grad_biases) -> NoReturn:
+        def update(self, weights, biases, grad_weights, grad_biases) -> None:
             if weights is not None:
                 self.updated_weights = self._update_weights(weights, grad_weights)
             if biases is not None:

@@ -243,7 +243,9 @@ class Pooling(Layer):
                 elif self.mode == "avg":
                     avg_grad = d_out[:, :, i, j] / (self.size**2)
                     self.dX[:, :, h_start:h_end, w_start:w_end] += (
-                        np.ones((1, 1, self.size, self.size)) * avg_grad
+                        # BUG: Broadcast Error
+                        np.ones((1, 1, self.size, self.size))
+                        * avg_grad
                     )
 
         return self.dX
@@ -402,6 +404,33 @@ class Flatten(Layer):
 
 
 class Sequential(Layer):
+    """
+    Sequential represents a linear arrangement of layers in a neural network
+    model. Each layer is added sequentially, with data flowing from one layer
+    to the next in the order they are added. This organization simplifies the
+    construction of neural networks, especially for straightforward architectures,
+    by mirroring the logical flow of data from input through hidden layers to
+    output.
+
+    Parameters
+    ----------
+    `*layers` : Layers or layers with its name assigned
+    (class name of the layer assigned by default)
+
+    Methods
+    -------
+    - For setting an optimizer of each layer:
+
+        ```py
+        def set_optimizer(self, optimizer: Optimizer) -> None
+        ```
+    - For setting a loss function of the model:
+
+        ```py
+        def set_loss(self, loss_func: Loss) -> None
+        ```
+    """
+
     trainable: List[Layer] = [Convolution, Dense]
     only_for_train: List[Layer] = [Dropout]
 
@@ -448,7 +477,7 @@ class Sequential(Layer):
 
     def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
         self.optimizer = optimizer
-        self.optimizer.set_params(**params)
+        self.optimizer.set_params(**params, ignore_missing=True)
 
         for _, layer in self.layers:
             layer.optimizer = Clone(self.optimizer).get
@@ -458,7 +487,7 @@ class Sequential(Layer):
 
     @classmethod
     def _check_only_for_train(cls, layer: Layer) -> bool:
-        return layer in cls.only_for_train
+        return type(layer) in cls.only_for_train
 
     @classmethod
     def _check_trainable_layer(cls, layer: Layer) -> bool:
@@ -481,8 +510,6 @@ class Sequential(Layer):
             layer = (str(layer), layer)
         self.layers.append(layer)
 
-    def __add__(self, seq: Self) -> Self: ...
-
     def __call__(self, X: Tensor, y: Matrix, is_train: bool = False) -> float:
         self._check_no_optimizer_loss()
 
@@ -493,3 +520,7 @@ class Sequential(Layer):
         self.backward(d_out)
         self.update()
         return loss
+
+    def __add__(self, seq: Self) -> Self:
+        # TODO: Implement here
+        NotImplemented

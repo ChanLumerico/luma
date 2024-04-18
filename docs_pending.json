@@ -1,0 +1,58 @@
+{
+    "class": [
+        {
+            "name": "Layer",
+            "script": "luma.interface.util",
+            "inheriting": null,
+            "is_written": false
+        },
+        {
+            "name": "Loss",
+            "script": "luma.interface.util",
+            "inheriting": null,
+            "is_written": false
+        },
+        {
+            "name": "Convolution",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer",
+            "is_written": false
+        },
+        {
+            "name": "Pooling",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer",
+            "is_written": false
+        },
+        {
+            "name": "Dense",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer",
+            "is_written": false
+        },
+        {
+            "name": "Dropout",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer",
+            "is_written": false
+        },
+        {
+            "name": "Flatten",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer",
+            "is_written": false
+        },
+        {
+            "name": "Sequential",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer",
+            "is_written": false
+        },
+        {
+            "name": "CategoricalCrossEntropy",
+            "script": "luma.neural.loss",
+            "inheriting": "Loss",
+            "is_written": false
+        }
+    ]
+}
