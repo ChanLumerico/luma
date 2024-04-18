@@ -223,7 +223,7 @@ class MLPClassifier(Estimator, Estimator.NeuralNet, Supervised):
 
         for i in range(self.n_layers - 2, -1, -1):
             delta = np.dot(delta, self.weights[i + 1].T)
-            delta *= self.act_.derivative(as_[i + 1])
+            delta *= self.act_.grad(as_[i + 1])
 
             dW = np.dot(as_[i].T, delta)
             dW += (self.lambda_ / m) * self.weights[i]
@@ -447,7 +447,7 @@ class MLPRegressor(Estimator, Estimator.NeuralNet, Supervised):
 
         for i in range(self.n_layers - 2, -1, -1):
             delta = np.dot(delta, self.weights[i + 1].T)
-            delta *= self.act_.derivative(as_[i + 1])
+            delta *= self.act_.grad(as_[i + 1])
 
             dW = np.dot(as_[i].T, delta)
             dW += (self.lambda_ / m) * self.weights[i]

@@ -1,10 +1,10 @@
-from typing import Tuple
+from typing import Iterator, Tuple
 import numpy as np
 
-from luma.interface.util import Matrix, Vector
+from luma.interface.util import Matrix, Vector, TensorLike
 
 
-__all__ = "TrainTestSplit"
+__all__ = ("TrainTestSplit", "BatchGenerator")
 
 
 class TrainTestSplit:
@@ -58,11 +58,11 @@ class TrainTestSplit:
             return self._split()
 
     def _split(self) -> Tuple[Matrix, Matrix, Vector, Vector]:
-        num_samples = self.X.shape[0]
-        indices = np.arange(num_samples)
+        n_samples = self.X.shape[0]
+        indices = np.arange(n_samples)
 
         if isinstance(self.test_size, float):
-            num_test_samples = int(self.test_size * num_samples)
+            num_test_samples = int(self.test_size * n_samples)
         else:
             num_test_samples = self.test_size
 
@@ -113,3 +113,68 @@ class TrainTestSplit:
         y_test = self.y[test_indices]
 
         return X_train, X_test, y_train, y_test
+
+
+class BatchGenerator:
+    """
+    A class for generating mini-batches of data for training machine
+    learning models including neural networks.
+
+    Parameters
+    ----------
+    `X` : Input features
+    `y` : Targets or labels
+    `batch_size` : Size of a mini-batch
+    `shuffle` : Whether to shuffle the data for every batch generation
+
+    Examples
+    --------
+    An instance of `BatchGenerator` can be used as an iterator.
+
+    - With instantiation:
+
+        ```py
+        batch_gen = BatchGenerator(X, y, batch_size=100)
+        for X_batch, y_batch in batch_gen:
+            pass
+        ```
+    - Without instantiation:
+
+        ```py
+        for X_batch, y_batch in BatchGenerator(X, y, batch_size=100):
+            pass
+        ```
+    """
+
+    def __init__(
+        self,
+        X: TensorLike,
+        y: TensorLike,
+        batch_size: int = 100,
+        shuffle: bool = True,
+    ) -> None:
+        self.X = X
+        self.y = y
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+
+        self.n_samples = X.shape[0]
+        self.n_batches = self.n_samples // batch_size
+
+        if self.n_samples % batch_size != 0:
+            self.n_batches += 1
+
+        self.indices = np.arange(self.n_samples)
+        if self.shuffle:
+            np.random.shuffle(self.indices)
+
+    def __iter__(self) -> Iterator[Tuple[TensorLike, TensorLike]]:
+        for i in range(self.n_batches):
+            start_idx = i * self.batch_size
+            end_idx = min((i + 1) * self.batch_size, self.n_samples)
+
+            batch_indices = self.indices[start_idx:end_idx]
+            X_batch = self.X[batch_indices]
+            y_batch = self.y[batch_indices]
+
+            yield X_batch, y_batch

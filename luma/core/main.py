@@ -18,5 +18,5 @@ class Luma:
     def __doc__(self) -> str:
         return luma.__doc__
 
-    if sys.version_info < (3, 10):
-        print("Luma requires Python 3.10 or more", file=sys.stderr)
+    if sys.version_info < (3, 12):
+        print("Luma requires Python 3.12 or more", file=sys.stderr)

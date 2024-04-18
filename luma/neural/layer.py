@@ -1,13 +1,13 @@
-from typing import Literal, Tuple
+from typing import Any, List, Literal, Self, Tuple
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.util import Layer, Matrix, Tensor, ActivationUtil
+from luma.interface.util import Layer, Matrix, Tensor, ActivationUtil, Loss, Clone
 from luma.interface.exception import UnsupportedParameterError
-from luma.neural.optimizer import SGDOptimizer
+from luma.neural.activation import Softmax
 
 
-__all__ = ("Convolution", "Pooling", "Dense", "Dropout", "Flatten")
+__all__ = ("Convolution", "Pooling", "Dense", "Dropout", "Flatten", "Sequential")
 
 
 class Convolution(Layer):
@@ -46,8 +46,8 @@ class Convolution(Layer):
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
         activation: ActivationUtil.FuncType = "relu",
-        optimizer: Optimizer = SGDOptimizer(),
-        lambda_: float = 0.1,
+        optimizer: Optimizer = None,
+        lambda_: float = 0.0,
         random_state: int = None,
     ) -> None:
         super().__init__()
@@ -78,7 +78,9 @@ class Convolution(Layer):
 
         out_height = ((padded_height - self.size) // self.stride) + 1
         out_width = ((padded_width - self.size) // self.stride) + 1
+
         out: Tensor = np.zeros((batch_size, self.n_filters, out_height, out_width))
+        self.out_shape = out.shape
 
         X_padded = np.pad(
             X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
@@ -103,7 +105,7 @@ class Convolution(Layer):
         out = self.act_.func(out)
         return out
 
-    def backward(self, d_out: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
+    def backward(self, d_out: Tensor) -> Tensor:
         X = self.input_
         batch_size, channels, height, width = X.shape
         pad_h, pad_w, padded_height, padded_width = self._get_padding_dim(height, width)
@@ -147,7 +149,7 @@ class Convolution(Layer):
             if pad_h > 0 or pad_w > 0
             else dX_padded
         )
-        self.dX = self.act_.derivative(self.dX)
+        self.dX = self.act_.grad(self.dX)
         return self.dX
 
     def _get_padding_dim(self, height: int, width: int) -> Tuple[int, int, int, int]:
@@ -206,6 +208,8 @@ class Pooling(Layer):
         out_width = 1 + (width - self.size) // self.stride
 
         out: Tensor = np.zeros((batch_size, channels, out_height, out_width))
+        self.out_shape = out.shape
+
         for i in range(out_height):
             for j in range(out_width):
                 h_start, h_end, w_start, w_end = self._get_height_width(i, j)
@@ -279,9 +283,6 @@ class Dense(Layer):
         ```py
         X.shape = (batch_size, n_features)
         ```
-    - Enabling `reshape` in `backward` forces the returning gradient
-        to have the shape of the original input. (default = True)
-
     """
 
     def __init__(
@@ -289,8 +290,8 @@ class Dense(Layer):
         input_size: int,
         output_size: int,
         activation: ActivationUtil.FuncType = "relu",
-        optimizer: Optimizer = SGDOptimizer(),
-        lambda_: float = 0.1,
+        optimizer: Optimizer = None,
+        lambda_: float = 0.0,
         random_state: int = None,
     ) -> None:
         super().__init__()
@@ -308,27 +309,27 @@ class Dense(Layer):
         self.weights_: Matrix = 0.01 * self.rs_.randn(self.input_size, self.output_size)
         self.biases_: Matrix = np.zeros((1, self.output_size))
 
-    def forward(self, X: Tensor | Matrix) -> Tensor:
+    def forward(self, X: Matrix) -> Matrix:
         self.input_ = X
 
         out = np.dot(X, self.weights_) + self.biases_
         out = self.act_.func(out)
+        self.out_shape = out.shape
         return out
 
-    def backward(self, d_out: Tensor, reshape: bool = True) -> Tensor:
+    def backward(self, d_out: Matrix) -> Matrix:
         X = self.input_
-        d_out = self.act_.derivative(d_out)
+        if isinstance(self.act_, Softmax):
+            pass
+        else:
+            d_out = self.act_.grad(d_out)
 
         self.dX = np.dot(d_out, self.weights_.T)
         self.dW = np.dot(X.T, d_out)
+        self.dW += 2 * self.lambda_ * self.weights_
         self.dB = np.sum(d_out, axis=0, keepdims=True)
 
-        self.dW += 2 * self.lambda_ * self.weights_
-
-        if reshape:
-            return self.dX.reshape(*self.input_.shape)
-        else:
-            return self.dX
+        return self.dX
 
 
 class Dropout(Layer):
@@ -360,6 +361,8 @@ class Dropout(Layer):
 
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         self.input_ = X
+        self.out_shape = self.input_.shape
+
         if is_train:
             self.mask_ = (
                 self.rs_.rand(*X.shape) < self.dropout_rate
@@ -389,8 +392,104 @@ class Flatten(Layer):
 
     def forward(self, X: Tensor) -> Matrix:
         self.input_ = X
-        return X.reshape(X.shape[0], -1)
+        out = X.reshape(X.shape[0], -1)
+        self.out_shape = out.shape
+        return out
 
     def backward(self, d_out: Matrix) -> Tensor:
         dX = d_out.reshape(self.input_.shape)
         return dX
+
+
+class Sequential(Layer):
+    trainable: List[Layer] = [Convolution, Dense]
+    only_for_train: List[Layer] = [Dropout]
+
+    def __init__(
+        self,
+        *layers: Layer | Tuple[str, Layer],
+        verbose: bool = False,
+    ) -> None:
+        self.layers: List[Tuple[str, Layer]] = list()
+        for layer in layers:
+            self.add(layer)
+
+        self.optimizer = None
+        self.loss_func_ = None
+        self.verbose = verbose
+
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        self.input_ = X
+        out = X
+
+        for name, layer in self.layers:
+            if Sequential._check_only_for_train(layer):
+                out = layer.forward(out, is_train=is_train)
+            else:
+                out = layer.forward(out)
+            if self.verbose:
+                print(f"[Sequential] Feed-forwarded '{name}'")
+
+        self.out_shape = out.shape
+        return out
+
+    def backward(self, d_out: Matrix) -> None:
+        for name, layer in reversed(self.layers):
+            d_out = layer.backward(d_out)
+            if self.verbose:
+                print(f"[Sequential] Backpropagated '{name}'")
+
+    def update(self) -> None:
+        self._check_no_optimizer_loss()
+        for name, layer in reversed(self.layers):
+            layer.update()
+            if self.verbose and Sequential._check_trainable_layer(layer):
+                print(f"[Sequential] Updated '{name}'")
+
+    def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
+        self.optimizer = optimizer
+        self.optimizer.set_params(**params)
+
+        for _, layer in self.layers:
+            layer.optimizer = Clone(self.optimizer).get
+
+    def set_loss(self, loss_func: Loss) -> None:
+        self.loss_func_ = loss_func
+
+    @classmethod
+    def _check_only_for_train(cls, layer: Layer) -> bool:
+        return layer in cls.only_for_train
+
+    @classmethod
+    def _check_trainable_layer(cls, layer: Layer) -> bool:
+        return layer in cls.trainable
+
+    def _check_no_optimizer_loss(self) -> None:
+        if self.optimizer is None:
+            raise RuntimeError(
+                f"'{self}' has no optimizer! "
+                + f"Call '{self}().set_optimizer' to assign an optimizer."
+            )
+        if self.loss_func_ is None:
+            raise RuntimeError(
+                f"'{self}' has no loss function! "
+                + f"Call '{self}().set_loss' to assign a loss function."
+            )
+
+    def add(self, layer: Layer | Tuple[str, Layer]) -> None:
+        if not isinstance(layer, tuple):
+            layer = (str(layer), layer)
+        self.layers.append(layer)
+
+    def __add__(self, seq: Self) -> Self: ...
+
+    def __call__(self, X: Tensor, y: Matrix, is_train: bool = False) -> float:
+        self._check_no_optimizer_loss()
+
+        out = self.forward(X, is_train=is_train)
+        d_out = self.loss_func_.grad(y, out)
+        loss = self.loss_func_.loss(y, out)
+
+        self.backward(d_out)
+        self.update()
+        return loss

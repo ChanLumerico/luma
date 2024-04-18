@@ -19,7 +19,11 @@ __all__ = (
     "Clone",
     "ParamRange",
     "Layer",
+    "Loss",
 )
+
+
+type TensorLike = Matrix | Tensor | Vector
 
 
 class Matrix(np.ndarray):
@@ -556,6 +560,7 @@ class Layer:
     - `dW` : Gradient w.r.t. the weights
     - `dB` : Gradient w.r.t. the biases
     - `optimizer` : Optimizer for certain layer
+    - `out_shape` : Shape of the output when forwarding
 
     """
 
@@ -569,6 +574,7 @@ class Layer:
         self.dB: Tensor = None
 
         self.optimizer: object = None
+        self.out_shape: tuple = None
 
     def forward(self) -> Tensor: ...
 
@@ -582,3 +588,24 @@ class Layer:
         )
         self.weights_ = Tensor(weights_)
         self.biases_ = Tensor(biases_)
+
+    def __str__(self) -> str:
+        return type(self).__name__
+
+
+class Loss:
+    """
+    An internal class for loss functions used in neural networks.
+
+    Loss functions, integral to the training process of machine
+    learning models, serve as crucial metrics assessing the disparity
+    between predicted outcomes and ground truth labels. They play a
+    pivotal role in optimization algorithms, guiding parameter updates
+    towards minimizing the discrepancy between predictions and true values.
+    """
+
+    def __init__(self) -> None: ...
+
+    def loss(self) -> float: ...
+
+    def grad(self) -> Matrix: ...

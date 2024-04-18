@@ -18,7 +18,7 @@ from luma.interface.util import (
     NearestNeighbors,
 )
 from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil
-from luma.interface.util import Clone, ParamRange, Layer
+from luma.interface.util import Clone, ParamRange, Layer, Loss
 
 from luma.classifier.discriminant import (
     LDAClassifier,
@@ -75,7 +75,8 @@ from luma.neural.optimizer import (
 )
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.network import MLPClassifier, MLPRegressor
-from luma.neural.layer import Convolution, Pooling, Dense, Dropout, Flatten
+from luma.neural.layer import Convolution, Pooling, Dense, Dropout, Flatten, Sequential
+from luma.neural.loss import CategoricalCrossEntropy
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -90,7 +91,7 @@ from luma.metric.clustering import SilhouetteCoefficient, DaviesBouldin, Inertia
 from luma.metric.distance import Euclidean, Manhattan, Chebyshev, Minkowski
 from luma.metric.distance import CosineSimilarity, Correlation, Mahalanobis
 
-from luma.model_selection.split import TrainTestSplit
+from luma.model_selection.split import TrainTestSplit, BatchGenerator
 from luma.model_selection.search import GridSearchCV, RandomizedSearchCV
 from luma.model_selection.cv import CrossValidator
 from luma.model_selection.fold import KFold, StratifiedKFold
@@ -168,7 +169,7 @@ if __name__ == "__main__":
     Matrix, Vector, Tensor, Scalar,
     DecisionTreeNode, NearestNeighbors,
     SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil,
-    Clone, ParamRange, Layer
+    Clone, ParamRange, Layer, Loss
 
     # ----------------- [ luma.classifier ] --------------------
     LDAClassifier, QDAClassifier, RDAClassifier, KDAClassifier
@@ -223,7 +224,9 @@ if __name__ == "__main__":
     AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
     AdaMaxOptimizer, AdamWOptimizer, NAdamOptimizer
 
-    Convolution, Pooling, Dense, Dropout, Flatten
+    Convolution, Pooling, Dense, Dropout, Flatten, Sequential
+
+    CategoricalCrossEntropy
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity
@@ -238,7 +241,7 @@ if __name__ == "__main__":
     CosineSimilarity, Correlation, Mahalanobis
 
     # --------------- [ luma.module_selection ] ----------------
-    TrainTestSplit
+    TrainTestSplit, BatchGenerator
 
     GridSearchCV, RandomizedSearchCV
 
