@@ -419,16 +419,64 @@ class Sequential(Layer):
 
     Methods
     -------
-    - For setting an optimizer of each layer:
+    For setting an optimizer of each layer:
+    ```py
+    def set_optimizer(self, optimizer: Optimizer) -> None
+    ```
+    For setting a loss function of the model:
+    ```py
+    def set_loss(self, loss_func: Loss) -> None
+    ```
+    To add additional layer:
+    ```py
+    def add(self, layer: Layer) -> None
+    ```
+    To compute loss:
+    ```py
+    def get_loss(y: Matrix, out: Matrix) -> float
+    ```
+    Specials
+    --------
+    - You can use `+` operator to add a layer or another instance of `Sequential`.
 
-        ```py
-        def set_optimizer(self, optimizer: Optimizer) -> None
-        ```
-    - For setting a loss function of the model:
+    - By calling its instance, `forward`, `backward`, and `update`
+        is automatically called (single cycle).
 
-        ```py
-        def set_loss(self, loss_func: Loss) -> None
-        ```
+    - Use `repr()` to print out its structural configuration.
+
+    Notes
+    -----
+    - Before any execution, an optimizer and a loss function must be assigned.
+
+    - Use `param_size` after at least one forwarding to get the proper
+        size of its parameter.
+
+    - For multi-class classification, the target variable `y`
+        must be one-hot encoded.
+
+    Examples
+    --------
+    ```py
+    model = Sequential(
+        ("conv_1", Convolution(6, 3, activation="relu")),
+        ("pool_1", Pooling(2, 2, mode="max")),
+        ...,
+        ("drop", Dropout(0.1)),
+        ("flat", Flatten()),
+        ("dense_1", Dense(384, 32, activation="relu")),
+        ("dense_2", Dense(32, 10, activation="softmax")),
+    )
+    model.set_optimizer(AnyOptimizer())
+    model.set_loss(AnyLoss())
+    ```
+    To use automated cyclic run:
+    >>> model(X, y, is_train=True)
+
+    Manual run:
+    >>> model.forward(X, is_train=True)
+    >>> model.backward(d_out)
+    >>> model.update()
+
     """
 
     trainable: List[Layer] = [Convolution, Dense]
@@ -485,6 +533,9 @@ class Sequential(Layer):
     def set_loss(self, loss_func: Loss) -> None:
         self.loss_func_ = loss_func
 
+    def get_loss(self, y: Matrix, out: Matrix) -> float:
+        return self.loss_func_.loss(y, out)
+
     @classmethod
     def _check_only_for_train(cls, layer: Layer) -> bool:
         return type(layer) in cls.only_for_train
@@ -510,17 +561,56 @@ class Sequential(Layer):
             layer = (str(layer), layer)
         self.layers.append(layer)
 
+    @property
+    def param_size(self) -> Tuple[int, int]:
+        w_size, b_size = 0, 0
+        for _, layer in self.layers:
+            w_, b_ = layer.param_size
+            w_size += w_
+            b_size += b_
+
+        return w_size, b_size
+
     def __call__(self, X: Tensor, y: Matrix, is_train: bool = False) -> float:
         self._check_no_optimizer_loss()
-
         out = self.forward(X, is_train=is_train)
         d_out = self.loss_func_.grad(y, out)
-        loss = self.loss_func_.loss(y, out)
 
         self.backward(d_out)
         self.update()
-        return loss
+        return self.get_loss(y, out)
 
-    def __add__(self, seq: Self) -> Self:
-        # TODO: Implement here
-        NotImplemented
+    def __add__(self, other: Layer | Self) -> Self:
+        if isinstance(other, Layer):
+            self.add(other)
+        elif isinstance(other, Self):
+            for layer in other.layers:
+                self.add(layer)
+        else:
+            raise TypeError(
+                "Unsupported operand type(s) for +: '{}' and '{}'".format(
+                    type(self).__name__, type(other).__name__
+                )
+            )
+        if self.optimizer is not None:
+            self.set_optimizer(self.optimizer)
+        if self.loss_func_ is not None:
+            self.set_loss(self.loss_func_)
+
+        return self
+
+    def __str__(self) -> str:
+        return super().__str__()
+
+    def __repr__(self) -> str:
+        rep = f"{type(self).__name__} Configuration\n"
+        rep += "-" * 60 + "\n"
+        for name, layer in self.layers:
+            rep += f"({name}) {repr(layer)}\n"
+
+        w_size, b_size = self.param_size
+        rep += f"\nTotal Layers: {len(self.layers)}"
+        rep += f"\nTotal Params: ({w_size:,} weights, {b_size:,} biases)"
+        rep += f" -> {w_size + b_size:,}\n"
+        rep += "-" * 60
+        return rep

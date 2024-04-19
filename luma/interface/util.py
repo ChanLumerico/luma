@@ -1,4 +1,4 @@
-from typing import Any, AnyStr, Callable, Literal, Self, Type, TypeGuard
+from typing import Any, AnyStr, Callable, Literal, Self, Tuple, Type, TypeGuard
 import numpy as np
 
 from luma.interface.exception import UnsupportedParameterError, InvalidRangeError
@@ -562,6 +562,12 @@ class Layer:
     - `optimizer` : Optimizer for certain layer
     - `out_shape` : Shape of the output when forwarding
 
+    Properties
+    ----------
+    To get its parameter size (weights, biases):
+    ```py
+    (property) param_size: Tuple[int, int]
+    ```
     """
 
     def __init__(self) -> None:
@@ -589,8 +595,26 @@ class Layer:
         self.weights_ = Tensor(weights_)
         self.biases_ = Tensor(biases_)
 
+    @property
+    def param_size(self) -> Tuple[int, int]:
+        w_size, b_size = 0, 0
+        if self.weights_ is not None:
+            w_size += len(self.weights_.flatten())
+        if self.biases_ is not None:
+            b_size += len(self.biases_.flatten())
+
+        return w_size, b_size
+
     def __str__(self) -> str:
         return type(self).__name__
+
+    def __repr__(self) -> str:
+        w_size, b_size = self.param_size
+        return (
+            f"{type(self).__name__}: "
+            + f"({w_size:,} weights, {b_size:,} biases)"
+            + f" -> {w_size + b_size:,} params"
+        )
 
 
 class Loss:
