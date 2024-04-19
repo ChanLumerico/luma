@@ -241,12 +241,9 @@ class Pooling(Layer):
                         mask_ * d_out[:, :, i : i + 1, j : j + 1]
                     )
                 elif self.mode == "avg":
-                    avg_grad = d_out[:, :, i, j] / (self.size**2)
-                    self.dX[:, :, h_start:h_end, w_start:w_end] += (
-                        # BUG: Broadcast Error
-                        np.ones((1, 1, self.size, self.size))
-                        * avg_grad
-                    )
+                    self.dX[:, :, h_start:h_end, w_start:w_end] += d_out[
+                        :, :, i : i + 1, j : j + 1
+                    ] / (self.size**2)
 
         return self.dX
 
