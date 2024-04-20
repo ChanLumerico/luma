@@ -75,16 +75,6 @@ class Convolution(Layer):
 
         self.biases_: Matrix = np.zeros((1, self.n_filters))
 
-        self.set_param_ranges(
-            {
-                "n_filters": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-            }
-        )
-        self.check_param_ranges()
-
     def forward(self, X: Tensor) -> Tensor:
         self.input_ = X
         batch_size, channels, height, width = X.shape
@@ -233,11 +223,6 @@ class Pooling(Layer):
         self.stride = stride
         self.mode = mode
 
-        self.set_param_ranges(
-            {"filter_size": ("0<,+inf", int), "stride": ("0<,+inf", int)}
-        )
-        self.check_param_ranges()
-
     def forward(self, X: Tensor) -> Tensor:
         self.input_ = X
         batch_size, channels, height, width = X.shape
@@ -352,15 +337,6 @@ class Dense(Layer):
                 self.input_size, self.output_size
             )
         self.biases_: Matrix = np.zeros((1, self.output_size))
-
-        self.set_param_ranges(
-            {
-                "input_size": ("0<,+inf", int),
-                "output_size": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-            }
-        )
-        self.check_param_ranges()
 
     def forward(self, X: Matrix) -> Matrix:
         self.input_ = X

@@ -543,6 +543,9 @@ class ParamRange:
 
 
 class InitUtil:
+    """
+    TODO: Write docstring
+    """
 
     InitType = Literal["he", "kaiming", "xavier", "auto", "random"]
 

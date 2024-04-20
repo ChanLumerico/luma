@@ -4,16 +4,20 @@ import numpy as np
 __all__ = ("KaimingInit", "XavierInit")
 
 
-type Matrix = Matrix
-type Tensor = Tensor
+type TensorLike = TensorLike
 
 
-class KaimingInit:
+class Initializer:
+    @classmethod
+    def __class_alias__(cls) -> None: ...
+
+
+class KaimingInit(Initializer):
     def __init__(self, random_state: int = None) -> None:
         super().__init__()
         self.rs_ = np.random.RandomState(random_state)
 
-    def init_2d(self, input_size: int, output_size: int) -> Matrix:
+    def init_2d(self, input_size: int, output_size: int) -> TensorLike:
         stddev = np.sqrt(2.0 / input_size)
         return self.rs_.normal(
             0.0,
@@ -23,7 +27,7 @@ class KaimingInit:
 
     def init_4d(
         self, input_size: int, output_size: int, height: int, width: int
-    ) -> Tensor:
+    ) -> TensorLike:
         stddev = np.sqrt(2.0 / (input_size * height * width))
         return self.rs_.normal(
             0.0,
@@ -32,7 +36,7 @@ class KaimingInit:
         )
 
 
-class XavierInit: ...
+class XavierInit(Initializer): ...
 
 
 # TODO: Further implementation

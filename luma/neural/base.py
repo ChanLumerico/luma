@@ -5,7 +5,7 @@ from luma.interface.util import Matrix, Tensor, Vector
 from luma.core.base import ModelBase
 
 
-__all__ = ("Layer", "Loss")
+__all__ = ("Layer", "Loss", "Initializer")
 
 
 class Layer(ModelBase):
@@ -100,3 +100,20 @@ class Loss(ABC):
 
     @abstractmethod
     def grad(self) -> Matrix: ...
+
+
+class Initializer(ABC):
+    """
+    TODO: Write docstring
+    """
+
+    def __init__(self) -> None: ...
+
+    @classmethod
+    def __class_alias__(cls) -> None: ...
+
+    @abstractmethod
+    def init_2d(self) -> Matrix: ...
+
+    @abstractmethod
+    def init_4d(self) -> Tensor: ...

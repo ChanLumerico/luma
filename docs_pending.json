@@ -71,6 +71,18 @@
             "script": "util",
             "inheriting": null,
             "is_written": false
+        },
+        {
+            "name": "BatchGenerator",
+            "script": "split",
+            "inheriting": null,
+            "is_written": false
+        },
+        {
+            "name": "Initializer",
+            "script": "luma.neural.base",
+            "inheriting": null,
+            "is_written": false
         }
     ]
 }
