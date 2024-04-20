@@ -17,8 +17,14 @@ from luma.interface.util import (
     DecisionTreeNode,
     NearestNeighbors,
 )
-from luma.interface.util import SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil
-from luma.interface.util import Clone, ParamRange, Layer, Loss
+from luma.interface.util import (
+    SilhouetteUtil,
+    DBUtil,
+    KernelUtil,
+    ActivationUtil,
+    InitUtil,
+)
+from luma.interface.util import Clone, ParamRange
 
 from luma.classifier.discriminant import (
     LDAClassifier,
@@ -75,8 +81,10 @@ from luma.neural.optimizer import (
 )
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.network import MLPClassifier, MLPRegressor
+from luma.neural.base import Layer, Loss
 from luma.neural.layer import Convolution, Pooling, Dense, Dropout, Flatten, Sequential
 from luma.neural.loss import CategoricalCrossEntropy
+from luma.neural.init import KaimingInit, XavierInit
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -168,8 +176,8 @@ if __name__ == "__main__":
 
     Matrix, Vector, Tensor, Scalar,
     DecisionTreeNode, NearestNeighbors,
-    SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil,
-    Clone, ParamRange, Layer, Loss
+    SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil, InitUtil
+    Clone, ParamRange
 
     # ----------------- [ luma.classifier ] --------------------
     LDAClassifier, QDAClassifier, RDAClassifier, KDAClassifier
@@ -224,9 +232,13 @@ if __name__ == "__main__":
     AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
     AdaMaxOptimizer, AdamWOptimizer, NAdamOptimizer
 
+    Layer, Loss
+
     Convolution, Pooling, Dense, Dropout, Flatten, Sequential
 
     CategoricalCrossEntropy
+
+    KaimingInit, XavierInit
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

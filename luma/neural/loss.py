@@ -1,6 +1,7 @@
 import numpy as np
 
-from luma.interface.util import Matrix, Loss
+from luma.interface.util import Matrix
+from luma.neural.base import Loss
 
 
 __all__ = "CategoricalCrossEntropy"
@@ -22,3 +23,6 @@ class CategoricalCrossEntropy(Loss):
         y_pred = np.clip(y_pred, self.epsilon, 1 - self.epsilon)
         grad = (y_pred - y_true) / m
         return grad
+
+
+# TODO: Add more losses

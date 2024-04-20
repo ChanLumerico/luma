@@ -13,6 +13,9 @@ from luma.neural.optimizer import SGDOptimizer
 __all__ = ("MLPClassifier", "MLPRegressor")
 
 
+# TODO: Possibly change MLPs into a single DNN with `Sequential`
+
+
 class MLPClassifier(Estimator, Estimator.NeuralNet, Supervised):
     """
     An MLP (Multilayer Perceptron) is a type of neural network composed

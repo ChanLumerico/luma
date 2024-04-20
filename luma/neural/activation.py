@@ -58,5 +58,5 @@ class Softmax:
         exps = np.exp(X - np.max(X, axis=1, keepdims=True))
         return exps / np.sum(exps, axis=1, keepdims=True)
 
-    def grad(self, _: Matrix) -> Matrix:
-        NotImplemented
+    def grad(self, X: Matrix) -> Matrix:
+        return X

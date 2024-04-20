@@ -1,8 +1,8 @@
-from typing import Any, AnyStr, Callable, Literal, Self, Tuple, Type, TypeGuard
+from typing import Any, AnyStr, Callable, Literal, Self, Type, TypeGuard
 import numpy as np
 
 from luma.interface.exception import UnsupportedParameterError, InvalidRangeError
-from luma.neural import activation
+from luma.neural import activation, init
 
 
 __all__ = (
@@ -16,10 +16,9 @@ __all__ = (
     "DBUtil",
     "KernelUtil",
     "ActivationUtil",
+    "InitUtil",
     "Clone",
     "ParamRange",
-    "Layer",
-    "Loss",
 )
 
 
@@ -353,10 +352,10 @@ class ActivationUtil:
     Properties
     ----------
     For getting an activation function class:
-        ```py
-        @property
-        def activation_type(self) -> type
-        ```
+    ```py
+    @property
+    def activation_type(self) -> type
+    ```
 
     Examples
     --------
@@ -543,93 +542,33 @@ class ParamRange:
             NotImplemented
 
 
-class Layer:
-    """
-    An internal class for layers in neural networks.
+class InitUtil:
 
-    Neural network layers are composed of interconnected nodes,
-    each performing computations on input data. Common types include
-    fully connected, convolutional, and recurrent layers, each
-    serving distinct roles in learning from data.
+    InitType = Literal["he", "kaiming", "xavier", "auto", "random"]
 
-    Attributes
-    ----------
-    - `weights_` : Weight tensor
-    - `biases_` : Bias tensor
-    - `dX` : Gradient w.r.t. the input
-    - `dW` : Gradient w.r.t. the weights
-    - `dB` : Gradient w.r.t. the biases
-    - `optimizer` : Optimizer for certain layer
-    - `out_shape` : Shape of the output when forwarding
-
-    Properties
-    ----------
-    To get its parameter size (weights, biases):
-    ```py
-    (property) param_size: Tuple[int, int]
-    ```
-    """
-
-    def __init__(self) -> None:
-        self.input_: Tensor = None
-        self.weights_: Tensor = None
-        self.biases_: Vector = None
-
-        self.dX: Tensor = None
-        self.dW: Tensor = None
-        self.dB: Tensor = None
-
-        self.optimizer: object = None
-        self.out_shape: tuple = None
-
-    def forward(self) -> Tensor: ...
-
-    def backward(self) -> Tensor: ...
-
-    def update(self) -> None:
-        if self.optimizer is None:
-            return
-        weights_, biases_ = self.optimizer.update(
-            self.weights_, self.biases_, self.dW, self.dB
-        )
-        self.weights_ = Tensor(weights_)
-        self.biases_ = Tensor(biases_)
+    def __init__(
+        self,
+        initializer: InitType,
+        activation: ActivationUtil.FuncType,
+    ) -> None:
+        self.initializer = initializer
+        self.activation = activation
 
     @property
-    def param_size(self) -> Tuple[int, int]:
-        w_size, b_size = 0, 0
-        if self.weights_ is not None:
-            w_size += len(self.weights_.flatten())
-        if self.biases_ is not None:
-            b_size += len(self.biases_.flatten())
+    def initializer_type(self) -> type | None:
+        if self.initializer == "auto":
+            return self._auto_init()
+        else:
+            return self._manual_init()
 
-        return w_size, b_size
+    def _manual_init(self) -> type | None:
+        if self.initializer in ("he", "kaiming"):
+            return init.KaimingInit
+        elif self.initializer in ("xavier"):
+            return init.XavierInit
 
-    def __str__(self) -> str:
-        return type(self).__name__
-
-    def __repr__(self) -> str:
-        w_size, b_size = self.param_size
-        return (
-            f"{type(self).__name__}: "
-            + f"({w_size:,} weights, {b_size:,} biases)"
-            + f" -> {w_size + b_size:,} params"
-        )
-
-
-class Loss:
-    """
-    An internal class for loss functions used in neural networks.
-
-    Loss functions, integral to the training process of machine
-    learning models, serve as crucial metrics assessing the disparity
-    between predicted outcomes and ground truth labels. They play a
-    pivotal role in optimization algorithms, guiding parameter updates
-    towards minimizing the discrepancy between predictions and true values.
-    """
-
-    def __init__(self) -> None: ...
-
-    def loss(self) -> float: ...
-
-    def grad(self) -> Matrix: ...
+    def _auto_init(self) -> type | None:
+        if self.activation in ("relu", "ReLU"):
+            return init.KaimingInit
+        elif self.activation in ("tanh", "sigmoid", "sig"):
+            return init.XavierInit
