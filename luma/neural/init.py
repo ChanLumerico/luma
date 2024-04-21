@@ -36,7 +36,27 @@ class KaimingInit(Initializer):
         )
 
 
-class XavierInit(Initializer): ...
+class XavierInit(Initializer):
+    def __init__(self, random_state: int = None) -> None:
+        super().__init__()
+        self.rs_ = np.random.RandomState(random_state)
 
+    def init_2d(self, input_size: int, output_size: int) -> TensorLike:
+        stddev = np.sqrt(2.0 / (input_size + output_size))
+        return self.rs_.normal(
+            0.0,
+            stddev,
+            (input_size, output_size),
+        )
 
-# TODO: Further implementation
+    def init_4d(
+        self, input_size: int, output_size: int, height: int, width: int
+    ) -> TensorLike:
+        stddev = np.sqrt(
+            2.0 / (input_size * height * width + output_size * height * width)
+        )
+        return self.rs_.normal(
+            0.0,
+            stddev,
+            (input_size, output_size, height, width),
+        )

@@ -544,7 +544,21 @@ class ParamRange:
 
 class InitUtil:
     """
-    TODO: Write docstring
+    An utility class for weight initializers used in neural networks.
+
+    Parameters
+    ----------
+    `initializer` : Name of an initializer (`InitType`)
+    `activation` : Name of an activation function (`FuncType`)
+
+    Properties
+    ----------
+    To get the corresponding initializer type:
+    ```py
+    @property
+    def initializer_type(self) -> type | None
+    # `None` for random init
+    ```
     """
 
     InitType = Literal["he", "kaiming", "xavier", "auto", "random"]
