@@ -4,6 +4,7 @@ import numpy as np
 
 from luma.interface.typing import Matrix, Tensor, Vector
 from luma.core.base import ModelBase
+from luma.interface.util import InitUtil
 
 
 __all__ = ("Layer", "Loss", "Initializer")
@@ -60,6 +61,24 @@ class Layer(ModelBase):
         )
         self.weights_ = Tensor(weights_)
         self.biases_ = Tensor(biases_)
+
+    def init_params(self, w_shape: tuple, b_shape: tuple) -> None:
+        init_type_: type = InitUtil(
+            self.initializer,
+            self.activation,
+        ).initializer_type
+
+        if init_type_ is None:
+            self.weights_ = 0.01 * self.rs_.randn(*w_shape)
+        else:
+            if len(w_shape) == 2:
+                self.weights_ = init_type_(self.random_state).init_2d(*w_shape)
+            elif len(w_shape) == 4:
+                self.weights_ = init_type_(self.random_state).init_4d(*w_shape)
+            else:
+                NotImplemented
+
+        self.biases_: Matrix = np.zeros(b_shape)
 
     @property
     def param_size(self) -> Tuple[int, int]:
@@ -118,7 +137,8 @@ class Initializer(ABC):
     that define methods for 2D and 4D weight tensors.
     """
 
-    def __init__(self) -> None: ...
+    def __init__(self, random_state: int) -> None:
+        self.rs_ = np.random.RandomState(random_state)
 
     @classmethod
     def __class_alias__(cls) -> None: ...

@@ -78,27 +78,15 @@ class Convolution(Layer):
         self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(self.random_state)
 
-        init_type_: type = InitUtil(
-            self.initializer,
-            self.activation,
-        ).initializer_type
-
-        if init_type_ is None:
-            self.weights_ = 0.01 * self.rs_.randn(
+        self.init_params(
+            w_shape=(
                 self.out_channels,
                 self.in_channels,
                 self.filter_size,
                 self.filter_size,
-            )
-        else:
-            self.weights_ = init_type_(self.random_state).init_4d(
-                self.out_channels,
-                self.in_channels,
-                self.filter_size,
-                self.filter_size,
-            )
-        self.biases_: Matrix = np.zeros((1, self.out_channels))
-
+            ),
+            b_shape=(1, self.out_channels),
+        )
         self.set_param_ranges(
             {
                 "in_channels": ("0<,+inf", int),
@@ -375,23 +363,10 @@ class Dense(Layer):
         self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(self.random_state)
 
-        init_type_: type = InitUtil(
-            self.initializer,
-            self.activation,
-        ).initializer_type
-
-        if init_type_ is None:
-            self.weights_ = 0.01 * self.rs_.randn(
-                self.in_features,
-                self.out_features,
-            )
-        else:
-            self.weights_ = init_type_(self.random_state).init_2d(
-                self.in_features,
-                self.out_features,
-            )
-        self.biases_: Matrix = np.zeros((1, self.out_features))
-
+        self.init_params(
+            w_shape=(self.in_features, self.out_features),
+            b_shape=(1, self.out_features),
+        )
         self.set_param_ranges(
             {
                 "in_features": ("0<,+inf", int),
