@@ -2,7 +2,8 @@ from typing import Self, Tuple
 from scipy.linalg import svd, eigh
 import numpy as np
 
-from luma.interface.util import Matrix, Vector, KernelUtil
+from luma.interface.typing import Matrix, Vector
+from luma.interface.util import KernelUtil
 from luma.core.super import Transformer, Unsupervised, Supervised
 from luma.interface.exception import (
     NotFittedError,

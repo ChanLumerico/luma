@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
+import numpy as np
 
-from luma.interface.util import Matrix, Tensor, Vector
+from luma.interface.typing import Matrix, Tensor, Vector
 from luma.core.base import ModelBase
 
 
@@ -93,7 +94,8 @@ class Loss(ABC):
     towards minimizing the discrepancy between predictions and true values.
     """
 
-    def __init__(self) -> None: ...
+    def __init__(self) -> None:
+        self.epsilon = 1e-12
 
     @abstractmethod
     def loss(self) -> float: ...
@@ -101,10 +103,19 @@ class Loss(ABC):
     @abstractmethod
     def grad(self) -> Matrix: ...
 
+    def _clip(self, y: Matrix) -> Matrix:
+        return np.clip(y, self.epsilon, 1 - self.epsilon)
+
 
 class Initializer(ABC):
     """
-    TODO: Write docstring
+    Abstract base class for initializing neural network weights.
+
+    This class provides a structured way to implement weight
+    initialization methods for different types of layers in a
+    neural network.
+    The class must be inherited by specific initializer implementations
+    that define methods for 2D and 4D weight tensors.
     """
 
     def __init__(self) -> None: ...

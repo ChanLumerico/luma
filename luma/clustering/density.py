@@ -4,7 +4,7 @@ from scipy.spatial.distance import cdist
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Unsupervised
-from luma.interface.util import Matrix, Vector, Scalar
+from luma.interface.typing import Matrix, Vector, Scalar
 from luma.interface.exception import NotFittedError, NotConvergedError
 from luma.interface.exception import UnsupportedParameterError
 

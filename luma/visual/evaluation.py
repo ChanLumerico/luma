@@ -3,7 +3,7 @@ from matplotlib.colors import ListedColormap
 import matplotlib.pyplot as plt
 import numpy as np
 
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.core.super import Evaluator, Visualizer, Estimator
 from luma.model_selection.split import TrainTestSplit
 from luma.preprocessing.encoder import LabelBinarizer

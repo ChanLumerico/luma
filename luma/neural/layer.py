@@ -2,7 +2,8 @@ from typing import Any, List, Literal, Self, Tuple
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.util import Matrix, Tensor, Clone, ActivationUtil, InitUtil
+from luma.interface.typing import Matrix, Tensor
+from luma.interface.util import ActivationUtil, InitUtil, Clone
 from luma.interface.exception import UnsupportedParameterError
 from luma.neural.base import Layer, Loss
 
@@ -27,12 +28,14 @@ class Convolution(Layer):
 
     Parameters
     ----------
-    `n_filters` : Number of filters(kernels) to use
+    `in_channels` : Number of input channels
+    `out_channels` : Number of output channels(filters)
     `filter_size`: Size of each filter
     `stride` : Step size for filters during convolution
     `padding` : Padding stratagies
     (`valid` for no padding, `same` for typical 0-padding)
     `activation` : Type of activation function
+    `initializer` : Type of weight initializer (default 'auto')
     `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
     `lambda_` : L2-regularization strength
     `random_state` : Seed for various random sampling processes
@@ -48,7 +51,8 @@ class Convolution(Layer):
 
     def __init__(
         self,
-        n_filters: int,
+        in_channels: int,
+        out_channels: int,
         filter_size: int,
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
@@ -59,7 +63,8 @@ class Convolution(Layer):
         random_state: int = None,
     ) -> None:
         super().__init__()
-        self.n_filters = n_filters
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.filter_size = filter_size
         self.stride = stride
         self.padding = padding
@@ -73,50 +78,80 @@ class Convolution(Layer):
         self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(self.random_state)
 
-        self.biases_: Matrix = np.zeros((1, self.n_filters))
+        init_type_: type = InitUtil(
+            self.initializer,
+            self.activation,
+        ).initializer_type
+
+        if init_type_ is None:
+            self.weights_ = 0.01 * self.rs_.randn(
+                self.out_channels,
+                self.in_channels,
+                self.filter_size,
+                self.filter_size,
+            )
+        else:
+            self.weights_ = init_type_(self.random_state).init_4d(
+                self.out_channels,
+                self.in_channels,
+                self.filter_size,
+                self.filter_size,
+            )
+        self.biases_: Matrix = np.zeros((1, self.out_channels))
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def forward(self, X: Tensor) -> Tensor:
         self.input_ = X
         batch_size, channels, height, width = X.shape
+        if self.in_channels != channels:
+            raise ValueError(
+                f"channels of 'X' does not match with 'in_channels'! "
+                + f"({self.in_channels}!={channels})"
+            )
 
-        if self.weights_ is None:
-            init_type_: type = InitUtil(
-                self.initializer, self.activation
-            ).initializer_type
+        pad_h, pad_w, padded_h, padded_w = self._get_padding_dim(height, width)
 
-            if init_type_ is None:
-                self.weights_ = 0.01 * self.rs_.randn(
-                    self.n_filters, channels, self.filter_size, self.filter_size
-                )
-            else:
-                self.weights_ = init_type_(self.random_state).init_4d(
-                    self.n_filters, channels, self.filter_size, self.filter_size
-                )
+        out_height = ((padded_h - self.filter_size) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size) // self.stride) + 1
 
-        pad_h, pad_w, padded_height, padded_width = self._get_padding_dim(height, width)
-
-        out_height = ((padded_height - self.filter_size) // self.stride) + 1
-        out_width = ((padded_width - self.filter_size) // self.stride) + 1
-
-        out: Tensor = np.zeros((batch_size, self.n_filters, out_height, out_width))
+        out: Tensor = np.zeros(
+            (
+                batch_size,
+                self.out_channels,
+                out_height,
+                out_width,
+            )
+        )
         self.out_shape = out.shape
 
         X_padded = np.pad(
             X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
         )
-        X_fft = np.fft.rfftn(X_padded, s=(padded_height, padded_width), axes=[2, 3])
+        X_fft = np.fft.rfftn(X_padded, s=(padded_h, padded_w), axes=[2, 3])
         filter_fft = np.fft.rfftn(
-            self.weights_, s=(padded_height, padded_width), axes=[2, 3]
+            self.weights_,
+            s=(padded_h, padded_w),
+            axes=[2, 3],
         )
 
         for i in range(batch_size):
-            for f in range(self.n_filters):
+            for f in range(self.out_channels):
                 result_fft = np.sum(X_fft[i] * filter_fft[f], axis=0)
-                result = np.fft.irfftn(result_fft, s=(padded_height, padded_width))
+                result = np.fft.irfftn(result_fft, s=(padded_h, padded_w))
 
                 sampled_result = result[
-                    pad_h : padded_height - pad_h : self.stride,
-                    pad_w : padded_width - pad_w : self.stride,
+                    pad_h : padded_h - pad_h : self.stride,
+                    pad_w : padded_w - pad_w : self.stride,
                 ]
                 out[i, f] = sampled_result[:out_height, :out_width]
 
@@ -127,41 +162,43 @@ class Convolution(Layer):
     def backward(self, d_out: Tensor) -> Tensor:
         X = self.input_
         batch_size, channels, height, width = X.shape
-        pad_h, pad_w, padded_height, padded_width = self._get_padding_dim(height, width)
+        pad_h, pad_w, padded_h, padded_w = self._get_padding_dim(height, width)
 
-        dX_padded = np.zeros((batch_size, channels, padded_height, padded_width))
+        dX_padded = np.zeros((batch_size, channels, padded_h, padded_w))
         self.dW = np.zeros_like(self.weights_)
         self.dB = np.zeros_like(self.biases_)
 
         X_padded = np.pad(
             X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
         )
-        X_fft = np.fft.rfftn(X_padded, s=(padded_height, padded_width), axes=[2, 3])
-        d_out_fft = np.fft.rfftn(d_out, s=(padded_height, padded_width), axes=[2, 3])
+        X_fft = np.fft.rfftn(X_padded, s=(padded_h, padded_w), axes=[2, 3])
+        d_out_fft = np.fft.rfftn(d_out, s=(padded_h, padded_w), axes=[2, 3])
 
-        for f in range(self.n_filters):
+        for f in range(self.out_channels):
             self.dB[:, f] = np.sum(d_out[:, f, :, :])
 
-        for f in range(self.n_filters):
+        for f in range(self.out_channels):
             for c in range(channels):
-                filter_d_out_fft = np.sum(X_fft[:, c] * d_out_fft[:, f].conj(), axis=0)
+                filter_d_out_fft = np.sum(
+                    X_fft[:, c] * d_out_fft[:, f].conj(),
+                    axis=0,
+                )
                 self.dW[f, c] = np.fft.irfftn(
-                    filter_d_out_fft, s=(padded_height, padded_width)
+                    filter_d_out_fft,
+                    s=(padded_h, padded_w),
                 )[pad_h : pad_h + self.filter_size, pad_w : pad_w + self.filter_size]
 
         self.dW += 2 * self.lambda_ * self.weights_
 
         for i in range(batch_size):
             for c in range(channels):
-                temp = np.zeros(
-                    (padded_height, padded_width // 2 + 1), dtype=np.complex128
-                )
-                for f in range(self.n_filters):
+                temp = np.zeros((padded_h, padded_w // 2 + 1), dtype=np.complex128)
+                for f in range(self.out_channels):
                     filter_fft = np.fft.rfftn(
-                        self.weights_[f, c], s=(padded_height, padded_width)
+                        self.weights_[f, c], s=(padded_h, padded_w)
                     )
                     temp += filter_fft * d_out_fft[i, f]
-                dX_padded[i, c] = np.fft.irfftn(temp, s=(padded_height, padded_width))
+                dX_padded[i, c] = np.fft.irfftn(temp, s=(padded_h, padded_w))
 
         self.dX = (
             dX_padded[:, :, pad_h:-pad_h, pad_w:-pad_w]
@@ -174,17 +211,17 @@ class Convolution(Layer):
     def _get_padding_dim(self, height: int, width: int) -> Tuple[int, int, int, int]:
         if self.padding == "same":
             pad_h = pad_w = (self.filter_size - 1) // 2
-            padded_height = height + 2 * pad_h
-            padded_width = width + 2 * pad_w
+            padded_h = height + 2 * pad_h
+            padded_w = width + 2 * pad_w
 
         elif self.padding == "valid":
             pad_h = pad_w = 0
-            padded_height = height
-            padded_width = width
+            padded_h = height
+            padded_w = width
         else:
             raise UnsupportedParameterError(self.padding)
 
-        return pad_h, pad_w, padded_height, padded_width
+        return pad_h, pad_w, padded_h, padded_w
 
 
 class Pooling(Layer):
@@ -222,6 +259,14 @@ class Pooling(Layer):
         self.filter_size = filter_size
         self.stride = stride
         self.mode = mode
+
+        self.set_param_ranges(
+            {
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
 
     def forward(self, X: Tensor) -> Tensor:
         self.input_ = X
@@ -290,9 +335,10 @@ class Dense(Layer):
 
     Parameters
     ----------
-    `input_size` : Number of input neurons
-    `output_size`:  Number of output neurons
+    `in_features` : Number of input features
+    `out_features`:  Number of output features
     `activation` : Activation function (Use `Sigmoid` for final dense layer)
+    `initializer` : Type of weight initializer (default `auto`)
     `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
     `lambda_` : L2-regularization strength
     `random_state` : Seed for various random sampling processes
@@ -308,8 +354,8 @@ class Dense(Layer):
 
     def __init__(
         self,
-        input_size: int,
-        output_size: int,
+        in_features: int,
+        out_features: int,
         activation: ActivationUtil.FuncType = "relu",
         initializer: InitUtil.InitType = "auto",
         optimizer: Optimizer = None,
@@ -317,8 +363,8 @@ class Dense(Layer):
         random_state: int = None,
     ) -> None:
         super().__init__()
-        self.input_size = input_size
-        self.output_size = output_size
+        self.in_features = in_features
+        self.out_features = out_features
         self.activation = activation
         self.initializer = initializer
         self.optimizer = optimizer
@@ -329,14 +375,31 @@ class Dense(Layer):
         self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(self.random_state)
 
-        init_type_: type = InitUtil(self.initializer, self.activation).initializer_type
+        init_type_: type = InitUtil(
+            self.initializer,
+            self.activation,
+        ).initializer_type
+
         if init_type_ is None:
-            self.weights_ = 0.01 * self.rs_.randn(self.input_size, self.output_size)
+            self.weights_ = 0.01 * self.rs_.randn(
+                self.in_features,
+                self.out_features,
+            )
         else:
             self.weights_ = init_type_(self.random_state).init_2d(
-                self.input_size, self.output_size
+                self.in_features,
+                self.out_features,
             )
-        self.biases_: Matrix = np.zeros((1, self.output_size))
+        self.biases_: Matrix = np.zeros((1, self.out_features))
+
+        self.set_param_ranges(
+            {
+                "in_features": ("0<,+inf", int),
+                "out_features": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
 
     def forward(self, X: Matrix) -> Matrix:
         self.input_ = X
@@ -377,7 +440,7 @@ class Dropout(Layer):
 
     """
 
-    def __init__(self, dropout_rate: float = 0.1, random_state: int = None) -> None:
+    def __init__(self, dropout_rate: float = 0.5, random_state: int = None) -> None:
         super().__init__()
         self.dropout_rate = dropout_rate
         self.random_state = random_state
@@ -475,9 +538,6 @@ class Sequential(Layer):
     -----
     - Before any execution, an optimizer and a loss function must be assigned.
 
-    - Use `param_size` after at least one forwarding to get the proper
-        size of its parameter.
-
     - For multi-class classification, the target variable `y`
         must be one-hot encoded.
 
@@ -485,7 +545,7 @@ class Sequential(Layer):
     --------
     ```py
     model = Sequential(
-        ("conv_1", Convolution(6, 3, activation="relu")),
+        ("conv_1", Convolution(3, 6, 3, activation="relu")),
         ("pool_1", Pooling(2, 2, mode="max")),
         ...,
         ("drop", Dropout(0.1)),
@@ -631,7 +691,7 @@ class Sequential(Layer):
 
     def __repr__(self) -> str:
         rep = f"{type(self).__name__} Configuration\n"
-        rep += "-" * 60 + "\n"
+        rep += "-" * 70 + "\n"
         for name, layer in self.layers:
             rep += f"({name}) {repr(layer)}\n"
 
@@ -639,5 +699,5 @@ class Sequential(Layer):
         rep += f"\nTotal Layers: {len(self.layers)}"
         rep += f"\nTotal Params: ({w_size:,} weights, {b_size:,} biases)"
         rep += f" -> {w_size + b_size:,}\n"
-        rep += "-" * 60
+        rep += "-" * 70
         return rep

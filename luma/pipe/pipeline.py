@@ -2,7 +2,7 @@ from typing import Dict, Literal, Self, Tuple, List, Any
 
 from luma.core.super import Estimator, Transformer, Evaluator
 from luma.core.super import Supervised
-from luma.interface.util import Matrix
+from luma.interface.typing import Matrix
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.classification import Accuracy
 from luma.metric.regression import MeanSquaredError

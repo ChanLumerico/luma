@@ -1,7 +1,8 @@
 from typing import Literal, Self
 import numpy as np
 
-from luma.interface.util import Matrix, Vector, Scalar, KernelUtil
+from luma.interface.typing import Matrix, Vector, Scalar
+from luma.interface.util import KernelUtil
 from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.clustering import SilhouetteCoefficient

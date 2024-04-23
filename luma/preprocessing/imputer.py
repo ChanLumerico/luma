@@ -4,7 +4,7 @@ from scipy.stats import mode
 import numpy as np
 import pandas as pd
 
-from luma.interface.util import Matrix
+from luma.interface.typing import Matrix
 from luma.core.super import Transformer
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 

@@ -1,7 +1,7 @@
 from typing import Literal, Self
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.typing import Matrix
 from luma.interface.exception import NotFittedError
 from luma.core.super import Estimator, Evaluator
 from luma.metric.regression import MeanSquaredError

@@ -2,8 +2,10 @@ from typing import List, Literal, Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
-from luma.interface.util import Matrix, Vector, Scalar, Clone
+from luma.interface.typing import Matrix, Vector, Scalar
+from luma.interface.util import Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
+
 from luma.metric.classification import Accuracy
 from luma.metric.regression import MeanSquaredError
 from luma.preprocessing.encoder import LabelEncoder

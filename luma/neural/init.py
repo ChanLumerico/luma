@@ -1,10 +1,9 @@
 import numpy as np
 
+from luma.interface.typing import Matrix, Tensor
+
 
 __all__ = ("KaimingInit", "XavierInit")
-
-
-type TensorLike = TensorLike
 
 
 class Initializer:
@@ -17,7 +16,7 @@ class KaimingInit(Initializer):
         super().__init__()
         self.rs_ = np.random.RandomState(random_state)
 
-    def init_2d(self, input_size: int, output_size: int) -> TensorLike:
+    def init_2d(self, input_size: int, output_size: int) -> Matrix:
         stddev = np.sqrt(2.0 / input_size)
         return self.rs_.normal(
             0.0,
@@ -27,7 +26,7 @@ class KaimingInit(Initializer):
 
     def init_4d(
         self, input_size: int, output_size: int, height: int, width: int
-    ) -> TensorLike:
+    ) -> Tensor:
         stddev = np.sqrt(2.0 / (input_size * height * width))
         return self.rs_.normal(
             0.0,
@@ -41,7 +40,7 @@ class XavierInit(Initializer):
         super().__init__()
         self.rs_ = np.random.RandomState(random_state)
 
-    def init_2d(self, input_size: int, output_size: int) -> TensorLike:
+    def init_2d(self, input_size: int, output_size: int) -> Matrix:
         stddev = np.sqrt(2.0 / (input_size + output_size))
         return self.rs_.normal(
             0.0,
@@ -51,7 +50,7 @@ class XavierInit(Initializer):
 
     def init_4d(
         self, input_size: int, output_size: int, height: int, width: int
-    ) -> TensorLike:
+    ) -> Tensor:
         stddev = np.sqrt(
             2.0 / (input_size * height * width + output_size * height * width)
         )

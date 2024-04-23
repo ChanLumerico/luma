@@ -2,7 +2,7 @@ from typing import Literal, Self
 from scipy.stats import mode
 import numpy as np
 
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.classifier.tree import DecisionTreeClassifier
 from luma.regressor.tree import DecisionTreeRegressor
 from luma.core.super import Estimator, Evaluator, Supervised

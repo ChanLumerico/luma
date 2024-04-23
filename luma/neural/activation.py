@@ -1,10 +1,9 @@
 import numpy as np
 
+from luma.interface.typing import Matrix
 
-__all__ = ("ReLU", "LeakyReLU", "ELU", "Tanh", "Sigmoid", "Softmax")
 
-
-type Matrix = Matrix
+__all__ = ("ReLU", "LeakyReLU", "ELU", "Tanh", "Sigmoid")
 
 
 class ReLU:
@@ -51,12 +50,3 @@ class Sigmoid:
 
     def grad(self, X: Matrix) -> Matrix:
         return X * (1 - X)
-
-
-class Softmax:
-    def func(self, X: Matrix) -> Matrix:
-        exps = np.exp(X - np.max(X, axis=1, keepdims=True))
-        return exps / np.sum(exps, axis=1, keepdims=True)
-
-    def grad(self, X: Matrix) -> Matrix:
-        return X

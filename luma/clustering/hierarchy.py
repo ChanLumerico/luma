@@ -4,7 +4,7 @@ from scipy.cluster.hierarchy import linkage, dendrogram
 import matplotlib.pyplot as plt
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.typing import Matrix
 from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.clustering.kmeans import KMeansClusteringPlus

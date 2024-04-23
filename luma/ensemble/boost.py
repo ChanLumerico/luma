@@ -3,8 +3,10 @@ from scipy.special import softmax
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
-from luma.interface.util import Matrix, Vector, Clone
+from luma.interface.typing import Matrix, Vector
+from luma.interface.util import Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
+
 from luma.classifier.tree import DecisionTreeClassifier
 from luma.regressor.tree import DecisionTreeRegressor
 from luma.preprocessing.encoder import LabelBinarizer

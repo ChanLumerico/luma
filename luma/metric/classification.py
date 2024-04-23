@@ -1,6 +1,6 @@
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.typing import Matrix
 from luma.core.super import Evaluator
 
 

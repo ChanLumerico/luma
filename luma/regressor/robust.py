@@ -2,7 +2,7 @@ from typing import Self, Tuple
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.interface.exception import NotFittedError
 from luma.metric.regression import MeanSquaredError
 from luma.regressor.linear import LinearRegressor

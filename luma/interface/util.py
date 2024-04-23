@@ -1,15 +1,12 @@
-from typing import Any, AnyStr, Callable, Literal, Self, Type, TypeGuard
+from typing import Any, AnyStr, Callable, Literal, Optional, Type, TypeGuard
 import numpy as np
 
 from luma.interface.exception import UnsupportedParameterError, InvalidRangeError
+from luma.interface.typing import Matrix, Scalar
 from luma.neural import activation, init
 
 
 __all__ = (
-    "Matrix",
-    "Vector",
-    "Tensor",
-    "Scalar",
     "DecisionTreeNode",
     "NearestNeighbors",
     "SilhouetteUtil",
@@ -20,84 +17,6 @@ __all__ = (
     "Clone",
     "ParamRange",
 )
-
-
-type TensorLike = Matrix | Tensor | Vector
-
-
-class Matrix(np.ndarray):
-    """
-    Internal class for matrices(2D-array) that extends `numpy.ndarray`.
-
-    This class provides a way to create matrix objects that have
-    all the capabilities of numpy arrays with the potential for
-    additional functionalities and readability.
-
-    Example
-    -------
-    >>> m = Matrix([1, 2, 3])
-    >>> isinstance(m, numpy.ndarray) # True
-
-    """
-
-    def __new__(cls, array_like: Any) -> Self:
-        if isinstance(array_like, (list, np.matrix)):
-            obj = np.array(array_like)
-        else:
-            obj = array_like
-        return obj
-
-    def __array_finalize__(self, obj: np.ndarray | None) -> None:
-        if obj is None:
-            return
-
-
-class Vector(Matrix):
-    """
-    Internal class for vectors(1D-array) that extends `Matrix`.
-
-    This class represents a single row/column vector with its
-    type of `numpy.ndarray` or `Matrix`.
-
-    """
-
-    def __new__(cls, array_like: Any) -> Self:
-        if isinstance(array_like, list):
-            obj = Matrix(array_like)
-        else:
-            obj = array_like
-        return obj
-
-
-class Tensor(Matrix):
-    """
-    Internal class for tensors(>=3D-arrray) that extends `Matrix`.
-
-    This class provides a way to create tensor objects that have
-    all the capabilities of numpy arrays with the potential for
-    additional functionalities and readability.
-    """
-
-    type Tensor_3D = "Tensor"
-    type Tensor_4D = "Tensor"
-
-    def __new__(cls, array_like: Any) -> Self:
-        if isinstance(array_like, list):
-            obj = Matrix(array_like)
-        else:
-            obj = array_like
-        return obj
-
-
-class Scalar:
-    """
-    A placeholder class for scalar type.
-
-    This class encompasses `int` and `float`.
-    """
-
-    def __new__(cls, value: int | float) -> Self:
-        return float(value)
 
 
 class DecisionTreeNode:
@@ -357,6 +276,11 @@ class ActivationUtil:
     def activation_type(self) -> type
     ```
 
+    Notes
+    -----
+    When the passed activation is `None`, an identity activation is
+    returned, with its function and gradient being identity functions.
+
     Examples
     --------
     >>> act = ActivationUtil(activation='relu')
@@ -365,17 +289,18 @@ class ActivationUtil:
 
     """
 
-    FuncType = Literal[
-        "relu",
-        "ReLU",
-        "leaky-relu",
-        "leaky-ReLU",
-        "elu",
-        "ELU",
-        "tanh",
-        "sigmoid",
-        "sig",
-        "softmax",
+    FuncType = Optional[
+        Literal[
+            "relu",
+            "ReLU",
+            "leaky-relu",
+            "leaky-ReLU",
+            "elu",
+            "ELU",
+            "tanh",
+            "sigmoid",
+            "sig",
+        ]
     ]
 
     def __init__(self, activation: str) -> None:
@@ -383,6 +308,9 @@ class ActivationUtil:
 
     @property
     def activation_type(self) -> type:
+        if self.activation is None:
+            return self._return_identity()
+
         if self.activation in ("relu", "ReLU"):
             return activation.ReLU
         elif self.activation in ("leaky-relu", "leaky-ReLU"):
@@ -393,8 +321,18 @@ class ActivationUtil:
             return activation.Tanh
         elif self.activation in ("sigmoid", "sig"):
             return activation.Sigmoid
-        elif self.activation in ("softmax"):
-            return activation.Softmax
+        else:
+            raise UnsupportedParameterError(self.activation)
+
+    def _return_identity(self) -> type:
+        class _Identity:
+            def func(self, X: Matrix) -> Matrix:
+                return X
+
+            def grad(self, X: Matrix) -> Matrix:
+                return X
+
+        return _Identity
 
 
 class Clone:

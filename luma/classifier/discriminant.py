@@ -4,7 +4,8 @@ from scipy.stats import multivariate_normal
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
-from luma.interface.util import Matrix, Scalar, Vector, KernelUtil
+from luma.interface.typing import Matrix, Scalar, Vector
+from luma.interface.util import KernelUtil
 from luma.interface.exception import NotFittedError
 from luma.metric.classification import Accuracy
 

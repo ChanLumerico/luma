@@ -2,7 +2,7 @@ from typing import Tuple
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.util import Tensor
+from luma.interface.typing import Tensor
 
 
 __all__ = (

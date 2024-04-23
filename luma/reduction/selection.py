@@ -3,8 +3,10 @@ from typing import Tuple
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Transformer, Supervised
-from luma.interface.util import Matrix, Vector, Clone
+from luma.interface.typing import Matrix, Vector
+from luma.interface.util import Clone
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
+
 from luma.model_selection.split import TrainTestSplit
 from luma.model_selection.cv import CrossValidator
 from luma.model_selection.fold import FoldType, KFold

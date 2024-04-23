@@ -3,7 +3,7 @@ import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.preprocessing.encoder import LabelBinarizer
 from luma.metric.classification import Accuracy
 from luma.metric.regression import MeanSquaredError

@@ -3,7 +3,7 @@ from scipy.stats import rv_continuous, rv_discrete
 import numpy as np
 import random
 
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.core.super import Estimator, Evaluator, Optimizer
 from luma.interface.exception import NotFittedError
 from luma.model_selection.cv import CrossValidator

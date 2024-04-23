@@ -6,7 +6,7 @@ import numpy as np
 
 from luma.clustering.kmeans import KMeansClusteringPlus
 from luma.clustering.hierarchy import AgglomerativeClustering, DivisiveClustering
-from luma.interface.util import Matrix
+from luma.interface.typing import Matrix
 from luma.core.super import Estimator, Evaluator, Unsupervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.metric.clustering import SilhouetteCoefficient

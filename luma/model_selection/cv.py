@@ -2,7 +2,7 @@ from typing import Tuple
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.model_selection.fold import FoldType, KFold
 
 

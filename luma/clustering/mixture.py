@@ -2,7 +2,7 @@ from typing import Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Unsupervised
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.metric.clustering import SilhouetteCoefficient
 from luma.interface.exception import NotFittedError
 

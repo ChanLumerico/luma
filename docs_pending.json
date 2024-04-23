@@ -3,86 +3,77 @@
         {
             "name": "Layer",
             "script": "luma.neural.base",
-            "inheriting": null,
-            "is_written": false
+            "inheriting": null
         },
         {
             "name": "Loss",
             "script": "luma.neural.base",
-            "inheriting": null,
-            "is_written": false
+            "inheriting": null
         },
         {
             "name": "Convolution",
             "script": "luma.neural.layer",
-            "inheriting": "Layer",
-            "is_written": false
+            "inheriting": "Layer"
         },
         {
             "name": "Pooling",
             "script": "luma.neural.layer",
-            "inheriting": "Layer",
-            "is_written": false
+            "inheriting": "Layer"
         },
         {
             "name": "Dense",
             "script": "luma.neural.layer",
-            "inheriting": "Layer",
-            "is_written": false
+            "inheriting": "Layer"
         },
         {
             "name": "Dropout",
             "script": "luma.neural.layer",
-            "inheriting": "Layer",
-            "is_written": false
+            "inheriting": "Layer"
         },
         {
             "name": "Flatten",
             "script": "luma.neural.layer",
-            "inheriting": "Layer",
-            "is_written": false
+            "inheriting": "Layer"
         },
         {
             "name": "Sequential",
             "script": "luma.neural.layer",
-            "inheriting": "Layer",
-            "is_written": false
+            "inheriting": "Layer"
         },
         {
             "name": "CategoricalCrossEntropy",
             "script": "luma.neural.loss",
-            "inheriting": "Loss",
-            "is_written": false
+            "inheriting": "Loss"
         },
         {
             "name": "KaimingInit",
             "script": "luma.neural.init",
-            "inheriting": "Initializer",
-            "is_written": false
+            "inheriting": "Initializer"
         },
         {
             "name": "XavierInit",
             "script": "luma.neural.init",
-            "inheriting": "Initializer",
-            "is_written": false
+            "inheriting": "Initializer"
         },
         {
             "name": "InitUtil",
             "script": "util",
-            "inheriting": null,
-            "is_written": false
+            "inheriting": null
         },
         {
             "name": "BatchGenerator",
             "script": "split",
-            "inheriting": null,
-            "is_written": false
+            "inheriting": null
         },
         {
             "name": "Initializer",
             "script": "luma.neural.base",
-            "inheriting": null,
-            "is_written": false
+            "inheriting": null
+        },
+        {
+            "name": "TensorLike",
+            "script": "luma.interface.typing",
+            "inheriting": null
         }
     ]
 }

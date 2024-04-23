@@ -3,7 +3,7 @@ import numpy as np
 
 from luma.core.super import Estimator, Transformer, Evaluator, Supervised
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.classifier.logistic import SoftmaxRegressor
 from luma.regressor.linear import LinearRegressor
 from luma.metric.classification import Accuracy

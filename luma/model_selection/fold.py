@@ -3,7 +3,7 @@ from itertools import chain
 from typing import Generator, Tuple, Union
 import numpy as np
 
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 
 FoldType = Union["KFold", "StratifiedKFold", "GroupKFold"]
 

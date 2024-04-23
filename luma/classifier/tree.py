@@ -1,7 +1,7 @@
 from typing import Literal, Self, Tuple
 import numpy as np
 
-from luma.interface.util import Matrix, Vector
+from luma.interface.typing import Matrix, Vector
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.util import DecisionTreeNode

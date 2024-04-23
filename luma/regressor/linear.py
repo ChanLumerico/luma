@@ -1,7 +1,8 @@
 from typing import Self
 import numpy as np
 
-from luma.interface.util import Matrix, Vector, KernelUtil
+from luma.interface.typing import Matrix, Vector
+from luma.interface.util import KernelUtil
 from luma.interface.exception import NotFittedError
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.metric.regression import MeanSquaredError

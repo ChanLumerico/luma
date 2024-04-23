@@ -2,8 +2,10 @@ from typing import Any, Dict, Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
-from luma.interface.util import Matrix, Vector, Clone
+from luma.interface.typing import Matrix, Vector
+from luma.interface.util import Clone
 from luma.interface.exception import NotFittedError
+
 from luma.classifier.tree import DecisionTreeClassifier
 from luma.regressor.tree import DecisionTreeRegressor
 from luma.metric.classification import Accuracy

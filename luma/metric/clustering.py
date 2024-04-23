@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from luma.core.super import Evaluator, Visualizer
-from luma.interface.util import Matrix, SilhouetteUtil, DBUtil
+from luma.interface.util import SilhouetteUtil, DBUtil
+from luma.interface.typing import Matrix
 
 
 __all__ = ("SilhouetteCoefficient", "DaviesBouldin", "Inertia")

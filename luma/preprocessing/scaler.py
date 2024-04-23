@@ -1,7 +1,7 @@
 from typing import Self
 import numpy as np
 
-from luma.interface.util import Matrix
+from luma.interface.typing import Matrix
 from luma.core.super import Transformer
 from luma.interface.exception import NotFittedError
 

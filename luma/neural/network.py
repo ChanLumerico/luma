@@ -2,11 +2,12 @@ from typing import Any, Dict, List, Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
-from luma.interface.util import Matrix, Vector, ActivationUtil
+from luma.interface.typing import Matrix, Vector
+from luma.interface.util import ActivationUtil
 from luma.interface.exception import NotFittedError
+
 from luma.metric.classification import Accuracy
 from luma.metric.regression import MeanSquaredError
-from luma.neural.activation import Softmax
 from luma.neural.optimizer import SGDOptimizer
 
 
@@ -123,7 +124,7 @@ class MLPClassifier(Estimator, Estimator.NeuralNet, Supervised):
 
         act = ActivationUtil(self.activation)
         self.act_ = act.activation_type()
-        self.softmax_ = Softmax()
+        # self.softmax_ = Softmax() # NOTE: Removed
         self.rs_ = np.random.RandomState(self.random_state)
 
         self.optimizer.set_params(

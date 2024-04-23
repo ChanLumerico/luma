@@ -1,7 +1,7 @@
 from typing import Iterator, Tuple
 import numpy as np
 
-from luma.interface.util import Matrix, Vector, TensorLike
+from luma.interface.typing import Matrix, Vector, TensorLike
 
 
 __all__ = ("TrainTestSplit", "BatchGenerator")

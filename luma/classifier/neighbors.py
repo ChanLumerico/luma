@@ -2,8 +2,8 @@ from typing import Self
 from scipy.spatial import distance_matrix
 import numpy as np
 
-from luma.interface.util import Matrix
 from luma.core.super import Estimator, Supervised, Evaluator
+from luma.interface.typing import Matrix
 from luma.interface.util import NearestNeighbors
 from luma.interface.exception import NotFittedError
 from luma.metric.classification import Accuracy
