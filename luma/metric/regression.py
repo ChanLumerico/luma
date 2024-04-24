@@ -1,7 +1,6 @@
-from typing import *
 import numpy as np
 
-from luma.interface.typing import Matrix
+from luma.interface.typing import Matrix, ClassType
 from luma.core.super import Evaluator
 
 
@@ -15,33 +14,38 @@ __all__ = (
 )
 
 
+@ClassType.non_instantiable()
 class MeanAbsoluteError(Evaluator):
-    @staticmethod
-    def score(y_true: Matrix, y_pred: Matrix) -> float:
+    @classmethod
+    def score(cls, y_true: Matrix, y_pred: Matrix) -> float:
         return np.mean(np.abs(y_true - y_pred))
 
 
+@ClassType.non_instantiable()
 class MeanSquaredError(Evaluator):
-    @staticmethod
-    def score(y_true: Matrix, y_pred: Matrix) -> float:
+    @classmethod
+    def score(cls, y_true: Matrix, y_pred: Matrix) -> float:
         return np.mean((y_true - y_pred) ** 2)
 
 
+@ClassType.non_instantiable()
 class RootMeanSquaredError(Evaluator):
-    @staticmethod
-    def score(y_true: Matrix, y_pred: Matrix) -> float:
+    @classmethod
+    def score(cls, y_true: Matrix, y_pred: Matrix) -> float:
         return np.sqrt(np.mean((y_true - y_pred) ** 2))
 
 
+@ClassType.non_instantiable()
 class MeanAbsolutePercentageError(Evaluator):
-    @staticmethod
-    def score(y_true: Matrix, y_pred: Matrix) -> float:
+    @classmethod
+    def score(cls, y_true: Matrix, y_pred: Matrix) -> float:
         return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
 
 
+@ClassType.non_instantiable()
 class RSquaredScore(Evaluator):
-    @staticmethod
-    def score(y_true: Matrix, y_pred: Matrix) -> float:
+    @classmethod
+    def score(cls, y_true: Matrix, y_pred: Matrix) -> float:
         y_bar = np.mean(y_true)
         sst = np.sum((y_true - y_bar) ** 2)
         ssr = np.sum((y_true - y_pred) ** 2)
@@ -49,9 +53,10 @@ class RSquaredScore(Evaluator):
         return r2
 
 
+@ClassType.non_instantiable()
 class AdjustedRSquaredScore(Evaluator):
-    @staticmethod
-    def score(y_true: Matrix, y_pred: Matrix, n_predictors: int) -> float:
+    @classmethod
+    def score(cls, y_true: Matrix, y_pred: Matrix, n_predictors: int) -> float:
         m = len(y_true)
         y_bar = np.mean(y_true)
         sst = np.sum((y_true - y_bar) ** 2)

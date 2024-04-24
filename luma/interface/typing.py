@@ -1,8 +1,17 @@
-from typing import Any, Self
+from functools import wraps
+from typing import Any, Callable, NoReturn, Self, Type, TypeVar
+import sys
 import numpy as np
 
 
-__all__ = ("TensorLike", "Matrix", "Vector", "Tensor", "Scalar")
+__all__ = (
+    "TensorLike",
+    "Matrix",
+    "Vector",
+    "Tensor",
+    "Scalar",
+    "ClassType",
+)
 
 
 class TensorLike(np.ndarray):
@@ -103,3 +112,51 @@ class Scalar:
 
     def __new__(cls, value: int | float) -> Self:
         return float(value)
+
+
+class ClassType:
+
+    T = TypeVar("T", bound=type)
+
+    @classmethod
+    def non_instantiable(cls) -> Callable:
+        def decorator(cls: Type[cls.T]) -> Type[cls.T]:
+            def wrapper(*args, **kwargs) -> NoReturn:
+                args, kwargs
+                raise TypeError(
+                    f"'{cls.__name__}'" + " is not instantiable!",
+                )
+
+            cls.__new__ = wrapper
+            return cls
+
+        return decorator
+
+    @classmethod
+    def private(cls) -> Callable:
+        def decorator(cls: Type[cls.T]) -> Type[cls.T]:
+
+            @wraps(cls, updated=())
+            class PrivateClassWrapper(cls):
+                def __new__(cls, *args, **kwargs) -> Any:
+                    args, kwargs
+                    caller = sys._getframe(1)
+
+                    if caller.f_globals["__name__"] == cls.__module__:
+                        return super().__new__(cls)
+                    else:
+                        raise TypeError(
+                            f"'{cls.__name__}' is a private class and cannot "
+                            + "be instantiated outside its module.",
+                        )
+
+                def __init__(self, *args, **kwargs) -> None:
+                    super(PrivateClassWrapper, self).__init__(*args, **kwargs)
+
+            for attr in dir(cls):
+                if not attr.startswith("_"):
+                    setattr(PrivateClassWrapper, attr, getattr(cls, attr))
+
+            return PrivateClassWrapper
+
+        return decorator

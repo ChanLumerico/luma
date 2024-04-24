@@ -1,9 +1,10 @@
+from enum import Enum
 from typing import Any, List, Literal, Self, Tuple
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Matrix, Tensor
-from luma.interface.util import ActivationUtil, InitUtil, Clone
+from luma.interface.typing import Matrix, Tensor, ClassType
+from luma.interface.util import InitUtil, Clone
 from luma.interface.exception import UnsupportedParameterError
 from luma.neural.base import Layer, Loss
 
@@ -14,6 +15,7 @@ __all__ = (
     "Dense",
     "Dropout",
     "Flatten",
+    "Activation",
     "Sequential",
 )
 
@@ -34,8 +36,7 @@ class Convolution(Layer):
     `stride` : Step size for filters during convolution
     `padding` : Padding stratagies
     (`valid` for no padding, `same` for typical 0-padding)
-    `activation` : Type of activation function
-    `initializer` : Type of weight initializer (default 'auto')
+    `initializer` : Type of weight initializer (default `None`)
     `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
     `lambda_` : L2-regularization strength
     `random_state` : Seed for various random sampling processes
@@ -56,8 +57,7 @@ class Convolution(Layer):
         filter_size: int,
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
-        activation: ActivationUtil.FuncType = "relu",
-        initializer: InitUtil.InitType = "auto",
+        initializer: InitUtil.InitType = None,
         optimizer: Optimizer = None,
         lambda_: float = 0.0,
         random_state: int = None,
@@ -68,14 +68,10 @@ class Convolution(Layer):
         self.filter_size = filter_size
         self.stride = stride
         self.padding = padding
-        self.activation = activation
         self.initializer = initializer
         self.optimizer = optimizer
         self.lambda_ = lambda_
         self.random_state = random_state
-
-        act = ActivationUtil(self.activation)
-        self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(self.random_state)
 
         self.init_params(
@@ -144,7 +140,6 @@ class Convolution(Layer):
                 out[i, f] = sampled_result[:out_height, :out_width]
 
         out += self.biases_[:, :, np.newaxis, np.newaxis]
-        out = self.act_.func(out)
         return out
 
     def backward(self, d_out: Tensor) -> Tensor:
@@ -193,7 +188,6 @@ class Convolution(Layer):
             if pad_h > 0 or pad_w > 0
             else dX_padded
         )
-        self.dX = self.act_.grad(self.dX)
         return self.dX
 
     def _get_padding_dim(self, height: int, width: int) -> Tuple[int, int, int, int]:
@@ -325,9 +319,8 @@ class Dense(Layer):
     ----------
     `in_features` : Number of input features
     `out_features`:  Number of output features
-    `activation` : Activation function (Use `Sigmoid` for final dense layer)
-    `initializer` : Type of weight initializer (default `auto`)
-    `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
+    `initializer` : Type of weight initializer (default `None`)
+    `optimizer` : Optimizer for weight update
     `lambda_` : L2-regularization strength
     `random_state` : Seed for various random sampling processes
 
@@ -344,8 +337,7 @@ class Dense(Layer):
         self,
         in_features: int,
         out_features: int,
-        activation: ActivationUtil.FuncType = "relu",
-        initializer: InitUtil.InitType = "auto",
+        initializer: InitUtil.InitType = None,
         optimizer: Optimizer = None,
         lambda_: float = 0.0,
         random_state: int = None,
@@ -353,14 +345,10 @@ class Dense(Layer):
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
-        self.activation = activation
         self.initializer = initializer
         self.optimizer = optimizer
         self.lambda_ = lambda_
         self.random_state = random_state
-
-        act = ActivationUtil(self.activation)
-        self.act_ = act.activation_type()
         self.rs_ = np.random.RandomState(self.random_state)
 
         self.init_params(
@@ -380,13 +368,11 @@ class Dense(Layer):
         self.input_ = X
 
         out = np.dot(X, self.weights_) + self.biases_
-        out = self.act_.func(out)
         self.out_shape = out.shape
         return out
 
     def backward(self, d_out: Matrix) -> Matrix:
         X = self.input_
-        d_out = self.act_.grad(d_out)
 
         self.dX = np.dot(d_out, self.weights_.T)
         self.dW = np.dot(X.T, d_out)
@@ -468,6 +454,77 @@ class Flatten(Layer):
         return dX
 
 
+@ClassType.non_instantiable()
+class Activation:
+    class ReLU(Layer):
+        def __init__(self) -> None:
+            super().__init__()
+
+        def forward(self, X: Tensor) -> Tensor:
+            self.input_ = X
+            return np.maximum(0, X)
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = d_out.copy()
+            self.dX[self.input_ <= 0] = 0
+            return self.dX
+
+    class Sigmoid(Layer):
+        def __init__(self) -> None:
+            super().__init__()
+
+        def forward(self, X: Tensor) -> Tensor:
+            self.output_ = 1 / (1 + np.exp(-X))
+            return self.output_
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = d_out * self.output_ * (1 - self.output_)
+            return self.dX
+
+    class Tanh(Layer):
+        def __init__(self) -> None:
+            super().__init__()
+
+        def forward(self, X: Tensor) -> Tensor:
+            self.output_ = np.tanh(X)
+            return self.output_
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = d_out * (1 - np.square(self.output_))
+            return self.dX
+
+    class LeakyReLU(Layer):
+        def __init__(self, alpha: float = 0.01) -> None:
+            super().__init__()
+            self.alpha = alpha
+
+        def forward(self, X: Tensor) -> Tensor:
+            self.input_ = X
+            return np.where(X > 0, X, X * self.alpha)
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = d_out * np.where(self.input_ > 0, 1, self.alpha)
+            return self.dX
+
+    class Softmax(Layer):
+        def __init__(self) -> None:
+            super().__init__()
+
+        def forward(self, X: Tensor) -> Tensor:
+            e_X = np.exp(X - np.max(X, axis=-1, keepdims=True))
+            return e_X / np.sum(e_X, axis=-1, keepdims=True)
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = np.empty_like(d_out)
+            for i, (y, dy) in enumerate(zip(self.output_, d_out)):
+                y = y.reshape(-1, 1)
+                jacobian_matrix = np.diagflat(y) - np.dot(y, y.T)
+
+                self.dX[i] = np.dot(jacobian_matrix, dy)
+
+            return self.dX
+
+
 class Sequential(Layer):
     """
     Sequential represents a linear arrangement of layers in a neural network
@@ -541,8 +598,13 @@ class Sequential(Layer):
 
     """
 
-    trainable: List[Layer] = [Convolution, Dense]
-    only_for_train: List[Layer] = [Dropout]
+    @ClassType.non_instantiable()
+    class LayerType(Enum):
+        TRAINABLE: Tuple[Layer] = (
+            Convolution,
+            Dense,
+        )
+        ONLY_TRAIN: Tuple[Layer] = (Dropout,)
 
     def __init__(
         self,
@@ -562,7 +624,7 @@ class Sequential(Layer):
         out = X
 
         for name, layer in self.layers:
-            if Sequential._check_only_for_train(layer):
+            if Sequential._check_only_train(layer):
                 out = layer.forward(out, is_train=is_train)
             else:
                 out = layer.forward(out)
@@ -599,12 +661,12 @@ class Sequential(Layer):
         return self.loss_func_.loss(y, out)
 
     @classmethod
-    def _check_only_for_train(cls, layer: Layer) -> bool:
-        return type(layer) in cls.only_for_train
+    def _check_only_train(cls, layer: Layer) -> bool:
+        return type(layer) in cls.LayerType.ONLY_TRAIN.value
 
     @classmethod
     def _check_trainable_layer(cls, layer: Layer) -> bool:
-        return layer in cls.trainable
+        return layer in cls.LayerType.TRAINABLE.value
 
     def _check_no_optimizer_loss(self) -> None:
         if self.optimizer is None:
@@ -661,18 +723,10 @@ class Sequential(Layer):
 
         return self
 
+    def __getitem__(self, index: int) -> Tuple[str, Layer]:
+        return self.layers[index]
+
     def __str__(self) -> str:
         return super().__str__()
 
-    def __repr__(self) -> str:
-        rep = f"{type(self).__name__} Configuration\n"
-        rep += "-" * 70 + "\n"
-        for name, layer in self.layers:
-            rep += f"({name}) {repr(layer)}\n"
-
-        w_size, b_size = self.param_size
-        rep += f"\nTotal Layers: {len(self.layers)}"
-        rep += f"\nTotal Params: ({w_size:,} weights, {b_size:,} biases)"
-        rep += f" -> {w_size + b_size:,}\n"
-        rep += "-" * 70
-        return rep
+    def __repr__(self) -> str: ...  # TODO: Implement here

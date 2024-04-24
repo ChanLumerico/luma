@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Tuple
 import numpy as np
 
-from luma.interface.typing import Matrix, Tensor, Vector
+from luma.interface.typing import Matrix, Tensor, TensorLike
 from luma.core.base import ModelBase
 from luma.interface.util import InitUtil
 
@@ -38,20 +38,22 @@ class Layer(ModelBase):
     """
 
     def __init__(self) -> None:
-        self.input_: Tensor = None
-        self.weights_: Tensor = None
-        self.biases_: Vector = None
+        self.input_: TensorLike = None
+        self.output_: TensorLike = None
 
-        self.dX: Tensor = None
-        self.dW: Tensor = None
-        self.dB: Tensor = None
+        self.weights_: TensorLike = None
+        self.biases_: TensorLike = None
+
+        self.dX: TensorLike = None
+        self.dW: TensorLike = None
+        self.dB: TensorLike = None
 
         self.optimizer: object = None
         self.out_shape: tuple = None
 
-    def forward(self) -> Tensor: ...
+    def forward(self) -> TensorLike: ...
 
-    def backward(self) -> Tensor: ...
+    def backward(self) -> TensorLike: ...
 
     def update(self) -> None:
         if self.optimizer is None:
@@ -63,10 +65,7 @@ class Layer(ModelBase):
         self.biases_ = Tensor(biases_)
 
     def init_params(self, w_shape: tuple, b_shape: tuple) -> None:
-        init_type_: type = InitUtil(
-            self.initializer,
-            self.activation,
-        ).initializer_type
+        init_type_: type = InitUtil(self.initializer).initializer_type
 
         if init_type_ is None:
             self.weights_ = 0.01 * self.rs_.randn(*w_shape)
@@ -78,7 +77,7 @@ class Layer(ModelBase):
             else:
                 NotImplemented
 
-        self.biases_: Matrix = np.zeros(b_shape)
+        self.biases_: TensorLike = np.zeros(b_shape)
 
     @property
     def param_size(self) -> Tuple[int, int]:

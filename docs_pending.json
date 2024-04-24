@@ -1,31 +1,6 @@
 {
     "class": [
         {
-            "name": "Layer",
-            "script": "luma.neural.base",
-            "inheriting": null
-        },
-        {
-            "name": "Loss",
-            "script": "luma.neural.base",
-            "inheriting": null
-        },
-        {
-            "name": "Convolution",
-            "script": "luma.neural.layer",
-            "inheriting": "Layer"
-        },
-        {
-            "name": "Pooling",
-            "script": "luma.neural.layer",
-            "inheriting": "Layer"
-        },
-        {
-            "name": "Dense",
-            "script": "luma.neural.layer",
-            "inheriting": "Layer"
-        },
-        {
             "name": "Dropout",
             "script": "luma.neural.layer",
             "inheriting": "Layer"
@@ -46,18 +21,8 @@
             "inheriting": "Loss"
         },
         {
-            "name": "KaimingInit",
-            "script": "luma.neural.init",
-            "inheriting": "Initializer"
-        },
-        {
-            "name": "XavierInit",
-            "script": "luma.neural.init",
-            "inheriting": "Initializer"
-        },
-        {
             "name": "InitUtil",
-            "script": "util",
+            "script": "luma.interface.util",
             "inheriting": null
         },
         {
@@ -66,14 +31,14 @@
             "inheriting": null
         },
         {
-            "name": "Initializer",
-            "script": "luma.neural.base",
+            "name": "ClassType",
+            "script": "luma.interface.util",
             "inheriting": null
         },
         {
-            "name": "TensorLike",
-            "script": "luma.interface.typing",
-            "inheriting": null
+            "name": "Softmax",
+            "script": "luma.neural.layer.Activation.Softmax",
+            "inheriting": "Layer"
         }
     ]
 }

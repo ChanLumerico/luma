@@ -1,9 +1,9 @@
-from typing import Any, AnyStr, Callable, Literal, Optional, Type, TypeGuard
+from typing import Any, AnyStr, Callable, Literal, Type, TypeGuard
 import numpy as np
 
 from luma.interface.exception import UnsupportedParameterError, InvalidRangeError
 from luma.interface.typing import Matrix, Scalar
-from luma.neural import activation, init
+from luma.neural import init
 
 
 __all__ = (
@@ -264,77 +264,6 @@ class KernelUtil:
             raise UnsupportedParameterError(self.kernel)
 
 
-class ActivationUtil:
-    """
-    Internal class for activaiton functions used in neural networks.
-
-    Properties
-    ----------
-    For getting an activation function class:
-    ```py
-    @property
-    def activation_type(self) -> type
-    ```
-
-    Notes
-    -----
-    When the passed activation is `None`, an identity activation is
-    returned, with its function and gradient being identity functions.
-
-    Examples
-    --------
-    >>> act = ActivationUtil(activation='relu')
-    >>> relu = act.activation_type
-    ReLU()
-
-    """
-
-    FuncType = Optional[
-        Literal[
-            "relu",
-            "ReLU",
-            "leaky-relu",
-            "leaky-ReLU",
-            "elu",
-            "ELU",
-            "tanh",
-            "sigmoid",
-            "sig",
-        ]
-    ]
-
-    def __init__(self, activation: str) -> None:
-        self.activation = activation
-
-    @property
-    def activation_type(self) -> type:
-        if self.activation is None:
-            return self._return_identity()
-
-        if self.activation in ("relu", "ReLU"):
-            return activation.ReLU
-        elif self.activation in ("leaky-relu", "leaky-ReLU"):
-            return activation.LeakyReLU
-        elif self.activation in ("elu", "ELU"):
-            return activation.ELU
-        elif self.activation in ("tanh"):
-            return activation.Tanh
-        elif self.activation in ("sigmoid", "sig"):
-            return activation.Sigmoid
-        else:
-            raise UnsupportedParameterError(self.activation)
-
-    def _return_identity(self) -> type:
-        class _Identity:
-            def func(self, X: Matrix) -> Matrix:
-                return X
-
-            def grad(self, X: Matrix) -> Matrix:
-                return X
-
-        return _Identity
-
-
 class Clone:
     """
     A utility class for cloning LUMA models.
@@ -487,7 +416,6 @@ class InitUtil:
     Parameters
     ----------
     `initializer` : Name of an initializer (`InitType`)
-    `activation` : Name of an activation function (`FuncType`)
 
     Properties
     ----------
@@ -499,31 +427,16 @@ class InitUtil:
     ```
     """
 
-    InitType = Literal["he", "kaiming", "xavier", "auto", "random"]
+    InitType = Literal["he", "kaiming", "xavier", "glorot"] | None
 
-    def __init__(
-        self,
-        initializer: InitType,
-        activation: ActivationUtil.FuncType,
-    ) -> None:
+    def __init__(self, initializer: InitType) -> None:
         self.initializer = initializer
-        self.activation = activation
 
     @property
     def initializer_type(self) -> type | None:
-        if self.initializer == "auto":
-            return self._auto_init()
-        else:
-            return self._manual_init()
-
-    def _manual_init(self) -> type | None:
+        if self.initializer is None:
+            return None
         if self.initializer in ("he", "kaiming"):
             return init.KaimingInit
-        elif self.initializer in ("xavier"):
-            return init.XavierInit
-
-    def _auto_init(self) -> type | None:
-        if self.activation in ("relu", "ReLU"):
-            return init.KaimingInit
-        elif self.activation in ("tanh", "sigmoid", "sig"):
+        elif self.initializer in ("xavier", "glorot"):
             return init.XavierInit

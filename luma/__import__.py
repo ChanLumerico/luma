@@ -16,6 +16,7 @@ from luma.interface.typing import (
     Vector,
     Tensor,
     Scalar,
+    ClassType,
 )
 from luma.interface.util import (
     DecisionTreeNode,
@@ -23,7 +24,6 @@ from luma.interface.util import (
     SilhouetteUtil,
     DBUtil,
     KernelUtil,
-    ActivationUtil,
     InitUtil,
     Clone,
     ParamRange,
@@ -83,7 +83,6 @@ from luma.neural.optimizer import (
     NAdamOptimizer,
 )
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
-from luma.neural.network import MLPClassifier, MLPRegressor
 from luma.neural.base import Layer, Loss, Initializer
 from luma.neural.layer import Convolution, Pooling, Dense, Dropout, Flatten, Sequential
 from luma.neural.loss import SoftmaxLoss, CrossEntropyLoss, MSELoss
@@ -177,11 +176,11 @@ if __name__ == "__main__":
     UnsupportedParameterError, ModelExtensionError,
     InvalidRangeError
 
-    TensorLike, Matrix, Vector, Tensor, Scalar
+    TensorLike, Matrix, Vector, Tensor, Scalar, ClassType
 
     DecisionTreeNode, NearestNeighbors,
-    SilhouetteUtil, DBUtil, KernelUtil, ActivationUtil,
-    InitUtil, Clone, ParamRange
+    SilhouetteUtil, DBUtil, KernelUtil, InitUtil, Clone,
+    ParamRange
 
     # ----------------- [ luma.classifier ] --------------------
     LDAClassifier, QDAClassifier, RDAClassifier, KDAClassifier
@@ -227,8 +226,6 @@ if __name__ == "__main__":
 
     # ------------------- [ luma.neural ] ----------------------
     PerceptronClassifier, PerceptronRegressor
-
-    MLPClassifier, MLPRegressor
 
     ReLU, LeakyReLU, ELU, Tanh, Sigmoid
 

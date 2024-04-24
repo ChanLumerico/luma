@@ -5,7 +5,7 @@ import numpy as np
 
 from luma.core.super import Evaluator, Visualizer
 from luma.interface.util import SilhouetteUtil, DBUtil
-from luma.interface.typing import Matrix
+from luma.interface.typing import Matrix, ClassType
 
 
 __all__ = ("SilhouetteCoefficient", "DaviesBouldin", "Inertia")
@@ -111,6 +111,7 @@ class SilhouetteCoefficient(Evaluator, Visualizer):
         return ax
 
 
+@ClassType.non_instantiable()
 class DaviesBouldin(Evaluator):
     """
     The Davies-Bouldin Index (DBI) is a metric for evaluating clustering
@@ -125,8 +126,8 @@ class DaviesBouldin(Evaluator):
 
     """
 
-    @staticmethod
-    def score(data: Matrix, labels: Matrix) -> float:
+    @classmethod
+    def score(cls, data: Matrix, labels: Matrix) -> float:
         util = DBUtil(data=data, labels=labels)
         centroids = util.cluster_centroids
         scatter = util.within_cluster_scatter
@@ -150,6 +151,7 @@ class DaviesBouldin(Evaluator):
         return db_index
 
 
+@ClassType.non_instantiable()
 class Inertia(Evaluator):
     """
     Inertia in clustering quantifies the compactness of clusters by measuring
@@ -167,8 +169,8 @@ class Inertia(Evaluator):
 
     """
 
-    @staticmethod
-    def score(data: Matrix, centroids: Matrix) -> float:
+    @classmethod
+    def score(cls, data: Matrix, centroids: Matrix) -> float:
         sq_dist = (data[:, np.newaxis, :] - centroids[np.newaxis, :, :]) ** 2
         dist = np.sqrt(sq_dist.sum(axis=2))
 

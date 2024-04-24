@@ -385,6 +385,5 @@ class Distance(MetricBase, metaclass=ABCMeta):
     ```
     """
 
-    @staticmethod
     @abstractmethod
-    def compute(*args) -> float: ...
+    def score(*args) -> float: ...
