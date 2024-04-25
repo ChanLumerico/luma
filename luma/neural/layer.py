@@ -456,6 +456,39 @@ class Flatten(Layer):
 
 @ClassType.non_instantiable()
 class Activation:
+    """
+    An Activation Layer in a neural network applies a specific activation
+    function to the input it receives, transforming the input to activate
+    or deactivate neurons within the network. This function can be linear
+    or non-linear, such as Sigmoid, ReLU, or Tanh, which helps to introduce
+    non-linearity into the model, allowing it to learn complex patterns.
+
+    Notes
+    -----
+    - This class is not instantiable, meaning that a solitary use of it
+        is not available.
+
+    - All the activation functions are included inside `Activation`.
+
+    Examples
+    --------
+    >>> # Activation() <- Impossible
+    >>> Activation.Linear()
+    >>> Activation.ReLU()
+
+    """
+
+    class Linear(Layer):
+        def __init__(self) -> None:
+            super().__init__()
+
+        def forward(self, X: Tensor) -> Tensor:
+            return X
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = d_out
+            return self.dX
+
     class ReLU(Layer):
         def __init__(self) -> None:
             super().__init__()
@@ -522,6 +555,82 @@ class Activation:
 
                 self.dX[i] = np.dot(jacobian_matrix, dy)
 
+            return self.dX
+
+    class ELU(Layer):
+        def __init__(self, alpha: float = 1.0) -> None:
+            super().__init__()
+            self.alpha = alpha
+
+        def forward(self, X: Tensor) -> Tensor:
+            self.input_ = X
+            self.output_ = np.where(X > 0, X, self.alpha * (np.exp(X) - 1))
+            return self.output_
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = d_out * np.where(
+                self.input_ > 0,
+                1,
+                self.output_ + self.alpha,
+            )
+            return self.dX
+
+    class SELU(Layer):
+        def __init__(
+            self,
+            lambda_: float = 1.0507,
+            alpha: float = 1.67326,
+        ) -> None:
+            super().__init__()
+            self.lambda_ = lambda_
+            self.alpha = alpha
+
+        def forward(self, X: Tensor) -> Tensor:
+            self.input_ = X
+            self.output_ = self.lambda_ * np.where(
+                X > 0, X, self.alpha * (np.exp(X) - 1)
+            )
+            return self.output_
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = (
+                d_out
+                * self.lambda_
+                * np.where(
+                    self.input_ > 0,
+                    1,
+                    self.alpha * np.exp(self.input_),
+                )
+            )
+            return self.dX
+
+    class Softplus(Layer):
+        def __init__(self) -> None:
+            super().__init__()
+
+        def forward(self, X: Tensor) -> Tensor:
+            self.output_ = np.log1p(np.exp(X))
+            return self.output_
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = d_out * (1 - 1 / (1 + np.exp(self.output_)))
+            return self.dX
+
+    class Swish(Layer):
+        def __init__(self, beta: float = 1.0) -> None:
+            super().__init__()
+            self.beta = beta
+
+        def forward(self, X: Tensor) -> Tensor:
+            self.input_ = X
+            self.sigmoid = 1 / (1 + np.exp(-self.beta * X))
+            self.output_ = X * self.sigmoid
+            return self.output_
+
+        def backward(self, d_out: Tensor) -> Tensor:
+            self.dX = d_out * (
+                self.sigmoid + self.input_ * self.sigmoid * (1 - self.sigmoid)
+            )
             return self.dX
 
 
