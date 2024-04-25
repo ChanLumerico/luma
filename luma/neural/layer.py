@@ -1,9 +1,9 @@
 from enum import Enum
-from typing import Any, List, Literal, Self, Tuple
+from typing import Any, List, Literal, Self, Tuple, Type
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Matrix, Tensor, ClassType
+from luma.interface.typing import Matrix, Tensor, ClassType, TensorLike
 from luma.interface.util import InitUtil, Clone
 from luma.interface.exception import UnsupportedParameterError
 from luma.neural.base import Layer, Loss
@@ -478,6 +478,8 @@ class Activation:
 
     """
 
+    type FuncType = Type
+
     class Linear(Layer):
         def __init__(self) -> None:
             super().__init__()
@@ -709,52 +711,38 @@ class Sequential(Layer):
 
     @ClassType.non_instantiable()
     class LayerType(Enum):
-        TRAINABLE: Tuple[Layer] = (
-            Convolution,
-            Dense,
-        )
+        TRAINABLE: Tuple[Layer] = (Convolution, Dense)
         ONLY_TRAIN: Tuple[Layer] = (Dropout,)
 
-    def __init__(
-        self,
-        *layers: Layer | Tuple[str, Layer],
-        verbose: bool = False,
-    ) -> None:
+    def __init__(self, *layers: Layer | Tuple[str, Layer]) -> None:
         self.layers: List[Tuple[str, Layer]] = list()
         for layer in layers:
             self.add(layer)
 
         self.optimizer = None
         self.loss_func_ = None
-        self.verbose = verbose
 
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         self.input_ = X
         out = X
 
-        for name, layer in self.layers:
+        for _, layer in self.layers:
             if Sequential._check_only_train(layer):
                 out = layer.forward(out, is_train=is_train)
             else:
                 out = layer.forward(out)
-            if self.verbose:
-                print(f"[Sequential] Feed-forwarded '{name}'")
 
         self.out_shape = out.shape
         return out
 
     def backward(self, d_out: Matrix) -> None:
-        for name, layer in reversed(self.layers):
+        for _, layer in reversed(self.layers):
             d_out = layer.backward(d_out)
-            if self.verbose:
-                print(f"[Sequential] Backpropagated '{name}'")
 
     def update(self) -> None:
         self._check_no_optimizer_loss()
-        for name, layer in reversed(self.layers):
+        for _, layer in reversed(self.layers):
             layer.update()
-            if self.verbose and Sequential._check_trainable_layer(layer):
-                print(f"[Sequential] Updated '{name}'")
 
     def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
         self.optimizer = optimizer
@@ -837,5 +825,3 @@ class Sequential(Layer):
 
     def __str__(self) -> str:
         return super().__str__()
-
-    def __repr__(self) -> str: ...  # TODO: Implement here

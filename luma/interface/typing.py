@@ -115,6 +115,23 @@ class Scalar:
 
 
 class ClassType:
+    """
+    An interface class designed to facilitate the annotation of
+    dedicated types for classes in a systematic way.
+
+    The `ClassType` class includes several classmethods that act
+    as decorator factories. These decorators can be applied to classes
+    to specify their types or roles within the application more
+    explicitly.
+
+    Decorator Factories
+    -------------------
+    - `non_instantiable` : Makes a class non-instantiable.
+
+    - `private` : Makes a class private; accesses are restricted
+                  outside its module.
+
+    """
 
     T = TypeVar("T", bound=type)
 
