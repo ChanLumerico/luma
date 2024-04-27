@@ -4,7 +4,13 @@ from luma.core.main import Luma
 from luma.interface.util import ParamRange
 
 
-__all__ = ("ModelBase", "ParadigmBase", "MetricBase", "VisualBase")
+__all__ = (
+    "ModelBase",
+    "ParadigmBase",
+    "MetricBase",
+    "VisualBase",
+    "NeuralBase",
+)
 
 
 class ModelBase(Luma):
@@ -155,3 +161,8 @@ class VisualBase(Luma):
 
     def __dealloc__(self) -> None:
         return super().__dealloc__()
+
+
+class NeuralBase(Luma):
+    # TODO: Finalize this base class
+    ...

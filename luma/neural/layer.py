@@ -3,10 +3,10 @@ from typing import Any, List, Literal, Self, Tuple, Type
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Matrix, Tensor, ClassType, TensorLike
+from luma.interface.typing import Matrix, Tensor, ClassType
 from luma.interface.util import InitUtil, Clone
 from luma.interface.exception import UnsupportedParameterError
-from luma.neural.base import Layer, Loss
+from luma.neural.base import Layer
 
 
 __all__ = (
@@ -57,7 +57,7 @@ class Convolution(Layer):
         filter_size: int,
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
-        initializer: InitUtil.InitType = None,
+        initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
         lambda_: float = 0.0,
         random_state: int = None,
@@ -337,7 +337,7 @@ class Dense(Layer):
         self,
         in_features: int,
         out_features: int,
-        initializer: InitUtil.InitType = None,
+        initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
         lambda_: float = 0.0,
         random_state: int = None,
@@ -401,32 +401,31 @@ class Dropout(Layer):
 
     """
 
-    def __init__(self, dropout_rate: float = 0.5, random_state: int = None) -> None:
+    def __init__(
+        self,
+        dropout_rate: float = 0.5,
+        random_state: int = None,
+    ) -> None:
         super().__init__()
         self.dropout_rate = dropout_rate
         self.random_state = random_state
-
-        self.mask_: Tensor = None
         self.rs_ = np.random.RandomState(self.random_state)
+        self.mask_ = None
 
         self.set_param_ranges({"dropout_rate": ("0,1", None)})
         self.check_param_ranges()
 
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        self.input_ = X
-        self.out_shape = self.input_.shape
-
         if is_train:
-            self.mask_ = (
-                self.rs_.rand(*X.shape) < self.dropout_rate
-            ) / self.dropout_rate
-            return X * self.mask_
+            self.mask_ = self.rs_.rand(*X.shape) < (1 - self.dropout_rate)
+            return X * self.mask_ / (1 - self.dropout_rate)
         else:
             return X
 
     def backward(self, d_out: Tensor) -> Tensor:
-        dX = d_out * self.mask_ if self.mask_ is not None else d_out
-        return dX
+        if self.mask_ is not None:
+            return d_out * self.mask_ / (1 - self.dropout_rate)
+        return d_out
 
 
 class Flatten(Layer):
@@ -656,30 +655,20 @@ class Sequential(Layer):
     ```py
     def set_optimizer(self, optimizer: Optimizer) -> None
     ```
-    For setting a loss function of the model:
-    ```py
-    def set_loss(self, loss_func: Loss) -> None
-    ```
     To add additional layer:
     ```py
     def add(self, layer: Layer) -> None
     ```
-    To compute loss:
-    ```py
-    def get_loss(y: Matrix, out: Matrix) -> float
-    ```
     Specials
     --------
-    - You can use `+` operator to add a layer or another instance of `Sequential`.
+    - You can use `+` operator to add a layer or another instance
+        of `Sequential`.
 
-    - By calling its instance, `forward`, `backward`, and `update`
-        is automatically called (single cycle) and the loss is returned.
-
-    - Use `repr()` to print out its structural configuration.
+    - Calling its instance performs a single forwarding.
 
     Notes
     -----
-    - Before any execution, an optimizer and a loss function must be assigned.
+    - Before any execution, an optimizer must be assigned.
 
     - For multi-class classification, the target variable `y`
         must be one-hot encoded.
@@ -697,21 +686,15 @@ class Sequential(Layer):
         ("dense_2", Dense(32, 10, activation="softmax")),
     )
     model.set_optimizer(AnyOptimizer())
-    model.set_loss(AnyLoss())
+
+    out = model(X, is_train=True) # model.forward(X, is_train=True)
+    model.backward(d_out) # assume d_out is the gradient w.r.t. loss
+    model.update()
     ```
-    To use automated cyclic run:
-    >>> model(X, y, is_train=True)
-
-    Manual run:
-    >>> model.forward(X, is_train=True)
-    >>> model.backward(d_out)
-    >>> model.update()
-
     """
 
     @ClassType.non_instantiable()
     class LayerType(Enum):
-        TRAINABLE: Tuple[Layer] = (Convolution, Dense)
         ONLY_TRAIN: Tuple[Layer] = (Dropout,)
 
     def __init__(self, *layers: Layer | Tuple[str, Layer]) -> None:
@@ -740,7 +723,7 @@ class Sequential(Layer):
             d_out = layer.backward(d_out)
 
     def update(self) -> None:
-        self._check_no_optimizer_loss()
+        self._check_no_optimizer()
         for _, layer in reversed(self.layers):
             layer.update()
 
@@ -751,36 +734,26 @@ class Sequential(Layer):
         for _, layer in self.layers:
             layer.optimizer = Clone(self.optimizer).get
 
-    def set_loss(self, loss_func: Loss) -> None:
-        self.loss_func_ = loss_func
-
-    def get_loss(self, y: Matrix, out: Matrix) -> float:
-        return self.loss_func_.loss(y, out)
-
     @classmethod
     def _check_only_train(cls, layer: Layer) -> bool:
         return type(layer) in cls.LayerType.ONLY_TRAIN.value
 
-    @classmethod
-    def _check_trainable_layer(cls, layer: Layer) -> bool:
-        return layer in cls.LayerType.TRAINABLE.value
-
-    def _check_no_optimizer_loss(self) -> None:
+    def _check_no_optimizer(self) -> None:
         if self.optimizer is None:
             raise RuntimeError(
                 f"'{self}' has no optimizer! "
                 + f"Call '{self}().set_optimizer' to assign an optimizer."
-            )
-        if self.loss_func_ is None:
-            raise RuntimeError(
-                f"'{self}' has no loss function! "
-                + f"Call '{self}().set_loss' to assign a loss function."
             )
 
     def add(self, layer: Layer | Tuple[str, Layer]) -> None:
         if not isinstance(layer, tuple):
             layer = (str(layer), layer)
         self.layers.append(layer)
+
+        if self.optimizer is not None:
+            self.set_optimizer(self.optimizer)
+        if self.loss_func_ is not None:
+            self.set_loss(self.loss_func_)
 
     @property
     def param_size(self) -> Tuple[int, int]:
@@ -792,14 +765,8 @@ class Sequential(Layer):
 
         return w_size, b_size
 
-    def __call__(self, X: Tensor, y: Matrix, is_train: bool = False) -> float:
-        self._check_no_optimizer_loss()
-        out = self.forward(X, is_train=is_train)
-        d_out = self.loss_func_.grad(y, out)
-
-        self.backward(d_out)
-        self.update()
-        return self.get_loss(y, out)
+    def __call__(self, X: Tensor, is_train: bool = False) -> float:
+        return self.forward(X, is_train=is_train)
 
     def __add__(self, other: Layer | Self) -> Self:
         if isinstance(other, Layer):
@@ -813,10 +780,6 @@ class Sequential(Layer):
                     type(self).__name__, type(other).__name__
                 )
             )
-        if self.optimizer is not None:
-            self.set_optimizer(self.optimizer)
-        if self.loss_func_ is not None:
-            self.set_loss(self.loss_func_)
 
         return self
 

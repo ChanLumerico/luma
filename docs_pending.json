@@ -1,11 +1,6 @@
 {
     "class": [
         {
-            "name": "Dropout",
-            "script": "luma.neural.layer",
-            "inheriting": "Layer"
-        },
-        {
             "name": "Flatten",
             "script": "luma.neural.layer",
             "inheriting": "Layer"
@@ -14,11 +9,6 @@
             "name": "Sequential",
             "script": "luma.neural.layer",
             "inheriting": "Layer"
-        },
-        {
-            "name": "CategoricalCrossEntropy",
-            "script": "luma.neural.loss",
-            "inheriting": "Loss"
         },
         {
             "name": "InitUtil",
@@ -36,9 +26,14 @@
             "inheriting": null
         },
         {
-            "name": "Softmax",
+            "name": "Activations",
             "script": "luma.neural.layer.Activation.Softmax",
             "inheriting": "Layer"
+        },
+        {
+            "name": "Losses",
+            "script": "luma.neural.loss",
+            "inheriting": "Loss"
         }
     ]
 }

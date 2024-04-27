@@ -105,7 +105,7 @@
                 </tr>
                 <tr>
                     <td>Dependencies</td>
-                    <td>NumPy, SciPy, Pandas, Matplotlib, Seaborn</td>
+                    <td>NumPy, SciPy, Pandas, Matplotlib, Seaborn, tqdm</td>
                 </tr>
                 <tr>
                     <td>Documentation</td>

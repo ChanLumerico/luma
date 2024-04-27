@@ -415,7 +415,7 @@ class InitUtil:
 
     Parameters
     ----------
-    `initializer` : Name of an initializer (`InitType`)
+    `initializer` : Name of an initializer (`InitStr`)
 
     Properties
     ----------
@@ -427,9 +427,9 @@ class InitUtil:
     ```
     """
 
-    InitType = Literal["he", "kaiming", "xavier", "glorot"] | None
+    InitStr = Literal["he", "kaiming", "xavier", "glorot"] | None
 
-    def __init__(self, initializer: InitType) -> None:
+    def __init__(self, initializer: InitStr) -> None:
         self.initializer = initializer
 
     @property

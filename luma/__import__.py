@@ -1,6 +1,13 @@
 from luma.core.main import Luma
 from luma.core.base import ModelBase, ParadigmBase, MetricBase, VisualBase
-from luma.core.super import Estimator, Transformer, Optimizer, Evaluator, Visualizer
+from luma.core.super import (
+    Estimator,
+    Transformer,
+    Optimizer,
+    Evaluator,
+    Visualizer,
+    NeuralModel,
+)
 from luma.core.super import Supervised, Unsupervised, Distance
 
 from luma.interface.exception import (
@@ -70,7 +77,6 @@ from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 from luma.ensemble.boost import GradientBoostingClassifier, GradientBoostingRegressor
 from luma.ensemble.stack import StackingClassifier, StackingRegressor
 
-from luma.neural.activation import ReLU, LeakyReLU, ELU, Tanh, Sigmoid
 from luma.neural.optimizer import (
     SGDOptimizer,
     MomentumOptimizer,
@@ -84,8 +90,16 @@ from luma.neural.optimizer import (
 )
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.base import Layer, Loss, Initializer
-from luma.neural.layer import Convolution, Pooling, Dense, Dropout, Flatten, Sequential
-from luma.neural.loss import SoftmaxLoss, CrossEntropyLoss, MSELoss
+from luma.neural.layer import (
+    Convolution,
+    Pooling,
+    Dense,
+    Dropout,
+    Flatten,
+    Activation,
+    Sequential,
+)
+from luma.neural.loss import CrossEntropy, BinaryCrossEntropy, MSELoss
 from luma.neural.init import KaimingInit, XavierInit
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
@@ -169,7 +183,7 @@ if __name__ == "__main__":
     ModelBase, ParadigmBase, MetricBase, VisualBase
 
     Estimator, Transformer, Optimizer, Evaluator, Visualizer,
-    Supervised, Unsupervised, Distance
+    Supervised, Unsupervised, Distance, NeuralModel
 
     # ----------------- [ luma.interface ] ---------------------
     NotFittedError, NotConvergedError,
@@ -227,17 +241,16 @@ if __name__ == "__main__":
     # ------------------- [ luma.neural ] ----------------------
     PerceptronClassifier, PerceptronRegressor
 
-    ReLU, LeakyReLU, ELU, Tanh, Sigmoid
-
     SGDOptimizer, MomentumOptimizer, RMSPropOptimizer,
     AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
     AdaMaxOptimizer, AdamWOptimizer, NAdamOptimizer
 
     Layer, Loss, Initializer
 
-    Convolution, Pooling, Dense, Dropout, Flatten, Sequential
+    Convolution, Pooling, Dense, Dropout, Flatten, Activation,
+    Sequential
 
-    SoftmaxLoss, CrossEntropyLoss, MSELoss
+    CrossEntropy, BinaryCrossEntropy, MSELoss
 
     KaimingInit, XavierInit
 

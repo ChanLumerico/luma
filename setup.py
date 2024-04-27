@@ -6,13 +6,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="luma-ml",
-    version="0.7.1",
+    version="0.7.2",
     author="ChanLumerico",
     author_email="greensox284@gmail.com",
     description="A Comprehensive Python Module for Machine Learning and Data Science",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ChanLumerico/LUMA",
+    url="https://github.com/ChanLumerico/luma",
     packages=setuptools.find_namespace_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -20,5 +20,12 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.12",
-    install_requires=["numpy", "scipy", "pandas", "matplotlib", "seaborn"],
+    install_requires=[
+        "numpy",
+        "scipy",
+        "pandas",
+        "matplotlib",
+        "seaborn",
+        "tqdm",
+    ],
 )

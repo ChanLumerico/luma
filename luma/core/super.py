@@ -13,6 +13,7 @@ __all__ = (
     "Supervised",
     "Unsupervised",
     "Distance",
+    "NeuralModel",
 )
 
 
@@ -84,19 +85,6 @@ class Estimator(ModelBase, metaclass=ABCMeta):
           effective integration.
 
         """
-
-    class NeuralNet:
-        """
-        An inner class of `Estimator` dedicated to neural networks.
-
-        Neural networks are computational models inspired by the human brain,
-        consisting of layers of interconnected nodes (neurons) that process
-        information through weighted connections. These models include an input
-        layer to receive data, hidden layers that perform computations, and an
-        output layer to deliver results.
-        """
-
-        def dump(self, **kwargs) -> None: ...
 
     @abstractmethod
     def fit(self, *args) -> Self: ...
@@ -387,3 +375,15 @@ class Distance(MetricBase, metaclass=ABCMeta):
 
     @abstractmethod
     def score(*args) -> float: ...
+
+
+class NeuralModel(NeuralBase, metaclass=ABCMeta):
+    """
+    Neural networks are computational models inspired by the human brain,
+    consisting of layers of interconnected nodes (neurons) that process
+    information through weighted connections. These models include an input
+    layer to receive data, hidden layers that perform computations, and an
+    output layer to deliver results.
+    """
+
+    # TODO: Finalize this abstract class

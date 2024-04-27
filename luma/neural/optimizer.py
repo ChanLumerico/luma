@@ -27,7 +27,11 @@ class SGDOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         super().update(weights, biases, grad_weights, grad_biases)
         return self.updated_weights, self.updated_biases
@@ -61,7 +65,11 @@ class MomentumOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         super().update(weights, biases, grad_weights, grad_biases)
         return self.updated_weights, self.updated_biases
@@ -111,7 +119,11 @@ class RMSPropOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         super().update(weights, biases, grad_weights, grad_biases)
         return self.updated_weights, self.updated_biases
@@ -182,7 +194,11 @@ class AdamOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         if not (weights is None and biases is None):
             self.t += 1
@@ -242,7 +258,11 @@ class AdaGradOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         super().update(weights, biases, grad_weights, grad_biases)
         return self.updated_weights, self.updated_biases
@@ -289,7 +309,11 @@ class AdaDeltaOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         super().update(weights, biases, grad_weights, grad_biases)
         return self.updated_weights, self.updated_biases
@@ -376,7 +400,11 @@ class AdaMaxOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         if not (weights is None and biases is None):
             self.t += 1
@@ -457,7 +485,11 @@ class AdamWOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         if not (weights is None and biases is None):
             self.t += 1
@@ -540,7 +572,11 @@ class NAdamOptimizer(Optimizer, Optimizer.Neural):
         self.check_param_ranges()
 
     def update(
-        self, weights: Tensor, biases: Tensor, grad_weights: Tensor, grad_biases: Tensor
+        self,
+        weights: Tensor,
+        biases: Tensor,
+        grad_weights: Tensor,
+        grad_biases: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         if not (weights is None and biases is None):
             self.t += 1
