@@ -330,8 +330,6 @@ class Supervised(ParadigmBase):
     target labels, and it learns to map the inputs to the correct outputs.
     """
 
-    def __init__(self, *args) -> None: ...
-
 
 class Unsupervised(ParadigmBase):
     """
@@ -350,8 +348,6 @@ class Unsupervised(ParadigmBase):
         def labels(self) -> Vector
     ```
     """
-
-    def __init__(self, *args) -> None: ...
 
     @property
     def labels(self) -> Any: ...
@@ -386,4 +382,16 @@ class NeuralModel(NeuralBase, metaclass=ABCMeta):
     output layer to deliver results.
     """
 
-    # TODO: Finalize this abstract class
+    def __init_model__(self) -> None:
+        self.feature_sizes_ = []
+        self.feature_shapes_ = []
+
+        self.running_loss_ = []
+        self.train_loss_ = []
+        self.valid_loss_ = []
+
+    @abstractmethod
+    def train(self, **kwargs) -> list[float]: ...
+
+    @abstractmethod
+    def eval(self, **kwargs) -> list[float]: ...

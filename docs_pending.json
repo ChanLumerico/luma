@@ -34,6 +34,11 @@
             "name": "Losses",
             "script": "luma.neural.loss",
             "inheriting": "Loss"
+        },
+        {
+            "name": "MLP",
+            "script": "luma.neural.network",
+            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         }
     ]
 }

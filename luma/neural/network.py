@@ -1,4 +1,4 @@
-from typing import List, Self
+from typing import Self
 from tqdm import tqdm
 import numpy as np
 
@@ -22,7 +22,7 @@ from luma.neural.optimizer import SGDOptimizer
 from luma.neural.loss import CrossEntropy
 
 
-__all__ = "MLP"
+__all__ = "MLP"  # TODO: Future implementations: CNN, RNN, ...
 
 
 class MLP(Estimator, Supervised, NeuralModel):
@@ -30,7 +30,7 @@ class MLP(Estimator, Supervised, NeuralModel):
         self,
         in_features: int,
         out_features: int,
-        hidden_layers: List[int] | int,
+        hidden_layers: list[int] | int,
         batch_size: int = 100,
         epochs: int = 100,
         learning_rate: float = 0.01,
@@ -67,13 +67,10 @@ class MLP(Estimator, Supervised, NeuralModel):
         self.random_state = random_state
         self.fitted_ = False
 
+        super().__init_model__()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
-
-        self.running_loss_ = []
-        self.train_loss_ = []
-        self.valid_loss_ = []
 
         if isinstance(self.hidden_layers, int):
             self.hidden_layers = [self.hidden_layers]
@@ -162,7 +159,7 @@ class MLP(Estimator, Supervised, NeuralModel):
                     random_state=self.random_state,
                 )
 
-    def train(self, X: TensorLike, y: TensorLike) -> List[float]:
+    def train(self, X: TensorLike, y: TensorLike) -> list[float]:
         train_loss = []
         for X_batch, y_batch in BatchGenerator(
             X, y, batch_size=self.batch_size, shuffle=self.shuffle
@@ -179,7 +176,7 @@ class MLP(Estimator, Supervised, NeuralModel):
 
         return train_loss
 
-    def eval(self, X: TensorLike, y: TensorLike) -> List[float]:
+    def eval(self, X: TensorLike, y: TensorLike) -> list[float]:
         valid_loss = []
         for X_batch, y_batch in BatchGenerator(
             X, y, batch_size=self.batch_size, shuffle=self.shuffle

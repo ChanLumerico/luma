@@ -6,6 +6,7 @@ __all__ = "Luma"
 
 
 class Luma:
+
     def __validate__(self) -> None:
         self
 

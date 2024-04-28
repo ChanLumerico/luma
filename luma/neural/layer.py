@@ -190,7 +190,7 @@ class Convolution(Layer):
         )
         return self.dX
 
-    def _get_padding_dim(self, height: int, width: int) -> Tuple[int, int, int, int]:
+    def _get_padding_dim(self, height: int, width: int) -> Tuple[int, ...]:
         if self.padding == "same":
             pad_h = pad_w = (self.filter_size - 1) // 2
             padded_h = height + 2 * pad_h
