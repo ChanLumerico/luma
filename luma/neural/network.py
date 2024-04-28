@@ -1,5 +1,4 @@
 from typing import Self
-from tqdm import tqdm
 import numpy as np
 
 from luma.core.super import (
@@ -11,7 +10,7 @@ from luma.core.super import (
 )
 
 from luma.interface.typing import TensorLike, Tensor, Matrix, Vector
-from luma.interface.util import InitUtil, Clone
+from luma.interface.util import InitUtil, Clone, TrainProgress
 
 from luma.preprocessing.encoder import OneHotEncoder
 from luma.model_selection.split import TrainTestSplit, BatchGenerator
@@ -32,7 +31,7 @@ class MLP(Estimator, Supervised, NeuralModel):
         out_features: int,
         hidden_layers: list[int] | int,
         batch_size: int = 100,
-        epochs: int = 100,
+        n_epochs: int = 100,
         learning_rate: float = 0.01,
         valid_size: float = 0.1,
         initializer: InitUtil.InitStr = None,
@@ -51,7 +50,7 @@ class MLP(Estimator, Supervised, NeuralModel):
         self.out_features = out_features
         self.hidden_layers = hidden_layers
         self.batch_size = batch_size
-        self.epochs = epochs
+        self.n_epochs = n_epochs
         self.learning_rate = learning_rate
         self.valid_size = valid_size
         self.initializer = initializer
@@ -71,6 +70,9 @@ class MLP(Estimator, Supervised, NeuralModel):
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
+
+        self.feature_sizes_: list[int] = []
+        self.feature_shapes_: list[tuple[int, int]] = []
 
         if isinstance(self.hidden_layers, int):
             self.hidden_layers = [self.hidden_layers]
@@ -93,12 +95,12 @@ class MLP(Estimator, Supervised, NeuralModel):
                 "in_features": ("0<,+inf", int),
                 "out_features": ("0<,+inf", int),
                 "batch_size": ("0<,+inf", int),
-                "epochs": ("0<,+inf", int),
+                "n_epochs": ("0<,+inf", int),
                 "learning_rate": ("0<,+inf", None),
                 "valid_size": ("0<,<1", None),
                 "dropout_rate": ("0,1", None),
                 "lambda_": ("0,+inf", None),
-                "patience": (f"0<,{self.epochs}", int),
+                "patience": (f"0<,{self.n_epochs}", int),
             }
         )
         self.check_param_ranges()
@@ -115,13 +117,11 @@ class MLP(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         ).get
 
-        with tqdm(
-            total=self.epochs,
-            desc="Training",
-            unit="epoch",
-            ncols=100,
-        ) as pbar:
-            for _ in range(self.epochs):
+        train_prog = TrainProgress(n_epochs=self.n_epochs)
+        with train_prog.progress as prog:
+            train_prog.add_task(prog, self)
+
+            for epoch in range(self.n_epochs):
                 train_loss = self.train(X_train, y_train)
                 train_loss_avg = np.average(train_loss)
 
@@ -131,10 +131,7 @@ class MLP(Estimator, Supervised, NeuralModel):
                 self.train_loss_.append(train_loss_avg)
                 self.valid_loss_.append(valid_loss_avg)
 
-                pbar.set_description(
-                    f"(Train/Valid Loss: {train_loss_avg:.4f}/{valid_loss_avg:.4f})"
-                )
-                pbar.update(1)
+                train_prog.update(prog, epoch, [train_loss_avg, valid_loss_avg])
 
         self.fitted_ = True
         return self

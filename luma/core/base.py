@@ -164,5 +164,23 @@ class VisualBase(Luma):
 
 
 class NeuralBase(Luma):
-    # TODO: Finalize this base class
-    ...
+    """
+    This class provides the foundational attributes and methods that are common
+    across different types of neural network models. It is not intended to be
+    instantiated directly but should be subclassed by specific types of neural
+    models that implement the specific functionalities.
+
+    Inheritances
+    ------------
+    `NeuralModel`
+
+    """
+
+    def __validate__(self) -> None:
+        return super().__validate__()
+
+    def __alloc__(self, *args, **kwargs) -> None:
+        return super().__alloc__(*args, **kwargs)
+
+    def __dealloc__(self) -> None:
+        return super().__dealloc__()

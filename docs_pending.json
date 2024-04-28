@@ -26,6 +26,11 @@
             "inheriting": null
         },
         {
+            "name": "TrainProgress",
+            "script": "luma.interface.util",
+            "inheriting": null
+        },
+        {
             "name": "Activations",
             "script": "luma.neural.layer.Activation.Softmax",
             "inheriting": "Layer"

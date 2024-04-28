@@ -26,6 +26,5 @@ setuptools.setup(
         "pandas",
         "matplotlib",
         "seaborn",
-        "tqdm",
     ],
 )

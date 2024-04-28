@@ -34,6 +34,7 @@ from luma.interface.util import (
     InitUtil,
     Clone,
     ParamRange,
+    TrainProgress,
 )
 
 from luma.classifier.discriminant import (
@@ -194,7 +195,7 @@ if __name__ == "__main__":
 
     DecisionTreeNode, NearestNeighbors,
     SilhouetteUtil, DBUtil, KernelUtil, InitUtil, Clone,
-    ParamRange
+    ParamRange, TrainProgress
 
     # ----------------- [ luma.classifier ] --------------------
     LDAClassifier, QDAClassifier, RDAClassifier, KDAClassifier

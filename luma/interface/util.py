@@ -1,4 +1,5 @@
-from typing import Any, AnyStr, Callable, Literal, Type, TypeGuard
+from typing import Any, Callable, Iterable, Literal, Type, TypeGuard
+from rich.progress import Progress, BarColumn, TextColumn
 import numpy as np
 
 from luma.interface.exception import UnsupportedParameterError, InvalidRangeError
@@ -16,6 +17,7 @@ __all__ = (
     "InitUtil",
     "Clone",
     "ParamRange",
+    "TrainProgress",
 )
 
 
@@ -111,7 +113,10 @@ class SilhouetteUtil:
     def avg_dist_others(self) -> Matrix:
         others = set(self.labels) - {self.cluster}
         sub_avg = [
-            np.mean(self.distances[self.idx][self.labels == other]) for other in others
+            np.mean(
+                self.distances[self.idx][self.labels == other],
+            )
+            for other in others
         ]
 
         return np.mean(sub_avg)
@@ -350,9 +355,13 @@ class ParamRange:
     - For open intervals, add '<' inside the range. (i.e. `0<,+inf`, `0<,<10`)
     """
 
-    type RangeStr = AnyStr
+    type RangeStr = str
 
-    def __init__(self, param_range: RangeStr, param_type: Type[Scalar] = None) -> None:
+    def __init__(
+        self,
+        param_range: RangeStr,
+        param_type: Type[Scalar] = None,
+    ) -> None:
         self.param_range = param_range
 
         if param_type is None:
@@ -440,3 +449,79 @@ class InitUtil:
             return init.KaimingInit
         elif self.initializer in ("xavier", "glorot"):
             return init.XavierInit
+
+
+class TrainProgress:
+    """
+    An utility class for managing auto-updating progress bar during training.
+
+    It facilitates the progress bar from the module `rich`, which provides
+    well-structured progress bar with colored indications for better readability.
+
+    Property
+    --------
+    To get an iterable object from `rich.progress.Progress`:
+    ```py
+    (property) progress: (self: Self@TrainProgress) -> Iterable
+    ```
+
+    Exmaples
+    --------
+    Create an instance for `TrainProgress`:
+    >>> train_prog = TrainProgress(n_epochs=100)
+
+    Generate a task and update the progress bar:
+    ```py
+    with train_prog.progress as progress:
+        train_prog.add_task(progress=progress, model=AnyModelInstance)
+
+        for epoch in range(n_epochs):
+            train_prog.update(progress=progress, cur=epoch, losses=[...])
+            # losses is a list of [train_loss, valid_loss]
+    ```
+    """
+
+    def __init__(self, n_epochs: int, bar_width: int = 50) -> None:
+        self.n_epochs = n_epochs
+        self.bar_width = bar_width
+        self.task = None
+
+    @property
+    def progress(self) -> Iterable:
+        return Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(bar_width=self.bar_width),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TextColumn("[bold green]{task.fields[train_loss]:.4f}"),
+            TextColumn("[bold red]{task.fields[valid_loss]:.4f}"),
+            expand=True,
+        )
+
+    def _check_task_exist(self) -> None:
+        if self.task is None:
+            raise RuntimeError(f"'{type(self).__name__}' does not have any tasks!")
+
+    def add_task(self, progress: Progress, model: object) -> None:
+        self.task = progress.add_task(
+            f"[purple]Start {type(model).__name__} training "
+            + f"with {self.n_epochs} epochs.",
+            total=self.n_epochs,
+            train_loss=0.0,
+            valid_loss=0.0,
+        )
+
+    def update(
+        self,
+        progress: Progress,
+        cur: int,
+        losses: list[float, float],
+    ) -> None:
+        self._check_task_exist()
+        progress.update(
+            self.task,
+            advance=1,
+            train_loss=losses[0],
+            valid_loss=losses[1],
+            description=f"Epoch: {cur}/{self.n_epochs} - "
+            + f"Train/Valid Loss: {losses[0]:.4f}/{losses[1]:.4f}",
+        )
