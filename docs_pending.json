@@ -1,44 +1,19 @@
 {
     "class": [
         {
-            "name": "Flatten",
-            "script": "luma.neural.layer",
-            "inheriting": "Layer"
-        },
-        {
-            "name": "Sequential",
-            "script": "luma.neural.layer",
-            "inheriting": "Layer"
-        },
-        {
-            "name": "InitUtil",
-            "script": "luma.interface.util",
-            "inheriting": null
-        },
-        {
-            "name": "BatchGenerator",
-            "script": "split",
-            "inheriting": null
-        },
-        {
-            "name": "ClassType",
-            "script": "luma.interface.util",
-            "inheriting": null
-        },
-        {
-            "name": "TrainProgress",
-            "script": "luma.interface.util",
-            "inheriting": null
-        },
-        {
-            "name": "Activations",
-            "script": "luma.neural.layer.Activation.Softmax",
-            "inheriting": "Layer"
-        },
-        {
             "name": "Losses",
             "script": "luma.neural.loss",
             "inheriting": "Loss"
+        },
+        {
+            "name": "NeuralModel",
+            "script": "luma.core.super",
+            "inheriting": "NeuralBase"
+        },
+        {
+            "name": "NeuralBase",
+            "script": "luma.core.base",
+            "inheriting": "Luma"
         },
         {
             "name": "MLP",

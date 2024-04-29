@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import Any, List, Literal, Self, Tuple, Type
 import numpy as np
 
@@ -94,9 +93,11 @@ class Convolution(Layer):
         )
         self.check_param_ranges()
 
-    def forward(self, X: Tensor) -> Tensor:
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
         self.input_ = X
         batch_size, channels, height, width = X.shape
+
         if self.in_channels != channels:
             raise ValueError(
                 f"channels of 'X' does not match with 'in_channels'! "
@@ -250,9 +251,11 @@ class Pooling(Layer):
         )
         self.check_param_ranges()
 
-    def forward(self, X: Tensor) -> Tensor:
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
         self.input_ = X
         batch_size, channels, height, width = X.shape
+
         out_height = 1 + (height - self.filter_size) // self.stride
         out_width = 1 + (width - self.filter_size) // self.stride
 
@@ -364,7 +367,8 @@ class Dense(Layer):
         )
         self.check_param_ranges()
 
-    def forward(self, X: Matrix) -> Matrix:
+    def forward(self, X: Matrix, is_train: bool = False) -> Matrix:
+        _ = is_train
         self.input_ = X
 
         out = np.dot(X, self.weights_) + self.biases_
@@ -442,9 +446,11 @@ class Flatten(Layer):
     def __init__(self) -> None:
         super().__init__()
 
-    def forward(self, X: Tensor) -> Matrix:
+    def forward(self, X: Tensor, is_train: bool = False) -> Matrix:
+        _ = is_train
         self.input_ = X
         out = X.reshape(X.shape[0], -1)
+
         self.out_shape = out.shape
         return out
 
@@ -483,7 +489,8 @@ class Activation:
         def __init__(self) -> None:
             super().__init__()
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             return X
 
         def backward(self, d_out: Tensor) -> Tensor:
@@ -494,7 +501,8 @@ class Activation:
         def __init__(self) -> None:
             super().__init__()
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             self.input_ = X
             return np.maximum(0, X)
 
@@ -507,7 +515,8 @@ class Activation:
         def __init__(self) -> None:
             super().__init__()
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             self.output_ = 1 / (1 + np.exp(-X))
             return self.output_
 
@@ -519,7 +528,8 @@ class Activation:
         def __init__(self) -> None:
             super().__init__()
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             self.output_ = np.tanh(X)
             return self.output_
 
@@ -532,7 +542,8 @@ class Activation:
             super().__init__()
             self.alpha = alpha
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             self.input_ = X
             return np.where(X > 0, X, X * self.alpha)
 
@@ -544,7 +555,8 @@ class Activation:
         def __init__(self) -> None:
             super().__init__()
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             e_X = np.exp(X - np.max(X, axis=-1, keepdims=True))
             return e_X / np.sum(e_X, axis=-1, keepdims=True)
 
@@ -563,7 +575,8 @@ class Activation:
             super().__init__()
             self.alpha = alpha
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             self.input_ = X
             self.output_ = np.where(X > 0, X, self.alpha * (np.exp(X) - 1))
             return self.output_
@@ -586,7 +599,8 @@ class Activation:
             self.lambda_ = lambda_
             self.alpha = alpha
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             self.input_ = X
             self.output_ = self.lambda_ * np.where(
                 X > 0, X, self.alpha * (np.exp(X) - 1)
@@ -609,7 +623,8 @@ class Activation:
         def __init__(self) -> None:
             super().__init__()
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             self.output_ = np.log1p(np.exp(X))
             return self.output_
 
@@ -622,15 +637,18 @@ class Activation:
             super().__init__()
             self.beta = beta
 
-        def forward(self, X: Tensor) -> Tensor:
+        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+            _ = is_train
             self.input_ = X
             self.sigmoid = 1 / (1 + np.exp(-self.beta * X))
+
             self.output_ = X * self.sigmoid
             return self.output_
 
         def backward(self, d_out: Tensor) -> Tensor:
             self.dX = d_out * (
-                self.sigmoid + self.input_ * self.sigmoid * (1 - self.sigmoid)
+                self.sigmoid
+                + self.beta * self.input_ * self.sigmoid * (1 - self.sigmoid)
             )
             return self.dX
 
@@ -693,10 +711,6 @@ class Sequential(Layer):
     ```
     """
 
-    @ClassType.non_instantiable()
-    class LayerType(Enum):
-        ONLY_TRAIN: Tuple[Layer] = (Dropout,)
-
     def __init__(self, *layers: Layer | Tuple[str, Layer]) -> None:
         self.layers: List[Tuple[str, Layer]] = list()
         for layer in layers:
@@ -708,12 +722,8 @@ class Sequential(Layer):
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         self.input_ = X
         out = X
-
         for _, layer in self.layers:
-            if Sequential._check_only_train(layer):
-                out = layer.forward(out, is_train=is_train)
-            else:
-                out = layer.forward(out)
+            out = layer(out, is_train=is_train)
 
         self.out_shape = out.shape
         return out
@@ -733,10 +743,6 @@ class Sequential(Layer):
 
         for _, layer in self.layers:
             layer.optimizer = Clone(self.optimizer).get
-
-    @classmethod
-    def _check_only_train(cls, layer: Layer) -> bool:
-        return type(layer) in cls.LayerType.ONLY_TRAIN.value
 
     def _check_no_optimizer(self) -> None:
         if self.optimizer is None:
@@ -765,9 +771,6 @@ class Sequential(Layer):
 
         return w_size, b_size
 
-    def __call__(self, X: Tensor, is_train: bool = False) -> float:
-        return self.forward(X, is_train=is_train)
-
     def __add__(self, other: Layer | Self) -> Self:
         if isinstance(other, Layer):
             self.add(other)
@@ -785,6 +788,3 @@ class Sequential(Layer):
 
     def __getitem__(self, index: int) -> Tuple[str, Layer]:
         return self.layers[index]
-
-    def __str__(self) -> str:
-        return super().__str__()

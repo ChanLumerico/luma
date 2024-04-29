@@ -10,7 +10,7 @@ from luma.interface.util import InitUtil
 __all__ = ("Layer", "Loss", "Initializer")
 
 
-class Layer(ModelBase):
+class Layer(ABC, ModelBase):
     """
     An internal class for layers in neural networks.
 
@@ -51,9 +51,11 @@ class Layer(ModelBase):
         self.optimizer: object = None
         self.out_shape: tuple = None
 
-    def forward(self) -> TensorLike: ...
+    @abstractmethod
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike: ...
 
-    def backward(self) -> TensorLike: ...
+    @abstractmethod
+    def backward(self, d_out: TensorLike) -> TensorLike: ...
 
     def update(self) -> None:
         if self.optimizer is None:
@@ -88,6 +90,9 @@ class Layer(ModelBase):
             b_size += len(self.biases_.flatten())
 
         return w_size, b_size
+
+    def __call__(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return self.forward(X, is_train=is_train)
 
     def __str__(self) -> str:
         return type(self).__name__

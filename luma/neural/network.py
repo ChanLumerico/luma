@@ -12,7 +12,6 @@ from luma.core.super import (
 from luma.interface.typing import TensorLike, Tensor, Matrix, Vector
 from luma.interface.util import InitUtil, Clone, TrainProgress
 
-from luma.preprocessing.encoder import OneHotEncoder
 from luma.model_selection.split import TrainTestSplit, BatchGenerator
 
 from luma.neural.base import Loss
@@ -25,6 +24,16 @@ __all__ = "MLP"  # TODO: Future implementations: CNN, RNN, ...
 
 
 class MLP(Estimator, Supervised, NeuralModel):
+    """_summary_
+
+    Args:
+        Estimator (_type_): _description_
+        Supervised (_type_): _description_
+        NeuralModel (_type_): _description_
+
+    TODO: Write doctstring
+    """
+
     def __init__(
         self,
         in_features: int,
@@ -106,10 +115,7 @@ class MLP(Estimator, Supervised, NeuralModel):
         self.check_param_ranges()
         self._build_model()
 
-    def fit(self, X: Matrix, y: Matrix | Vector) -> Self:
-        if len(y.shape) == 1:
-            y = self._one_hot_encode_y(y)
-
+    def fit(self, X: Matrix, y: Matrix) -> Self:
         X_train, X_val, y_train, y_val = TrainTestSplit(
             X,
             y,
@@ -135,10 +141,6 @@ class MLP(Estimator, Supervised, NeuralModel):
 
         self.fitted_ = True
         return self
-
-    def _one_hot_encode_y(self, y: Vector) -> Matrix:
-        oh = OneHotEncoder()
-        return oh.fit_transform(y.reshape(-1, 1))
 
     def _build_model(self) -> None:
         for i, (in_, out_) in enumerate(self.feature_shapes_):
@@ -184,17 +186,11 @@ class MLP(Estimator, Supervised, NeuralModel):
 
         return valid_loss
 
-    def predict(self, X: Matrix) -> Vector:
+    def predict(self, X: Matrix, argmax: bool = True) -> Vector:
         out = self.model(X, is_train=False)
         y_pred = self.out_activation.forward(out)
 
-        return np.argmax(y_pred, axis=1)
-
-    def predict_proba(self, X: Matrix) -> Matrix:
-        out = self.model(X, is_train=False)
-        y_pred = self.out_activation.forward(out)
-
-        return y_pred
+        return np.argmax(y_pred, axis=1) if argmax else y_pred
 
     def score(self, X: Matrix, y: Matrix, metric: Evaluator) -> float:
         X_pred = self.predict(X)
