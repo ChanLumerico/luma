@@ -476,7 +476,7 @@ class TrainProgress:
         train_prog.add_task(progress=progress, model=AnyModelInstance)
 
         for epoch in range(n_epochs):
-            train_prog.update(progress=progress, cur=epoch, losses=[...])
+            train_prog.update(progress=progress, cur=epoch, losses=[...], ...)
             # losses is a list of [train_loss, valid_loss]
     ```
     """
@@ -514,6 +514,7 @@ class TrainProgress:
         self,
         progress: Progress,
         cur: int,
+        patience: int,
         losses: list[float, float],
     ) -> None:
         self._check_task_exist()
@@ -523,5 +524,5 @@ class TrainProgress:
             train_loss=losses[0],
             valid_loss=losses[1],
             description=f"Epoch: {cur}/{self.n_epochs} - "
-            + f"Train/Valid Loss: {losses[0]:.4f}/{losses[1]:.4f}",
+            + f"Train/Valid Loss: {losses[0]:.4f}/{losses[1]:.4f}, pat: {patience}",
         )

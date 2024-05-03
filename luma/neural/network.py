@@ -24,14 +24,49 @@ __all__ = "MLP"  # TODO: Future implementations: CNN, RNN, ...
 
 
 class MLP(Estimator, Supervised, NeuralModel):
-    """_summary_
+    """
+    An MLP (Multilayer Perceptron) is a type of artificial neural network
+    composed of at least three layers: an input layer, one or more hidden
+    layers, and an output layer. Each layer consists of nodes, or neurons,
+    which are fully connected to the neurons in the next layer. MLPs use a
+    technique called backpropagation for learning, where the output error
+    is propagated backwards through the network to update the weights.
+    They are capable of modeling complex nonlinear relationships between
+    inputs and outputs. MLPs are commonly used for tasks like classification,
+    regression, and pattern recognition.
 
-    Args:
-        Estimator (_type_): _description_
-        Supervised (_type_): _description_
-        NeuralModel (_type_): _description_
+    Parameters
+    ----------
+    `in_features` : Number of input features
+    `out_features` : Number of output features
+    `hidden_layers` : Numbers of the features in hidden layers
+    (`int` for a single layer)
+    `batch_size` : Size of a single mini-batch
+    `n_epochs` : Number of epochs for training
+    `learning_rate` : Step size during optimization process
+    `valid_size` : Fractional size of validation set
+    `initializer` : Type of weight initializer (default `None`)
+    `activation` : Type of activation function (default `ReLU`)
+    `out_activation` : Type of activation function for the last layer
+    (only applied in prediction, default `Softmax`)
+    `optimizer` : An optimizer used in weight update process
+    (default `SGDOptimizer`)
+    `loss` : Type of loss function (default `CrossEntropy`)
+    `dropout_rate` : Dropout rate
+    `lambda_` : L2 regularization strength
+    `early_stopping` : Whether to early-stop the training when the valid
+    score stagnates
+    `patience` : Number of epochs to wait until early-stopping
+    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
 
-    TODO: Write doctstring
+    Notes
+    -----
+    - If the data or the target is a 1D-Array(`Vector`), reshape it into a
+        higher dimensional array.
+
+    - For classification tasks, the target vector `y` must be
+        one-hot encoded.
+
     """
 
     def __init__(
@@ -80,9 +115,6 @@ class MLP(Estimator, Supervised, NeuralModel):
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
 
-        self.feature_sizes_: list[int] = []
-        self.feature_shapes_: list[tuple[int, int]] = []
-
         if isinstance(self.hidden_layers, int):
             self.hidden_layers = [self.hidden_layers]
 
@@ -119,9 +151,13 @@ class MLP(Estimator, Supervised, NeuralModel):
         X_train, X_val, y_train, y_val = TrainTestSplit(
             X,
             y,
+            test_size=self.valid_size,
             shuffle=self.shuffle,
             random_state=self.random_state,
         ).get
+
+        best_valid_loss = np.inf
+        epochs_no_improve = 0
 
         train_prog = TrainProgress(n_epochs=self.n_epochs)
         with train_prog.progress as prog:
@@ -136,8 +172,22 @@ class MLP(Estimator, Supervised, NeuralModel):
 
                 self.train_loss_.append(train_loss_avg)
                 self.valid_loss_.append(valid_loss_avg)
+                train_prog.update(
+                    prog,
+                    epoch,
+                    epochs_no_improve,
+                    [train_loss_avg, valid_loss_avg],
+                )
 
-                train_prog.update(prog, epoch, [train_loss_avg, valid_loss_avg])
+                if valid_loss_avg < best_valid_loss:
+                    best_valid_loss = valid_loss_avg
+                    epochs_no_improve = 0
+                else:
+                    epochs_no_improve += 1
+
+                if self.early_stopping and epochs_no_improve >= self.patience:
+                    print(f"Early stopping triggered after {epoch + 1} epochs.")
+                    break
 
         self.fitted_ = True
         return self
@@ -192,6 +242,8 @@ class MLP(Estimator, Supervised, NeuralModel):
 
         return np.argmax(y_pred, axis=1) if argmax else y_pred
 
-    def score(self, X: Matrix, y: Matrix, metric: Evaluator) -> float:
-        X_pred = self.predict(X)
-        return metric.score(y_true=y, y_pred=X_pred)
+    def score(
+        self, X: Matrix, y: Matrix, metric: Evaluator, argmax: bool = True
+    ) -> float:
+        y_pred = self.predict(X, argmax=argmax)
+        return metric.score(y_true=y, y_pred=y_pred)

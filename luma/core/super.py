@@ -383,6 +383,9 @@ class NeuralModel(NeuralBase, metaclass=ABCMeta):
     """
 
     def __init_model__(self) -> None:
+        self.feature_sizes_: list[int] = []
+        self.feature_shapes_: list[tuple] = []
+
         self.running_loss_: list[float] = []
         self.train_loss_: list[float] = []
         self.valid_loss_: list[float] = []
