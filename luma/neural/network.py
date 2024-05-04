@@ -1,21 +1,13 @@
-from typing import Literal, Self
-import numpy as np
+from typing import Literal, Self, override
 
-from luma.core.super import (
-    Estimator,
-    Optimizer,
-    Evaluator,
-    Supervised,
-    NeuralModel,
-)
+from luma.core.super import Estimator, Optimizer, Evaluator, Supervised
 
-from luma.interface.typing import TensorLike, Tensor, Matrix, Vector
-from luma.interface.util import InitUtil, Clone, TrainProgress
+from luma.interface.typing import Tensor, Matrix, Vector
+from luma.interface.util import InitUtil, Clone
 
-from luma.model_selection.split import TrainTestSplit, BatchGenerator
-
-from luma.neural.base import Loss
-from luma.neural.layer import Sequential, Dense, Dropout, Activation
+from luma.neural.base import NeuralModel, Loss
+from luma.neural.layer import Sequential, Dense, Dropout, Activation, Flatten
+from luma.neural.block import ConvBlock, DenseBlock
 
 
 __all__ = ("MLP", "CNN")
@@ -36,7 +28,7 @@ class MLP(Estimator, Supervised, NeuralModel):
     Structure
     ---------
     ```py
-    (Dense -> Activation -> Dropout) -> ... -> Dense -> Activation
+    (Dense -> Activation -> Dropout) -> ... -> Dense
     ```
     Parameters
     ----------
@@ -50,8 +42,6 @@ class MLP(Estimator, Supervised, NeuralModel):
     `valid_size` : Fractional size of validation set
     `initializer` : Type of weight initializer
     `activation` : Type of activation function
-    `out_activation` : Type of activation function for the last layer
-    (only applied in prediction)
     `optimizer` : An optimizer used in weight update process
     `loss` : Type of loss function
     `dropout_rate` : Dropout rate
@@ -78,13 +68,12 @@ class MLP(Estimator, Supervised, NeuralModel):
         hidden_layers: list[int] | int,
         *,
         activation: Activation.FuncType,
-        out_activation: Activation.FuncType,
         optimizer: Optimizer,
         loss: Loss,
         initializer: InitUtil.InitStr = None,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
+        learning_rate: float = 0.001,
         valid_size: float = 0.1,
         dropout_rate: float = 0.5,
         lambda_: float = 0.0,
@@ -96,23 +85,24 @@ class MLP(Estimator, Supervised, NeuralModel):
         self.in_features = in_features
         self.out_features = out_features
         self.hidden_layers = hidden_layers
-        self.batch_size = batch_size
-        self.n_epochs = n_epochs
-        self.learning_rate = learning_rate
-        self.valid_size = valid_size
         self.initializer = initializer
         self.activation = activation
-        self.out_activation = out_activation
         self.optimizer = optimizer
         self.loss = loss
         self.dropout_rate = dropout_rate
         self.lambda_ = lambda_
-        self.early_stopping = early_stopping
-        self.patience = patience
         self.shuffle = shuffle
         self.random_state = random_state
         self.fitted_ = False
 
+        super().__init__(
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            early_stopping,
+            patience,
+        )
         super().__init_model__()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
@@ -126,13 +116,7 @@ class MLP(Estimator, Supervised, NeuralModel):
             *self.hidden_layers,
             self.out_features,
         ]
-        self.feature_shapes_ = [
-            (i, j)
-            for i, j in zip(
-                self.feature_sizes_[:-1],
-                self.feature_sizes_[1:],
-            )
-        ]
+        self.feature_shapes_ = self._get_feature_shapes(self.feature_sizes_)
 
         self.set_param_ranges(
             {
@@ -150,51 +134,6 @@ class MLP(Estimator, Supervised, NeuralModel):
         self.check_param_ranges()
         self._build_model()
 
-    def fit(self, X: Matrix, y: Matrix) -> Self:
-        X_train, X_val, y_train, y_val = TrainTestSplit(
-            X,
-            y,
-            test_size=self.valid_size,
-            shuffle=self.shuffle,
-            random_state=self.random_state,
-        ).get
-
-        best_valid_loss = np.inf
-        epochs_no_improve = 0
-
-        train_prog = TrainProgress(n_epochs=self.n_epochs)
-        with train_prog.progress as prog:
-            train_prog.add_task(prog, self)
-
-            for epoch in range(self.n_epochs):
-                train_loss = self.train(X_train, y_train)
-                train_loss_avg = np.average(train_loss)
-
-                valid_loss = self.eval(X_val, y_val)
-                valid_loss_avg = np.average(valid_loss)
-
-                self.train_loss_.append(train_loss_avg)
-                self.valid_loss_.append(valid_loss_avg)
-                train_prog.update(
-                    prog,
-                    epoch,
-                    epochs_no_improve,
-                    [train_loss_avg, valid_loss_avg],
-                )
-
-                if valid_loss_avg < best_valid_loss:
-                    best_valid_loss = valid_loss_avg
-                    epochs_no_improve = 0
-                else:
-                    epochs_no_improve += 1
-
-                if self.early_stopping and epochs_no_improve >= self.patience:
-                    print(f"Early stopping triggered after {epoch + 1} epochs.")
-                    break
-
-        self.fitted_ = True
-        return self
-
     def _build_model(self) -> None:
         for i, (in_, out_) in enumerate(self.feature_shapes_):
             self.model += Dense(
@@ -211,62 +150,168 @@ class MLP(Estimator, Supervised, NeuralModel):
                     random_state=self.random_state,
                 )
 
-    def train(self, X: TensorLike, y: TensorLike) -> list[float]:
-        train_loss = []
-        for X_batch, y_batch in BatchGenerator(
-            X, y, batch_size=self.batch_size, shuffle=self.shuffle
-        ):
-            out = self.model(X_batch, is_train=True)
-            loss = self.loss.loss(y_batch, out)
-            d_out = self.loss.grad(y_batch, out)
+    def fit(self, X: Matrix, y: Matrix) -> Self:
+        return super(MLP, self).fit_nn(X, y)
 
-            train_loss.append(loss)
-            self.running_loss_.append(loss)
+    @override
+    def predict(self, X: Matrix, argmax: bool = True) -> Matrix | Vector:
+        return super(MLP, self).predict_nn(X, argmax)
 
-            self.model.backward(d_out)
-            self.model.update()
-
-        return train_loss
-
-    def eval(self, X: TensorLike, y: TensorLike) -> list[float]:
-        valid_loss = []
-        for X_batch, y_batch in BatchGenerator(
-            X, y, batch_size=self.batch_size, shuffle=self.shuffle
-        ):
-            out = self.model(X_batch, is_train=False)
-            loss = self.loss.loss(y_batch, out)
-            valid_loss.append(loss)
-
-        return valid_loss
-
-    def predict(self, X: Matrix, argmax: bool = True) -> Vector:
-        out = self.model(X, is_train=False)
-        y_pred = self.out_activation.forward(out)
-
-        return np.argmax(y_pred, axis=1) if argmax else y_pred
-
+    @override
     def score(
         self, X: Matrix, y: Matrix, metric: Evaluator, argmax: bool = True
     ) -> float:
-        y_pred = self.predict(X, argmax=argmax)
-        return metric.score(y_true=y, y_pred=y_pred)
+        return super(MLP, self).score_nn(X, y, metric, argmax)
 
 
 class CNN(Estimator, Supervised, NeuralModel):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        in_channels_list: list[int] | int,
+        in_features_list: list[int] | int,
+        out_channels: int,
+        out_features: int,
+        filter_size: int,
+        *,
+        activation: Activation.FuncType,
+        optimizer: Optimizer,
+        loss: Loss,
+        initializer: InitUtil.InitStr = None,
+        padding: Literal["same", "valid"] = "same",
+        stride: int = 1,
+        do_pooling: bool = True,
+        pool_filter_size: int = 2,
+        pool_stride: int = 2,
+        pool_mode: Literal["max", "avg"] = "max",
+        do_dropout: bool = True,
+        dropout_rate: float = 0.5,
+        batch_size: int = 100,
+        n_epochs: int = 100,
+        learning_rate: float = 0.001,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int = None,
+    ) -> None:
+        self.in_channels_list = in_channels_list
+        self.in_features_list = in_features_list
+        self.out_channels = out_channels
+        self.out_features = out_features
+        self.filter_size = filter_size
+        self.activation = activation
+        self.optimizer = optimizer
+        self.loss = loss
+        self.initializer = initializer
+        self.padding = padding
+        self.stride = stride
+        self.do_pooling = do_pooling
+        self.pool_filter_size = pool_filter_size
+        self.pool_stride = pool_stride
+        self.pool_mode = pool_mode
+        self.do_dropout = do_dropout
+        self.dropout_rate = dropout_rate
+        self.lambda_ = lambda_
+        self.shuffle = shuffle
+        self.random_state = random_state
+        self._fitted = False
 
-    def fit(self, *args) -> Self:
-        return super().fit(*args)
+        super().__init__(
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            early_stopping,
+            patience,
+        )
+        super().__init_model__()
+        self.model = Sequential()
+        self.optimizer.set_params(learning_rate=self.learning_rate)
+        self.model.set_optimizer(optimizer=self.optimizer)
 
-    def predict(self, *args) -> np.Any:
-        return super().predict(*args)
+        if isinstance(self.in_channels_list, int):
+            self.in_channels_list = [self.in_channels_list]
+        if isinstance(self.in_features_list, int):
+            self.in_features_list = [self.in_features_list]
 
-    def train(self, **kwargs) -> list[float]:
-        return super().train(**kwargs)
+        self.feature_sizes_ = [
+            [*self.in_channels_list, self.out_channels],
+            [*self.in_features_list, self.out_features],
+        ]
+        self.feature_shapes_ = [
+            [*self._get_feature_shapes(self.feature_sizes_[0])],
+            [*self._get_feature_shapes(self.feature_sizes_[1])],
+        ]
 
-    def eval(self, **kwargs) -> list[float]:
-        return super().eval(**kwargs)
+        self.set_param_ranges(
+            {
+                "out_channels": ("0<,+inf", int),
+                "out_features": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "pool_filter_size": ("0<,+inf", int),
+                "pool_stride": ("0<,+inf", int),
+                "dropout_rate": ("0,1", None),
+                "batch_size": ("0<,+inf", int),
+                "n_epochs": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+                "valid_size": ("0<,<1", None),
+                "dropout_rate": ("0,1", None),
+                "lambda_": ("0,+inf", None),
+                "patience": (f"0<,{self.n_epochs}", int),
+            }
+        )
+        self.check_param_ranges()
+        self._build_model()
 
-    def score(self, *args) -> float:
-        return super().score(*args)
+    def _build_model(self) -> None:
+        for in_, out_ in self.feature_shapes_[0]:
+            self.model += ConvBlock(
+                in_,
+                out_,
+                self.filter_size,
+                activation=Clone(self.activation).get,
+                initializer=self.initializer,
+                padding=self.padding,
+                stride=self.stride,
+                lambda_=self.lambda_,
+                do_pooling=self.do_pooling,
+                pool_filter_size=self.pool_filter_size,
+                pool_stride=self.pool_stride,
+                pool_mode=self.pool_mode,
+                random_state=self.random_state,
+            )
+
+        self.model += Flatten()
+        for i, (in_, out_) in enumerate(self.feature_shapes_[1]):
+            if i < len(self.feature_shapes_[1]) - 1:
+                self.model += DenseBlock(
+                    in_,
+                    out_,
+                    activation=Clone(self.activation).get,
+                    lambda_=self.lambda_,
+                    do_dropout=self.do_dropout,
+                    dropout_rate=self.dropout_rate,
+                    random_state=self.random_state,
+                )
+            else:
+                self.model += Dense(
+                    in_,
+                    out_,
+                    lambda_=self.lambda_,
+                    random_state=self.random_state,
+                )
+
+    def fit(self, X: Tensor, y: Matrix) -> Self:
+        return super(CNN, self).fit_nn(X, y)
+
+    @override
+    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
+        return super(CNN, self).predict_nn(X, argmax)
+
+    @override
+    def score(
+        self, X: Tensor, y: Matrix, metric: Evaluator, argmax: bool = True
+    ) -> float:
+        return super(CNN, self).score_nn(X, y, metric, argmax)

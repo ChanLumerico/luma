@@ -13,7 +13,6 @@ __all__ = (
     "Supervised",
     "Unsupervised",
     "Distance",
-    "NeuralModel",
 )
 
 
@@ -371,27 +370,3 @@ class Distance(MetricBase, metaclass=ABCMeta):
 
     @abstractmethod
     def score(*args) -> float: ...
-
-
-class NeuralModel(NeuralBase, metaclass=ABCMeta):
-    """
-    Neural networks are computational models inspired by the human brain,
-    consisting of layers of interconnected nodes (neurons) that process
-    information through weighted connections. These models include an input
-    layer to receive data, hidden layers that perform computations, and an
-    output layer to deliver results.
-    """
-
-    def __init_model__(self) -> None:
-        self.feature_sizes_: list[int] = []
-        self.feature_shapes_: list[tuple] = []
-
-        self.running_loss_: list[float] = []
-        self.train_loss_: list[float] = []
-        self.valid_loss_: list[float] = []
-
-    @abstractmethod
-    def train(self, **kwargs) -> list[float]: ...
-
-    @abstractmethod
-    def eval(self, **kwargs) -> list[float]: ...

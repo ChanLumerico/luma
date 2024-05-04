@@ -1,13 +1,17 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Self, Tuple
 import numpy as np
 
+from luma.core.base import ModelBase, NeuralBase
+from luma.core.super import Evaluator
+
+from luma.interface.exception import NotFittedError
 from luma.interface.typing import Matrix, Tensor, TensorLike
-from luma.core.base import ModelBase
-from luma.interface.util import InitUtil
+from luma.interface.util import InitUtil, TrainProgress
+from luma.model_selection.split import BatchGenerator, TrainTestSplit
 
 
-__all__ = ("Layer", "Loss", "Initializer")
+__all__ = ("Layer", "Loss", "Initializer", "NeuralModel")
 
 
 class Layer(ABC, ModelBase):
@@ -152,3 +156,130 @@ class Initializer(ABC):
 
     @abstractmethod
     def init_4d(self) -> Tensor: ...
+
+
+class NeuralModel(ABC, NeuralBase):
+    """
+    Neural networks are computational models inspired by the human brain,
+    consisting of layers of interconnected nodes (neurons) that process
+    information through weighted connections. These models include an input
+    layer to receive data, hidden layers that perform computations, and an
+    output layer to deliver results.
+    """
+
+    def __init__(
+        self,
+        batch_size: int,
+        n_epochs: int,
+        learning_rate: float,
+        valid_size: float,
+        early_stopping: bool,
+        patience: int,
+    ) -> None:
+        self.batch_size = batch_size
+        self.n_epochs = n_epochs
+        self.learning_rate = learning_rate
+        self.valid_size = valid_size
+        self.early_stopping = early_stopping
+        self.patience = patience
+
+    def __init_model__(self) -> None:
+        self.feature_sizes_: list = []
+        self.feature_shapes_: list = []
+
+        self.running_loss_: list[float] = []
+        self.train_loss_: list[float] = []
+        self.valid_loss_: list[float] = []
+
+        self.model: object
+
+    @abstractmethod
+    def _build_model(self) -> None: ...
+
+    def _get_feature_shapes(self, sizes: list) -> list[tuple]:
+        return [(i, j) for i, j in zip(sizes[:-1], sizes[1:])]
+
+    def fit_nn(self, X: TensorLike, y: TensorLike) -> Self:
+        X_train, X_val, y_train, y_val = TrainTestSplit(
+            X,
+            y,
+            test_size=self.valid_size,
+            shuffle=self.shuffle,
+            random_state=self.random_state,
+        ).get
+
+        best_valid_loss = np.inf
+        epochs_no_improve = 0
+
+        train_prog = TrainProgress(n_epochs=self.n_epochs)
+        with train_prog.progress as prog:
+            train_prog.add_task(prog, self)
+
+            for epoch in range(self.n_epochs):
+                train_loss = self.train(X_train, y_train)
+                train_loss_avg = np.average(train_loss)
+
+                valid_loss = self.eval(X_val, y_val)
+                valid_loss_avg = np.average(valid_loss)
+
+                self.train_loss_.append(train_loss_avg)
+                self.valid_loss_.append(valid_loss_avg)
+                train_prog.update(
+                    prog,
+                    epoch,
+                    epochs_no_improve,
+                    [train_loss_avg, valid_loss_avg],
+                )
+
+                if valid_loss_avg < best_valid_loss:
+                    best_valid_loss = valid_loss_avg
+                    epochs_no_improve = 0
+                else:
+                    epochs_no_improve += 1
+
+                if self.early_stopping and epochs_no_improve >= self.patience:
+                    print(f"Early stopping triggered after {epoch + 1} epochs.")
+                    break
+
+        self.fitted_ = True
+        return self
+
+    def predict_nn(self, X: TensorLike, argmax: bool = True) -> TensorLike:
+        if not self.fitted_:
+            raise NotFittedError
+        out = self.model(X, is_train=False)
+        return np.argmax(out, axis=1) if argmax else out
+
+    def score_nn(
+        self, X: TensorLike, y: TensorLike, metric: Evaluator, argmax: bool = True
+    ) -> float:
+        y_pred = self.predict(X, argmax=argmax)
+        return metric.score(y_true=y, y_pred=y_pred)
+
+    def train(self, X: TensorLike, y: TensorLike) -> list[float]:
+        train_loss = []
+        for X_batch, y_batch in BatchGenerator(
+            X, y, batch_size=self.batch_size, shuffle=self.shuffle
+        ):
+            out = self.model(X_batch, is_train=True)
+            loss = self.loss.loss(y_batch, out)
+            d_out = self.loss.grad(y_batch, out)
+
+            train_loss.append(loss)
+            self.running_loss_.append(loss)
+
+            self.model.backward(d_out)
+            self.model.update()
+
+        return train_loss
+
+    def eval(self, X: TensorLike, y: TensorLike) -> list[float]:
+        valid_loss = []
+        for X_batch, y_batch in BatchGenerator(
+            X, y, batch_size=self.batch_size, shuffle=self.shuffle
+        ):
+            out = self.model(X_batch, is_train=False)
+            loss = self.loss.loss(y_batch, out)
+            valid_loss.append(loss)
+
+        return valid_loss

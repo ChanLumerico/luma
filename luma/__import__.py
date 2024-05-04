@@ -1,13 +1,6 @@
 from luma.core.main import Luma
 from luma.core.base import ModelBase, ParadigmBase, MetricBase, VisualBase
-from luma.core.super import (
-    Estimator,
-    Transformer,
-    Optimizer,
-    Evaluator,
-    Visualizer,
-    NeuralModel,
-)
+from luma.core.super import Estimator, Transformer, Optimizer, Evaluator, Visualizer
 from luma.core.super import Supervised, Unsupervised, Distance
 
 from luma.interface.exception import (
@@ -78,7 +71,7 @@ from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 from luma.ensemble.boost import GradientBoostingClassifier, GradientBoostingRegressor
 from luma.ensemble.stack import StackingClassifier, StackingRegressor
 
-from luma.neural.base import Layer, Loss, Initializer
+from luma.neural.base import Layer, Loss, Initializer, NeuralModel
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.layer import (
     Convolution,
@@ -102,8 +95,8 @@ from luma.neural.optimizer import (
 )
 from luma.neural.loss import CrossEntropy, BinaryCrossEntropy, MSELoss
 from luma.neural.init import KaimingInit, XavierInit
-from luma.neural.block import ConvBlock
-from luma.neural.network import MLP
+from luma.neural.block import ConvBlock, DenseBlock
+from luma.neural.network import MLP, CNN
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -186,7 +179,7 @@ if __name__ == "__main__":
     ModelBase, ParadigmBase, MetricBase, VisualBase
 
     Estimator, Transformer, Optimizer, Evaluator, Visualizer,
-    Supervised, Unsupervised, Distance, NeuralModel
+    Supervised, Unsupervised, Distance
 
     # ----------------- [ luma.interface ] ---------------------
     NotFittedError, NotConvergedError,
@@ -248,7 +241,7 @@ if __name__ == "__main__":
     AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
     AdaMaxOptimizer, AdamWOptimizer, NAdamOptimizer
 
-    Layer, Loss, Initializer
+    Layer, Loss, Initializer, NeuralModel
 
     Convolution, Pooling, Dense, Dropout, Flatten, Activation,
     Sequential
@@ -257,9 +250,9 @@ if __name__ == "__main__":
 
     KaimingInit, XavierInit
 
-    ConvBlock
+    ConvBlock, DenseBlock
 
-    MLP
+    MLP, CNN
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

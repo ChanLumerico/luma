@@ -7,7 +7,7 @@
         },
         {
             "name": "NeuralModel",
-            "script": "luma.core.super",
+            "script": "luma.neural.base",
             "inheriting": "NeuralBase"
         },
         {
@@ -17,6 +17,11 @@
         },
         {
             "name": "MLP",
+            "script": "luma.neural.network",
+            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
+        },
+        {
+            "name": "CNN",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         },
