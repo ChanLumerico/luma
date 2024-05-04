@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Literal, Self
 import numpy as np
 
 from luma.core.super import (
@@ -16,11 +16,9 @@ from luma.model_selection.split import TrainTestSplit, BatchGenerator
 
 from luma.neural.base import Loss
 from luma.neural.layer import Sequential, Dense, Dropout, Activation
-from luma.neural.optimizer import SGDOptimizer
-from luma.neural.loss import CrossEntropy
 
 
-__all__ = ("MLP", "SimpleCNN")  # TODO: Future implementations: SimpleCNN, RNN, ...
+__all__ = ("MLP", "CNN")
 
 
 class MLP(Estimator, Supervised, NeuralModel):
@@ -35,6 +33,11 @@ class MLP(Estimator, Supervised, NeuralModel):
     inputs and outputs. MLPs are commonly used for tasks like classification,
     regression, and pattern recognition.
 
+    Structure
+    ---------
+    ```py
+    (Dense -> Activation -> Dropout) -> ... -> Dense -> Activation
+    ```
     Parameters
     ----------
     `in_features` : Number of input features
@@ -45,13 +48,12 @@ class MLP(Estimator, Supervised, NeuralModel):
     `n_epochs` : Number of epochs for training
     `learning_rate` : Step size during optimization process
     `valid_size` : Fractional size of validation set
-    `initializer` : Type of weight initializer (default `None`)
-    `activation` : Type of activation function (default `ReLU`)
+    `initializer` : Type of weight initializer
+    `activation` : Type of activation function
     `out_activation` : Type of activation function for the last layer
-    (only applied in prediction, default `Softmax`)
+    (only applied in prediction)
     `optimizer` : An optimizer used in weight update process
-    (default `SGDOptimizer`)
-    `loss` : Type of loss function (default `CrossEntropy`)
+    `loss` : Type of loss function
     `dropout_rate` : Dropout rate
     `lambda_` : L2 regularization strength
     `early_stopping` : Whether to early-stop the training when the valid
@@ -74,15 +76,16 @@ class MLP(Estimator, Supervised, NeuralModel):
         in_features: int,
         out_features: int,
         hidden_layers: list[int] | int,
+        *,
+        activation: Activation.FuncType,
+        out_activation: Activation.FuncType,
+        optimizer: Optimizer,
+        loss: Loss,
+        initializer: InitUtil.InitStr = None,
         batch_size: int = 100,
         n_epochs: int = 100,
         learning_rate: float = 0.01,
         valid_size: float = 0.1,
-        initializer: InitUtil.InitStr = None,
-        activation: Activation.FuncType = Activation.ReLU(),
-        out_activation: Activation.FuncType = Activation.Softmax(),
-        optimizer: Optimizer = SGDOptimizer(),
-        loss: Loss = CrossEntropy(),
         dropout_rate: float = 0.5,
         lambda_: float = 0.0,
         early_stopping: bool = False,
@@ -249,4 +252,21 @@ class MLP(Estimator, Supervised, NeuralModel):
         return metric.score(y_true=y, y_pred=y_pred)
 
 
-class SimpleCNN(Estimator, Supervised, NeuralModel): ...
+class CNN(Estimator, Supervised, NeuralModel):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def fit(self, *args) -> Self:
+        return super().fit(*args)
+
+    def predict(self, *args) -> np.Any:
+        return super().predict(*args)
+
+    def train(self, **kwargs) -> list[float]:
+        return super().train(**kwargs)
+
+    def eval(self, **kwargs) -> list[float]:
+        return super().eval(**kwargs)
+
+    def score(self, *args) -> float:
+        return super().score(*args)

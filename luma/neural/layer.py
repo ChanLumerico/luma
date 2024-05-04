@@ -1,8 +1,8 @@
-from typing import Any, List, Literal, Self, Tuple, Type
+from typing import Any, List, Literal, Self, Tuple, Type, override
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Matrix, Tensor, ClassType
+from luma.interface.typing import Matrix, Tensor, TensorLike, ClassType
 from luma.interface.util import InitUtil, Clone
 from luma.interface.exception import UnsupportedParameterError
 from luma.neural.base import Layer
@@ -712,14 +712,12 @@ class Sequential(Layer):
     """
 
     def __init__(self, *layers: Layer | Tuple[str, Layer]) -> None:
+        super().__init__()
         self.layers: List[Tuple[str, Layer]] = list()
         for layer in layers:
             self.add(layer)
 
-        self.optimizer = None
-        self.loss_func_ = None
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         self.input_ = X
         out = X
         for _, layer in self.layers:
@@ -728,9 +726,10 @@ class Sequential(Layer):
         self.out_shape = out.shape
         return out
 
-    def backward(self, d_out: Matrix) -> None:
+    def backward(self, d_out: TensorLike) -> TensorLike:
         for _, layer in reversed(self.layers):
             d_out = layer.backward(d_out)
+        return d_out
 
     def update(self) -> None:
         self._check_no_optimizer()
@@ -742,7 +741,11 @@ class Sequential(Layer):
         self.optimizer.set_params(**params, ignore_missing=True)
 
         for _, layer in self.layers:
-            layer.optimizer = Clone(self.optimizer).get
+            cloned_opt = Clone(self.optimizer).get
+            if hasattr(layer, "set_optimizer"):
+                layer.set_optimizer(cloned_opt)
+            else:
+                layer.optimizer = cloned_opt
 
     def _check_no_optimizer(self) -> None:
         if self.optimizer is None:
@@ -758,9 +761,8 @@ class Sequential(Layer):
 
         if self.optimizer is not None:
             self.set_optimizer(self.optimizer)
-        if self.loss_func_ is not None:
-            self.set_loss(self.loss_func_)
 
+    @override
     @property
     def param_size(self) -> Tuple[int, int]:
         w_size, b_size = 0, 0

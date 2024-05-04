@@ -465,7 +465,7 @@ class TrainProgress:
     (property) progress: (self: Self@TrainProgress) -> Iterable
     ```
 
-    Exmaples
+    Examples
     --------
     Create an instance for `TrainProgress`:
     >>> train_prog = TrainProgress(n_epochs=100)

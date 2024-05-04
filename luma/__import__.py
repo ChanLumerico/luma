@@ -78,6 +78,17 @@ from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 from luma.ensemble.boost import GradientBoostingClassifier, GradientBoostingRegressor
 from luma.ensemble.stack import StackingClassifier, StackingRegressor
 
+from luma.neural.base import Layer, Loss, Initializer
+from luma.neural.single import PerceptronClassifier, PerceptronRegressor
+from luma.neural.layer import (
+    Convolution,
+    Pooling,
+    Dense,
+    Dropout,
+    Flatten,
+    Activation,
+    Sequential,
+)
 from luma.neural.optimizer import (
     SGDOptimizer,
     MomentumOptimizer,
@@ -89,19 +100,10 @@ from luma.neural.optimizer import (
     AdamWOptimizer,
     NAdamOptimizer,
 )
-from luma.neural.single import PerceptronClassifier, PerceptronRegressor
-from luma.neural.base import Layer, Loss, Initializer
-from luma.neural.layer import (
-    Convolution,
-    Pooling,
-    Dense,
-    Dropout,
-    Flatten,
-    Activation,
-    Sequential,
-)
 from luma.neural.loss import CrossEntropy, BinaryCrossEntropy, MSELoss
 from luma.neural.init import KaimingInit, XavierInit
+from luma.neural.block import ConvBlock
+from luma.neural.network import MLP
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -254,6 +256,10 @@ if __name__ == "__main__":
     CrossEntropy, BinaryCrossEntropy, MSELoss
 
     KaimingInit, XavierInit
+
+    ConvBlock
+
+    MLP
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

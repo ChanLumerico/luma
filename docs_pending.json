@@ -19,6 +19,16 @@
             "name": "MLP",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
+        },
+        {
+            "name": "ConvBlock",
+            "script": "luma.neural.block",
+            "inheriting": "Sequential"
+        },
+        {
+            "name": "DenseBlock",
+            "script": "luma.neural.block",
+            "inheriting": "Sequential"
         }
     ]
 }
