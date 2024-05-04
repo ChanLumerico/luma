@@ -20,7 +20,7 @@ from luma.neural.optimizer import SGDOptimizer
 from luma.neural.loss import CrossEntropy
 
 
-__all__ = "MLP"  # TODO: Future implementations: CNN, RNN, ...
+__all__ = ("MLP", "SimpleCNN")  # TODO: Future implementations: SimpleCNN, RNN, ...
 
 
 class MLP(Estimator, Supervised, NeuralModel):
@@ -247,3 +247,6 @@ class MLP(Estimator, Supervised, NeuralModel):
     ) -> float:
         y_pred = self.predict(X, argmax=argmax)
         return metric.score(y_true=y, y_pred=y_pred)
+
+
+class SimpleCNN(Estimator, Supervised, NeuralModel): ...
