@@ -175,6 +175,7 @@ class NeuralModel(ABC, NeuralBase):
         valid_size: float,
         early_stopping: bool,
         patience: int,
+        deep_verbose: bool,
     ) -> None:
         self.batch_size = batch_size
         self.n_epochs = n_epochs
@@ -182,6 +183,7 @@ class NeuralModel(ABC, NeuralBase):
         self.valid_size = valid_size
         self.early_stopping = early_stopping
         self.patience = patience
+        self.deep_verbose = deep_verbose
 
     def __init_model__(self) -> None:
         self.feature_sizes_: list = []
@@ -258,6 +260,7 @@ class NeuralModel(ABC, NeuralBase):
 
     def train(self, X: TensorLike, y: TensorLike) -> list[float]:
         train_loss = []
+        i = 0  # tmp
         for X_batch, y_batch in BatchGenerator(
             X, y, batch_size=self.batch_size, shuffle=self.shuffle
         ):
@@ -270,6 +273,9 @@ class NeuralModel(ABC, NeuralBase):
 
             self.model.backward(d_out)
             self.model.update()
+
+            print(i, loss)  # tmp
+            i += 1
 
         return train_loss
 

@@ -1,4 +1,4 @@
-from typing import Literal, Tuple
+from typing import Literal
 
 from luma.core.super import Optimizer
 from luma.interface.util import InitUtil

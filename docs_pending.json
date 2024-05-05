@@ -1,11 +1,6 @@
 {
     "class": [
         {
-            "name": "Losses",
-            "script": "luma.neural.loss",
-            "inheriting": "Loss"
-        },
-        {
             "name": "NeuralModel",
             "script": "luma.neural.base",
             "inheriting": "NeuralBase"
