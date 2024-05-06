@@ -468,21 +468,21 @@ class TrainProgress:
     Examples
     --------
     Create an instance for `TrainProgress`:
-    >>> train_prog = TrainProgress(n_epochs=100)
+    >>> train_prog = TrainProgress(n_iter=100)
 
     Generate a task and update the progress bar:
     ```py
     with train_prog.progress as progress:
         train_prog.add_task(progress=progress, model=AnyModelInstance)
 
-        for epoch in range(n_epochs):
-            train_prog.update(progress=progress, cur=epoch, losses=[...], ...)
+        for i in range(n_iter):
+            train_prog.update(progress=progress, cur=i, losses=[...])
             # losses is a list of [train_loss, valid_loss]
     ```
     """
 
-    def __init__(self, n_epochs: int, bar_width: int = 50) -> None:
-        self.n_epochs = n_epochs
+    def __init__(self, n_iter: int, bar_width: int = 50) -> None:
+        self.n_iter = n_iter
         self.bar_width = bar_width
         self.task = None
 
@@ -504,8 +504,8 @@ class TrainProgress:
     def add_task(self, progress: Progress, model: object) -> None:
         self.task = progress.add_task(
             f"[purple]Start {type(model).__name__} training "
-            + f"with {self.n_epochs} epochs.",
-            total=self.n_epochs,
+            + f"with {self.n_iter} epochs.",
+            total=self.n_iter,
             train_loss=0.0,
             valid_loss=0.0,
         )
@@ -514,7 +514,6 @@ class TrainProgress:
         self,
         progress: Progress,
         cur: int,
-        patience: int,
         losses: list[float, float],
     ) -> None:
         self._check_task_exist()
@@ -523,6 +522,6 @@ class TrainProgress:
             advance=1,
             train_loss=losses[0],
             valid_loss=losses[1],
-            description=f"Epoch: {cur}/{self.n_epochs} - "
-            + f"Train/Valid Loss: {losses[0]:.4f}/{losses[1]:.4f}, pat: {patience}",
+            description=f"Epoch: {cur}/{self.n_iter} - "
+            + f"Train/Valid Loss: {losses[0]:.4f}/{losses[1]:.4f}",
         )

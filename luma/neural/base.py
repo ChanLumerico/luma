@@ -213,12 +213,12 @@ class NeuralModel(ABC, NeuralBase):
         best_valid_loss = np.inf
         epochs_no_improve = 0
 
-        train_prog = TrainProgress(n_epochs=self.n_epochs)
+        train_prog = TrainProgress(n_iter=self.n_epochs)
         with train_prog.progress as prog:
             train_prog.add_task(prog, self)
 
-            for epoch in range(self.n_epochs):
-                train_loss = self.train(X_train, y_train)
+            for epoch in range(1, self.n_epochs + 1):
+                train_loss = self.train(X_train, y_train, epoch=epoch)
                 train_loss_avg = np.average(train_loss)
 
                 valid_loss = self.eval(X_val, y_val)
@@ -229,7 +229,6 @@ class NeuralModel(ABC, NeuralBase):
                 train_prog.update(
                     prog,
                     epoch,
-                    epochs_no_improve,
                     [train_loss_avg, valid_loss_avg],
                 )
 
@@ -258,24 +257,27 @@ class NeuralModel(ABC, NeuralBase):
         y_pred = self.predict(X, argmax=argmax)
         return metric.score(y_true=y, y_pred=y_pred)
 
-    def train(self, X: TensorLike, y: TensorLike) -> list[float]:
+    def train(self, X: TensorLike, y: TensorLike, epoch: int) -> list[float]:
         train_loss = []
-        i = 0  # tmp
-        for X_batch, y_batch in BatchGenerator(
+        train_batch = BatchGenerator(
             X, y, batch_size=self.batch_size, shuffle=self.shuffle
-        ):
+        )
+        for i, (X_batch, y_batch) in enumerate(train_batch, start=1):
             out = self.model(X_batch, is_train=True)
             loss = self.loss.loss(y_batch, out)
             d_out = self.loss.grad(y_batch, out)
 
             train_loss.append(loss)
             self.running_loss_.append(loss)
-
             self.model.backward(d_out)
             self.model.update()
 
-            print(i, loss)  # tmp
-            i += 1
+            if self.deep_verbose:
+                print(
+                    f"Epoch {epoch}/{self.n_epochs},",
+                    f"Batch {i}/{train_batch.n_batches}",
+                    f"- Loss: {loss}",
+                )
 
         return train_loss
 
