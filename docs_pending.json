@@ -11,12 +11,12 @@
             "inheriting": "Luma"
         },
         {
-            "name": "MLP",
+            "name": "SimpleMLP",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         },
         {
-            "name": "CNN",
+            "name": "SimpleCNN",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         },
@@ -29,6 +29,21 @@
             "name": "DenseBlock",
             "script": "luma.neural.block",
             "inheriting": "Sequential"
+        },
+        {
+            "name": "LeNet_1",
+            "script": "luma.neural.network",
+            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
+        },
+        {
+            "name": "LeNet_4",
+            "script": "luma.neural.network",
+            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
+        },
+        {
+            "name": "LeNet_5",
+            "script": "luma.neural.network",
+            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         }
     ]
 }

@@ -1,21 +1,25 @@
-from typing import Any, Literal, Self, override
+from typing import Literal
 
-from luma.core.super import Estimator, Optimizer, Evaluator, Supervised
+from luma.core.super import Optimizer
+from luma.interface.util import InitUtil
 
-from luma.interface.typing import Tensor, Matrix, Vector
-from luma.interface.util import InitUtil, Clone
-from luma.metric.classification import Accuracy
-
-from luma.neural.base import NeuralModel, Loss
-from luma.neural.layer import Sequential, Dense, Dropout, Activation, Flatten
-from luma.neural.block import ConvBlock, DenseBlock
+from luma.neural.base import Loss
+from luma.neural.layer import Activation
 from luma.neural.loss import CrossEntropy
 
+from ._models import _simple, _lenet
 
-__all__ = ("MLP", "CNN", "LeNet_1")
+
+__all__ = (
+    "SimpleMLP",
+    "SimpleCNN",
+    "LeNet_1",
+    "LeNet_4",
+    "LeNet_5",
+)
 
 
-class MLP(Estimator, Supervised, NeuralModel):
+class SimpleMLP(_simple._SimpleMLP):
     """
     An MLP (Multilayer Perceptron) is a type of artificial neural network
     composed of at least three layers: an input layer, one or more hidden
@@ -69,7 +73,7 @@ class MLP(Estimator, Supervised, NeuralModel):
         out_features: int,
         hidden_layers: list[int] | int,
         *,
-        activation: Activation.FuncType,
+        activation: Activation,
         optimizer: Optimizer,
         loss: Loss,
         initializer: InitUtil.InitStr = None,
@@ -78,97 +82,36 @@ class MLP(Estimator, Supervised, NeuralModel):
         learning_rate: float = 0.001,
         valid_size: float = 0.1,
         dropout_rate: float = 0.5,
-        lambda_: float = 0.0,
+        lambda_: float = 0,
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
         random_state: int = None,
-        deep_verbose: bool = False,
+        deep_verbose: bool = False
     ) -> None:
-        self.in_features = in_features
-        self.out_features = out_features
-        self.hidden_layers = hidden_layers
-        self.initializer = initializer
-        self.activation = activation
-        self.optimizer = optimizer
-        self.loss = loss
-        self.dropout_rate = dropout_rate
-        self.lambda_ = lambda_
-        self.shuffle = shuffle
-        self.random_state = random_state
-        self.fitted_ = False
-
         super().__init__(
+            in_features,
+            out_features,
+            hidden_layers,
+            activation,
+            optimizer,
+            loss,
+            initializer,
             batch_size,
             n_epochs,
             learning_rate,
             valid_size,
+            dropout_rate,
+            lambda_,
             early_stopping,
             patience,
+            shuffle,
+            random_state,
             deep_verbose,
         )
-        super().__init_model__()
-        self.model = Sequential()
-        self.optimizer.set_params(learning_rate=self.learning_rate)
-        self.model.set_optimizer(optimizer=self.optimizer)
-
-        if isinstance(self.hidden_layers, int):
-            self.hidden_layers = [self.hidden_layers]
-
-        self.feature_sizes_ = [
-            self.in_features,
-            *self.hidden_layers,
-            self.out_features,
-        ]
-        self.feature_shapes_ = self._get_feature_shapes(self.feature_sizes_)
-
-        self.set_param_ranges(
-            {
-                "in_features": ("0<,+inf", int),
-                "out_features": ("0<,+inf", int),
-                "batch_size": ("0<,+inf", int),
-                "n_epochs": ("0<,+inf", int),
-                "learning_rate": ("0<,+inf", None),
-                "valid_size": ("0<,<1", None),
-                "dropout_rate": ("0,1", None),
-                "lambda_": ("0,+inf", None),
-                "patience": (f"0<,{self.n_epochs}", int),
-            }
-        )
-        self.check_param_ranges()
-        self._build_model()
-
-    def _build_model(self) -> None:
-        for i, (in_, out_) in enumerate(self.feature_shapes_):
-            self.model += Dense(
-                in_,
-                out_,
-                initializer=self.initializer,
-                lambda_=self.lambda_,
-                random_state=self.random_state,
-            )
-            if i < len(self.feature_shapes_) - 1:
-                self.model += Clone(self.activation).get
-                self.model += Dropout(
-                    dropout_rate=self.dropout_rate,
-                    random_state=self.random_state,
-                )
-
-    def fit(self, X: Matrix, y: Matrix) -> Self:
-        return super(MLP, self).fit_nn(X, y)
-
-    @override
-    def predict(self, X: Matrix, argmax: bool = True) -> Matrix | Vector:
-        return super(MLP, self).predict_nn(X, argmax)
-
-    @override
-    def score(
-        self, X: Matrix, y: Matrix, metric: Evaluator, argmax: bool = True
-    ) -> float:
-        return super(MLP, self).score_nn(X, y, metric, argmax)
 
 
-class CNN(Estimator, Supervised, NeuralModel):
+class SimpleCNN(_simple._SimpleCNN):
     """
     A Convolutional Neural Network (CNN) is a type of deep neural network
     primarily used in image recognition and processing that is particularly
@@ -223,7 +166,7 @@ class CNN(Estimator, Supervised, NeuralModel):
     Examples
     --------
     ```py
-    model = CNN(
+    model = SimpleCNN(
         in_channels_list=[1, 6],
         in_features_list=[96, 16],
         out_channels=12,
@@ -261,7 +204,7 @@ class CNN(Estimator, Supervised, NeuralModel):
         out_features: int,
         filter_size: int,
         *,
-        activation: Activation.FuncType,
+        activation: Activation,
         optimizer: Optimizer,
         loss: Loss,
         initializer: InitUtil.InitStr = None,
@@ -277,263 +220,296 @@ class CNN(Estimator, Supervised, NeuralModel):
         n_epochs: int = 100,
         learning_rate: float = 0.001,
         valid_size: float = 0.1,
-        lambda_: float = 0.0,
+        lambda_: float = 0,
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
         random_state: int = None,
-        deep_verbose: bool = False,
+        deep_verbose: bool = False
     ) -> None:
-        self.in_channels_list = in_channels_list
-        self.in_features_list = in_features_list
-        self.out_channels = out_channels
-        self.out_features = out_features
-        self.filter_size = filter_size
-        self.activation = activation
-        self.optimizer = optimizer
-        self.loss = loss
-        self.initializer = initializer
-        self.padding = padding
-        self.stride = stride
-        self.do_pooling = do_pooling
-        self.pool_filter_size = pool_filter_size
-        self.pool_stride = pool_stride
-        self.pool_mode = pool_mode
-        self.do_dropout = do_dropout
-        self.dropout_rate = dropout_rate
-        self.lambda_ = lambda_
-        self.shuffle = shuffle
-        self.random_state = random_state
-        self._fitted = False
-
         super().__init__(
+            in_channels_list,
+            in_features_list,
+            out_channels,
+            out_features,
+            filter_size,
+            activation,
+            optimizer,
+            loss,
+            initializer,
+            padding,
+            stride,
+            do_pooling,
+            pool_filter_size,
+            pool_stride,
+            pool_mode,
+            do_dropout,
+            dropout_rate,
             batch_size,
             n_epochs,
             learning_rate,
             valid_size,
+            lambda_,
             early_stopping,
             patience,
+            shuffle,
+            random_state,
             deep_verbose,
         )
-        super().__init_model__()
-        self.model = Sequential()
-        self.optimizer.set_params(learning_rate=self.learning_rate)
-        self.model.set_optimizer(optimizer=self.optimizer)
-
-        if isinstance(self.in_channels_list, int):
-            self.in_channels_list = [self.in_channels_list]
-        if isinstance(self.in_features_list, int):
-            self.in_features_list = [self.in_features_list]
-
-        self.feature_sizes_ = [
-            [*self.in_channels_list, self.out_channels],
-            [*self.in_features_list, self.out_features],
-        ]
-        self.feature_shapes_ = [
-            [*self._get_feature_shapes(self.feature_sizes_[0])],
-            [*self._get_feature_shapes(self.feature_sizes_[1])],
-        ]
-
-        self.set_param_ranges(
-            {
-                "out_channels": ("0<,+inf", int),
-                "out_features": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-                "dropout_rate": ("0,1", None),
-                "batch_size": ("0<,+inf", int),
-                "n_epochs": ("0<,+inf", int),
-                "learning_rate": ("0<,+inf", None),
-                "valid_size": ("0<,<1", None),
-                "dropout_rate": ("0,1", None),
-                "lambda_": ("0,+inf", None),
-                "patience": (f"0<,{self.n_epochs}", int),
-            }
-        )
-        self.check_param_ranges()
-        self._build_model()
-
-    def _build_model(self) -> None:
-        for in_, out_ in self.feature_shapes_[0]:
-            self.model += ConvBlock(
-                in_,
-                out_,
-                self.filter_size,
-                activation=Clone(self.activation).get,
-                initializer=self.initializer,
-                padding=self.padding,
-                stride=self.stride,
-                lambda_=self.lambda_,
-                do_pooling=self.do_pooling,
-                pool_filter_size=self.pool_filter_size,
-                pool_stride=self.pool_stride,
-                pool_mode=self.pool_mode,
-                random_state=self.random_state,
-            )
-
-        self.model += Flatten()
-        for i, (in_, out_) in enumerate(self.feature_shapes_[1]):
-            if i < len(self.feature_shapes_[1]) - 1:
-                self.model += DenseBlock(
-                    in_,
-                    out_,
-                    activation=Clone(self.activation).get,
-                    lambda_=self.lambda_,
-                    do_dropout=self.do_dropout,
-                    dropout_rate=self.dropout_rate,
-                    random_state=self.random_state,
-                )
-            else:
-                self.model += Dense(
-                    in_,
-                    out_,
-                    lambda_=self.lambda_,
-                    random_state=self.random_state,
-                )
-
-    def fit(self, X: Tensor, y: Matrix) -> Self:
-        return super(CNN, self).fit_nn(X, y)
-
-    @override
-    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
-        return super(CNN, self).predict_nn(X, argmax)
-
-    @override
-    def score(
-        self, X: Tensor, y: Matrix, metric: Evaluator, argmax: bool = True
-    ) -> float:
-        return super(CNN, self).score_nn(X, y, metric, argmax)
 
 
-class LeNet_1(Estimator, Supervised, NeuralModel):
+class LeNet_1(_lenet._LeNet_1):
+    """
+    LeNet-1 is an early convolutional neural network (CNN) proposed by
+    Yann LeCun in 1988, primarily designed for handwritten character
+    recognition. It consists of two convolutional layers interleaved
+    with subsampling layers, followed by a fully connected layer.
+    The network uses convolutions to automatically learn spatial
+    hierarchies of features, which are then used for classification
+    tasks. LeNet-1 was one of the first successful applications of CNNs,
+    laying the groundwork for more complex architectures in image
+    processing.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 1, 28, 28]
+    ```
+    Convolution Layers:
+    ```py
+    ConvBlock(1, 4) -> ConvBlock(4, 8)
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(8 * 4 * 4, 10)
+    ```
+    Output:
+    ```py
+    Matrix[..., 10]
+    ```
+    Parameters
+    ----------
+    `activation` : Type of activation function (Default `Tanh`)
+    `optimizer` : Type of optimizer for weight update
+    `loss` : Type of loss function (Default `CrossEntropy`)
+    `initializer` : Type of weight initializer (`None` for dense layers)
+    `batch_size` : Size of a single mini-batch
+    `n_epochs` : Number of epochs for training
+    `learning_rate` : Step size during optimization process
+    `valid_size` : Fractional size of validation set
+    `lambda_` : L2 regularization strength
+    `early_stopping` : Whether to early-stop the training when the valid
+    score stagnates
+    `patience` : Number of epochs to wait until early-stopping
+    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. LeCun, Yann, et al. "Backpropagation Applied to Handwritten Zip
+    Code Recognition." Neural Computation, vol. 1, no. 4, 1989, pp. 541-551.
+
+    """
+
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.Tanh(),
+        activation: Activation = Activation.Tanh(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         batch_size: int = 100,
         n_epochs: int = 100,
         learning_rate: float = 0.01,
         valid_size: float = 0.1,
-        lambda_: float = 0.0,
+        lambda_: float = 0,
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
         random_state: int = None,
         deep_verbose: bool = False,
     ) -> None:
-        self.activation = activation
-        self.optimizer = optimizer
-        self.loss = loss
-        self.initializer = initializer
-        self.lambda_ = lambda_
-        self.shuffle = shuffle
-        self.random_state = random_state
-        self._fitted = False
-
         super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
             batch_size,
             n_epochs,
             learning_rate,
             valid_size,
+            lambda_,
             early_stopping,
             patience,
+            shuffle,
+            random_state,
             deep_verbose,
         )
-        super().__init_model__()
-        self.model = Sequential()
-        self.optimizer.set_params(learning_rate=self.learning_rate)
-        self.model.set_optimizer(optimizer=self.optimizer)
 
-        self.feature_sizes_ = [
-            [1, 4, 12, 10],
-            [10, 10],
-        ]
-        self.feature_shapes_ = [
-            [(1, 4), (4, 12), (12, 10)],
-            [(10, 10)],
-        ]
 
-        self.set_param_ranges(
-            {
-                "batch_size": ("0<,+inf", int),
-                "n_epochs": ("0<,+inf", int),
-                "learning_rate": ("0<,+inf", None),
-                "valid_size": ("0<,<1", None),
-                "dropout_rate": ("0,1", None),
-                "lambda_": ("0,+inf", None),
-                "patience": (f"0<,{self.n_epochs}", int),
-            }
-        )
-        self.check_param_ranges()
-        self._build_model()
+class LeNet_4(_lenet._LeNet_4):
+    """
+    LeNet-4 is a specific convolutional neural network structure designed
+    for more advanced image recognition tasks than its predecessors.
+    This version incorporates several layers of convolutions and pooling,
+    followed by fully connected layers leading to the output for classification.
 
-    def _build_model(self) -> None:
-        self.model += ConvBlock(
-            1,
-            4,
-            filter_size=5,
-            stride=1,
-            activation=Clone(self.activation).get,
-            initializer=self.initializer,
-            padding="valid",
-            lambda_=self.lambda_,
-            pool_filter_size=2,
-            pool_stride=2,
-            pool_mode="avg",
-            random_state=self.random_state,
-        )
-        self.model += ConvBlock(
-            4,
-            12,
-            filter_size=5,
-            stride=1,
-            activation=Clone(self.activation).get,
-            initializer=self.initializer,
-            padding="valid",
-            lambda_=self.lambda_,
-            pool_filter_size=2,
-            pool_stride=2,
-            pool_mode="avg",
-            random_state=self.random_state,
-        )
-        self.model += ConvBlock(
-            12,
-            10,
-            filter_size=5,
-            stride=1,
-            activation=Clone(self.activation).get,
-            initializer=self.initializer,
-            padding="valid",
-            lambda_=self.lambda_,
-            do_pooling=False,
-            random_state=self.random_state,
-        )
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 1, 32, 32]
+    ```
+    Convolution Layers:
+    ```py
+    ConvBlock(1, 4) -> ConvBlock(4, 16)
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> DenseBlock(16 * 5 * 5, 120) -> Dense(10)
+    ```
+    Output:
+    ```py
+    Matrix[..., 10]
+    ```
+    Parameters
+    ----------
+    `activation` : Type of activation function (Default `Tanh`)
+    `optimizer` : Type of optimizer for weight update
+    `loss` : Type of loss function (Default `CrossEntropy`)
+    `initializer` : Type of weight initializer (`None` for dense layers)
+    `batch_size` : Size of a single mini-batch
+    `n_epochs` : Number of epochs for training
+    `learning_rate` : Step size during optimization process
+    `valid_size` : Fractional size of validation set
+    `lambda_` : L2 regularization strength
+    `early_stopping` : Whether to early-stop the training when the valid
+    score stagnates
+    `patience` : Number of epochs to wait until early-stopping
+    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
 
-        self.model += Flatten()
-        self.model += Dense(
-            10,
-            10,
-            lambda_=self.lambda_,
-            random_state=self.random_state,
-        )
+    References
+    ----------
+    1. LeCun, Yann, et al. "Backpropagation Applied to Handwritten Zip
+    Code Recognition." Neural Computation, vol. 1, no. 4, 1989, pp. 541-551.
+    """
 
-    def fit(self, X: Tensor, y: Matrix) -> Self:
-        return super(LeNet_1, self).fit_nn(X, y)
-
-    @override
-    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
-        return super(LeNet_1, self).predict_nn(X, argmax)
-
-    @override
-    def score(
+    def __init__(
         self,
-        X: Tensor,
-        y: Matrix,
-        metric: Evaluator = Accuracy,
-        argmax: bool = True,
-    ) -> float:
-        return super(LeNet_1, self).score_nn(X, y, metric, argmax)
+        optimizer: Optimizer,
+        activation: Activation = Activation.Tanh(),
+        loss: Loss = CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        batch_size: int = 100,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        dropout_rate: float = 0.5,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class LeNet_5(_lenet._LeNet_5):
+    """
+    LeNet-5 is a specific convolutional neural network structure designed
+    for more advanced image recognition tasks than its predecessors.
+    This version incorporates several layers of convolutions and pooling,
+    followed by fully connected layers leading to the output for classification.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 1, 32, 32]
+    ```
+    Convolution Layers:
+    ```py
+    ConvBlock(1, 6) -> ConvBlock(6, 16)
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten ->
+    DenseBlock(16 * 5 * 5, 120) -> DenseBlock(120, 84) -> Dense(84, 10)
+    ```
+    Output:
+    ```py
+    Matrix[..., 10]
+    ```
+    Parameters
+    ----------
+    `activation` : Type of activation function (Default `Tanh`)
+    `optimizer` : Type of optimizer for weight update
+    `loss` : Type of loss function (Default `CrossEntropy`)
+    `initializer` : Type of weight initializer (`None` for dense layers)
+    `batch_size` : Size of a single mini-batch
+    `n_epochs` : Number of epochs for training
+    `learning_rate` : Step size during optimization process
+    `valid_size` : Fractional size of validation set
+    `lambda_` : L2 regularization strength
+    `early_stopping` : Whether to early-stop the training when the valid
+    score stagnates
+    `patience` : Number of epochs to wait until early-stopping
+    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. LeCun, Yann, et al. "Backpropagation Applied to Handwritten Zip
+    Code Recognition." Neural Computation, vol. 1, no. 4, 1989, pp. 541-551.
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation = Activation.Tanh(),
+        loss: Loss = CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        batch_size: int = 100,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        dropout_rate: float = 0.5,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )

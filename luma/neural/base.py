@@ -291,3 +291,6 @@ class NeuralModel(ABC, NeuralBase):
             valid_loss.append(loss)
 
         return valid_loss
+
+    def __str__(self) -> str:
+        return type(self).__name__

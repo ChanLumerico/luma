@@ -3,7 +3,6 @@ from typing import Literal
 from luma.core.super import Optimizer
 from luma.interface.util import InitUtil
 
-from luma.neural.base import Layer
 from luma.neural.layer import *
 
 
