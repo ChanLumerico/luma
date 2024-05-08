@@ -140,6 +140,8 @@ class SimpleCNN(_simple._SimpleCNN):
     `initializer` : Type of weight initializer (`None` for dense layers)
     `padding` : Padding strategy (default `same`)
     `stride` : Step size of filters during convolution
+    `do_batch_norm` : Whether to perform batch normalization (default `True`)
+    `momentum` : Momentum for batch normalization
     `do_pooling` : Whether to perform pooling
     `pool_filter_size` : Size of filters for pooling layers
     `pool_stride` : Step size of filters during pooling
@@ -210,6 +212,8 @@ class SimpleCNN(_simple._SimpleCNN):
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
         do_pooling: bool = True,
         pool_filter_size: int = 2,
         pool_stride: int = 2,
@@ -239,6 +243,8 @@ class SimpleCNN(_simple._SimpleCNN):
             initializer,
             padding,
             stride,
+            do_batch_norm,
+            momentum,
             do_pooling,
             pool_filter_size,
             pool_stride,

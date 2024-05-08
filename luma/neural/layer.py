@@ -15,8 +15,9 @@ __all__ = (
     "Dropout",
     "Flatten",
     "Activation",
+    "BatchNorm",
     "Sequential",
-)
+)  # TODO: Make a 1D version of these layers; rename these to ~2D
 
 
 class Convolution(Layer):
@@ -53,6 +54,7 @@ class Convolution(Layer):
         self,
         in_channels: int,
         out_channels: int,
+        *,
         filter_size: int,
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
@@ -340,6 +342,7 @@ class Dense(Layer):
         self,
         in_features: int,
         out_features: int,
+        *,
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
         lambda_: float = 0.0,
@@ -651,6 +654,83 @@ class Activation:
                 + self.beta * self.input_ * self.sigmoid * (1 - self.sigmoid)
             )
             return self.dX
+
+
+class BatchNorm(Layer):
+    """
+    Batch normalization standardizes layer inputs across mini-batches to stabilize
+    learning, accelerate convergence, and reduce sensitivity to initialization.
+    It adjusts normalized outputs using learnable parameters, mitigating internal
+    covariate shift in deep networks.
+
+    Parameters
+    ----------
+    `in_features` : Number of input features
+    `momentum` : Momentum for updating the running averages
+
+    """
+
+    def __init__(
+        self,
+        in_features: int,
+        *,
+        momentum: float = 0.9,
+        epsilon: float = 1e-9,
+    ) -> None:
+        super().__init__()
+        self.in_features = in_features
+        self.momentum = momentum
+        self.epsilon = epsilon
+
+        gamma_ = np.ones((1, in_features, 1, 1))
+        beta_ = np.zeros((1, in_features, 1, 1))
+        self.weights_ = [gamma_, beta_]
+
+        self.running_mean = np.zeros((1, in_features, 1, 1))
+        self.running_var = np.ones((1, in_features, 1, 1))
+
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        if is_train:
+            batch_mean = np.mean(X, axis=(0, 2, 3), keepdims=True)
+            batch_var = np.var(X, axis=(0, 2, 3), keepdims=True)
+
+            self.running_mean = (
+                self.momentum * self.running_mean + (1 - self.momentum) * batch_mean
+            )
+            self.running_var = (
+                self.momentum * self.running_var + (1 - self.momentum) * batch_var
+            )
+
+            self.X_norm = (X - batch_mean) / np.sqrt(batch_var + self.epsilon)
+        else:
+            self.X_norm = (X - self.running_mean) / np.sqrt(
+                self.running_var + self.epsilon
+            )
+
+        out = self.weights_[0] * self.X_norm + self.weights_[1]
+        self.out_shape = out.shape
+        return out
+
+    def backward(self, d_out: Tensor) -> Tensor:
+        batch_size, _, height, width = d_out.shape
+        dX_norm = d_out * self.weights_[0]
+
+        dgamma = np.sum(d_out * self.X_norm, axis=(0, 2, 3), keepdims=True)
+        dbeta = np.sum(d_out, axis=(0, 2, 3), keepdims=True)
+        self.dW = [dgamma, dbeta]
+
+        dX = (
+            (1.0 / (batch_size * height * width))
+            * np.reciprocal(np.sqrt(self.running_var + self.epsilon))
+            * (
+                (batch_size * height * width) * dX_norm
+                - np.sum(dX_norm, axis=(0, 2, 3), keepdims=True)
+                - self.X_norm
+                * np.sum(dX_norm * self.X_norm, axis=(0, 2, 3), keepdims=True)
+            )
+        )
+        self.dX = dX
+        return self.dX
 
 
 class Sequential(Layer):

@@ -133,6 +133,8 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
         do_pooling: bool = True,
         pool_filter_size: int = 2,
         pool_stride: int = 2,
@@ -161,6 +163,8 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
         self.initializer = initializer
         self.padding = padding
         self.stride = stride
+        self.do_batch_norm = do_batch_norm
+        self.momentum = momentum
         self.do_pooling = do_pooling
         self.pool_filter_size = pool_filter_size
         self.pool_stride = pool_stride
@@ -206,6 +210,7 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
                 "out_features": ("0<,+inf", int),
                 "filter_size": ("0<,+inf", int),
                 "stride": ("0<,+inf", int),
+                "momentum": ("0,1", None),
                 "pool_filter_size": ("0<,+inf", int),
                 "pool_stride": ("0<,+inf", int),
                 "dropout_rate": ("0,1", None),
@@ -232,6 +237,8 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
                 padding=self.padding,
                 stride=self.stride,
                 lambda_=self.lambda_,
+                do_batch_norm=self.do_batch_norm,
+                momentum=self.momentum,
                 do_pooling=self.do_pooling,
                 pool_filter_size=self.pool_filter_size,
                 pool_stride=self.pool_stride,

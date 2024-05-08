@@ -292,5 +292,8 @@ class NeuralModel(ABC, NeuralBase):
 
         return valid_loss
 
+    @property
+    def param_size(self) -> tuple[int, int]: ...  # TODO: Implement this
+
     def __str__(self) -> str:
         return type(self).__name__

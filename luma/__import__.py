@@ -80,6 +80,7 @@ from luma.neural.layer import (
     Dropout,
     Flatten,
     Activation,
+    BatchNorm,
     Sequential,
 )
 from luma.neural.optimizer import (
@@ -245,7 +246,7 @@ if __name__ == "__main__":
     Layer, Loss, Initializer, NeuralModel
 
     Convolution, Pooling, Dense, Dropout, Flatten, Activation,
-    Sequential
+    BatchNorm, Sequential
 
     CrossEntropy, BinaryCrossEntropy, MSELoss
 

@@ -22,7 +22,7 @@ class ConvBlock(Sequential):
     Structure
     ---------
     ```py
-    Convolution -> Activation -> Optional[Pooling]
+    Convolution -> Optional[BatchNorm] -> Activation -> Optional[Pooling]
     ```
     Parameters
     ----------
@@ -35,6 +35,8 @@ class ConvBlock(Sequential):
     `initializer` : Type of weight initializer
     `stride` : Step size for filters during convolution
     `lambda_` : L2 regularization strength
+    `do_batch_norm` : Whether to perform batch normalization (default `True`)
+    `momentum` : Momentum for batch normalization
     `do_pooling` : Whether to perform pooling (default `True`)
     `pool_filter_size` : Filter size for pooling
     `pool_stride` : Step size for pooling process
@@ -46,14 +48,16 @@ class ConvBlock(Sequential):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
         *,
+        filter_size: int,
         activation: Activation.FuncType,
         optimizer: Optimizer = None,
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
         lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
         do_pooling: bool = True,
         pool_filter_size: int = 2,
         pool_stride: int = 2,
@@ -74,6 +78,13 @@ class ConvBlock(Sequential):
             ),
             activation,
         )
+        if do_batch_norm:
+            super(ConvBlock, self).__add__(
+                BatchNorm(
+                    out_channels,
+                    momentum,
+                )
+            )
         if do_pooling:
             super(ConvBlock, self).__add__(
                 Pooling(
@@ -90,6 +101,7 @@ class ConvBlock(Sequential):
                 "filter_size": ("0<,+inf", int),
                 "stride": ("0<,+inf", int),
                 "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
                 "pool_filter_size": ("0<,+inf", int),
                 "pool_stride": ("0<,+inf", int),
             }
@@ -97,7 +109,7 @@ class ConvBlock(Sequential):
         self.check_param_ranges()
 
 
-class DenseBlock(Sequential):
+class DenseBlock(Sequential):  # TODO: Add BN-1D
     """
     A typical dense block in a neural network configuration often
     includes a series of fully connected (dense) layers. Each layer
