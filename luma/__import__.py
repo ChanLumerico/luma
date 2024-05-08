@@ -74,13 +74,13 @@ from luma.ensemble.stack import StackingClassifier, StackingRegressor
 from luma.neural.base import Layer, Loss, Initializer, NeuralModel
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.layer import (
-    Convolution,
-    Pooling,
+    Convolution2D,
+    Pooling2D,
     Dense,
     Dropout,
     Flatten,
     Activation,
-    BatchNorm,
+    BatchNorm2D,
     Sequential,
 )
 from luma.neural.optimizer import (
@@ -96,7 +96,7 @@ from luma.neural.optimizer import (
 )
 from luma.neural.loss import CrossEntropy, BinaryCrossEntropy, MSELoss
 from luma.neural.init import KaimingInit, XavierInit
-from luma.neural.block import ConvBlock, DenseBlock
+from luma.neural.block import ConvBlock2D, DenseBlock
 from luma.neural.network import SimpleMLP, SimpleCNN
 from luma.neural.network import LeNet_1, LeNet_4
 
@@ -245,14 +245,14 @@ if __name__ == "__main__":
 
     Layer, Loss, Initializer, NeuralModel
 
-    Convolution, Pooling, Dense, Dropout, Flatten, Activation,
-    BatchNorm, Sequential
+    Convolution2D, Pooling2D, Dense, Dropout, Flatten, Activation,
+    BatchNorm2D, Sequential
 
     CrossEntropy, BinaryCrossEntropy, MSELoss
 
     KaimingInit, XavierInit
 
-    ConvBlock, DenseBlock
+    ConvBlock2D, DenseBlock
 
     SimpleMLP, SimpleCNN, LeNet_1, LeNet_4
 

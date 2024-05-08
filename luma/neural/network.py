@@ -125,7 +125,7 @@ class SimpleCNN(_simple._SimpleCNN):
     Structure
     ---------
     ```py
-    ConvBlock -> ... -> Flatten -> DenseBlock -> ... -> Dense
+    ConvBlock2D -> ... -> Flatten -> DenseBlock -> ... -> Dense
     ```
     Parameters
     ----------
@@ -284,7 +284,7 @@ class LeNet_1(_lenet._LeNet_1):
     ```
     Convolution Layers:
     ```py
-    ConvBlock(1, 4) -> ConvBlock(4, 8)
+    ConvBlock2D(1, 4) -> ConvBlock2D(4, 8)
     ```
     Fully Connected Layers:
     ```py
@@ -367,7 +367,7 @@ class LeNet_4(_lenet._LeNet_4):
     ```
     Convolution Layers:
     ```py
-    ConvBlock(1, 4) -> ConvBlock(4, 16)
+    ConvBlock2D(1, 4) -> ConvBlock2D(4, 16)
     ```
     Fully Connected Layers:
     ```py
@@ -451,7 +451,7 @@ class LeNet_5(_lenet._LeNet_5):
     ```
     Convolution Layers:
     ```py
-    ConvBlock(1, 6) -> ConvBlock(6, 16)
+    ConvBlock2D(1, 6) -> ConvBlock2D(6, 16)
     ```
     Fully Connected Layers:
     ```py

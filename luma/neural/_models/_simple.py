@@ -5,7 +5,7 @@ from luma.interface.typing import Matrix, Tensor, Vector
 from luma.interface.util import Clone, InitUtil
 
 from luma.neural.base import Loss, NeuralModel
-from luma.neural.block import ConvBlock, DenseBlock
+from luma.neural.block import ConvBlock2D, DenseBlock
 from luma.neural.layer import Activation, Dense, Dropout, Flatten, Sequential
 
 
@@ -228,7 +228,7 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
 
     def _build_model(self) -> None:
         for in_, out_ in self.feature_shapes_[0]:
-            self.model += ConvBlock(
+            self.model += ConvBlock2D(
                 in_,
                 out_,
                 self.filter_size,

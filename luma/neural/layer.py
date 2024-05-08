@@ -9,18 +9,18 @@ from luma.neural.base import Layer
 
 
 __all__ = (
-    "Convolution",
-    "Pooling",
+    "Convolution2D",
+    "Pooling2D",
     "Dense",
     "Dropout",
     "Flatten",
     "Activation",
-    "BatchNorm",
+    "BatchNorm2D",
     "Sequential",
 )  # TODO: Make a 1D version of these layers; rename these to ~2D
 
 
-class Convolution(Layer):
+class Convolution2D(Layer):
     """
     A convolutional layer in a neural network convolves learnable filters
     across input data, detecting patterns like edges or textures, producing
@@ -209,7 +209,7 @@ class Convolution(Layer):
         return pad_h, pad_w, padded_h, padded_w
 
 
-class Pooling(Layer):
+class Pooling2D(Layer):
     """
     A pooling layer in a neural network reduces the spatial dimensions of
     feature maps, reducing computational complexity. It aggregates neighboring
@@ -656,7 +656,7 @@ class Activation:
             return self.dX
 
 
-class BatchNorm(Layer):
+class BatchNorm2D(Layer):
     """
     Batch normalization standardizes layer inputs across mini-batches to stabilize
     learning, accelerate convergence, and reduce sensitivity to initialization.
@@ -668,6 +668,13 @@ class BatchNorm(Layer):
     `in_features` : Number of input features
     `momentum` : Momentum for updating the running averages
 
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
     """
 
     def __init__(

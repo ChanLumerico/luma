@@ -6,7 +6,7 @@ from luma.interface.util import Clone, InitUtil
 from luma.metric.classification import Accuracy
 
 from luma.neural.base import Loss, NeuralModel
-from luma.neural.block import ConvBlock, DenseBlock
+from luma.neural.block import ConvBlock2D, DenseBlock
 from luma.neural.layer import Activation, Dense, Flatten, Sequential
 from luma.neural.loss import CrossEntropy
 
@@ -79,7 +79,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
         self._build_model()
 
     def _build_model(self) -> None:
-        self.model += ConvBlock(
+        self.model += ConvBlock2D(
             1,
             4,
             filter_size=5,
@@ -94,7 +94,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
             pool_mode="avg",
             random_state=self.random_state,
         )
-        self.model += ConvBlock(
+        self.model += ConvBlock2D(
             4,
             8,
             filter_size=5,
@@ -203,7 +203,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
         self._build_model()
 
     def _build_model(self) -> None:
-        self.model += ConvBlock(
+        self.model += ConvBlock2D(
             1,
             4,
             filter_size=5,
@@ -218,7 +218,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
             pool_mode="avg",
             random_state=self.random_state,
         )
-        self.model += ConvBlock(
+        self.model += ConvBlock2D(
             4,
             16,
             filter_size=5,
@@ -335,7 +335,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
         self._build_model()
 
     def _build_model(self) -> None:
-        self.model += ConvBlock(
+        self.model += ConvBlock2D(
             1,
             6,
             filter_size=5,
@@ -350,7 +350,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
             pool_mode="avg",
             random_state=self.random_state,
         )
-        self.model += ConvBlock(
+        self.model += ConvBlock2D(
             6,
             16,
             filter_size=5,

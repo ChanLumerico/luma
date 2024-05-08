@@ -6,10 +6,10 @@ from luma.interface.util import InitUtil
 from luma.neural.layer import *
 
 
-__all__ = ("ConvBlock", "DenseBlock")
+__all__ = ("ConvBlock2D", "DenseBlock")
 
 
-class ConvBlock(Sequential):
+class ConvBlock2D(Sequential):
     """
     A convolutional block in a neural network typically consists of a
     convolutional layer followed by a nonlinear activation function,
@@ -22,7 +22,7 @@ class ConvBlock(Sequential):
     Structure
     ---------
     ```py
-    Convolution -> Optional[BatchNorm] -> Activation -> Optional[Pooling]
+    Convolution2D -> Optional[BatchNorm2D] -> Activation -> Optional[Pooling2D]
     ```
     Parameters
     ----------
@@ -64,8 +64,8 @@ class ConvBlock(Sequential):
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int = None,
     ) -> None:
-        super(ConvBlock, self).__init__(
-            Convolution(
+        super(ConvBlock2D, self).__init__(
+            Convolution2D(
                 in_channels,
                 out_channels,
                 filter_size,
@@ -79,15 +79,15 @@ class ConvBlock(Sequential):
             activation,
         )
         if do_batch_norm:
-            super(ConvBlock, self).__add__(
-                BatchNorm(
+            super(ConvBlock2D, self).__add__(
+                BatchNorm2D(
                     out_channels,
                     momentum,
                 )
             )
         if do_pooling:
-            super(ConvBlock, self).__add__(
-                Pooling(
+            super(ConvBlock2D, self).__add__(
+                Pooling2D(
                     pool_filter_size,
                     pool_stride,
                     pool_mode,
