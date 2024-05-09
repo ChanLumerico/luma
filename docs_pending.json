@@ -1,16 +1,6 @@
 {
     "class": [
         {
-            "name": "NeuralModel",
-            "script": "luma.neural.base",
-            "inheriting": "NeuralBase"
-        },
-        {
-            "name": "NeuralBase",
-            "script": "luma.core.base",
-            "inheriting": "Luma"
-        },
-        {
             "name": "SimpleMLP",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
@@ -21,7 +11,7 @@
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         },
         {
-            "name": "ConvBlock",
+            "name": "ConvBlock2D",
             "script": "luma.neural.block",
             "inheriting": "Sequential"
         },

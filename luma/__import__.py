@@ -74,7 +74,9 @@ from luma.ensemble.stack import StackingClassifier, StackingRegressor
 from luma.neural.base import Layer, Loss, Initializer, NeuralModel
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.layer import (
+    Convolution1D,
     Convolution2D,
+    Convolution3D,
     Pooling2D,
     Dense,
     Dropout,
@@ -245,8 +247,8 @@ if __name__ == "__main__":
 
     Layer, Loss, Initializer, NeuralModel
 
-    Convolution2D, Pooling2D, Dense, Dropout, Flatten, Activation,
-    BatchNorm2D, Sequential
+    Convolution1D, Convolution2D, Convolution3D, Pooling2D,
+    Dense, Dropout, Flatten, Activation, BatchNorm2D, Sequential
 
     CrossEntropy, BinaryCrossEntropy, MSELoss
 

@@ -76,12 +76,7 @@ class Layer(ABC, ModelBase):
         if init_type_ is None:
             self.weights_ = 0.01 * self.rs_.randn(*w_shape)
         else:
-            if len(w_shape) == 2:
-                self.weights_ = init_type_(self.random_state).init_2d(*w_shape)
-            elif len(w_shape) == 4:
-                self.weights_ = init_type_(self.random_state).init_4d(*w_shape)
-            else:
-                NotImplemented
+            self.weights_ = init_type_(self.random_state).init_nd(*w_shape)
 
         self.biases_: TensorLike = np.zeros(b_shape)
 
@@ -152,10 +147,7 @@ class Initializer(ABC):
     def __class_alias__(cls) -> None: ...
 
     @abstractmethod
-    def init_2d(self) -> Matrix: ...
-
-    @abstractmethod
-    def init_4d(self) -> Tensor: ...
+    def init_nd(self) -> TensorLike: ...
 
 
 class NeuralModel(ABC, NeuralBase):
