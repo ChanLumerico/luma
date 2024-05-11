@@ -21,6 +21,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
         activation: Activation.FuncType = Activation.Tanh(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
+        out_features: int = 10,
         batch_size: int = 100,
         n_epochs: int = 100,
         learning_rate: float = 0.01,
@@ -36,6 +37,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
         self.optimizer = optimizer
         self.loss = loss
         self.initializer = initializer
+        self.out_features = out_features
         self.lambda_ = lambda_
         self.shuffle = shuffle
         self.random_state = random_state
@@ -57,15 +59,16 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
 
         self.feature_sizes_ = [
             [1, 4, 8],
-            [8 * 4 * 4, 10],
+            [8 * 4 * 4, self.out_features],
         ]
         self.feature_shapes_ = [
             [(1, 4), (4, 8)],
-            [(8 * 4 * 4, 10)],
+            [(8 * 4 * 4, self.out_features)],
         ]
 
         self.set_param_ranges(
             {
+                "out_features": ("0<,+inf", int),
                 "batch_size": ("0<,+inf", int),
                 "n_epochs": ("0<,+inf", int),
                 "learning_rate": ("0<,+inf", None),
@@ -113,7 +116,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
         self.model += Flatten()
         self.model += Dense(
             8 * 4 * 4,
-            10,
+            self.out_features,
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
@@ -143,7 +146,8 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
         activation: Activation.FuncType = Activation.Tanh(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
-        batch_size: int = 128,
+        out_features: int = 10,
+        batch_size: int = 100,
         n_epochs: int = 100,
         learning_rate: float = 0.01,
         valid_size: float = 0.1,
@@ -159,6 +163,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
         self.optimizer = optimizer
         self.loss = loss
         self.initializer = initializer
+        self.out_features = out_features
         self.lambda_ = lambda_
         self.dropout_rate = dropout_rate
         self.shuffle = shuffle
@@ -181,15 +186,16 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
 
         self.feature_sizes_ = [
             [1, 4, 16],
-            [16 * 5 * 5, 120, 10],
+            [16 * 5 * 5, 120, self.out_features],
         ]
         self.feature_shapes_ = [
             [(1, 4), (4, 16)],
-            [(16 * 5 * 5, 120), (120, 10)],
+            [(16 * 5 * 5, 120), (120, self.out_features)],
         ]
 
         self.set_param_ranges(
             {
+                "out_features": ("0<,+inf", int),
                 "batch_size": ("0<,+inf", int),
                 "n_epochs": ("0<,+inf", int),
                 "learning_rate": ("0<,+inf", None),
@@ -240,12 +246,13 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
             120,
             activation=Clone(self.activation).get,
             lambda_=self.lambda_,
-            dropout_rate=self.dropout_rate,
+            do_batch_norm=False,
+            do_dropout=False,
             random_state=self.random_state,
         )
         self.model += Dense(
-            in_features=120,
-            out_features=10,
+            120,
+            self.out_features,
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
@@ -275,7 +282,8 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
         activation: Activation.FuncType = Activation.Tanh(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
-        batch_size: int = 128,
+        out_features: int = 10,
+        batch_size: int = 100,
         n_epochs: int = 100,
         learning_rate: float = 0.01,
         valid_size: float = 0.1,
@@ -291,6 +299,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
         self.optimizer = optimizer
         self.loss = loss
         self.initializer = initializer
+        self.out_features = out_features
         self.lambda_ = lambda_
         self.dropout_rate = dropout_rate
         self.shuffle = shuffle
@@ -313,15 +322,16 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
 
         self.feature_sizes_ = [
             [1, 6, 16],
-            [16 * 5 * 5, 120, 84, 10],
+            [16 * 5 * 5, 120, 84, self.out_features],
         ]
         self.feature_shapes_ = [
             [(1, 6), (6, 16)],
-            [(16 * 5 * 5, 120), (120, 84), (84, 10)],
+            [(16 * 5 * 5, 120), (120, 84), (84, self.out_features)],
         ]
 
         self.set_param_ranges(
             {
+                "out_features": ("0<,+inf", int),
                 "batch_size": ("0<,+inf", int),
                 "n_epochs": ("0<,+inf", int),
                 "learning_rate": ("0<,+inf", None),
@@ -372,7 +382,8 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
             120,
             activation=Clone(self.activation).get,
             lambda_=self.lambda_,
-            dropout_rate=self.dropout_rate,
+            do_batch_norm=False,
+            do_dropout=False,
             random_state=self.random_state,
         )
         self.model += DenseBlock(
@@ -380,12 +391,13 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
             84,
             activation=Clone(self.activation).get,
             lambda_=self.lambda_,
-            dropout_rate=self.dropout_rate,
+            do_batch_norm=False,
+            do_dropout=False,
             random_state=self.random_state,
         )
         self.model += Dense(
-            in_features=84,
-            out_features=10,
+            84,
+            self.out_features,
             lambda_=self.lambda_,
             random_state=self.random_state,
         )

@@ -316,7 +316,7 @@ class NeuralModel(ABC, NeuralBase):
             )
             in_shape = layer.out_shape(in_shape)
         print("=" * 83)
-        print(f"Total Layers: {n_layers}")
+        print(f"Total Layers/Blocks: {n_layers}")
         print(
             f"Total Parameters: ({w_size:,} weights, {b_size:,} biases)",
             f"-> {w_size + b_size:,} params",

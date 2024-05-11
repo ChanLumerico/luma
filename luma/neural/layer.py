@@ -1713,7 +1713,7 @@ class Sequential(Layer):
                 + f"Call '{self}().set_optimizer' to assign an optimizer."
             )
 
-    def add(self, layer: Layer | Tuple[str, Layer]) -> None:
+    def add(self, layer: Layer | tuple[str, Layer]) -> None:
         if not isinstance(layer, tuple):
             layer = (str(layer), layer)
         self.layers.append(layer)
@@ -1737,12 +1737,9 @@ class Sequential(Layer):
             in_shape = layer.out_shape(in_shape)
         return in_shape
 
-    def __add__(self, other: Layer | Self) -> Self:
-        if isinstance(other, Layer):
+    def __add__(self, other: Layer | tuple[str, Layer]) -> Self:
+        if isinstance(other, (Layer, tuple)):
             self.add(other)
-        elif isinstance(other, Self):
-            for layer in other.layers:
-                self.add(layer)
         else:
             raise TypeError(
                 "Unsupported operand type(s) for +: '{}' and '{}'".format(
