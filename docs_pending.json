@@ -1,11 +1,6 @@
 {
     "class": [
         {
-            "name": "SimpleMLP",
-            "script": "luma.neural.network",
-            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
-        },
-        {
             "name": "SimpleCNN",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
@@ -34,6 +29,11 @@
             "name": "LeNet_5",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
+        },
+        {
+            "name": "BatchNorm",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer"
         }
     ]
 }

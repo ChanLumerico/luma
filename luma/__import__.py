@@ -77,7 +77,9 @@ from luma.neural.layer import (
     Convolution1D,
     Convolution2D,
     Convolution3D,
+    Pooling1D,
     Pooling2D,
+    Pooling3D,
     Dense,
     Dropout,
     Flatten,
@@ -247,7 +249,8 @@ if __name__ == "__main__":
 
     Layer, Loss, Initializer, NeuralModel
 
-    Convolution1D, Convolution2D, Convolution3D, Pooling2D,
+    Convolution1D, Convolution2D, Convolution3D,
+    Pooling1D, Pooling2D, Pooling3D,
     Dense, Dropout, Flatten, Activation, BatchNorm2D, Sequential
 
     CrossEntropy, BinaryCrossEntropy, MSELoss

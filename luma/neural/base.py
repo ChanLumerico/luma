@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Self, Tuple
+from typing import Self
 import numpy as np
 
 from luma.core.base import ModelBase, NeuralBase
@@ -53,7 +53,6 @@ class Layer(ABC, ModelBase):
         self.dB: TensorLike = None
 
         self.optimizer: object = None
-        self.out_shape: tuple = None
 
     @abstractmethod
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike: ...
@@ -81,14 +80,24 @@ class Layer(ABC, ModelBase):
         self.biases_: TensorLike = np.zeros(b_shape)
 
     @property
-    def param_size(self) -> Tuple[int, int]:
+    def param_size(self) -> tuple[int, int]:
         w_size, b_size = 0, 0
+        w_list: list | list[TensorLike] = []
+        b_list: list | list[TensorLike] = []
+
         if self.weights_ is not None:
-            w_size += len(self.weights_.flatten())
+            w_list.extend(self.weights_)
+            for w in w_list:
+                w_size += len(w.flatten())
         if self.biases_ is not None:
-            b_size += len(self.biases_.flatten())
+            b_list.extend(self.biases_)
+            for b in b_list:
+                b_size += len(b.flatten())
 
         return w_size, b_size
+
+    @abstractmethod
+    def out_shape(self, in_shape: tuple[int]) -> tuple[int]: ...
 
     def __call__(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return self.forward(X, is_train=is_train)
@@ -98,11 +107,7 @@ class Layer(ABC, ModelBase):
 
     def __repr__(self) -> str:
         w_size, b_size = self.param_size
-        return (
-            f"{type(self).__name__}: "
-            + f"({w_size:,} weights, {b_size:,} biases)"
-            + f" -> {w_size + b_size:,} params"
-        )
+        return f"{type(self).__name__}({w_size + b_size} params)"
 
 
 class Loss(ABC):
@@ -285,7 +290,38 @@ class NeuralModel(ABC, NeuralBase):
         return valid_loss
 
     @property
-    def param_size(self) -> tuple[int, int]: ...  # TODO: Implement this
+    def param_size(self) -> tuple[int, int]:
+        return self.model.param_size
+
+    def summarize(self, in_shape: tuple[int]) -> None:
+        title = f"Summary of '{str(self)}'"
+        print(f"{title:^83}")
+        print("-" * 83)
+        print(
+            "{:<20} {:<20} {:<20} {:<20}".format(
+                "Name", "Layer/Block", "Output Shape", "Weights, Biases"
+            )
+        )
+        print("=" * 83)
+
+        n_layers = 0
+        w_size, b_size = self.param_size
+        for name, layer in self.model:
+            n_layers += 1
+            print(
+                f"{name:<20}",
+                f"{str(layer):<20}",
+                f"{str(layer.out_shape(in_shape)):<20}",
+                f"{str(layer.param_size):<20}",
+            )
+            in_shape = layer.out_shape(in_shape)
+        print("=" * 83)
+        print(f"Total Layers: {n_layers}")
+        print(
+            f"Total Parameters: ({w_size:,} weights, {b_size:,} biases)",
+            f"-> {w_size + b_size:,} params",
+        )
+        print("-" * 83)
 
     def __str__(self) -> str:
         return type(self).__name__

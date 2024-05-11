@@ -12,12 +12,16 @@ __all__ = (
     "Convolution1D",
     "Convolution2D",
     "Convolution3D",
+    "Pooling1D",
     "Pooling2D",
+    "Pooling3D",
     "Dense",
     "Dropout",
     "Flatten",
     "Activation",
+    "BatchNorm1D",
     "BatchNorm2D",
+    "BatchNorm3D",
     "Sequential",
 )
 
@@ -58,7 +62,6 @@ class Convolution1D(Layer):
         self,
         in_channels: int,
         out_channels: int,
-        *,
         filter_size: int,
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
@@ -112,9 +115,7 @@ class Convolution1D(Layer):
         pad_w, padded_w = self._get_padding_dim(width)
 
         out_width = ((padded_w - self.filter_size) // self.stride) + 1
-
         out: Tensor = np.zeros((batch_size, self.out_channels, out_width))
-        self.out_shape = out.shape
 
         X_padded = np.pad(X, ((0, 0), (0, 0), (pad_w, pad_w)), mode="constant")
         X_fft = np.fft.rfft(X_padded, n=padded_w, axis=2)
@@ -186,6 +187,13 @@ class Convolution1D(Layer):
 
         return pad_w, padded_w
 
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, width = in_shape
+        _, padded_w = self._get_padding_dim(width)
+        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+
+        return (batch_size, self.out_channels, out_width)
+
 
 class Convolution2D(Layer):
     """
@@ -223,7 +231,6 @@ class Convolution2D(Layer):
         self,
         in_channels: int,
         out_channels: int,
-        *,
         filter_size: int,
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
@@ -279,7 +286,6 @@ class Convolution2D(Layer):
 
         out_height = ((padded_h - self.filter_size) // self.stride) + 1
         out_width = ((padded_w - self.filter_size) // self.stride) + 1
-
         out: Tensor = np.zeros(
             (
                 batch_size,
@@ -288,7 +294,6 @@ class Convolution2D(Layer):
                 out_width,
             )
         )
-        self.out_shape = out.shape
 
         X_padded = np.pad(
             X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
@@ -376,6 +381,15 @@ class Convolution2D(Layer):
 
         return pad_h, pad_w, padded_h, padded_w
 
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, height, width = in_shape
+        _, _, padded_h, padded_w = self._get_padding_dim(height, width)
+
+        out_height = ((padded_h - self.filter_size) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+
+        return (batch_size, self.out_channels, out_height, out_width)
+
 
 class Convolution3D(Layer):
     """
@@ -413,7 +427,6 @@ class Convolution3D(Layer):
         self,
         in_channels: int,
         out_channels: int,
-        *,
         filter_size: int,
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
@@ -469,15 +482,12 @@ class Convolution3D(Layer):
         pad_d, pad_h, pad_w, padded_d, padded_h, padded_w = self._get_padding_dim(
             depth, height, width
         )
-
         out_depth = ((padded_d - self.filter_size) // self.stride) + 1
         out_height = ((padded_h - self.filter_size) // self.stride) + 1
         out_width = ((padded_w - self.filter_size) // self.stride) + 1
-
         out: Tensor = np.zeros(
             (batch_size, self.out_channels, out_depth, out_height, out_width)
         )
-        self.out_shape = out.shape
 
         X_padded = np.pad(
             X,
@@ -603,9 +613,122 @@ class Convolution3D(Layer):
 
         return pad_d, pad_h, pad_w, padded_d, padded_h, padded_w
 
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, depth, height, width = in_shape
+        _, _, _, padded_d, padded_h, padded_w = self._get_padding_dim(
+            depth, height, width
+        )
+        out_depth = ((padded_d - self.filter_size) // self.stride) + 1
+        out_height = ((padded_h - self.filter_size) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+
+        return (batch_size, self.out_channels, out_depth, out_height, out_width)
+
+
+class Pooling1D(Layer):
+    """
+    Pooling layer for 1-dimensional data.
+
+    A pooling layer in a neural network reduces the spatial dimensions of
+    feature maps, reducing computational complexity. It aggregates neighboring
+    values, typically through operations like max pooling or average pooling,
+    to extract dominant features. Pooling helps in achieving translation invariance
+    and reducing overfitting by summarizing the presence of features in local
+    regions. It downsamples feature maps, preserving important information while
+    discarding redundant details.
+
+    Parameters
+    ----------
+    `filter_size` : Size of the pooling filter
+    `stride` : Step size of the filter during pooling
+    `mode` : Pooling strategy (i.e., 'max' or 'avg')
+
+    Notes
+    -----
+    - The input `X` must have the form of 3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        filter_size: int = 2,
+        stride: int = 2,
+        mode: Literal["max", "avg"] = "max",
+    ) -> None:
+        super().__init__()
+        self.filter_size = filter_size
+        self.stride = stride
+        self.mode = mode
+
+        self.set_param_ranges(
+            {
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        batch_size, channels, width = X.shape
+
+        out_width = 1 + (width - self.filter_size) // self.stride
+        out: Tensor = np.zeros((batch_size, channels, out_width))
+
+        for i in range(out_width):
+            w_start, w_end = self._get_pooling_bounds(i)
+            window = X[:, :, w_start:w_end]
+
+            if self.mode == "max":
+                out[:, :, i] = np.max(window, axis=2)
+            elif self.mode == "avg":
+                out[:, :, i] = np.mean(window, axis=2)
+            else:
+                raise UnsupportedParameterError(self.mode)
+
+        return out
+
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, out_width = d_out.shape
+        self.dX = np.zeros_like(X)
+
+        for i in range(out_width):
+            w_start, w_end = self._get_pooling_bounds(i)
+            window = X[:, :, w_start:w_end]
+
+            if self.mode == "max":
+                max_vals = np.max(window, axis=2, keepdims=True)
+                mask_ = window == max_vals
+                self.dX[:, :, w_start:w_end] += mask_ * d_out[:, :, i : i + 1]
+            elif self.mode == "avg":
+                self.dX[:, :, w_start:w_end] += (
+                    d_out[:, :, i : i + 1] / self.filter_size
+                )
+
+        return self.dX
+
+    def _get_pooling_bounds(self, cur_w: int) -> Tuple[int, int]:
+        w_start = cur_w * self.stride
+        w_end = w_start + self.filter_size
+
+        return w_start, w_end
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, width = in_shape
+        out_width = 1 + (width - self.filter_size) // self.stride
+
+        return (batch_size, channels, out_width)
+
 
 class Pooling2D(Layer):
     """
+    Pooling layer for 2-dimensional data.
+
     A pooling layer in a neural network reduces the spatial dimensions of
     feature maps, reducing computational complexity. It aggregates neighboring
     values, typically through operations like max pooling or average pooling,
@@ -655,13 +778,11 @@ class Pooling2D(Layer):
 
         out_height = 1 + (height - self.filter_size) // self.stride
         out_width = 1 + (width - self.filter_size) // self.stride
-
         out: Tensor = np.zeros((batch_size, channels, out_height, out_width))
-        self.out_shape = out.shape
 
         for i in range(out_height):
             for j in range(out_width):
-                h_start, h_end, w_start, w_end = self._get_height_width(i, j)
+                h_start, h_end, w_start, w_end = self._get_pooling_bounds(i, j)
                 window = X[:, :, h_start:h_end, w_start:w_end]
 
                 if self.mode == "max":
@@ -680,7 +801,7 @@ class Pooling2D(Layer):
 
         for i in range(out_height):
             for j in range(out_width):
-                h_start, h_end, w_start, w_end = self._get_height_width(i, j)
+                h_start, h_end, w_start, w_end = self._get_pooling_bounds(i, j)
                 window = X[:, :, h_start:h_end, w_start:w_end]
 
                 if self.mode == "max":
@@ -696,13 +817,153 @@ class Pooling2D(Layer):
 
         return self.dX
 
-    def _get_height_width(self, cur_h: int, cur_w: int) -> Tuple[int, ...]:
+    def _get_pooling_bounds(self, cur_h: int, cur_w: int) -> Tuple[int, ...]:
         h_start = cur_h * self.stride
         w_start = cur_w * self.stride
+
         h_end = h_start + self.filter_size
         w_end = w_start + self.filter_size
 
         return h_start, h_end, w_start, w_end
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, height, width = in_shape
+        out_height = 1 + (height - self.filter_size) // self.stride
+        out_width = 1 + (width - self.filter_size) // self.stride
+
+        return (batch_size, channels, out_height, out_width)
+
+
+class Pooling3D(Layer):
+    """
+    Pooling layer for 3-dimensional data.
+
+    A pooling layer in a neural network reduces the spatial dimensions of
+    feature maps, reducing computational complexity. It aggregates neighboring
+    values, typically through operations like max pooling or average pooling,
+    to extract dominant features. Pooling helps in achieving translation invariance
+    and reducing overfitting by summarizing the presence of features in local
+    regions. It downsamples feature maps, preserving important information while
+    discarding redundant details.
+
+    Parameters
+    ----------
+    `filter_size` : Size of the pooling filter (cubic)
+    `stride` : Step size of the filter during pooling
+    `mode` : Pooling strategy (i.e., 'max' or 'avg')
+
+    Notes
+    -----
+    - The input `X` must have the form of 5D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, depth, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        filter_size: int = 2,
+        stride: int = 2,
+        mode: Literal["max", "avg"] = "max",
+    ) -> None:
+        super().__init__()
+        self.filter_size = filter_size
+        self.stride = stride
+        self.mode = mode
+
+        self.set_param_ranges(
+            {
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        batch_size, channels, depth, height, width = X.shape
+
+        out_depth = 1 + (depth - self.filter_size) // self.stride
+        out_height = 1 + (height - self.filter_size) // self.stride
+        out_width = 1 + (width - self.filter_size) // self.stride
+        out: Tensor = np.zeros(
+            (
+                batch_size,
+                channels,
+                out_depth,
+                out_height,
+                out_width,
+            )
+        )
+
+        for i in range(out_depth):
+            for j in range(out_height):
+                for k in range(out_width):
+                    d_start, d_end, h_start, h_end, w_start, w_end = (
+                        self._get_pooling_bounds(i, j, k)
+                    )
+                    window = X[:, :, d_start:d_end, h_start:h_end, w_start:w_end]
+
+                    if self.mode == "max":
+                        out[:, :, i, j, k] = np.max(window, axis=(2, 3, 4))
+                    elif self.mode == "avg":
+                        out[:, :, i, j, k] = np.mean(window, axis=(2, 3, 4))
+                    else:
+                        raise UnsupportedParameterError(self.mode)
+
+        return out
+
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, out_depth, out_height, out_width = d_out.shape
+        self.dX = np.zeros_like(X)
+
+        for i in range(out_depth):
+            for j in range(out_height):
+                for k in range(out_width):
+                    d_start, d_end, h_start, h_end, w_start, w_end = (
+                        self._get_pooling_bounds(i, j, k)
+                    )
+                    window = X[:, :, d_start:d_end, h_start:h_end, w_start:w_end]
+
+                    if self.mode == "max":
+                        max_vals = np.max(window, axis=(2, 3, 4), keepdims=True)
+                        mask_ = window == max_vals
+                        self.dX[:, :, d_start:d_end, h_start:h_end, w_start:w_end] += (
+                            mask_ * d_out[:, :, i : i + 1, j : j + 1, k : k + 1]
+                        )
+                    elif self.mode == "avg":
+                        self.dX[
+                            :, :, d_start:d_end, h_start:h_end, w_start:w_end
+                        ] += d_out[:, :, i : i + 1, j : j + 1, k : k + 1] / (
+                            self.filter_size**3
+                        )
+
+        return self.dX
+
+    def _get_pooling_bounds(
+        self, cur_d: int, cur_h: int, cur_w: int
+    ) -> Tuple[int, ...]:
+        d_start = cur_d * self.stride
+        h_start = cur_h * self.stride
+        w_start = cur_w * self.stride
+
+        d_end = d_start + self.filter_size
+        h_end = h_start + self.filter_size
+        w_end = w_start + self.filter_size
+
+        return d_start, d_end, h_start, h_end, w_start, w_end
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, depth, height, width = in_shape
+
+        out_depth = 1 + (depth - self.filter_size) // self.stride
+        out_height = 1 + (height - self.filter_size) // self.stride
+        out_width = 1 + (width - self.filter_size) // self.stride
+
+        return (batch_size, channels, out_depth, out_height, out_width)
 
 
 class Dense(Layer):
@@ -737,7 +998,6 @@ class Dense(Layer):
         self,
         in_features: int,
         out_features: int,
-        *,
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
         lambda_: float = 0.0,
@@ -768,10 +1028,7 @@ class Dense(Layer):
     def forward(self, X: Matrix, is_train: bool = False) -> Matrix:
         _ = is_train
         self.input_ = X
-
-        out = np.dot(X, self.weights_) + self.biases_
-        self.out_shape = out.shape
-        return out
+        return np.dot(X, self.weights_) + self.biases_
 
     def backward(self, d_out: Matrix) -> Matrix:
         X = self.input_
@@ -782,6 +1039,10 @@ class Dense(Layer):
         self.dB = np.sum(d_out, axis=0, keepdims=True)
 
         return self.dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _ = in_shape
+        return (batch_size, self.out_features)
 
 
 class Dropout(Layer):
@@ -829,6 +1090,9 @@ class Dropout(Layer):
             return d_out * self.mask_ / (1 - self.dropout_rate)
         return d_out
 
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        return in_shape
+
 
 class Flatten(Layer):
     """
@@ -847,14 +1111,15 @@ class Flatten(Layer):
     def forward(self, X: Tensor, is_train: bool = False) -> Matrix:
         _ = is_train
         self.input_ = X
-        out = X.reshape(X.shape[0], -1)
-
-        self.out_shape = out.shape
-        return out
+        return X.reshape(X.shape[0], -1)
 
     def backward(self, d_out: Matrix) -> Tensor:
         dX = d_out.reshape(self.input_.shape)
         return dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, *shape = in_shape
+        return (batch_size, np.prod(shape))
 
 
 @ClassType.non_instantiable()
@@ -883,6 +1148,10 @@ class Activation:
 
     type FuncType = Type
 
+    @classmethod
+    def _out_shape(cls, in_shape: Tuple[int]) -> Tuple[int]:
+        return in_shape
+
     class Linear(Layer):
         def __init__(self) -> None:
             super().__init__()
@@ -894,6 +1163,9 @@ class Activation:
         def backward(self, d_out: Tensor) -> Tensor:
             self.dX = d_out
             return self.dX
+
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
 
     class ReLU(Layer):
         def __init__(self) -> None:
@@ -909,6 +1181,9 @@ class Activation:
             self.dX[self.input_ <= 0] = 0
             return self.dX
 
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
+
     class Sigmoid(Layer):
         def __init__(self) -> None:
             super().__init__()
@@ -921,6 +1196,9 @@ class Activation:
         def backward(self, d_out: Tensor) -> Tensor:
             self.dX = d_out * self.output_ * (1 - self.output_)
             return self.dX
+
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
 
     class Tanh(Layer):
         def __init__(self) -> None:
@@ -935,6 +1213,9 @@ class Activation:
             self.dX = d_out * (1 - np.square(self.output_))
             return self.dX
 
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
+
     class LeakyReLU(Layer):
         def __init__(self, alpha: float = 0.01) -> None:
             super().__init__()
@@ -948,6 +1229,9 @@ class Activation:
         def backward(self, d_out: Tensor) -> Tensor:
             self.dX = d_out * np.where(self.input_ > 0, 1, self.alpha)
             return self.dX
+
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
 
     class Softmax(Layer):
         def __init__(self) -> None:
@@ -968,6 +1252,9 @@ class Activation:
 
             return self.dX
 
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
+
     class ELU(Layer):
         def __init__(self, alpha: float = 1.0) -> None:
             super().__init__()
@@ -986,6 +1273,9 @@ class Activation:
                 self.output_ + self.alpha,
             )
             return self.dX
+
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
 
     class SELU(Layer):
         def __init__(
@@ -1017,6 +1307,9 @@ class Activation:
             )
             return self.dX
 
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
+
     class Softplus(Layer):
         def __init__(self) -> None:
             super().__init__()
@@ -1029,6 +1322,9 @@ class Activation:
         def backward(self, d_out: Tensor) -> Tensor:
             self.dX = d_out * (1 - 1 / (1 + np.exp(self.output_)))
             return self.dX
+
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
 
     class Swish(Layer):
         def __init__(self, beta: float = 1.0) -> None:
@@ -1050,9 +1346,102 @@ class Activation:
             )
             return self.dX
 
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return Activation._out_shape(in_shape)
+
+
+class BatchNorm1D(Layer):
+    """
+    Batch normalization layer for 1-dimensional data.
+
+    Batch normalization standardizes layer inputs across mini-batches to stabilize
+    learning, accelerate convergence, and reduce sensitivity to initialization.
+    It adjusts normalized outputs using learnable parameters, mitigating internal
+    covariate shift in deep networks.
+
+    Parameters
+    ----------
+    `in_features` : Number of input features
+    `momentum` : Momentum for updating the running averages
+
+    Notes
+    -----
+    - The input `X` must have the form of 3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_features: int,
+        momentum: float = 0.9,
+        epsilon: float = 1e-9,
+    ) -> None:
+        super().__init__()
+        self.in_features = in_features
+        self.momentum = momentum
+        self.epsilon = epsilon
+
+        self.gamma = np.ones((1, in_features, 1))
+        self.beta = np.zeros((1, in_features, 1))
+        self.weights_ = [self.gamma, self.beta]
+
+        self.running_mean = np.zeros((1, in_features, 1))
+        self.running_var = np.ones((1, in_features, 1))
+
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        if is_train:
+            batch_mean = np.mean(X, axis=(0, 2), keepdims=True)
+            batch_var = np.var(X, axis=(0, 2), keepdims=True)
+
+            self.running_mean = (
+                self.momentum * self.running_mean + (1 - self.momentum) * batch_mean
+            )
+            self.running_var = (
+                self.momentum * self.running_var + (1 - self.momentum) * batch_var
+            )
+
+            self.X_norm = (X - batch_mean) / np.sqrt(batch_var + self.epsilon)
+        else:
+            self.X_norm = (X - self.running_mean) / np.sqrt(
+                self.running_var + self.epsilon
+            )
+
+        out = self.weights_[0] * self.X_norm + self.weights_[1]
+        return out
+
+    def backward(self, d_out: Tensor) -> Tensor:
+        batch_size, _, width = d_out.shape
+
+        dX_norm = d_out * self.weights_[0]
+        dgamma = np.sum(d_out * self.X_norm, axis=(0, 2), keepdims=True)
+        dbeta = np.sum(d_out, axis=(0, 2), keepdims=True)
+        self.dW = [dgamma, dbeta]
+
+        dX = (
+            1.0
+            / (batch_size * width)
+            * np.reciprocal(np.sqrt(self.running_var + self.epsilon))
+            * (
+                batch_size * width * dX_norm
+                - np.sum(dX_norm, axis=(0, 2), keepdims=True)
+                - self.X_norm
+                * np.sum(dX_norm * self.X_norm, axis=(0, 2), keepdims=True)
+            )
+        )
+        self.dX = dX
+        return dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        return in_shape
+
 
 class BatchNorm2D(Layer):
     """
+    Batch normalization layer for 2-dimensional data.
+
     Batch normalization standardizes layer inputs across mini-batches to stabilize
     learning, accelerate convergence, and reduce sensitivity to initialization.
     It adjusts normalized outputs using learnable parameters, mitigating internal
@@ -1075,7 +1464,6 @@ class BatchNorm2D(Layer):
     def __init__(
         self,
         in_features: int,
-        *,
         momentum: float = 0.9,
         epsilon: float = 1e-9,
     ) -> None:
@@ -1110,7 +1498,6 @@ class BatchNorm2D(Layer):
             )
 
         out = self.weights_[0] * self.X_norm + self.weights_[1]
-        self.out_shape = out.shape
         return out
 
     def backward(self, d_out: Tensor) -> Tensor:
@@ -1133,6 +1520,97 @@ class BatchNorm2D(Layer):
         )
         self.dX = dX
         return self.dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        return in_shape
+
+
+class BatchNorm3D(Layer):
+    """
+    Batch normalization layer for 3-dimensional data.
+
+    Batch normalization standardizes layer inputs across mini-batches to stabilize
+    learning, accelerate convergence, and reduce sensitivity to initialization.
+    It adjusts normalized outputs using learnable parameters, mitigating internal
+    covariate shift in deep networks.
+
+    Parameters
+    ----------
+    `in_features` : Number of input features
+    `momentum` : Momentum for updating the running averages
+
+    Notes
+    -----
+    - The input `X` must have the form of 5D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, depth, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_features: int,
+        momentum: float = 0.9,
+        epsilon: float = 1e-5,
+    ) -> None:
+        super().__init__()
+        self.in_features = in_features
+        self.momentum = momentum
+        self.epsilon = epsilon
+
+        self.gamma = np.ones((1, in_features, 1, 1, 1))
+        self.beta = np.zeros((1, in_features, 1, 1, 1))
+        self.weights_ = [self.gamma, self.beta]
+
+        self.running_mean = np.zeros((1, in_features, 1, 1, 1))
+        self.running_var = np.ones((1, in_features, 1, 1, 1))
+
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        if is_train:
+            batch_mean = np.mean(X, axis=(0, 2, 3, 4), keepdims=True)
+            batch_var = np.var(X, axis=(0, 2, 3, 4), keepdims=True)
+
+            self.running_mean = (
+                self.momentum * self.running_mean + (1 - self.momentum) * batch_mean
+            )
+            self.running_var = (
+                self.momentum * self.running_var + (1 - self.momentum) * batch_var
+            )
+
+            self.X_norm = (X - batch_mean) / np.sqrt(batch_var + self.epsilon)
+        else:
+            self.X_norm = (X - self.running_mean) / np.sqrt(
+                self.running_var + self.epsilon
+            )
+
+        out = self.weights_[0] * self.X_norm + self.weights_[1]
+        return out
+
+    def backward(self, d_out: Tensor) -> Tensor:
+        batch_size, _, depth, height, width = d_out.shape
+
+        dX_norm = d_out * self.weights_[0]
+        dgamma = np.sum(d_out * self.X_norm, axis=(0, 2, 3, 4), keepdims=True)
+        dbeta = np.sum(d_out, axis=(0, 2, 3, 4), keepdims=True)
+        self.dW = [dgamma, dbeta]
+
+        dX = (
+            1.0
+            / (batch_size * depth * height * width)
+            * np.reciprocal(np.sqrt(self.running_var + self.epsilon))
+            * (
+                batch_size * depth * height * width * dX_norm
+                - np.sum(dX_norm, axis=(0, 2, 3, 4), keepdims=True)
+                - self.X_norm
+                * np.sum(dX_norm * self.X_norm, axis=(0, 2, 3, 4), keepdims=True)
+            )
+        )
+        self.dX = dX
+        return dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        return in_shape
 
 
 class Sequential(Layer):
@@ -1193,9 +1671,9 @@ class Sequential(Layer):
     ```
     """
 
-    def __init__(self, *layers: Layer | Tuple[str, Layer]) -> None:
+    def __init__(self, *layers: Layer | tuple[str, Layer]) -> None:
         super().__init__()
-        self.layers: List[Tuple[str, Layer]] = list()
+        self.layers: List[tuple[str, Layer]] = list()
         for layer in layers:
             self.add(layer)
 
@@ -1205,7 +1683,6 @@ class Sequential(Layer):
         for _, layer in self.layers:
             out = layer(out, is_train=is_train)
 
-        self.out_shape = out.shape
         return out
 
     def backward(self, d_out: TensorLike) -> TensorLike:
@@ -1254,6 +1731,11 @@ class Sequential(Layer):
             b_size += b_
 
         return w_size, b_size
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        for _, layer in self.layers:
+            in_shape = layer.out_shape(in_shape)
+        return in_shape
 
     def __add__(self, other: Layer | Self) -> Self:
         if isinstance(other, Layer):

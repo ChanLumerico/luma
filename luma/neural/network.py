@@ -294,6 +294,10 @@ class LeNet_1(_lenet._LeNet_1):
     ```py
     Matrix[..., 10]
     ```
+    Parameter Size:
+    ```txt
+    2,180 weights, 22 biases -> 2,202 params
+    ```
     Parameters
     ----------
     `activation` : Type of activation function (Default `Tanh`)
@@ -376,6 +380,10 @@ class LeNet_4(_lenet._LeNet_4):
     Output:
     ```py
     Matrix[..., 10]
+    ```
+    Parameter Size:
+    ```txt
+    50,902 weights, 150 biases -> 51,052 params
     ```
     Parameters
     ----------
@@ -461,6 +469,10 @@ class LeNet_5(_lenet._LeNet_5):
     Output:
     ```py
     Matrix[..., 10]
+    ```
+    Parameter Size:
+    ```txt
+    61,474 weights, 236 biases -> 61,710 params
     ```
     Parameters
     ----------

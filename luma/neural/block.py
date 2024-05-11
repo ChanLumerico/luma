@@ -1,16 +1,136 @@
-from typing import Literal
+from typing import Literal, override
+import numpy as np
 
 from luma.core.super import Optimizer
+from luma.interface.typing import TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
 
 
-__all__ = ("ConvBlock2D", "DenseBlock")
+__all__ = (
+    "ConvBlock1D",
+    "ConvBlock2D",
+    "ConvBlock3D",
+    "DenseBlock",
+)
+
+
+class ConvBlock1D(Sequential):
+    """
+    Convolutional block for 1-dimensional data.
+
+    A convolutional block in a neural network typically consists of a
+    convolutional layer followed by a nonlinear activation function,
+    and a pooling layer to reduce spatial dimensions.
+    This structure extracts and transforms features from input data,
+    applying filters to capture spatial hierarchies and patterns.
+    The pooling layer then reduces the feature dimensionality, helping to
+    decrease computational cost and overfitting.
+
+    Structure
+    ---------
+    ```py
+    Convolution1D -> Optional[BatchNorm1D] -> Activation -> Optional[Pooling1D]
+    ```
+    Parameters
+    ----------
+    `in_channels` : Number of input channels
+    `out_channels` : Number of output channels
+    `filter_size` : Size of the convolution filter
+    `activation` : Type of activation function
+    `padding` : Padding method
+    `optimizer` : Type of optimizer for weight updating
+    `initializer` : Type of weight initializer
+    `stride` : Step size for filters during convolution
+    `lambda_` : L2 regularization strength
+    `do_batch_norm` : Whether to perform batch normalization (default `True`)
+    `momentum` : Momentum for batch normalization
+    `do_pooling` : Whether to perform pooling (default `True`)
+    `pool_filter_size` : Filter size for pooling
+    `pool_stride` : Step size for pooling process
+    `pool_mode` : Pooling strategy
+
+    Notes
+    -----
+    - The input `X` must have the form of 3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        *,
+        filter_size: int,
+        activation: Activation.FuncType,
+        optimizer: Optimizer = None,
+        initializer: InitUtil.InitStr = None,
+        padding: Literal["same", "valid"] = "same",
+        stride: int = 1,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        do_pooling: bool = True,
+        pool_filter_size: int = 2,
+        pool_stride: int = 2,
+        pool_mode: Literal["max", "avg"] = "max",
+        random_state: int = None,
+    ) -> None:
+        super(ConvBlock1D, self).__init__(
+            Convolution1D(
+                in_channels,
+                out_channels,
+                filter_size,
+                stride,
+                padding,
+                initializer,
+                optimizer,
+                lambda_,
+                random_state,
+            )
+        )
+        if do_batch_norm:
+            super(ConvBlock1D, self).__add__(
+                BatchNorm1D(
+                    out_channels,
+                    momentum,
+                )
+            )
+        super(ConvBlock1D, self).__add__(
+            activation,
+        )
+        if do_pooling:
+            super(ConvBlock1D, self).__add__(
+                Pooling1D(
+                    pool_filter_size,
+                    pool_stride,
+                    pool_mode,
+                )
+            )
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+                "pool_filter_size": ("0<,+inf", int),
+                "pool_stride": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
 
 
 class ConvBlock2D(Sequential):
     """
+    Convolutional block for 2-dimensional data.
+
     A convolutional block in a neural network typically consists of a
     convolutional layer followed by a nonlinear activation function,
     and a pooling layer to reduce spatial dimensions.
@@ -42,6 +162,13 @@ class ConvBlock2D(Sequential):
     `pool_stride` : Step size for pooling process
     `pool_mode` : Pooling strategy
 
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
     """
 
     def __init__(
@@ -75,8 +202,7 @@ class ConvBlock2D(Sequential):
                 optimizer,
                 lambda_,
                 random_state,
-            ),
-            activation,
+            )
         )
         if do_batch_norm:
             super(ConvBlock2D, self).__add__(
@@ -85,6 +211,9 @@ class ConvBlock2D(Sequential):
                     momentum,
                 )
             )
+        super(ConvBlock2D, self).__add__(
+            activation,
+        )
         if do_pooling:
             super(ConvBlock2D, self).__add__(
                 Pooling2D(
@@ -109,7 +238,118 @@ class ConvBlock2D(Sequential):
         self.check_param_ranges()
 
 
-class DenseBlock(Sequential):  # TODO: Add BN-1D
+class ConvBlock3D(Sequential):
+    """
+    Convolutional block for 3-dimensional data.
+
+    A convolutional block in a neural network typically consists of a
+    convolutional layer followed by a nonlinear activation function,
+    and a pooling layer to reduce spatial dimensions.
+    This structure extracts and transforms features from input data,
+    applying filters to capture spatial hierarchies and patterns.
+    The pooling layer then reduces the feature dimensionality, helping to
+    decrease computational cost and overfitting.
+
+    Structure
+    ---------
+    ```py
+    Convolution3D -> Optional[BatchNorm3D] -> Activation -> Optional[Pooling3D]
+    ```
+    Parameters
+    ----------
+    `in_channels` : Number of input channels
+    `out_channels` : Number of output channels
+    `filter_size` : Size of the convolution filter
+    `activation` : Type of activation function
+    `padding` : Padding method
+    `optimizer` : Type of optimizer for weight updating
+    `initializer` : Type of weight initializer
+    `stride` : Step size for filters during convolution
+    `lambda_` : L2 regularization strength
+    `do_batch_norm` : Whether to perform batch normalization (default `True`)
+    `momentum` : Momentum for batch normalization
+    `do_pooling` : Whether to perform pooling (default `True`)
+    `pool_filter_size` : Filter size for pooling
+    `pool_stride` : Step size for pooling process
+    `pool_mode` : Pooling strategy
+
+    Notes
+    -----
+    - The input `X` must have the form of 5D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, depth, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        *,
+        filter_size: int,
+        activation: Activation.FuncType,
+        optimizer: Optimizer = None,
+        initializer: InitUtil.InitStr = None,
+        padding: Literal["same", "valid"] = "same",
+        stride: int = 1,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        do_pooling: bool = True,
+        pool_filter_size: int = 2,
+        pool_stride: int = 2,
+        pool_mode: Literal["max", "avg"] = "max",
+        random_state: int = None,
+    ) -> None:
+        super(ConvBlock3D, self).__init__(
+            Convolution3D(
+                in_channels,
+                out_channels,
+                filter_size,
+                stride,
+                padding,
+                initializer,
+                optimizer,
+                lambda_,
+                random_state,
+            )
+        )
+        if do_batch_norm:
+            super(ConvBlock3D, self).__add__(
+                BatchNorm3D(
+                    out_channels,
+                    momentum,
+                )
+            )
+        super(ConvBlock3D, self).__add__(
+            activation,
+        )
+        if do_pooling:
+            super(ConvBlock3D, self).__add__(
+                Pooling3D(
+                    pool_filter_size,
+                    pool_stride,
+                    pool_mode,
+                )
+            )
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+                "pool_filter_size": ("0<,+inf", int),
+                "pool_stride": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
+
+class DenseBlock(Sequential):
     """
     A typical dense block in a neural network configuration often
     includes a series of fully connected (dense) layers. Each layer
@@ -124,7 +364,7 @@ class DenseBlock(Sequential):  # TODO: Add BN-1D
     Structure
     ---------
     ```py
-    Dense -> Activation -> Optional[Dropout]
+    Dense -> Optional[BatchNorm1D] -> Activation -> Optional[Dropout]
     ```
     Parameters
     ----------
@@ -134,6 +374,8 @@ class DenseBlock(Sequential):  # TODO: Add BN-1D
     `optimizer` : Type of optimizer for weight update
     `initializer` : Type of weight initializer
     `lambda_` : L2 regularization strength
+    `do_batch_norm` : Whether to perform batch normalization (default `True`)
+    `momentum` : Momentum for batch normalization
     `do_dropout` : Whethter to perform dropout (default `True`)
     `dropout_rate` : Dropout rate
 
@@ -148,6 +390,8 @@ class DenseBlock(Sequential):  # TODO: Add BN-1D
         optimizer: Optimizer = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
+        do_batch_norm: float = True,
+        momentum: float = 0.9,
         do_dropout: bool = True,
         dropout_rate: float = 0.5,
         random_state: int = None,
@@ -160,7 +404,16 @@ class DenseBlock(Sequential):  # TODO: Add BN-1D
                 optimizer,
                 lambda_,
                 random_state,
-            ),
+            )
+        )
+        if do_batch_norm:
+            super(DenseBlock, self).__add__(
+                BatchNorm1D(
+                    1,
+                    momentum,
+                )
+            )
+        super(DenseBlock, self).__add__(
             activation,
         )
         if do_dropout:
@@ -180,3 +433,25 @@ class DenseBlock(Sequential):  # TODO: Add BN-1D
             }
         )
         self.check_param_ranges()
+
+    @override
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        self.input_ = X
+        out = X
+        for _, layer in self.layers:
+            if isinstance(layer, BatchNorm1D):
+                out = layer(out[:, np.newaxis, :], is_train=is_train).squeeze()
+                continue
+            out = layer(out, is_train=is_train)
+
+        self.out_shape = out.shape
+        return out
+
+    @override
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        for _, layer in reversed(self.layers):
+            if isinstance(layer, BatchNorm1D):
+                d_out = layer.backward(d_out[:, np.newaxis, :]).squeeze()
+                continue
+            d_out = layer.backward(d_out)
+        return d_out
