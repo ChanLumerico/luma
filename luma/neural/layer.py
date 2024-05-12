@@ -1,11 +1,18 @@
-from typing import Any, List, Literal, Self, Tuple, Type, override
-import numpy as np
+from typing import Any, List, Literal, Self, Tuple, override
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Matrix, Tensor, TensorLike, ClassType
+from luma.interface.typing import TensorLike
 from luma.interface.util import InitUtil, Clone
-from luma.interface.exception import UnsupportedParameterError
 from luma.neural.base import Layer
+
+from ._layers import (
+    _act,
+    _conv,
+    _drop,
+    _linear,
+    _norm,
+    _pool,
+)
 
 
 __all__ = (
@@ -26,7 +33,7 @@ __all__ = (
 )
 
 
-class Convolution1D(Layer):
+class Convolution1D(_conv._Conv1D):
     """
     Convolutional layer for 1-dimensional data.
 
@@ -67,135 +74,23 @@ class Convolution1D(Layer):
         padding: Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
-        lambda_: float = 0.0,
+        lambda_: float = 0,
         random_state: int = None,
     ) -> None:
-        super().__init__()
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.filter_size = filter_size
-        self.stride = stride
-        self.padding = padding
-        self.initializer = initializer
-        self.optimizer = optimizer
-        self.lambda_ = lambda_
-        self.random_state = random_state
-        self.rs_ = np.random.RandomState(self.random_state)
-
-        self.init_params(
-            w_shape=(
-                self.out_channels,
-                self.in_channels,
-                self.filter_size,
-            ),
-            b_shape=(1, self.out_channels),
-        )
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-            }
-        )
-        self.check_param_ranges()
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        _ = is_train
-        self.input_ = X
-        batch_size, channels, width = X.shape
-
-        if self.in_channels != channels:
-            raise ValueError(
-                f"channels of 'X' does not match with 'in_channels'! "
-                + f"({self.in_channels}!={channels})"
-            )
-
-        pad_w, padded_w = self._get_padding_dim(width)
-
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
-        out: Tensor = np.zeros((batch_size, self.out_channels, out_width))
-
-        X_padded = np.pad(X, ((0, 0), (0, 0), (pad_w, pad_w)), mode="constant")
-        X_fft = np.fft.rfft(X_padded, n=padded_w, axis=2)
-        filter_fft = np.fft.rfft(
-            self.weights_,
-            n=padded_w,
-            axis=2,
+        super().__init__(
+            in_channels,
+            out_channels,
+            filter_size,
+            stride,
+            padding,
+            initializer,
+            optimizer,
+            lambda_,
+            random_state,
         )
 
-        for i in range(batch_size):
-            for f in range(self.out_channels):
-                result_fft = np.sum(X_fft[i] * filter_fft[f], axis=0)
-                result = np.fft.irfft(result_fft, n=padded_w)
 
-                out[i, f] = result[pad_w : padded_w - pad_w : self.stride][:out_width]
-
-        out += self.biases_[:, :, np.newaxis]
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        X = self.input_
-        batch_size, channels, width = X.shape
-        pad_w, padded_w = self._get_padding_dim(width)
-
-        dX_padded = np.zeros((batch_size, channels, padded_w))
-        self.dW = np.zeros_like(self.weights_)
-        self.dB = np.zeros_like(self.biases_)
-
-        X_padded = np.pad(X, ((0, 0), (0, 0), (pad_w, pad_w)), mode="constant")
-        X_fft = np.fft.rfft(X_padded, n=padded_w, axis=2)
-        d_out_fft = np.fft.rfft(d_out, n=padded_w, axis=2)
-
-        for f in range(self.out_channels):
-            self.dB[:, f] = np.sum(d_out[:, f, :])
-
-        for f in range(self.out_channels):
-            for c in range(channels):
-                filter_d_out_fft = np.sum(
-                    X_fft[:, c] * d_out_fft[:, f].conj(),
-                    axis=0,
-                )
-                self.dW[f, c] = np.fft.irfft(filter_d_out_fft, n=padded_w)[
-                    : self.filter_size
-                ]
-
-        self.dW += 2 * self.lambda_ * self.weights_
-
-        for i in range(batch_size):
-            for c in range(channels):
-                temp = np.zeros(padded_w // 2 + 1, dtype=np.complex128)
-                for f in range(self.out_channels):
-                    filter_fft = np.fft.rfft(self.weights_[f, c], n=padded_w)
-                    temp += filter_fft * d_out_fft[i, f]
-                dX_padded[i, c] = np.fft.irfft(temp, n=padded_w)
-
-        self.dX = dX_padded[:, :, pad_w:-pad_w] if pad_w > 0 else dX_padded
-        return self.dX
-
-    def _get_padding_dim(self, width: int) -> Tuple[int, ...]:
-        if self.padding == "same":
-            pad_w = (self.filter_size - 1) // 2
-            padded_w = width + 2 * pad_w
-
-        elif self.padding == "valid":
-            pad_w = 0
-            padded_w = width
-        else:
-            raise UnsupportedParameterError(self.padding)
-
-        return pad_w, padded_w
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, _, width = in_shape
-        _, padded_w = self._get_padding_dim(width)
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
-
-        return (batch_size, self.out_channels, out_width)
-
-
-class Convolution2D(Layer):
+class Convolution2D(_conv._Conv2D):
     """
     Convolutional layer for 2-dimensional data.
 
@@ -236,162 +131,23 @@ class Convolution2D(Layer):
         padding: Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
-        lambda_: float = 0.0,
+        lambda_: float = 0,
         random_state: int = None,
     ) -> None:
-        super().__init__()
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.filter_size = filter_size
-        self.stride = stride
-        self.padding = padding
-        self.initializer = initializer
-        self.optimizer = optimizer
-        self.lambda_ = lambda_
-        self.random_state = random_state
-        self.rs_ = np.random.RandomState(self.random_state)
-
-        self.init_params(
-            w_shape=(
-                self.out_channels,
-                self.in_channels,
-                self.filter_size,
-                self.filter_size,
-            ),
-            b_shape=(1, self.out_channels),
-        )
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-            }
-        )
-        self.check_param_ranges()
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        _ = is_train
-        self.input_ = X
-        batch_size, channels, height, width = X.shape
-
-        if self.in_channels != channels:
-            raise ValueError(
-                f"channels of 'X' does not match with 'in_channels'! "
-                + f"({self.in_channels}!={channels})"
-            )
-
-        pad_h, pad_w, padded_h, padded_w = self._get_padding_dim(height, width)
-
-        out_height = ((padded_h - self.filter_size) // self.stride) + 1
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
-        out: Tensor = np.zeros(
-            (
-                batch_size,
-                self.out_channels,
-                out_height,
-                out_width,
-            )
+        super().__init__(
+            in_channels,
+            out_channels,
+            filter_size,
+            stride,
+            padding,
+            initializer,
+            optimizer,
+            lambda_,
+            random_state,
         )
 
-        X_padded = np.pad(
-            X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
-        )
-        X_fft = np.fft.rfftn(X_padded, s=(padded_h, padded_w), axes=[2, 3])
-        filter_fft = np.fft.rfftn(
-            self.weights_,
-            s=(padded_h, padded_w),
-            axes=[2, 3],
-        )
-        for i in range(batch_size):
-            for f in range(self.out_channels):
-                result_fft = np.sum(X_fft[i] * filter_fft[f], axis=0)
-                result = np.fft.irfftn(result_fft, s=(padded_h, padded_w))
 
-                sampled_result = result[
-                    pad_h : padded_h - pad_h : self.stride,
-                    pad_w : padded_w - pad_w : self.stride,
-                ]
-                out[i, f] = sampled_result[:out_height, :out_width]
-
-        out += self.biases_[:, :, np.newaxis, np.newaxis]
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        X = self.input_
-        batch_size, channels, height, width = X.shape
-        pad_h, pad_w, padded_h, padded_w = self._get_padding_dim(height, width)
-
-        dX_padded = np.zeros((batch_size, channels, padded_h, padded_w))
-        self.dW = np.zeros_like(self.weights_)
-        self.dB = np.zeros_like(self.biases_)
-
-        X_padded = np.pad(
-            X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
-        )
-        X_fft = np.fft.rfftn(X_padded, s=(padded_h, padded_w), axes=[2, 3])
-        d_out_fft = np.fft.rfftn(d_out, s=(padded_h, padded_w), axes=[2, 3])
-
-        for f in range(self.out_channels):
-            self.dB[:, f] = np.sum(d_out[:, f, :, :])
-
-        for f in range(self.out_channels):
-            for c in range(channels):
-                filter_d_out_fft = np.sum(
-                    X_fft[:, c] * d_out_fft[:, f].conj(),
-                    axis=0,
-                )
-                self.dW[f, c] = np.fft.irfftn(
-                    filter_d_out_fft,
-                    s=(padded_h, padded_w),
-                )[pad_h : pad_h + self.filter_size, pad_w : pad_w + self.filter_size]
-
-        self.dW += 2 * self.lambda_ * self.weights_
-
-        for i in range(batch_size):
-            for c in range(channels):
-                temp = np.zeros((padded_h, padded_w // 2 + 1), dtype=np.complex128)
-                for f in range(self.out_channels):
-                    filter_fft = np.fft.rfftn(
-                        self.weights_[f, c], s=(padded_h, padded_w)
-                    )
-                    temp += filter_fft * d_out_fft[i, f]
-                dX_padded[i, c] = np.fft.irfftn(temp, s=(padded_h, padded_w))
-
-        self.dX = (
-            dX_padded[:, :, pad_h:-pad_h, pad_w:-pad_w]
-            if pad_h > 0 or pad_w > 0
-            else dX_padded
-        )
-        return self.dX
-
-    def _get_padding_dim(self, height: int, width: int) -> Tuple[int, ...]:
-        if self.padding == "same":
-            pad_h = pad_w = (self.filter_size - 1) // 2
-            padded_h = height + 2 * pad_h
-            padded_w = width + 2 * pad_w
-
-        elif self.padding == "valid":
-            pad_h = pad_w = 0
-            padded_h = height
-            padded_w = width
-        else:
-            raise UnsupportedParameterError(self.padding)
-
-        return pad_h, pad_w, padded_h, padded_w
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, _, height, width = in_shape
-        _, _, padded_h, padded_w = self._get_padding_dim(height, width)
-
-        out_height = ((padded_h - self.filter_size) // self.stride) + 1
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
-
-        return (batch_size, self.out_channels, out_height, out_width)
-
-
-class Convolution3D(Layer):
+class Convolution3D(_conv._Conv3D):
     """
     Convolutional layer for 3-dimensional data.
 
@@ -432,200 +188,23 @@ class Convolution3D(Layer):
         padding: Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
-        lambda_: float = 0.0,
+        lambda_: float = 0,
         random_state: int = None,
     ) -> None:
-        super().__init__()
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.filter_size = filter_size
-        self.stride = stride
-        self.padding = padding
-        self.initializer = initializer
-        self.optimizer = optimizer
-        self.lambda_ = lambda_
-        self.random_state = random_state
-        self.rs_ = np.random.RandomState(self.random_state)
-
-        self.init_params(
-            w_shape=(
-                self.out_channels,
-                self.in_channels,
-                self.filter_size,
-                self.filter_size,
-                self.filter_size,
-            ),
-            b_shape=(1, self.out_channels),
-        )
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-            }
-        )
-        self.check_param_ranges()
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        _ = is_train
-        self.input_ = X
-        batch_size, channels, depth, height, width = X.shape
-
-        if self.in_channels != channels:
-            raise ValueError(
-                f"channels of 'X' does not match with 'in_channels'! "
-                + f"({self.in_channels}!={channels})"
-            )
-
-        pad_d, pad_h, pad_w, padded_d, padded_h, padded_w = self._get_padding_dim(
-            depth, height, width
-        )
-        out_depth = ((padded_d - self.filter_size) // self.stride) + 1
-        out_height = ((padded_h - self.filter_size) // self.stride) + 1
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
-        out: Tensor = np.zeros(
-            (batch_size, self.out_channels, out_depth, out_height, out_width)
+        super().__init__(
+            in_channels,
+            out_channels,
+            filter_size,
+            stride,
+            padding,
+            initializer,
+            optimizer,
+            lambda_,
+            random_state,
         )
 
-        X_padded = np.pad(
-            X,
-            ((0, 0), (0, 0), (pad_d, pad_d), (pad_h, pad_h), (pad_w, pad_w)),
-            mode="constant",
-        )
-        X_fft = np.fft.rfftn(
-            X_padded,
-            s=(padded_d, padded_h, padded_w),
-            axes=[2, 3, 4],
-        )
-        filter_fft = np.fft.rfftn(
-            self.weights_,
-            s=(padded_d, padded_h, padded_w),
-            axes=[2, 3, 4],
-        )
 
-        for i in range(batch_size):
-            for f in range(self.out_channels):
-                result_fft = np.sum(X_fft[i] * filter_fft[f], axis=0)
-                result = np.fft.irfftn(result_fft, s=(padded_d, padded_h, padded_w))
-
-                sampled_result = result[
-                    pad_d : padded_d - pad_d : self.stride,
-                    pad_h : padded_h - pad_h : self.stride,
-                    pad_w : padded_w - pad_w : self.stride,
-                ]
-                out[i, f] = sampled_result[:out_depth, :out_height, :out_width]
-
-        out += self.biases_[:, :, np.newaxis, np.newaxis, np.newaxis]
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        X = self.input_
-        batch_size, channels, depth, height, width = X.shape
-        pad_d, pad_h, pad_w, padded_d, padded_h, padded_w = self._get_padding_dim(
-            depth, height, width
-        )
-
-        dX_padded = np.zeros((batch_size, channels, padded_d, padded_h, padded_w))
-        self.dW = np.zeros_like(self.weights_)
-        self.dB = np.zeros_like(self.biases_)
-
-        X_padded = np.pad(
-            X,
-            ((0, 0), (0, 0), (pad_d, pad_d), (pad_h, pad_h), (pad_w, pad_w)),
-            mode="constant",
-        )
-        X_fft = np.fft.rfftn(
-            X_padded,
-            s=(padded_d, padded_h, padded_w),
-            axes=[2, 3, 4],
-        )
-        d_out_fft = np.fft.rfftn(
-            d_out,
-            s=(padded_d, padded_h, padded_w),
-            axes=[2, 3, 4],
-        )
-
-        for f in range(self.out_channels):
-            self.dB[:, f] = np.sum(d_out[:, f, :, :, :])
-
-        for f in range(self.out_channels):
-            for c in range(channels):
-                filter_d_out_fft = np.sum(
-                    X_fft[:, c] * d_out_fft[:, f].conj(),
-                    axis=0,
-                )
-                self.dW[f, c] = np.fft.irfftn(
-                    filter_d_out_fft,
-                    s=(padded_d, padded_h, padded_w),
-                )[
-                    pad_d : pad_d + self.filter_size,
-                    pad_h : pad_h + self.filter_size,
-                    pad_w : pad_w + self.filter_size,
-                ]
-
-        self.dW += 2 * self.lambda_ * self.weights_
-
-        for i in range(batch_size):
-            for c in range(channels):
-                temp = np.zeros(
-                    (padded_d, padded_h, padded_w // 2 + 1), dtype=np.complex128
-                )
-                for f in range(self.out_channels):
-                    filter_fft = np.fft.rfftn(
-                        self.weights_[f, c],
-                        s=(padded_d, padded_h, padded_w),
-                        axes=[2, 3, 4],
-                    )
-                    temp += filter_fft * d_out_fft[i, f]
-                dX_padded[i, c] = np.fft.irfftn(
-                    temp,
-                    s=(padded_d, padded_h, padded_w),
-                )
-
-        self.dX = (
-            dX_padded[:, :, pad_d:-pad_d, pad_h:-pad_h, pad_w:-pad_w]
-            if (pad_d > 0 or pad_h > 0 or pad_w > 0)
-            else dX_padded
-        )
-        return self.dX
-
-    def _get_padding_dim(
-        self,
-        depth: int,
-        height: int,
-        width: int,
-    ) -> Tuple[int, ...]:
-        if self.padding == "same":
-            pad_d = pad_h = pad_w = (self.filter_size - 1) // 2
-            padded_d = depth + 2 * pad_d
-            padded_h = height + 2 * pad_h
-            padded_w = width + 2 * pad_w
-
-        elif self.padding == "valid":
-            pad_d = pad_h = pad_w = 0
-            padded_d = depth
-            padded_h = height
-            padded_w = width
-        else:
-            raise UnsupportedParameterError(self.padding)
-
-        return pad_d, pad_h, pad_w, padded_d, padded_h, padded_w
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, _, depth, height, width = in_shape
-        _, _, _, padded_d, padded_h, padded_w = self._get_padding_dim(
-            depth, height, width
-        )
-        out_depth = ((padded_d - self.filter_size) // self.stride) + 1
-        out_height = ((padded_h - self.filter_size) // self.stride) + 1
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
-
-        return (batch_size, self.out_channels, out_depth, out_height, out_width)
-
-
-class Pooling1D(Layer):
+class Pooling1D(_pool._Pool1D):
     """
     Pooling layer for 1-dimensional data.
 
@@ -658,74 +237,10 @@ class Pooling1D(Layer):
         stride: int = 2,
         mode: Literal["max", "avg"] = "max",
     ) -> None:
-        super().__init__()
-        self.filter_size = filter_size
-        self.stride = stride
-        self.mode = mode
-
-        self.set_param_ranges(
-            {
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        _ = is_train
-        self.input_ = X
-        batch_size, channels, width = X.shape
-
-        out_width = 1 + (width - self.filter_size) // self.stride
-        out: Tensor = np.zeros((batch_size, channels, out_width))
-
-        for i in range(out_width):
-            w_start, w_end = self._get_pooling_bounds(i)
-            window = X[:, :, w_start:w_end]
-
-            if self.mode == "max":
-                out[:, :, i] = np.max(window, axis=2)
-            elif self.mode == "avg":
-                out[:, :, i] = np.mean(window, axis=2)
-            else:
-                raise UnsupportedParameterError(self.mode)
-
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        X = self.input_
-        _, _, out_width = d_out.shape
-        self.dX = np.zeros_like(X)
-
-        for i in range(out_width):
-            w_start, w_end = self._get_pooling_bounds(i)
-            window = X[:, :, w_start:w_end]
-
-            if self.mode == "max":
-                max_vals = np.max(window, axis=2, keepdims=True)
-                mask_ = window == max_vals
-                self.dX[:, :, w_start:w_end] += mask_ * d_out[:, :, i : i + 1]
-            elif self.mode == "avg":
-                self.dX[:, :, w_start:w_end] += (
-                    d_out[:, :, i : i + 1] / self.filter_size
-                )
-
-        return self.dX
-
-    def _get_pooling_bounds(self, cur_w: int) -> Tuple[int, int]:
-        w_start = cur_w * self.stride
-        w_end = w_start + self.filter_size
-
-        return w_start, w_end
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, channels, width = in_shape
-        out_width = 1 + (width - self.filter_size) // self.stride
-
-        return (batch_size, channels, out_width)
+        super().__init__(filter_size, stride, mode)
 
 
-class Pooling2D(Layer):
+class Pooling2D(_pool._Pool2D):
     """
     Pooling layer for 2-dimensional data.
 
@@ -758,83 +273,10 @@ class Pooling2D(Layer):
         stride: int = 2,
         mode: Literal["max", "avg"] = "max",
     ) -> None:
-        super().__init__()
-        self.filter_size = filter_size
-        self.stride = stride
-        self.mode = mode
-
-        self.set_param_ranges(
-            {
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        _ = is_train
-        self.input_ = X
-        batch_size, channels, height, width = X.shape
-
-        out_height = 1 + (height - self.filter_size) // self.stride
-        out_width = 1 + (width - self.filter_size) // self.stride
-        out: Tensor = np.zeros((batch_size, channels, out_height, out_width))
-
-        for i in range(out_height):
-            for j in range(out_width):
-                h_start, h_end, w_start, w_end = self._get_pooling_bounds(i, j)
-                window = X[:, :, h_start:h_end, w_start:w_end]
-
-                if self.mode == "max":
-                    out[:, :, i, j] = np.max(window, axis=(2, 3))
-                elif self.mode == "avg":
-                    out[:, :, i, j] = np.mean(window, axis=(2, 3))
-                else:
-                    raise UnsupportedParameterError(self.mode)
-
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        X = self.input_
-        _, _, out_height, out_width = d_out.shape
-        self.dX = np.zeros_like(X)
-
-        for i in range(out_height):
-            for j in range(out_width):
-                h_start, h_end, w_start, w_end = self._get_pooling_bounds(i, j)
-                window = X[:, :, h_start:h_end, w_start:w_end]
-
-                if self.mode == "max":
-                    max_vals = np.max(window, axis=(2, 3), keepdims=True)
-                    mask_ = window == max_vals
-                    self.dX[:, :, h_start:h_end, w_start:w_end] += (
-                        mask_ * d_out[:, :, i : i + 1, j : j + 1]
-                    )
-                elif self.mode == "avg":
-                    self.dX[:, :, h_start:h_end, w_start:w_end] += d_out[
-                        :, :, i : i + 1, j : j + 1
-                    ] / (self.filter_size**2)
-
-        return self.dX
-
-    def _get_pooling_bounds(self, cur_h: int, cur_w: int) -> Tuple[int, ...]:
-        h_start = cur_h * self.stride
-        w_start = cur_w * self.stride
-
-        h_end = h_start + self.filter_size
-        w_end = w_start + self.filter_size
-
-        return h_start, h_end, w_start, w_end
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, channels, height, width = in_shape
-        out_height = 1 + (height - self.filter_size) // self.stride
-        out_width = 1 + (width - self.filter_size) // self.stride
-
-        return (batch_size, channels, out_height, out_width)
+        super().__init__(filter_size, stride, mode)
 
 
-class Pooling3D(Layer):
+class Pooling3D(_pool._Pool3D):
     """
     Pooling layer for 3-dimensional data.
 
@@ -867,106 +309,10 @@ class Pooling3D(Layer):
         stride: int = 2,
         mode: Literal["max", "avg"] = "max",
     ) -> None:
-        super().__init__()
-        self.filter_size = filter_size
-        self.stride = stride
-        self.mode = mode
-
-        self.set_param_ranges(
-            {
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        _ = is_train
-        self.input_ = X
-        batch_size, channels, depth, height, width = X.shape
-
-        out_depth = 1 + (depth - self.filter_size) // self.stride
-        out_height = 1 + (height - self.filter_size) // self.stride
-        out_width = 1 + (width - self.filter_size) // self.stride
-        out: Tensor = np.zeros(
-            (
-                batch_size,
-                channels,
-                out_depth,
-                out_height,
-                out_width,
-            )
-        )
-
-        for i in range(out_depth):
-            for j in range(out_height):
-                for k in range(out_width):
-                    d_start, d_end, h_start, h_end, w_start, w_end = (
-                        self._get_pooling_bounds(i, j, k)
-                    )
-                    window = X[:, :, d_start:d_end, h_start:h_end, w_start:w_end]
-
-                    if self.mode == "max":
-                        out[:, :, i, j, k] = np.max(window, axis=(2, 3, 4))
-                    elif self.mode == "avg":
-                        out[:, :, i, j, k] = np.mean(window, axis=(2, 3, 4))
-                    else:
-                        raise UnsupportedParameterError(self.mode)
-
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        X = self.input_
-        _, _, out_depth, out_height, out_width = d_out.shape
-        self.dX = np.zeros_like(X)
-
-        for i in range(out_depth):
-            for j in range(out_height):
-                for k in range(out_width):
-                    d_start, d_end, h_start, h_end, w_start, w_end = (
-                        self._get_pooling_bounds(i, j, k)
-                    )
-                    window = X[:, :, d_start:d_end, h_start:h_end, w_start:w_end]
-
-                    if self.mode == "max":
-                        max_vals = np.max(window, axis=(2, 3, 4), keepdims=True)
-                        mask_ = window == max_vals
-                        self.dX[:, :, d_start:d_end, h_start:h_end, w_start:w_end] += (
-                            mask_ * d_out[:, :, i : i + 1, j : j + 1, k : k + 1]
-                        )
-                    elif self.mode == "avg":
-                        self.dX[
-                            :, :, d_start:d_end, h_start:h_end, w_start:w_end
-                        ] += d_out[:, :, i : i + 1, j : j + 1, k : k + 1] / (
-                            self.filter_size**3
-                        )
-
-        return self.dX
-
-    def _get_pooling_bounds(
-        self, cur_d: int, cur_h: int, cur_w: int
-    ) -> Tuple[int, ...]:
-        d_start = cur_d * self.stride
-        h_start = cur_h * self.stride
-        w_start = cur_w * self.stride
-
-        d_end = d_start + self.filter_size
-        h_end = h_start + self.filter_size
-        w_end = w_start + self.filter_size
-
-        return d_start, d_end, h_start, h_end, w_start, w_end
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, channels, depth, height, width = in_shape
-
-        out_depth = 1 + (depth - self.filter_size) // self.stride
-        out_height = 1 + (height - self.filter_size) // self.stride
-        out_width = 1 + (width - self.filter_size) // self.stride
-
-        return (batch_size, channels, out_depth, out_height, out_width)
+        super().__init__(filter_size, stride, mode)
 
 
-class Dense(Layer):
+class Dense(_linear._Dense):
     """
     A dense layer, also known as a fully connected layer, connects each
     neuron in one layer to every neuron in the next layer. It performs a
@@ -1000,52 +346,20 @@ class Dense(Layer):
         out_features: int,
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
-        lambda_: float = 0.0,
+        lambda_: float = 0,
         random_state: int = None,
     ) -> None:
-        super().__init__()
-        self.in_features = in_features
-        self.out_features = out_features
-        self.initializer = initializer
-        self.optimizer = optimizer
-        self.lambda_ = lambda_
-        self.random_state = random_state
-        self.rs_ = np.random.RandomState(self.random_state)
-
-        self.init_params(
-            w_shape=(self.in_features, self.out_features),
-            b_shape=(1, self.out_features),
+        super().__init__(
+            in_features,
+            out_features,
+            initializer,
+            optimizer,
+            lambda_,
+            random_state,
         )
-        self.set_param_ranges(
-            {
-                "in_features": ("0<,+inf", int),
-                "out_features": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-            }
-        )
-        self.check_param_ranges()
-
-    def forward(self, X: Matrix, is_train: bool = False) -> Matrix:
-        _ = is_train
-        self.input_ = X
-        return np.dot(X, self.weights_) + self.biases_
-
-    def backward(self, d_out: Matrix) -> Matrix:
-        X = self.input_
-
-        self.dX = np.dot(d_out, self.weights_.T)
-        self.dW = np.dot(X.T, d_out)
-        self.dW += 2 * self.lambda_ * self.weights_
-        self.dB = np.sum(d_out, axis=0, keepdims=True)
-
-        return self.dX
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, _ = in_shape
-        return (batch_size, self.out_features)
 
 
-class Dropout(Layer):
+class Dropout(_drop._Dropout):
     """
     Dropout is a regularization technique used during training to prevent
     overfitting by randomly setting a fraction of input units to zero during
@@ -1064,37 +378,11 @@ class Dropout(Layer):
 
     """
 
-    def __init__(
-        self,
-        dropout_rate: float = 0.5,
-        random_state: int = None,
-    ) -> None:
-        super().__init__()
-        self.dropout_rate = dropout_rate
-        self.random_state = random_state
-        self.rs_ = np.random.RandomState(self.random_state)
-        self.mask_ = None
-
-        self.set_param_ranges({"dropout_rate": ("0,1", None)})
-        self.check_param_ranges()
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        if is_train:
-            self.mask_ = self.rs_.rand(*X.shape) < (1 - self.dropout_rate)
-            return X * self.mask_ / (1 - self.dropout_rate)
-        else:
-            return X
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        if self.mask_ is not None:
-            return d_out * self.mask_ / (1 - self.dropout_rate)
-        return d_out
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        return in_shape
+    def __init__(self, dropout_rate: float = 0.5, random_state: int = None) -> None:
+        super().__init__(dropout_rate, random_state)
 
 
-class Flatten(Layer):
+class Flatten(_linear._Flatten):
     """
     A flatten layer reshapes the input tensor into a 2D array(`Matrix`),
     collapsing all dimensions except the batch dimension.
@@ -1108,22 +396,8 @@ class Flatten(Layer):
     def __init__(self) -> None:
         super().__init__()
 
-    def forward(self, X: Tensor, is_train: bool = False) -> Matrix:
-        _ = is_train
-        self.input_ = X
-        return X.reshape(X.shape[0], -1)
 
-    def backward(self, d_out: Matrix) -> Tensor:
-        dX = d_out.reshape(self.input_.shape)
-        return dX
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, *shape = in_shape
-        return (batch_size, np.prod(shape))
-
-
-@ClassType.non_instantiable()
-class Activation:
+class Activation(_act._Activation):
     """
     An Activation Layer in a neural network applies a specific activation
     function to the input it receives, transforming the input to activate
@@ -1146,211 +420,8 @@ class Activation:
 
     """
 
-    type FuncType = Type
 
-    @classmethod
-    def _out_shape(cls, in_shape: Tuple[int]) -> Tuple[int]:
-        return in_shape
-
-    class Linear(Layer):
-        def __init__(self) -> None:
-            super().__init__()
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            return X
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = d_out
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class ReLU(Layer):
-        def __init__(self) -> None:
-            super().__init__()
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            self.input_ = X
-            return np.maximum(0, X)
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = d_out.copy()
-            self.dX[self.input_ <= 0] = 0
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class Sigmoid(Layer):
-        def __init__(self) -> None:
-            super().__init__()
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            self.output_ = 1 / (1 + np.exp(-X))
-            return self.output_
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = d_out * self.output_ * (1 - self.output_)
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class Tanh(Layer):
-        def __init__(self) -> None:
-            super().__init__()
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            self.output_ = np.tanh(X)
-            return self.output_
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = d_out * (1 - np.square(self.output_))
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class LeakyReLU(Layer):
-        def __init__(self, alpha: float = 0.01) -> None:
-            super().__init__()
-            self.alpha = alpha
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            self.input_ = X
-            return np.where(X > 0, X, X * self.alpha)
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = d_out * np.where(self.input_ > 0, 1, self.alpha)
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class Softmax(Layer):
-        def __init__(self) -> None:
-            super().__init__()
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            e_X = np.exp(X - np.max(X, axis=-1, keepdims=True))
-            return e_X / np.sum(e_X, axis=-1, keepdims=True)
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = np.empty_like(d_out)
-            for i, (y, dy) in enumerate(zip(self.output_, d_out)):
-                y = y.reshape(-1, 1)
-                jacobian_matrix = np.diagflat(y) - np.dot(y, y.T)
-
-                self.dX[i] = np.dot(jacobian_matrix, dy)
-
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class ELU(Layer):
-        def __init__(self, alpha: float = 1.0) -> None:
-            super().__init__()
-            self.alpha = alpha
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            self.input_ = X
-            self.output_ = np.where(X > 0, X, self.alpha * (np.exp(X) - 1))
-            return self.output_
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = d_out * np.where(
-                self.input_ > 0,
-                1,
-                self.output_ + self.alpha,
-            )
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class SELU(Layer):
-        def __init__(
-            self,
-            lambda_: float = 1.0507,
-            alpha: float = 1.67326,
-        ) -> None:
-            super().__init__()
-            self.lambda_ = lambda_
-            self.alpha = alpha
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            self.input_ = X
-            self.output_ = self.lambda_ * np.where(
-                X > 0, X, self.alpha * (np.exp(X) - 1)
-            )
-            return self.output_
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = (
-                d_out
-                * self.lambda_
-                * np.where(
-                    self.input_ > 0,
-                    1,
-                    self.alpha * np.exp(self.input_),
-                )
-            )
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class Softplus(Layer):
-        def __init__(self) -> None:
-            super().__init__()
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            self.output_ = np.log1p(np.exp(X))
-            return self.output_
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = d_out * (1 - 1 / (1 + np.exp(self.output_)))
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-    class Swish(Layer):
-        def __init__(self, beta: float = 1.0) -> None:
-            super().__init__()
-            self.beta = beta
-
-        def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-            _ = is_train
-            self.input_ = X
-            self.sigmoid = 1 / (1 + np.exp(-self.beta * X))
-
-            self.output_ = X * self.sigmoid
-            return self.output_
-
-        def backward(self, d_out: Tensor) -> Tensor:
-            self.dX = d_out * (
-                self.sigmoid
-                + self.beta * self.input_ * self.sigmoid * (1 - self.sigmoid)
-            )
-            return self.dX
-
-        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-            return Activation._out_shape(in_shape)
-
-
-class BatchNorm1D(Layer):
+class BatchNorm1D(_norm._BatchNorm1D):
     """
     Batch normalization layer for 1-dimensional data.
 
@@ -1374,71 +445,12 @@ class BatchNorm1D(Layer):
     """
 
     def __init__(
-        self,
-        in_features: int,
-        momentum: float = 0.9,
-        epsilon: float = 1e-9,
+        self, in_features: int, momentum: float = 0.9, epsilon: float = 1e-9
     ) -> None:
-        super().__init__()
-        self.in_features = in_features
-        self.momentum = momentum
-        self.epsilon = epsilon
-
-        self.gamma = np.ones((1, in_features, 1))
-        self.beta = np.zeros((1, in_features, 1))
-        self.weights_ = [self.gamma, self.beta]
-
-        self.running_mean = np.zeros((1, in_features, 1))
-        self.running_var = np.ones((1, in_features, 1))
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        if is_train:
-            batch_mean = np.mean(X, axis=(0, 2), keepdims=True)
-            batch_var = np.var(X, axis=(0, 2), keepdims=True)
-
-            self.running_mean = (
-                self.momentum * self.running_mean + (1 - self.momentum) * batch_mean
-            )
-            self.running_var = (
-                self.momentum * self.running_var + (1 - self.momentum) * batch_var
-            )
-
-            self.X_norm = (X - batch_mean) / np.sqrt(batch_var + self.epsilon)
-        else:
-            self.X_norm = (X - self.running_mean) / np.sqrt(
-                self.running_var + self.epsilon
-            )
-
-        out = self.weights_[0] * self.X_norm + self.weights_[1]
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        batch_size, _, width = d_out.shape
-
-        dX_norm = d_out * self.weights_[0]
-        dgamma = np.sum(d_out * self.X_norm, axis=(0, 2), keepdims=True)
-        dbeta = np.sum(d_out, axis=(0, 2), keepdims=True)
-        self.dW = [dgamma, dbeta]
-
-        dX = (
-            1.0
-            / (batch_size * width)
-            * np.reciprocal(np.sqrt(self.running_var + self.epsilon))
-            * (
-                batch_size * width * dX_norm
-                - np.sum(dX_norm, axis=(0, 2), keepdims=True)
-                - self.X_norm
-                * np.sum(dX_norm * self.X_norm, axis=(0, 2), keepdims=True)
-            )
-        )
-        self.dX = dX
-        return dX
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        return in_shape
+        super().__init__(in_features, momentum, epsilon)
 
 
-class BatchNorm2D(Layer):
+class BatchNorm2D(_norm._BatchNorm2D):
     """
     Batch normalization layer for 2-dimensional data.
 
@@ -1462,70 +474,12 @@ class BatchNorm2D(Layer):
     """
 
     def __init__(
-        self,
-        in_features: int,
-        momentum: float = 0.9,
-        epsilon: float = 1e-9,
+        self, in_features: int, momentum: float = 0.9, epsilon: float = 1e-9
     ) -> None:
-        super().__init__()
-        self.in_features = in_features
-        self.momentum = momentum
-        self.epsilon = epsilon
-
-        gamma_ = np.ones((1, in_features, 1, 1))
-        beta_ = np.zeros((1, in_features, 1, 1))
-        self.weights_ = [gamma_, beta_]
-
-        self.running_mean = np.zeros((1, in_features, 1, 1))
-        self.running_var = np.ones((1, in_features, 1, 1))
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        if is_train:
-            batch_mean = np.mean(X, axis=(0, 2, 3), keepdims=True)
-            batch_var = np.var(X, axis=(0, 2, 3), keepdims=True)
-
-            self.running_mean = (
-                self.momentum * self.running_mean + (1 - self.momentum) * batch_mean
-            )
-            self.running_var = (
-                self.momentum * self.running_var + (1 - self.momentum) * batch_var
-            )
-
-            self.X_norm = (X - batch_mean) / np.sqrt(batch_var + self.epsilon)
-        else:
-            self.X_norm = (X - self.running_mean) / np.sqrt(
-                self.running_var + self.epsilon
-            )
-
-        out = self.weights_[0] * self.X_norm + self.weights_[1]
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        batch_size, _, height, width = d_out.shape
-        dX_norm = d_out * self.weights_[0]
-
-        dgamma = np.sum(d_out * self.X_norm, axis=(0, 2, 3), keepdims=True)
-        dbeta = np.sum(d_out, axis=(0, 2, 3), keepdims=True)
-        self.dW = [dgamma, dbeta]
-
-        dX = (
-            (1.0 / (batch_size * height * width))
-            * np.reciprocal(np.sqrt(self.running_var + self.epsilon))
-            * (
-                (batch_size * height * width) * dX_norm
-                - np.sum(dX_norm, axis=(0, 2, 3), keepdims=True)
-                - self.X_norm
-                * np.sum(dX_norm * self.X_norm, axis=(0, 2, 3), keepdims=True)
-            )
-        )
-        self.dX = dX
-        return self.dX
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        return in_shape
+        super().__init__(in_features, momentum, epsilon)
 
 
-class BatchNorm3D(Layer):
+class BatchNorm3D(_norm._BatchNorm3D):
     """
     Batch normalization layer for 3-dimensional data.
 
@@ -1549,68 +503,9 @@ class BatchNorm3D(Layer):
     """
 
     def __init__(
-        self,
-        in_features: int,
-        momentum: float = 0.9,
-        epsilon: float = 1e-5,
+        self, in_features: int, momentum: float = 0.9, epsilon: float = 0.00001
     ) -> None:
-        super().__init__()
-        self.in_features = in_features
-        self.momentum = momentum
-        self.epsilon = epsilon
-
-        self.gamma = np.ones((1, in_features, 1, 1, 1))
-        self.beta = np.zeros((1, in_features, 1, 1, 1))
-        self.weights_ = [self.gamma, self.beta]
-
-        self.running_mean = np.zeros((1, in_features, 1, 1, 1))
-        self.running_var = np.ones((1, in_features, 1, 1, 1))
-
-    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
-        if is_train:
-            batch_mean = np.mean(X, axis=(0, 2, 3, 4), keepdims=True)
-            batch_var = np.var(X, axis=(0, 2, 3, 4), keepdims=True)
-
-            self.running_mean = (
-                self.momentum * self.running_mean + (1 - self.momentum) * batch_mean
-            )
-            self.running_var = (
-                self.momentum * self.running_var + (1 - self.momentum) * batch_var
-            )
-
-            self.X_norm = (X - batch_mean) / np.sqrt(batch_var + self.epsilon)
-        else:
-            self.X_norm = (X - self.running_mean) / np.sqrt(
-                self.running_var + self.epsilon
-            )
-
-        out = self.weights_[0] * self.X_norm + self.weights_[1]
-        return out
-
-    def backward(self, d_out: Tensor) -> Tensor:
-        batch_size, _, depth, height, width = d_out.shape
-
-        dX_norm = d_out * self.weights_[0]
-        dgamma = np.sum(d_out * self.X_norm, axis=(0, 2, 3, 4), keepdims=True)
-        dbeta = np.sum(d_out, axis=(0, 2, 3, 4), keepdims=True)
-        self.dW = [dgamma, dbeta]
-
-        dX = (
-            1.0
-            / (batch_size * depth * height * width)
-            * np.reciprocal(np.sqrt(self.running_var + self.epsilon))
-            * (
-                batch_size * depth * height * width * dX_norm
-                - np.sum(dX_norm, axis=(0, 2, 3, 4), keepdims=True)
-                - self.X_norm
-                * np.sum(dX_norm * self.X_norm, axis=(0, 2, 3, 4), keepdims=True)
-            )
-        )
-        self.dX = dX
-        return dX
-
-    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        return in_shape
+        super().__init__(in_features, momentum, epsilon)
 
 
 class Sequential(Layer):

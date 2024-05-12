@@ -1,12 +1,7 @@
 {
     "class": [
         {
-            "name": "SimpleCNN",
-            "script": "luma.neural.network",
-            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
-        },
-        {
-            "name": "ConvBlock2D",
+            "name": "ConvBlock",
             "script": "luma.neural.block",
             "inheriting": "Sequential"
         },
@@ -34,6 +29,11 @@
             "name": "BatchNorm",
             "script": "luma.neural.layer",
             "inheriting": "Layer"
+        },
+        {
+            "name": "AlexNet",
+            "script": "luma.neural.network",
+            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         }
     ]
 }

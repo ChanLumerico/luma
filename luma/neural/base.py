@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Self
 import numpy as np
+import time
 
 from luma.core.base import ModelBase, NeuralBase
 from luma.core.super import Evaluator
@@ -260,6 +261,7 @@ class NeuralModel(ABC, NeuralBase):
             X, y, batch_size=self.batch_size, shuffle=self.shuffle
         )
         for i, (X_batch, y_batch) in enumerate(train_batch, start=1):
+            t_start = time.time_ns()
             out = self.model(X_batch, is_train=True)
             loss = self.loss.loss(y_batch, out)
             d_out = self.loss.grad(y_batch, out)
@@ -269,11 +271,12 @@ class NeuralModel(ABC, NeuralBase):
             self.model.backward(d_out)
             self.model.update()
 
+            t_end = time.time_ns()
             if self.deep_verbose:
                 print(
                     f"Epoch {epoch}/{self.n_epochs},",
                     f"Batch {i}/{train_batch.n_batches}",
-                    f"- Loss: {loss}",
+                    f"- Loss: {loss}, Elapsed Time: {(t_end - t_start) / 1e9} s",
                 )
 
         return train_loss

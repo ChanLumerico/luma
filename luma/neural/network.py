@@ -205,8 +205,8 @@ class SimpleCNN(_simple._SimpleCNN):
         in_features_list: list[int] | int,
         out_channels: int,
         out_features: int,
-        filter_size: int,
         *,
+        filter_size: int,
         activation: Activation,
         optimizer: Optimizer,
         loss: Loss,
@@ -555,17 +555,17 @@ class AlexNet(_imagenet._AlexNet):
     ---------
     Input:
     ```py
-    Tensor[..., 3, 224, 224]
+    Tensor[..., 3, 227, 227]
     ```
     Convolutional Blocks:
     ```py
-    Convolution2D(3, 96, 11) -> ReLU() -> Pooling2D(3, 2, mode="max") ->
-    Convolution2D(96, 256, 6) -> ReLU() -> Pooling2D(3, 2, mode="max") ->
+    Convolution2D(3, 96, 11) -> ReLU -> Pooling2D(3, 2, mode="max") ->
+    Convolution2D(96, 256, 6) -> ReLU -> Pooling2D(3, 2, mode="max") ->
 
     ConvBlock2D(256, 384, 3, do_pooling=False) ->
     ConvBlock2D(384, 384, 3, do_pooling=False) ->
 
-    Convolution2D(384, 256, 3) -> ReLU() -> Pooling2D(3, 2, mode="max") ->
+    Convolution2D(384, 256, 3) -> ReLU -> Pooling2D(3, 2, mode="max") ->
     ```
     Fully Connected Layers:
     ```py

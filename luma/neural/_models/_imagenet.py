@@ -59,6 +59,15 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
 
+        self.feature_sizes_ = [
+            [3, 96, 256, 384, 384, 256],
+            [256 * 6 * 6, 4096, 4096, 100],
+        ]
+        self.feature_shapes_ = [
+            self._get_feature_shapes(self.feature_sizes_[0]),
+            self._get_feature_shapes(self.feature_sizes_[1]),
+        ]
+
         self.set_param_ranges(
             {
                 "out_features": ("0<,+inf", int),
