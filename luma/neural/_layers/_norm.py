@@ -1,7 +1,7 @@
 from typing import Tuple
 import numpy as np
 
-from luma.interface.typing import Tensor, TensorLike
+from luma.interface.typing import Tensor
 from luma.neural.base import Layer
 
 

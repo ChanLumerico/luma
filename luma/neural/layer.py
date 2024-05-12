@@ -30,6 +30,7 @@ __all__ = (
     "BatchNorm2D",
     "BatchNorm3D",
     "LocalResponseNorm",
+    "LayerNorm",
     "Sequential",
 )
 
@@ -546,6 +547,30 @@ class LocalResponseNorm(_norm._LocalResponseNorm):
             beta,
             k,
         )
+
+
+class LayerNorm(_norm._LayerNorm):
+    """
+    Layer normalization is a technique used in neural networks to normalize the
+    inputs across the features for each data sample in a batch independently.
+    It stabilizes the learning process by reducing the variance of the inputs
+    within a layer, helping to speed up training and improve performance.
+
+    Parameters
+    ----------
+    `in_shape` : Shape of the input
+
+    Notes
+    -----
+    - The input `X` must have the form of >=2D-array(`Matrix`).
+
+        ```py
+        X.shape = (batch_size, *spatial)
+        ```
+    """
+
+    def __init__(self, in_shape: Tuple[int] | int, epsilon: float = 1e-5) -> None:
+        super().__init__(in_shape, epsilon)
 
 
 class Sequential(Layer):

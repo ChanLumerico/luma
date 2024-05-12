@@ -17,6 +17,7 @@ __all__ = (
     "LeNet_4",
     "LeNet_5",
     "AlexNet",
+    "ZFNet",
 )
 
 
@@ -603,6 +604,108 @@ class AlexNet(_imagenet._AlexNet):
     1. Krizhevsky, Alex, Ilya Sutskever, and Geoffrey E. Hinton. "ImageNet
     Classification with Deep Convolutional Neural Networks." Advances in Neural
     Information Processing Systems, 2012.
+
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation = Activation.ReLU(),
+        loss: Loss = CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 100,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        dropout_rate: float = 0.5,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class ZFNet(_imagenet._ZFNet):
+    """
+    ZFNet is a refinement of the AlexNet architecture that was specifically
+    designed to improve model understanding and performance on image recognition
+    tasks. This model was presented by Matthew Zeiler and Rob Fergus in their
+    paper and was particularly notable for its improvements in layer configurations
+    that enhanced visualization of intermediate activations, aiding in understanding
+    the functioning of deep convolutional networks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 227, 227]
+    ```
+    Convolutional Blocks:
+    ```py
+    ConvBlock2D(3, 96) -> LocalResponseNorm(5) ->  # Conv_1
+    ConvBlock2D(96, 256) -> LocalResponseNorm(5) ->  # Conv_2
+
+    ConvBlock2D(256, 384, do_pooling=False) -> LocalResponseNorm(5) ->  # Conv_3
+    ConvBlock2D(384, 384, do_pooling=False) -> LocalResponseNorm(5) ->  # Conv_4
+
+    ConvBlock2D(384, 256) -> LocalResponseNorm(5) ->  # Conv_5
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten ->
+    DenseBlock(256 * 6 * 6, 4096) -> DenseBlock(4096, 4096) ->
+    Dense(4096, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    58,292,000 weights, 9,578 biases -> 58,301,578 params
+    ```
+    Parameters
+    ----------
+    `activation` : Type of activation function (Default `ReLU`)
+    `optimizer` : Type of optimizer for weight update
+    `loss` : Type of loss function (Default `CrossEntropy`)
+    `initializer` : Type of weight initializer (Default None)
+    `out_features` : Number of output features (Default `1000`)
+    `batch_size` : Size of a single mini-batch
+    `n_epochs` : Number of epochs for training
+    `learning_rate` : Step size during optimization process
+    `valid_size` : Fractional size of validation set
+    `lambda_` : L2 regularization strength
+    `early_stopping` : Whether to early-stop the training when the valid
+    score stagnates
+    `patience` : Number of epochs to wait until early-stopping
+    `shuffle` : Whether to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. Zeiler, Matthew D., and Rob Fergus. "Visualizing and Understanding
+    Convolutional Networks." European conference on computer vision, 2014.
 
     """
 
