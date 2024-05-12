@@ -31,6 +31,16 @@
             "inheriting": "Layer"
         },
         {
+            "name": "LocalResponseNorm",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer"
+        },
+        {
+            "name": "LayerNorm",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer"
+        },
+        {
             "name": "AlexNet",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]

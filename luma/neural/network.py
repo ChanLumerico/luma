@@ -559,13 +559,13 @@ class AlexNet(_imagenet._AlexNet):
     ```
     Convolutional Blocks:
     ```py
-    Convolution2D(3, 96, 11) -> ReLU -> Pooling2D(3, 2, mode="max") ->
-    Convolution2D(96, 256, 6) -> ReLU -> Pooling2D(3, 2, mode="max") ->
+    ConvBlock2D(3, 96) -> LocalResponseNorm(5) ->  # Conv_1
+    ConvBlock2D(96, 256) -> LocalResponseNorm(5) ->  # Conv_2
 
-    ConvBlock2D(256, 384, 3, do_pooling=False) ->
-    ConvBlock2D(384, 384, 3, do_pooling=False) ->
+    ConvBlock2D(256, 384, do_pooling=False) -> LocalResponseNorm(5) ->  # Conv_3
+    ConvBlock2D(384, 384, do_pooling=False) -> LocalResponseNorm(5) ->  # Conv_4
 
-    Convolution2D(384, 256, 3) -> ReLU -> Pooling2D(3, 2, mode="max") ->
+    ConvBlock2D(384, 256) -> LocalResponseNorm(5) ->  # Conv_5
     ```
     Fully Connected Layers:
     ```py

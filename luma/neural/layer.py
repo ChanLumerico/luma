@@ -29,6 +29,7 @@ __all__ = (
     "BatchNorm1D",
     "BatchNorm2D",
     "BatchNorm3D",
+    "LocalResponseNorm",
     "Sequential",
 )
 
@@ -506,6 +507,45 @@ class BatchNorm3D(_norm._BatchNorm3D):
         self, in_features: int, momentum: float = 0.9, epsilon: float = 0.00001
     ) -> None:
         super().__init__(in_features, momentum, epsilon)
+
+
+class LocalResponseNorm(_norm._LocalResponseNorm):
+    """
+    Local Response Normalization (LRN) is a technique used in neural networks
+    to promote competition among neighboring feature maps. By normalizing the
+    activities in local regions across channels, LRN helps to enhance generalization
+    by suppressing activations that are uniformly large across the entire map and
+    boosting those that are uniquely larger in a local neighborhood.
+
+    Parameters
+    ----------
+    `depth` : Number of adjacent channels to normalize across
+    `alpha` : Scaling parameter for the squared sum
+    `beta` : Exponent for the normalization
+    `k` : Offset to avoid division by zero
+
+    Notes
+    -----
+    - The input `X` must have the form of >=3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, *spatial)
+        ```
+    """
+
+    def __init__(
+        self,
+        depth: int,
+        alpha: float = 0.0001,
+        beta: float = 0.75,
+        k: float = 2,
+    ) -> None:
+        super().__init__(
+            depth,
+            alpha,
+            beta,
+            k,
+        )
 
 
 class Sequential(Layer):

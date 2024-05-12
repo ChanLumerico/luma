@@ -6,9 +6,15 @@ from luma.interface.util import Clone, InitUtil
 from luma.metric.classification import Accuracy
 
 from luma.neural.base import Loss, NeuralModel
-from luma.neural.block import ConvBlock2D, DenseBlock
-from luma.neural.layer import Activation, Dense, Flatten, Sequential
 from luma.neural.loss import CrossEntropy
+from luma.neural.block import ConvBlock2D, DenseBlock
+from luma.neural.layer import (
+    Activation,
+    Dense,
+    Flatten,
+    LocalResponseNorm,
+    Sequential,
+)
 
 
 __all__ = "_AlexNet"
@@ -103,6 +109,11 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
             ),
         )
         self.model += (
+            "LRN_1",
+            LocalResponseNorm(depth=5),
+        )
+
+        self.model += (
             "ConvBlock_2",
             ConvBlock2D(
                 96,
@@ -121,6 +132,11 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
             ),
         )
         self.model += (
+            "LRN_2",
+            LocalResponseNorm(depth=5),
+        )
+
+        self.model += (
             "ConvBlock_3",
             ConvBlock2D(
                 256,
@@ -136,6 +152,11 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
                 random_state=self.random_state,
             ),
         )
+        self.model += (
+            "LRN_3",
+            LocalResponseNorm(depth=5),
+        )
+
         self.model += (
             "ConvBlock_4",
             ConvBlock2D(
@@ -153,6 +174,11 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
             ),
         )
         self.model += (
+            "LRN_4",
+            LocalResponseNorm(depth=5),
+        )
+
+        self.model += (
             "ConvBlock_5",
             ConvBlock2D(
                 384,
@@ -169,6 +195,10 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
                 pool_mode="max",
                 random_state=self.random_state,
             ),
+        )
+        self.model += (
+            "LRN_5",
+            LocalResponseNorm(depth=5),
         )
 
         self.model += Flatten()

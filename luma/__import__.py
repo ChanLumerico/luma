@@ -84,7 +84,10 @@ from luma.neural.layer import (
     Dropout,
     Flatten,
     Activation,
+    BatchNorm1D,
     BatchNorm2D,
+    BatchNorm3D,
+    LocalResponseNorm,
     Sequential,
 )
 from luma.neural.optimizer import (
@@ -251,7 +254,9 @@ if __name__ == "__main__":
 
     Convolution1D, Convolution2D, Convolution3D,
     Pooling1D, Pooling2D, Pooling3D,
-    Dense, Dropout, Flatten, Activation, BatchNorm2D, Sequential
+    BatchNorm1D, BatchNorm2D, BatchNorm3D,
+    LocalResponseNorm,
+    Dense, Dropout, Flatten, Activation, Sequential
 
     CrossEntropy, BinaryCrossEntropy, MSELoss
 
