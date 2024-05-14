@@ -47,16 +47,24 @@ class Convolution1D(_conv._Conv1D):
 
     Parameters
     ----------
-    `in_channels` : Number of input channels
-    `out_channels` : Number of output channels (filters)
-    `filter_size`: Length of each filter
-    `stride` : Step size for filters during convolution
-    `padding` : Padding strategies
-    (`valid` for no padding, `same` for zero-padding)
-    `initializer` : Type of weight initializer (default `None`)
-    `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
-    `lambda_` : L2-regularization strength
-    `random_state` : Seed for various random sampling processes
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels(filters)
+    `filter_size`: int
+        Length of each filter
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `padding` : {"valid", "same"}, default="same"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `optimizer` : Optimizer, optional, default=None
+        Optimizer for weight update
+    `lambda_` : float, default=0.0
+        L2-regularization strength
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
 
     Notes
     -----
@@ -75,9 +83,9 @@ class Convolution1D(_conv._Conv1D):
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         lambda_: float = 0,
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super().__init__(
             in_channels,
@@ -104,16 +112,24 @@ class Convolution2D(_conv._Conv2D):
 
     Parameters
     ----------
-    `in_channels` : Number of input channels
-    `out_channels` : Number of output channels(filters)
-    `filter_size`: Size of each filter
-    `stride` : Step size for filters during convolution
-    `padding` : Padding stratagies
-    (`valid` for no padding, `same` for typical 0-padding)
-    `initializer` : Type of weight initializer (default `None`)
-    `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
-    `lambda_` : L2-regularization strength
-    `random_state` : Seed for various random sampling processes
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels(filters)
+    `filter_size`: int
+        Length of each filter
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `padding` : {"valid", "same"}, default="same"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `optimizer` : Optimizer, optional, default=None
+        Optimizer for weight update
+    `lambda_` : float, default=0.0
+        L2-regularization strength
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
 
     Notes
     -----
@@ -161,16 +177,24 @@ class Convolution3D(_conv._Conv3D):
 
     Parameters
     ----------
-    `in_channels` : Number of input channels
-    `out_channels` : Number of output channels(filters)
-    `filter_size`: Size of each filter
-    `stride` : Step size for filters during convolution
-    `padding` : Padding stratagies
-    (`valid` for no padding, `same` for typical 0-padding)
-    `initializer` : Type of weight initializer (default `None`)
-    `optimizer` : Optimizer for weight update (default `SGDOptimizer`)
-    `lambda_` : L2-regularization strength
-    `random_state` : Seed for various random sampling processes
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels(filters)
+    `filter_size`: int
+        Length of each filter
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `padding` : {"valid", "same"}, default="same"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `optimizer` : Optimizer, optional, default=None
+        Optimizer for weight update
+    `lambda_` : float, default=0.0
+        L2-regularization strength
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
 
     Notes
     -----
@@ -220,9 +244,12 @@ class Pooling1D(_pool._Pool1D):
 
     Parameters
     ----------
-    `filter_size` : Size of the pooling filter
-    `stride` : Step size of the filter during pooling
-    `mode` : Pooling strategy (i.e., 'max' or 'avg')
+    `filter_size` : int, default=2
+        Size of the pooling filter
+    `stride` : int, default=2
+        Step size of the filter during pooling
+    `mode` : {"max", "avg"}, default="max"
+        Pooling strategy (i.e., 'max' or 'avg')
 
     Notes
     -----
@@ -256,9 +283,12 @@ class Pooling2D(_pool._Pool2D):
 
     Parameters
     ----------
-    `size` : Size of pooling filter
-    `stride` : Step size of filter during pooling
-    `mode` : Pooling strategy (i.e. max, average)
+    `filter_size` : int, default=2
+        Size of the pooling filter
+    `stride` : int, default=2
+        Step size of the filter during pooling
+    `mode` : {"max", "avg"}, default="max"
+        Pooling strategy (i.e., 'max' or 'avg')
 
     Notes
     -----
@@ -292,9 +322,12 @@ class Pooling3D(_pool._Pool3D):
 
     Parameters
     ----------
-    `filter_size` : Size of the pooling filter (cubic)
-    `stride` : Step size of the filter during pooling
-    `mode` : Pooling strategy (i.e., 'max' or 'avg')
+    `filter_size` : int, default=2
+        Size of the pooling filter
+    `stride` : int, default=2
+        Step size of the filter during pooling
+    `mode` : {"max", "avg"}, default="max"
+        Pooling strategy (i.e., 'max' or 'avg')
 
     Notes
     -----
@@ -326,12 +359,18 @@ class Dense(_linear._Dense):
 
     Parameters
     ----------
-    `in_features` : Number of input features
-    `out_features`:  Number of output features
-    `initializer` : Type of weight initializer (default `None`)
-    `optimizer` : Optimizer for weight update
-    `lambda_` : L2-regularization strength
-    `random_state` : Seed for various random sampling processes
+    `in_features` : int
+        Number of input features
+    `out_features`:  int
+        Number of output features
+    `initializer` : InitStr, default = None
+        Type of weight initializer
+    `optimizer` : Optimizer, optional, default=None
+        Optimizer for weight update
+    `lambda_` : float, default=0.0
+        L2-regularization strength
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
 
     Notes
     -----
@@ -347,9 +386,9 @@ class Dense(_linear._Dense):
         in_features: int,
         out_features: int,
         initializer: InitUtil.InitStr = None,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         lambda_: float = 0,
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super().__init__(
             in_features,
@@ -370,8 +409,10 @@ class Dropout(_drop._Dropout):
 
     Parameters
     ----------
-    `dropout_rate` : The fraction of input units to drop during training
-    `random_state` : Seed for various random sampling processes
+    `dropout_rate` : float, default=0.5
+        The fraction of input units to drop during training
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
 
     Notes
     -----
@@ -380,7 +421,9 @@ class Dropout(_drop._Dropout):
 
     """
 
-    def __init__(self, dropout_rate: float = 0.5, random_state: int = None) -> None:
+    def __init__(
+        self, dropout_rate: float = 0.5, random_state: int | None = None
+    ) -> None:
         super().__init__(dropout_rate, random_state)
 
 
@@ -434,8 +477,10 @@ class BatchNorm1D(_norm._BatchNorm1D):
 
     Parameters
     ----------
-    `in_features` : Number of input features
-    `momentum` : Momentum for updating the running averages
+    `in_features` : int
+        Number of input features
+    `momentum` : float, default=0.9
+        Momentum for updating the running averages
 
     Notes
     -----
@@ -463,8 +508,10 @@ class BatchNorm2D(_norm._BatchNorm2D):
 
     Parameters
     ----------
-    `in_features` : Number of input features
-    `momentum` : Momentum for updating the running averages
+    `in_features` : int
+        Number of input features
+    `momentum` : float, default=0.9
+        Momentum for updating the running averages
 
     Notes
     -----
@@ -492,8 +539,10 @@ class BatchNorm3D(_norm._BatchNorm3D):
 
     Parameters
     ----------
-    `in_features` : Number of input features
-    `momentum` : Momentum for updating the running averages
+    `in_features` : int
+        Number of input features
+    `momentum` : float, default=0.9
+        Momentum for updating the running averages
 
     Notes
     -----
@@ -520,10 +569,14 @@ class LocalResponseNorm(_norm._LocalResponseNorm):
 
     Parameters
     ----------
-    `depth` : Number of adjacent channels to normalize across
-    `alpha` : Scaling parameter for the squared sum
-    `beta` : Exponent for the normalization
-    `k` : Offset to avoid division by zero
+    `depth` : int
+        Number of adjacent channels to normalize across
+    `alpha` : float, default=1e-4
+        Scaling parameter for the squared sum
+    `beta` : float, default=0.75
+        Exponent for the normalization
+    `k` : float, default=2
+        Offset to avoid division by zero
 
     Notes
     -----
@@ -558,7 +611,8 @@ class LayerNorm(_norm._LayerNorm):
 
     Parameters
     ----------
-    `in_shape` : Shape of the input
+    `in_shape` : int or tuple of int
+        Shape of the input
 
     Notes
     -----
@@ -569,7 +623,11 @@ class LayerNorm(_norm._LayerNorm):
         ```
     """
 
-    def __init__(self, in_shape: Tuple[int] | int, epsilon: float = 1e-5) -> None:
+    def __init__(
+        self,
+        in_shape: Tuple[int] | int,
+        epsilon: float = 1e-5,
+    ) -> None:
         super().__init__(in_shape, epsilon)
 
 
@@ -584,8 +642,9 @@ class Sequential(Layer):
 
     Parameters
     ----------
-    `*layers` : Layers or layers with its name assigned
-    (class name of the layer assigned by default)
+    `*layers` : Layer or tuple[str, Layer]
+        Layers or layers with its name assigned
+        (class name of the layer assigned by default)
 
     Methods
     -------

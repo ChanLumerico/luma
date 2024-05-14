@@ -23,11 +23,12 @@ class PCA(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Number of principal components
+    `n_components` : int, required optional, default=None
+        Number of principal components
 
     """
 
-    def __init__(self, n_components: int = None) -> None:
+    def __init__(self, n_components: int | None = None) -> None:
         self.n_components = n_components
         self._fitted = False
 
@@ -75,18 +76,22 @@ class KernelPCA(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Number of principal components
-    `deg` : Polynomial degree of `poly` kernel
-    `gamma` : Shape parameter of `rbf`, `sigmoid`, `laplacian`
-    `coef` : Additional coefficient of `poly`, `sigmoid`
-    `kernel` : Type of kernel functions
-    (e.g. `linear`, `poly`, `rbf`, `sigmoid`, `laplacian`)
+    `n_components` : int, required optional, default=None
+        Number of principal components
+    `deg` : int, default=3
+        Polynomial degree of polynomial kernel
+    `gamma` : float, default=1.0
+        Shape parameter of RBF, sigmoid, and laplacian kernels
+    `coef` : float, default=1.0
+        Additional coefficient of polynomial and sigmoid kernels
+    `kernel` : FuncType, default="rbf"
+        Type of kernel functions
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
+        n_components: int | None = None,
         deg: int = 3,
         gamma: float = 1.0,
         coef: float = 1.0,
@@ -192,7 +197,8 @@ class LDA(Transformer, Supervised):
 
     Parameters
     ----------
-    `n_components` : Number of linear discriminants
+    `n_components` : int, required optional, default=None
+        Number of linear discriminants
 
     Notes
     -----
@@ -201,7 +207,7 @@ class LDA(Transformer, Supervised):
 
     """
 
-    def __init__(self, n_components: int = None) -> None:
+    def __init__(self, n_components: int | None = None) -> None:
         self.n_components = n_components
         self._fitted = False
 
@@ -254,7 +260,7 @@ class LDA(Transformer, Supervised):
 
 class TruncatedSVD(Transformer, Unsupervised):
     """
-    runcated Singular Value Decomposition (TruncatedSVD) is a linear dimensionality
+    Truncated Singular Value Decomposition (TruncatedSVD) is a linear dimensionality
     reduction method that simplifies large datasets by preserving the most relevant
     information. It achieves this by decomposing a matrix into three components
     using singular value decomposition (SVD) and retaining only a specified number
@@ -262,11 +268,12 @@ class TruncatedSVD(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
+    `n_components` : int, required optional, default=None
+        Dimensionality of low-space
 
     """
 
-    def __init__(self, n_components: int = None) -> None:
+    def __init__(self, n_components: int | None = None) -> None:
         self.n_components = n_components
         self._fitted = False
 
@@ -306,19 +313,23 @@ class FactorAnalysis(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
-    `max_iter` : Number of iterations
-    `tol` : Threshold for convergence
-    `noise_variance` : Initial variances for noise of each features
+    `n_components` : int, required optional, default=None
+        Dimensionality of low-space
+    `max_iter` : int, default=1000
+        Number of iterations
+    `tol` : float, default=1e-5
+        Threshold for convergence
+    `noise_variance` : list or Matirx, optional, default=None
+        Initial variances for noise of each features
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
+        n_components: int | None = None,
         max_iter: int = 1000,
         tol: float = 1e-5,
-        noise_variance: Matrix | list = None,
+        noise_variance: Matrix | list | None = None,
         verbose: bool = False,
     ) -> None:
         self.n_components = n_components
@@ -410,25 +421,30 @@ class KDA(Transformer, Supervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
-    `deg` : Polynomial degree of `poly` kernel
-    `gamma` : Shape parameter of `rbf`, `sigmoid`, `laplacian`
-    `coef` : Additional coefficient of `poly`, `sigmoid`
-    `kernel` : Type of kernel functions
+    `n_components` : int, required optional, default=None
+        Dimensionality of low-space
+    `deg` : int, default=2
+        Polynomial degree of polynomial kernel
+    `gamma` : float, default=1.0
+        Shape parameter of RBF, sigmoid, laplacian
+    `coef` : float, default=0.0
+        Additional coefficient of polynomial, sigmoid
+    `kernel` : FuncType, default="rbf"
+        Type of kernel functions
 
     Notes
     -----
-    * To use KDA for classification, refer to
+    - To use KDA for classification, refer to
         `luma.classifier.discriminant.KDAClassifier`
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
+        n_components: int | None = None,
         deg: int = 2,
         gamma: float = 1.0,
-        coef: int = 0.0,
+        coef: float = 0.0,
         kernel: KernelUtil.FuncType = "rbf",
     ) -> None:
         self.n_components = n_components
@@ -501,22 +517,23 @@ class CCA(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
+    `n_components` : int, required optional, default=None
+        Dimensionality of low-space
 
     Notes
     -----
-    * `CCA` requires two distinct datasets `X` and `Y`,
+    - `CCA` requires two distinct datasets `X` and `Y`,
         in which `Y` is not a target variable
-    * Due to its uniqueness in its parameters,
+    - Due to its uniqueness in its parameters,
         `CCA` may not be compatible with several meta estimators
-    * `transform()` and `fit_transform()` returns a 2-tuple of `Matrix`
+    - `transform` and `fit_transform` returns a 2-tuple of `Matrix`
 
         ```py
         def transform(self, X: Matrix, Y: Matrix) -> Tuple[Matrix, Matrix]
         ```
     """
 
-    def __init__(self, n_components: int = None) -> None:
+    def __init__(self, n_components: int | None = None) -> None:
         self.n_components = n_components
         self.correlations_ = None
         self._fitted = False

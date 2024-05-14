@@ -24,17 +24,21 @@ class AgglomerativeClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `linkage` : Linkage method (e.g. `single`, `complete`, `average`, `ward`)
+    `n_clusters` : int, default=2
+        Number of clusters to estimate
+    `linkage` : {"single", "complete", "average"}, default="single"
+        Linkage method
 
     Methods
     -------
     Plot hierarchical dendrogram:
     ```py
-    def plot_dendrogram(self,
-                        ax: Optional[plt.Axes] = None,
-                        hide_indices: bool = True,
-                        show: bool = False) -> plt.Axes
+    def plot_dendrogram(
+        self,
+        ax: Optional[plt.Axes] = None,
+        hide_indices: bool = True,
+        show: bool = False
+    ) -> plt.Axes
     ```
     Examples
     --------
@@ -172,7 +176,8 @@ class DivisiveClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
+    `n_clusters` : int, default=2
+        Number of clusters to estimate
 
     Examples
     --------

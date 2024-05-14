@@ -429,17 +429,28 @@ class LearningCurve(Visualizer):
 
     Parameters
     ----------
-    `estimator` : An estimator to evaluate
-    `X` : Feature data for training
-    `y`: Target data for training
-    `train_sizes` : List of fractional values for each dataset size
-    `test_size` : Proportional value for validation set size
-    `cv` : Number of times for cross-validation
-    `shuffle` : Whether to shuffle the dataset
-    `stratify` : Whether to perform stratified split
-    `fold_type` : Fold type (Default `KFold`)
-    `metric` : Evaluation metric for scoring
-    `random_state` : Seed for random sampling upon splitting samples
+    `estimator` : Estimator
+        An estimator to evaluate
+    `X` : Matrix
+        Feature data for training
+    `y`: Vector
+        Target data for training
+    `train_sizes` : Vector, optional, default=None
+        List of fractional values for each dataset size
+    `test_size` : float, default=0.3
+        Proportional value for validation set size
+    `cv` : int, default=5
+        Number of times for cross-validation
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `stratify` : bool, default=False
+        Whether to perform stratified split
+    `fold_type` : FoldType, default=KFold
+        Fold type
+    `metric` : Evaluator, default=Accuracy
+        Evaluation metric for scoring
+    `random_state` : int, optional, default=None
+        Seed for random sampling upon splitting samples
 
     """
 
@@ -448,14 +459,14 @@ class LearningCurve(Visualizer):
         estimator: Estimator,
         X: Matrix,
         y: Vector,
-        train_sizes: Vector = None,
+        train_sizes: Vector | None = None,
         test_size: float = 0.3,
         cv: int = 5,
         shuffle: bool = True,
         stratify: bool = False,
         fold_type: FoldType = KFold,
         metric: Evaluator = Accuracy,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ):
         self.estimator = estimator
@@ -594,16 +605,26 @@ class ValidationCurve(Visualizer):
 
     Parameters
     ----------
-    `estimator` : An estimator to evaluate
-    `X` : Feature data for training
-    `y`: Target data for training
-    `param_name` : Name of the hyperparameter to be varied
-    `param_range` : Range of values for the hyperparameter
-    `cv` : Number of times for cross-validation
-    `shuffle` : Whether to shuffle the dataset
-    `fold_type` : Fold type (Default `KFold`)
-    `metric` : Evaluation metric for scoring
-    `random_state` : Seed for random sampling upon splitting samples
+    `estimator` : Estimator
+        An estimator to evaluate
+    `X` : Matrix
+        Feature data for training
+    `y`: Vector
+        Target data for training
+    `param_name` : str
+        Name of the hyperparameter to be varied
+    `param_range` : Vector
+        Range of values for the hyperparameter
+    `cv` : int, default=5
+        Number of times for cross-validation
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `fold_type` : FoldType, default=KfFold
+        Fold type
+    `metric` : Evaluator, default=Accuracy
+        Evaluation metric for scoring
+    `random_state` : int, optional, default=None
+        Seed for random sampling upon splitting samples
 
     """
 
@@ -618,7 +639,7 @@ class ValidationCurve(Visualizer):
         shuffle: bool = True,
         fold_type: FoldType = KFold,
         metric: Evaluator = Accuracy,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimator = estimator
@@ -735,8 +756,10 @@ class InertiaPlot(Visualizer):
 
     Parameters
     ----------
-    `inertia_list` : List of inertia values for various cluster sizes
-    `n_clusters_list` : List of the number of clusters
+    `inertia_list` : list for float
+        List of inertia values for various cluster sizes
+    `n_clusters_list` : list of int
+        List of the number of clusters
 
     Examples
     --------

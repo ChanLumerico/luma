@@ -18,10 +18,14 @@ class PolynomialRegressor(Estimator):
 
     Parameters
     ----------
-    `deg` : Degree of a polynomial function
-    `alpha` : Regularization strength
-    `l1_ratio` : Balancing parameter between `l1` and `l2`
-    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
+    `deg` : int, default=2
+        Degree of a polynomial function
+    `alpha` : float, default=0.01
+        Regularization strength
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balancing parameter between L1 and L2 regularization
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularization type
 
     """
 
@@ -30,7 +34,7 @@ class PolynomialRegressor(Estimator):
         deg: int = 2,
         alpha: float = 0.01,
         l1_ratio: float = 0.5,
-        regularization: Literal["l1", "l2", "elastic-net"] = None,
+        regularization: Literal["l1", "l2", "elastic-net"] | None = None,
     ) -> None:
         self.deg = deg
         self.alpha = alpha

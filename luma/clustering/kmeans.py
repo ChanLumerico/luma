@@ -27,13 +27,18 @@ class KMeansClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters
-    `max_iter` : Number of iteration
+    `n_clusters` : int, optional, default=None
+        Number of clusters
+    `max_iter` : int, default=100
+        Number of iteration
 
     """
 
     def __init__(
-        self, n_clusters: int = None, max_iter: int = 100, verbose: bool = False
+        self,
+        n_clusters: int | None = None,
+        max_iter: int = 100,
+        verbose: bool = False,
     ) -> None:
         self.n_clusters = n_clusters
         self.max_iter = max_iter
@@ -101,13 +106,18 @@ class KMeansClusteringPlus(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters
-    `max_iter` : Number of iteration
+    `n_clusters` : int, optional, default=None
+        Number of clusters
+    `max_iter` : int, default=100
+        Number of iteration
 
     """
 
     def __init__(
-        self, n_clusters: int = None, max_iter: int = 100, verbose: bool = False
+        self,
+        n_clusters: int | None = None,
+        max_iter: int = 100,
+        verbose: bool = False,
     ) -> None:
         self.n_clusters = n_clusters
         self.max_iter = max_iter
@@ -179,13 +189,18 @@ class KMediansClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters
-    `max_iter` : Number of iteration
+    `n_clusters` : int, optional, default=None
+        Number of clusters
+    `max_iter` : int, default=100
+        Number of iteration
 
     """
 
     def __init__(
-        self, n_clusters: int = None, max_iter: int = 100, verbose: bool = False
+        self,
+        n_clusters: int | None = None,
+        max_iter: int = 100,
+        verbose: bool = False,
     ) -> None:
         self.n_clusters = n_clusters
         self.max_iter = max_iter
@@ -254,9 +269,12 @@ class KMedoidsClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `max_iter` : Maximum iteration for PAM (Partitioning Around Medoids) algorithm
-    `random_state` : Seed for randomized initialization of medoids
+    `n_clusters` : int
+        Number of clusters to estimate
+    `max_iter` : int, default=300
+        Maximum iteration for PAM (Partitioning Around Medoids) algorithm
+    `random_state` : int, optional, default=None
+        Seed for randomized initialization of medoids
 
     """
 
@@ -264,7 +282,7 @@ class KMedoidsClustering(Estimator, Unsupervised):
         self,
         n_clusters: int,
         max_iter: int = 300,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.n_clusters = n_clusters
@@ -344,14 +362,20 @@ class MiniBatchKMeansClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `batch_size` : Size of a single mini-batch
-    `max_iter` : Maximum amount of iteration
+    `n_clusters` : int, optional, default=None
+        Number of clusters to estimate
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `max_iter` : int, default=100
+        Maximum amount of iteration
 
     """
 
     def __init__(
-        self, n_clusters: int = None, batch_size: int = 100, max_iter: int = 100
+        self,
+        n_clusters: int | None = None,
+        batch_size: int = 100,
+        max_iter: int = 100,
     ) -> None:
         self.n_clusters = n_clusters
         self.batch_size = batch_size
@@ -418,11 +442,16 @@ class FuzzyCMeansClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `max_iter` : Maximum iteration
-    `m`: Fuzziness parameter (larger makes labels softer)
-    `tol` : Threshold for early convergence
-    `random_state` : Seed for randomized initialization of centers
+    `n_clusters` : int
+        Number of clusters to estimate
+    `max_iter` : int, default=100
+        Maximum iteration
+    `m`: float, default=2.0
+        Fuzziness parameter (larger makes labels softer)
+    `tol` : float, default=1e-5
+        Threshold for early convergence
+    `random_state` : int, optional, default=None
+        Seed for randomized initialization of centers
 
     """
 
@@ -432,7 +461,7 @@ class FuzzyCMeansClustering(Estimator, Unsupervised):
         max_iter: int = 100,
         m: float = 2.0,
         tol: float = 1e-5,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.n_clusters = n_clusters

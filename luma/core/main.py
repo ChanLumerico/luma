@@ -6,6 +6,9 @@ __all__ = "Luma"
 
 
 class Luma:
+    """
+    A root class for `luma` module.
+    """
 
     def __validate__(self) -> None:
         self

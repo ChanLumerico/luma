@@ -38,17 +38,20 @@ class TSNE(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of lower spcae
-    `max_iter` : Number of iteration
-    `learning_rate` : Updating factor of embedding optimization
-    `perplexity` : Perplexity parameter of Gaussian kernel
-    `verbose` : Provided details of each iteration when set `True`
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `max_iter` : int, default=1000
+        Number of iteration
+    `learning_rate` : float, default=300
+        Updating factor of embedding optimization
+    `perplexity` : int, default=30, preferred range=[5,50]
+        Perplexity parameter of Gaussian kernel
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
+        n_components: int | None = None,
         max_iter: int = 1000,
         learning_rate: int = 300,
         perplexity: int = 30,
@@ -193,11 +196,12 @@ class MDS(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
 
     """
 
-    def __init__(self, n_components: int = None) -> None:
+    def __init__(self, n_components: int | None = None) -> None:
         self.n_components = n_components
         self._fitted = False
 
@@ -251,18 +255,21 @@ class MetricMDS(Transformer, Unsupervised):
 
     Parameter
     ---------
-    `n_components` : Dimensionality of low-space
-    `metric` : Distance metric
-    (e.g. `euclidean`, `manhattan`, `chebyshev`, `minkowski`,
-    `cos_similarity`, `correation`, `mahalanobis`)
-    `p` : Power factor for `minkowski`
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `metric` : {"euclidean", "manhattan", "chebyshev", "minkowski",
+                "cos_similarity", "correlation", "mahalanobis"},
+                default="euclidean"
+        Distance metric
+    `p` : int or float, optional, default=None
+        Power factor for `minkowski`
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
-        p: float | int = None,
+        n_components: int | None = None,
+        p: float | int | None = None,
         metric: Literal[
             "euclidean",
             "manhattan",
@@ -355,16 +362,18 @@ class LandmarkMDS(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
-    `n_landmarks` : Number of landmarks
-    `method` : Algorithm for landmark initialization
-    (e.g. `random`, `kmeans`, `kmeans++`, `kmedians`)
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `n_landmarks` : int, default=10
+        Number of landmarks
+    `method` : {"random", "kmeans", "kmeans++", "kmedians"}, default="random"
+        Algorithm for landmark initialization
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
+        n_components: int | None = None,
         n_landmarks: int = 10,
         method: Literal["random", "kmeans", "kmeans++", "kmedians"] = "random",
         verbose: bool = False,
@@ -461,13 +470,18 @@ class LLE(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_neighbors` : Number of neighbors to be considered 'close'
-    `n_components` : Dimensionality of low-space
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `n_neighbors` : int, default=5
+        Number of neighbors to be considered 'close'
 
     """
 
     def __init__(
-        self, n_components: int = None, n_neighbors: int = 5, verbose: bool = False
+        self,
+        n_components: int | None = None,
+        n_neighbors: int = 5,
+        verbose: bool = False,
     ) -> None:
         self.n_neighbors = n_neighbors
         self.n_components = n_components
@@ -528,16 +542,19 @@ class ModifiedLLE(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_neighbors` : Number of neighbors to be considered 'close'
-    `n_components` : Dimensionality of the lower-dimensional space
-    `regularization` : Regularization parameter for stability
+    `n_neighbors` : int, default=5
+        Number of neighbors to be considered 'close'
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `regularization` : float, default=1e-3
+        Regularization parameter for stability
 
     """
 
     def __init__(
         self,
         n_neighbors: int = 5,
-        n_components: int = None,
+        n_components: int | None = None,
         regularization: float = 1e-3,
         verbose: bool = False,
     ) -> None:
@@ -603,16 +620,19 @@ class HessianLLE(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_neighbors` : Number of neighbors to be considered 'close'
-    `n_components` : Dimensionality of the lower-dimensional space
-    `regularization` : Regularization parameter for stability
+    `n_neighbors` : int, default=5
+        Number of neighbors to be considered 'close'
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `regularization` : float, default=1e-5
+        Regularization parameter for stability
 
     """
 
     def __init__(
         self,
         n_neighbors: int = 5,
-        n_components: int = None,
+        n_components: int | None = None,
         regularization: float = 1e-5,
         verbose: bool = False,
     ) -> None:
@@ -716,17 +736,22 @@ class SammonMapping(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
-    `max_iter` : Number of iteration
-    `max_halves` : Number of halving of step-size
-    `tol` : Threshold for early-stopping
-    `initialize` : Methodology for embedding-space initialization
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `max_iter` : int, default=100
+        Number of iteration
+    `max_halves` : int, default=20
+        Number of halving of step-size
+    `tol` : float, default=1e-5
+        Threshold for early-stopping
+    `initialize` : {"pca"}, optional, default="pca"
+        Methodology for embedding-space initialization
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
+        n_components: int | None = None,
         max_iter: int = 100,
         max_halves: int = 20,
         tol: float = 1e-5,
@@ -855,12 +880,14 @@ class LaplacianEigenmap(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of the lower-dimensional space
-    `sigma` : Width parameter for Gaussian kernel in affinity calculation
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `sigma` : float, default=1.0
+        Width parameter for Gaussian kernel in affinity calculation
 
     """
 
-    def __init__(self, n_components: int = None, sigma: float = 1.0) -> None:
+    def __init__(self, n_components: int | None = None, sigma: float = 1.0) -> None:
         self.n_components = n_components
         self.sigma = sigma
         self.embedding = None
@@ -915,18 +942,21 @@ class Isomap(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
-    `epsilon` : Boundary radius of the neighbor hypersphere
-    `algorithm` : Shortest path finding algorithm
-    (e.g. `dijkstra`, `floyd`)
-    `metric` : Distance metric
-    (e.g. `euclidean`, `cityblock`, `chebyshev`, `cosine`, `correlation`)
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `epsilon` : float, default=5.0
+        Boundary radius of the neighbor hypersphere
+    `algorithm` : {"dijkstra", "floyd"}, default="dijkstra"
+        Shortest path finding algorithm
+    `metric` : {"euclidean", "cityblock", "chebyshev", "cosine", "correlation"},
+                default="euclidean"
+        Distance metric
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
+        n_components: int | None = None,
         epsilon: float = 5.0,
         algorithm: Literal["dijkstra", "floyd"] = "dijkstra",
         metric: Literal[
@@ -997,16 +1027,18 @@ class ConformalIsomap(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
-    `epsilon` : Boundary radius of the neighbor hypersphere
-    `algorithm` : Shortest path finding algorithm
-    (e.g. `dijkstra`, `floyd`)
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `epsilon` : float, default=5.0
+        Boundary radius of the neighbor hypersphere
+    `algorithm` : {"dijkstra", "floyd"}, default="dijkstra"
+        Shortest path finding algorithm
 
     """
 
     def __init__(
         self,
-        n_components: int = None,
+        n_components: int | None = None,
         epsilon: float = 5.0,
         algorithm: Literal["dijkstra", "floyd"] = "dijkstra",
     ) -> None:
@@ -1080,12 +1112,18 @@ class LTSA(Transformer, Unsupervised):
 
     Parameters
     ----------
-    `n_components` : Dimensionality of low-space
-    `n_neighbors` : Number of neighbors
+    `n_components` : int, required optional, default=None
+        Dimensionality of lower spcae
+    `n_neighbors` : int, default=10
+        Number of neighbors
 
     """
 
-    def __init__(self, n_components: int = None, n_neighbors: int = 10) -> None:
+    def __init__(
+        self,
+        n_components: int | None = None,
+        n_neighbors: int = 10,
+    ) -> None:
         self.n_components = n_components
         self.n_neighbors = n_neighbors
         self._fitted = False

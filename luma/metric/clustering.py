@@ -5,7 +5,7 @@ import numpy as np
 
 from luma.core.super import Evaluator, Visualizer
 from luma.interface.util import SilhouetteUtil, DBUtil
-from luma.interface.typing import Matrix, ClassType
+from luma.interface.typing import Matrix, Vector, ClassType
 
 
 __all__ = ("SilhouetteCoefficient", "DaviesBouldin", "Inertia")
@@ -22,8 +22,10 @@ class SilhouetteCoefficient(Evaluator, Visualizer):
 
     Parameters
     ----------
-    `data` : Original data
-    `labels` : Labels assigned by clustering estimator
+    `data` : Matrix
+        Original data
+    `labels` : Vector
+        Labels assigned by clustering estimator
 
     Examples
     --------
@@ -33,16 +35,14 @@ class SilhouetteCoefficient(Evaluator, Visualizer):
         score = sil.score(data, labels) # compute() is a static method
         sil.plot(...)
     ```
-
     Without Instantiation
     ```py
         score = SilhouetteCoefficient.score(data, labels)
         SilhouetteCoefficient.plot(...) # Error; plot() is an instance method
     ```
-
     """
 
-    def __init__(self, data: Matrix, labels: Matrix) -> None:
+    def __init__(self, data: Matrix, labels: Vector) -> None:
         self.data = data
         self.labels = labels
         self.dist = squareform(pdist(self.data))
@@ -121,13 +121,15 @@ class DaviesBouldin(Evaluator):
 
     Parameters
     ----------
-    `data` : Original data
-    `labels` : Labels assigned by clustering estimator
+    `data` : Matrix
+        Original data
+    `labels` : Vector
+        Labels assigned by clustering estimator
 
     """
 
     @classmethod
-    def score(cls, data: Matrix, labels: Matrix) -> float:
+    def score(cls, data: Matrix, labels: Vector) -> float:
         util = DBUtil(data=data, labels=labels)
         centroids = util.cluster_centroids
         scatter = util.within_cluster_scatter
@@ -164,8 +166,10 @@ class Inertia(Evaluator):
 
     Parameters
     ----------
-    `data` : Original data
-    `centroids`: Centroids(or medoids for certain algorithm)
+    `data` : Matrix
+        Original data
+    `centroids`: Matrix
+        Centroids(or medoids for certain algorithm)
 
     """
 

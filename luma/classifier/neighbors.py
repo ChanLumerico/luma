@@ -24,7 +24,8 @@ class KNNClassifier(Estimator, Supervised):
 
     Parameters
     ----------
-    `n_neighbors` : Number of neighbors to be considered close
+    `n_neighbors` : int, default=5
+        Number of neighbors to be considered close
 
     """
 
@@ -94,9 +95,12 @@ class AdaptiveKNNClassifier(Estimator, Supervised):
 
     Parameters
     ----------
-    `n_density` : Number of nearest neighbors to estimate the local density
-    `min_neighbors` : Minimum number of neighbors to be considered for averaging
-    `max_neighbors` : Maximum number of neighbors to be considered
+    `n_density` : int, default=10
+        Number of nearest neighbors to estimate the local density
+    `min_neighbors` : int, default=5
+        Minimum number of neighbors to be considered for averaging
+    `max_neighbors` : int, default=20
+        Maximum number of neighbors to be considered
 
     """
 
@@ -191,7 +195,8 @@ class WeightedKNNClassifier(Estimator, Supervised):
 
     Parameters
     ----------
-    `n_neighbors` : Number of neighbors to be considered close
+    `n_neighbors` : int, default=5
+        Number of neighbors to be considered close
 
     """
 

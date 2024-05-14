@@ -28,7 +28,8 @@ class RidgeRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `alpha` : L2-regularization strength
+    `alpha` : float, default=1.0
+        L2-regularization strength
 
     """
 
@@ -71,9 +72,12 @@ class LassoRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `alpha` : L1-regularization strength
-    `max_iter` : Number of iteration
-    `learning_rate` : Step size of the gradient descent update
+    `alpha` : float, default=1.0
+        L1-regularization strength
+    `max_iter` : int, default=100
+        Number of iteration
+    `learning_rate` : float, default=0.01
+        Step size of the gradient descent update
 
     """
 
@@ -144,10 +148,14 @@ class ElasticNetRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `alpha` : Regularization strength
-    `l1_ratio` : Balancing parameter between `l1` and `l2`
-    `max_iter` : Number of iteration
-    `learning_rate` : Step size of the gradient descent update
+    `alpha` : float, default=1.0
+        Regularization strength
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balancing parameter between `l1` and `l2`
+    `max_iter` : int, default=100
+        Number of iteration
+    `learning_rate` : float, default=0.01
+        Step size of the gradient descent update
 
     """
 
@@ -260,11 +268,16 @@ class KernelRidgeRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `alpha` : Regularization strength
-    `deg` : Degree for `poly` kernel
-    `gamma` : Scaling factor for `tanh`, `rbf`, and `laplacian` kernels
-    `coef` : Base coefficient for `linear` and `poly` kernels
-    `kernel` : Kernel functions
+    `alpha` : float, default=1.0
+        Regularization strength
+    `deg` : int, default=2
+        Degree for polynomial kernel
+    `gamma` : float, default=2
+        Scaling factor for Tanh, RBF, sigmoid kernels
+    `coef` : float, default=1.0
+        Base coefficient for linear and polynomial kernels
+    `kernel` : FuncType, default="rbf"
+        Kernel functions
 
     """
 
@@ -337,12 +350,18 @@ class BayesianRidgeRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `alpha_init` : Initial value for the precision of the distribution of noise
-    `lambda_init` : Initial value for the precision of the distribution of weights
+    `alpha_init` : float, optional, default=None
+        Initial value for the precision of the distribution of noise
+    `lambda_init` : float, optional, default=None
+        Initial value for the precision of the distribution of weights
 
     """
 
-    def __init__(self, alpha_init: float = None, lambda_init: float = None) -> None:
+    def __init__(
+        self,
+        alpha_init: float | None = None,
+        lambda_init: float | None = None,
+    ) -> None:
         self.alpha_init = alpha_init
         self.lambda_init = lambda_init
         self._fitted = False

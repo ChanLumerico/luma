@@ -24,14 +24,22 @@ class DecisionTreeClassifier(Estimator, Supervised):
 
     Parameters
     ----------
-    `max_depth` : Maximum depth of the tree
-    `criterion` : Function used to measure the quality of a split
-    `min_samples_split` : Minimum samples required to split a node
-    `min_samples_leaf` : Minimum samples required to be at a leaf node
-    `max_features` : Number of features to consider
-    `min_impurity_decrease` : Minimum decrement of impurity for a split
-    `max_leaf_nodes` : Maximum amount of leaf nodes
-    `random_state` : The randomness seed of the estimator
+    `max_depth` : int, default=10
+        Maximum depth of the tree
+    `criterion` : {"gini", "entropy"}, default="gini"
+        Function used to measure the quality of a split
+    `min_samples_split` : int, default=2
+        Minimum samples required to split a node
+    `min_samples_leaf` : int, default=1
+        Minimum samples required to be at a leaf node
+    `max_features` : int, optional, default=None
+        Number of features to consider
+    `min_impurity_decrease` : float, default=0.0
+        Minimum decrement of impurity for a split
+    `max_leaf_nodes` : int, optional, default=None
+        Maximum amount of leaf nodes
+    `random_state` : int, optional, default=None
+        The randomness seed of the estimator
 
     """
 
@@ -41,10 +49,10 @@ class DecisionTreeClassifier(Estimator, Supervised):
         criterion: Literal["gini", "entropy"] = "gini",
         min_samples_split: int = 2,
         min_samples_leaf: int = 1,
-        max_features: int = None,
+        max_features: int | None = None,
         min_impurity_decrease: float = 0.0,
-        max_leaf_nodes: int = None,
-        random_state: int = None,
+        max_leaf_nodes: int | None = None,
+        random_state: int | None = None,
     ) -> None:
         self.max_depth = max_depth
         self.criterion = criterion

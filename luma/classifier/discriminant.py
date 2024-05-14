@@ -170,10 +170,12 @@ class RDAClassifier(Estimator, Supervised):
 
     Parameters
     ----------
-    `alpha` : Balancing parameter between the class-specific covariance matrices
-    (0 for LDA-like, 1 for QDA-like approach)
-    `gamma` : Shrinkage applied to the covariance matrices
-    (0 for large shrinkage, i.e. max regularization)
+    `alpha` : float, default=0.5
+        Balancing parameter between the class-specific covariance matrices
+        (0 for LDA-like, 1 for QDA-like approach)
+    `gamma` : float, default=0.5
+        Shrinkage applied to the covariance matrices
+        (0 for large shrinkage, i.e. max regularization)
 
     """
 
@@ -275,10 +277,14 @@ class KDAClassifier(Estimator, Supervised):
 
     Parameters
     ----------
-    `deg` : Polynomial degree of `poly` kernel
-    `gamma` : Shape parameter of `rbf`, `sigmoid`, `laplacian`
-    `coef` : Additional coefficient of `poly`, `sigmoid`
-    `kernel` : Type of kernel functions
+    `deg` : int, default=2
+        Polynomial degree of polynomial kernel
+    `gamma` : float, default=1.0
+        Shape parameter of RBF, sigmoid, laplacian kernels
+    `coef` : float, default=0.0
+        Additional coefficient of polynomial and sigmoid kernels
+    `kernel` : FuncType, default="rbf"
+        Type of kernel functions
 
     Notes
     -----
@@ -291,7 +297,7 @@ class KDAClassifier(Estimator, Supervised):
         self,
         deg: int = 2,
         gamma: float = 1.0,
-        coef: int = 0.0,
+        coef: float = 0.0,
         kernel: KernelUtil.FuncType = "rbf",
     ) -> None:
         self.deg = deg
@@ -308,7 +314,12 @@ class KDAClassifier(Estimator, Supervised):
             "coef": self.coef,
         }
 
-        self.set_param_ranges({"deg": ("0,+inf", int), "gamma": ("0<,+inf", None)})
+        self.set_param_ranges(
+            {
+                "deg": ("0,+inf", int),
+                "gamma": ("0<,+inf", None),
+            }
+        )
         self.check_param_ranges()
 
     def fit(self, X: Matrix, y: Vector) -> Self:

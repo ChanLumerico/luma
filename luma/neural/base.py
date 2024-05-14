@@ -26,13 +26,18 @@ class Layer(ABC, ModelBase):
 
     Attributes
     ----------
-    - `weights_` : Weight tensor
-    - `biases_` : Bias tensor
-    - `dX` : Gradient w.r.t. the input
-    - `dW` : Gradient w.r.t. the weights
-    - `dB` : Gradient w.r.t. the biases
-    - `optimizer` : Optimizer for certain layer
-    - `out_shape` : Shape of the output when forwarding
+    `weights_` : TensorLike
+        Weight tensor
+    `biases_` : TensorLike
+        Bias tensor
+    `dX` : TensorLike
+        Gradient w.r.t. the input
+    `dW` : TensorLike
+        Gradient w.r.t. the weights
+    `dB` : TensorLike
+        Gradient w.r.t. the biases
+    `optimizer` : object (possibly Optimizer)
+        Optimizer for certain layer
 
     Properties
     ----------
@@ -40,6 +45,26 @@ class Layer(ABC, ModelBase):
     ```py
     (property) param_size: Tuple[int, int]
     ```
+    Methods
+    -------
+    - To feed-forward a layer:
+
+        ```py
+        @abstractmethod
+        def forward(self, X: TensorLike, ...) -> TensorLike
+        ```
+    - To perform backward pass:
+
+        ```py
+        @abstractmethod
+        def backward(self, d_out: TensorLike, ...) -> TensorLike
+        ```
+    - To get an output shape:
+
+        ```py
+        @abstractmethod
+        def out_shape(self, in_shape: tuple[int]) -> tuple[int]
+        ```
     """
 
     def __init__(self) -> None:
@@ -146,7 +171,7 @@ class Initializer(ABC):
     that define methods for 2D and 4D weight tensors.
     """
 
-    def __init__(self, random_state: int) -> None:
+    def __init__(self, random_state: int | None) -> None:
         self.rs_ = np.random.RandomState(random_state)
 
     @classmethod
@@ -163,6 +188,42 @@ class NeuralModel(ABC, NeuralBase):
     information through weighted connections. These models include an input
     layer to receive data, hidden layers that perform computations, and an
     output layer to deliver results.
+
+    Parameters
+    ----------
+    `batch_size` : int
+        Size of a single mini-batch
+    `n_epochs` : int
+        Number of epochs for training
+    `learning_rate` : float
+        Step size during optimization process
+    `valid_size` : float, range=[0,1]
+        Fractional size of validation set
+    `early_stopping` : bool
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int
+        Number of epochs to wait until early-stopping
+    `deep_verbose` : bool
+        Whether to log deeply (for all the batches)
+
+    Methods
+    -------
+    - To initialize fundamental attributes of a neural model(mandatory):
+
+        ```py
+        def __init_model__(self) -> None:
+        ```
+    - To construct a neural model(mandatory):
+
+        ```py
+        @abstractmethod
+        def _build_model(self) -> None
+        ```
+    - To summarize a neural model:
+
+        ```py
+        def summarize(self, in_shape: tuple[int]) -> None
+        ```
     """
 
     def __init__(

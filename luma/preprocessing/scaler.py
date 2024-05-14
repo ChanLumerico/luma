@@ -1,7 +1,7 @@
 from typing import Self
 import numpy as np
 
-from luma.interface.typing import Matrix
+from luma.interface.typing import Matrix, Scalar
 from luma.core.super import Transformer
 from luma.interface.exception import NotFittedError
 
@@ -51,11 +51,12 @@ class MinMaxScaler(Transformer, Transformer.Feature):
 
     Parameters
     ----------
-    `feature_range` : Range to be scaled
+    `feature_range` : tuple[Scalar, Scalar], default=(0,1)
+        Range to be scaled
 
     """
 
-    def __init__(self, feature_range: tuple = (0, 1)) -> None:
+    def __init__(self, feature_range: tuple[Scalar, Scalar] = (0, 1)) -> None:
         self.feature_range = feature_range
         self.min = None
         self.max = None

@@ -21,10 +21,14 @@ class SVC(Estimator, Supervised):
 
     Parameters
     ----------
-    `C` : Regularization parameter
-    `batch_size` : Size of a single batch
-    `learning_rate` : Step-size of gradient descent update
-    `max_iter` : Number of iteration
+    `C` : float, default=1.0
+        Regularization parameter
+    `batch_size` : int, default=100
+        Size of a single batch
+    `learning_rate` : float, default=0.001
+        Step-size of gradient descent update
+    `max_iter` : int, default=1000
+        Number of iteration
 
     """
 
@@ -119,14 +123,22 @@ class KernelSVC(Estimator, Supervised):
 
     Parameters
     ----------
-    `C` : Regularization parameter
-    `deg` : Polynomial Degree for `poly` kernel
-    `gamma` : Shape parameter of Gaussian curve for `rbf` kernel
-    `coef` : Coefficient for `poly`, `sigmoid` kernel
-    `learning_rate` : Step-size for gradient descent update
-    `max_iter` : Number of iteration
-    `batch_size`: Size of the batch for batch-based learning
-    `kernel` : Type of kernel (e.g., `linear`, `poly`, `rbf`, `sigmoid`)
+    `C` : float, default=1.0
+        Regularization parameter
+    `deg` : int, default=3
+        Polynomial Degree for polynomial kernel
+    `gamma` : float, default=0.0
+        Shape parameter of Gaussian curve for RBF kernel
+    `coef` : float, default=1.0
+        Coefficient for polynomial and sigmoid kernel
+    `learning_rate` : float, default=0.001
+        Step-size for gradient descent update
+    `max_iter` : int, default=1000
+        Number of iteration
+    `batch_size`: int, default=100
+        Size of the batch for batch-based learning
+    `kernel` : FuncType, default="rbf"
+        Type of kernel
 
     """
 

@@ -27,17 +27,21 @@ class VotingClassifier(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `estimators` : List of estimators to vote
-    `voting` : Voting criterion
-    (`label` to vote the most frequent and `prob` to vote the most probable)
-    `weights` : Weights for each classifier on voting
-    (`None` for uniform weights)
+    `estimators` : list of Esimators, required optional, default=None
+        List of estimators to vote
+    `voting` : {"label", "prob"}, default="label"
+        Voting criterion ("label" to vote the most frequent and
+        "prob" to vote the most probable)
+    `weights` : Vector[Scalar], optional, default=None
+        Weights for each classifier on voting (None for uniform weights)
 
     Examples
     --------
-    >>> vot = VotingClassifier(estimators=[AnyClassifier(), ...],
-                               voting='label',
-                               weights=[0.25, 0.5, ...])
+    >>> vot = VotingClassifier(
+            estimators=[AnyClassifier(), ...],
+            voting="label",
+            weights=[0.25, 0.5, ...],
+        )
     >>> vot.fit(X, y)
     >>> pred = vot.predict(X)
     >>> clf = vot[i] # Get i-th classifier from `vot`
@@ -46,9 +50,9 @@ class VotingClassifier(Estimator, Estimator.Meta, Supervised):
 
     def __init__(
         self,
-        estimators: List[Estimator] = None,
+        estimators: List[Estimator] | None = None,
         voting: Literal["label", "prob"] = "label",
-        weights: Vector[Scalar] = None,
+        weights: Vector[Scalar] | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimators = estimators
@@ -127,14 +131,17 @@ class VotingRegressor(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `estimators` : List of regressors to vote
-    `weights` : Weights for each regressor on voting
-    (`None` for uniform weights)
+    `estimators` : list of Esimators, required optional, default=None
+        List of estimators to vote
+    `weights` : Vector[Scalar], optional, default=None
+        Weights for each classifier on voting (None for uniform weights)
 
     Examples
     --------
-    >>> vot = VotingRegressor(estimators=[AnyRegressor(), ...],
-                              weights=[0.25, 0.5, ...])
+    >>> vot = VotingRegressor(
+            estimators=[AnyRegressor(), ...],
+            weights=[0.25, 0.5, ...],
+        )
     >>> vot.fit(X, y)
     >>> pred = vot.predict(X)
     >>> reg = vot[i] # Get i-th regressor from `vot`
@@ -143,8 +150,8 @@ class VotingRegressor(Estimator, Estimator.Meta, Supervised):
 
     def __init__(
         self,
-        estimators: List[Estimator] = None,
-        weights: Vector[Scalar] = None,
+        estimators: List[Estimator] | None = None,
+        weights: Vector[Scalar] | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimators = estimators

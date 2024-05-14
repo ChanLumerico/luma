@@ -23,17 +23,28 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `n_trees` : Number of trees in the forest
-    `max_depth` :  Maximum depth of each trees
-    `criterion` : Function used to measure the quality of a split
-    `min_samples_split` : Minimum samples required to split a node
-    `min_samples_leaf` : Minimum samples required to be at a leaf node
-    `max_features` : Number of features to consider
-    `min_impurity_decrease` : Minimum decrement of impurity for a split
-    `max_leaf_nodes` : Maximum amount of leaf nodes
-    `bootstrap` : Whether to bootstrap the samples of dataset
-    `bootstrap_feature` : Whether to bootstrap the features of each data
-    `n_features` : Number of features to be sampled when bootstrapping features
+    `n_trees` : int, default=10
+        Number of trees in the forest
+    `max_depth` :  int, default=100
+        Maximum depth of each trees
+    `criterion` : {"gini", "entropy"}, default="gini"
+        Function used to measure the quality of a split
+    `min_samples_split` : int, default=2
+        Minimum samples required to split a node
+    `min_samples_leaf` : int, default=1
+        Minimum samples required to be at a leaf node
+    `max_features` : int, optional, default=None
+        Number of features to consider
+    `min_impurity_decrease` : float, default=0.0
+        Minimum decrement of impurity for a split
+    `max_leaf_nodes` : int, optional, default=None
+        Maximum amount of leaf nodes
+    `bootstrap` : bool, default=True
+        Whether to bootstrap the samples of dataset
+    `bootstrap_feature` : bool, default=False
+        Whether to bootstrap the features of each data
+    `n_features` : int or {"auto"}, default="auto"
+        Number of features to be sampled when bootstrapping features
 
     """
 
@@ -44,9 +55,9 @@ class RandomForestClassifier(Estimator, Estimator.Meta, Supervised):
         criterion: Literal["gini", "entropy"] = "gini",
         min_samples_split: int = 2,
         min_samples_leaf: int = 1,
-        max_features: int = None,
+        max_features: int | None = None,
         min_impurity_decrease: float = 0.0,
-        max_leaf_nodes: int = None,
+        max_leaf_nodes: int | None = None,
         bootstrap: bool = True,
         bootstrap_feature: bool = False,
         n_features: int | Literal["auto"] = "auto",
@@ -141,16 +152,26 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `n_trees` : Number of trees in the forest
-    `max_depth` :  Maximum depth of each trees
-    `min_samples_split` : Minimum samples required to split a node
-    `min_samples_leaf` : Minimum samples required to be at a leaf node
-    `max_features` : Number of features to consider
-    `min_variance_decrease` : Minimum decrement of variance for a split
-    `max_leaf_nodes` : Maximum amount of leaf nodes
-    `bootstrap` : Whether to bootstrap the samples of dataset
-    `bootstrap_feature` : Whether to bootstrap the features of each data
-    `n_features` : Number of features to be sampled when bootstrapping features
+    `n_trees` : int, default=10
+        Number of trees in the forest
+    `max_depth` : int, default=10
+        Maximum depth of each trees
+    `min_samples_split` : int, default=2
+        Minimum samples required to split a node
+    `min_samples_leaf` : int, default=1
+        Minimum samples required to be at a leaf node
+    `max_features` : int, optional, default=None
+        Number of features to consider
+    `min_variance_decrease` : float, default=0.0
+        Minimum decrement of variance for a split
+    `max_leaf_nodes` : int, optional, default=None
+        Maximum amount of leaf nodes
+    `bootstrap` : bool, default=True
+        Whether to bootstrap the samples of dataset
+    `bootstrap_feature` : bool, default=False
+        Whether to bootstrap the features of each data
+    `n_features` : int or {"auto"}, default="auto"
+        Number of features to be sampled when bootstrapping features
 
     """
 
@@ -160,9 +181,9 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
         max_depth: int = 10,
         min_samples_split: int = 2,
         min_samples_leaf: int = 1,
-        max_features: int = None,
+        max_features: int | None = None,
         min_variance_decrease: float = 0.0,
-        max_leaf_nodes: int = None,
+        max_leaf_nodes: int | None = None,
         bootstrap: bool = True,
         bootstrap_feature: bool = False,
         n_features: int | Literal["auto"] = "auto",
@@ -246,5 +267,5 @@ class RandomForestRegressor(Estimator, Estimator.Meta, Supervised):
         X_pred = self.predict(X)
         return metric.score(y_true=y, y_pred=X_pred)
 
-    def __gettiem__(self, index: int) -> DecisionTreeClassifier:
+    def __gettiem__(self, index: int) -> DecisionTreeRegressor:
         return self.trees[index]

@@ -13,16 +13,27 @@ class TrainTestSplit:
 
     Parameters
     ----------
-    `X` : Feature data
-    `y` : Target data (as a 1-D `Vector`)
-    `test_size` : Proportional size of the test set (e.g. `0.2`, `0.3`)
-    `shuffle` : Whether to shuffle the dataset
-    `stratify` : Whether to perform stratified split (Default `False`)
-    `random_state` : Seed for random sampling for split
+    `X` : Matrix
+        Feature data
+    `y` : Vector
+        Target data
+    `test_size` : int or float, default=0.3
+        Proportional size of the test set
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `stratify` : bool, default=False
+        Whether to perform stratified split
+    `random_state` : int, optional, default=None
+        Seed for random sampling for split
 
     Properties
     ----------
-    `get` : Returns the split data as a 4-tuple
+    `get` : tuple[Matrix, Matrix, Vector, Vector]
+        Returns the split data as a 4-tuple
+
+    Notes
+    -----
+    For `stratify == True`, one-hot encoded `y` is not compatible.
 
     Examples
     --------
@@ -122,11 +133,22 @@ class BatchGenerator:
 
     Parameters
     ----------
-    `X` : Input features
-    `y` : Targets or labels
-    `batch_size` : Size of a mini-batch
-    `shuffle` : Whether to shuffle the data for every batch generation
+    `X` : TensorLike
+        Input features
+    `y` : TensorLike
+        Targets or labels
+    `batch_size` : int, default=100
+        Size of a mini-batch
+    `shuffle` : bool, default=True
+        Whether to shuffle the data for every batch generation
 
+    Iterator
+    --------
+    The iterator of `BatchGenerator` returns a 2-tuple of
+    `TensorLike` objects.
+    ```py
+    def __iter__(self) -> Iterator[Tuple[TensorLike, TensorLike]]
+    ```
     Examples
     --------
     An instance of `BatchGenerator` can be used as an iterator.

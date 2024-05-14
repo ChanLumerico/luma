@@ -26,19 +26,28 @@ class StackingClassifier(Estimator, Transformer, Supervised):
 
     Parameters
     ----------
-    `estimators` : List of base estimators
-    `final_estimator` : Final meta-estimator (Default `SoftmaxRegressor`)
-    `pass_original` : Whether to pass the original data to final estimator
-    `drop_threshold` : Omitting threshold for base estimators
-    (`None` not to omit any estimators)
-    `metric` : Scoring metric
-    `method` : Methods called for each base estimator
-    `cv` : Number of folds for cross-validation
-    `fold_type` : Fold type (Default `KFold`)
-    `shuffle` : Whether to shuffle the dataset when cross-validating
-    `random_state` : Seed for random splitting
-    `**kwargs` : Additional parameters for final estimator
-    (i.e. `learning_rate`)
+    `estimators` : list of Estimator
+        List of base estimators
+    `final_estimator` : Estimator, default=SoftmaxRegressor()
+        Final meta-estimator
+    `pass_original` : bool, default=False
+        Whether to pass the original data to final estimator
+    `drop_threshold` : float, optional, default=None
+        Omitting threshold for base estimators (None not to omit any estimators)
+    `metric` : Evaluator, default=Accuracy
+        Scoring metric
+    `method` : {"label", "prob"}, default="label"
+        Methods called for each base estimator
+    `cv` : int, default=5
+        Number of folds for cross-validation
+    `fold_type` : FoldType, default=KFold
+        Fold type (pass the class itself, not its instance)
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset when cross-validating
+    `random_state` : int, optional, default=None
+        Seed for random splitting
+    `**kwargs` : dict[str, Any]
+        Additional parameters for final estimator (i.e. `learning_rate`)
 
     Notes
     -----
@@ -50,18 +59,19 @@ class StackingClassifier(Estimator, Transformer, Supervised):
         ```py
         def transform(self, X: Matrix) -> Matrix
         ```
-
     Each base estimators can be accessed via indexing of its instance:
     >>> estimator = stack[0]
 
     Examples
     --------
     ```py
-    stack = StackingClassifier(estimators=[...],
-                               final_estimator=SoftmaxRegressor(),
-                               method='label',
-                               cv=5,
-                               fold_type=KFold)
+    stack = StackingClassifier(
+        estimators=[...],
+        final_estimator=SoftmaxRegressor(),
+        method='label',
+        cv=5,
+        fold_type=KFold,
+    )
     stack.fit(X, y)
     X_new = stack.transform(X)
     y_pred = stack.predict(X)
@@ -73,13 +83,13 @@ class StackingClassifier(Estimator, Transformer, Supervised):
         estimators: List[Estimator],
         final_estimator: Estimator = SoftmaxRegressor(),
         pass_original: bool = False,
-        drop_threshold: float = None,
+        drop_threshold: float | None = None,
         metric: Evaluator = Accuracy,
         method: Literal["label", "prob"] = "label",
         cv: int = 5,
         fold_type: FoldType = KFold,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
         **kwargs: Dict[str, Any],
     ) -> None:
@@ -109,7 +119,11 @@ class StackingClassifier(Estimator, Transformer, Supervised):
         self.n_classes = len(np.unique(y))
 
         fold = self.fold_type(
-            X, y, n_folds=self.cv, shuffle=self.shuffle, random_state=self.random_state
+            X,
+            y,
+            n_folds=self.cv,
+            shuffle=self.shuffle,
+            random_state=self.random_state,
         )
 
         if self.method == "label":
@@ -246,16 +260,24 @@ class StackingRegressor(Estimator, Transformer, Supervised):
 
     Parameters
     ----------
-    `estimators` : List of base estimators
-    `final_estimator` : Final meta-estimator (Default `LinearRegressor`)
-    `pass_original` : Whether to pass the original data to final estimator
-    `cv` : Number of folds for cross-validation
-    `fold_type` : Fold type (Default `KFold`)
-    `metric` : Scoring metric
-    `shuffle` : Whether to shuffle the dataset when cross-validating
-    `random_state` : Seed for random splitting
-    `**kwargs` : Additional parameters for final estimator
-    (i.e. `learning_rate`)
+    `estimators` : list of Estimator
+        List of base estimators
+    `final_estimator` : Estimator, default=LinearRegressor()
+        Final meta-estimator
+    `pass_original` : bool, default=False
+        Whether to pass the original data to final estimator
+    `cv` : int, default=5
+        Number of folds for cross-validation
+    `fold_type` : FoldType, default=KFold
+        Fold type (pass the class itself, not its instance)
+    `metric` : Evaluator, default=MeanSquaredError
+        Scoring metric
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset when cross-validating
+    `random_state` : int, optional, default=None
+        Seed for random splitting
+    `**kwargs` : dict[str, Any]
+        Additional parameters for final estimator (i.e. `learning_rate`)
 
     Notes
     -----
@@ -267,17 +289,18 @@ class StackingRegressor(Estimator, Transformer, Supervised):
         ```py
         def transform(self, X: Matrix) -> Matrix
         ```
-
     Each base estimators can be accessed via indexing of its instance:
     >>> estimator = stack[0]
 
     Examples
     --------
     ```py
-    stack = StackingRegressor(estimators=[...],
-                              final_estimator=LinearRegressor(),
-                              cv=5,
-                              fold_type=KFold)
+    stack = StackingRegressor(
+        estimators=[...],
+        final_estimator=LinearRegressor(),
+        cv=5,
+        fold_type=KFold,
+    )
     stack.fit(X, y)
     X_new = stack.transform(X)
     y_pred = stack.predict(X)
@@ -293,7 +316,7 @@ class StackingRegressor(Estimator, Transformer, Supervised):
         fold_type: FoldType = KFold,
         metric: Evaluator = MeanSquaredError,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
         **kwargs: Dict[str, Any],
     ) -> None:

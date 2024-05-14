@@ -35,21 +35,36 @@ class ConvBlock1D(Sequential):
     ```
     Parameters
     ----------
-    `in_channels` : Number of input channels
-    `out_channels` : Number of output channels
-    `filter_size` : Size of the convolution filter
-    `activation` : Type of activation function
-    `padding` : Padding method
-    `optimizer` : Type of optimizer for weight updating
-    `initializer` : Type of weight initializer
-    `stride` : Step size for filters during convolution
-    `lambda_` : L2 regularization strength
-    `do_batch_norm` : Whether to perform batch normalization (default `True`)
-    `momentum` : Momentum for batch normalization
-    `do_pooling` : Whether to perform pooling (default `True`)
-    `pool_filter_size` : Filter size for pooling
-    `pool_stride` : Step size for pooling process
-    `pool_mode` : Pooling strategy
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels
+    `filter_size` : int
+        Size of the convolution filter
+    `activation` : FuncType
+        Type of activation function
+    `padding` : {"same", "valid"}, default="same"
+        Padding method
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight updating
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+    `do_pooling` : bool, default=True
+        Whether to perform pooling
+    `pool_filter_size` : int, default=2
+        Filter size for pooling
+    `pool_stride` : int, default=2
+        Step size for pooling process
+    `pool_mode` : {"max", "avg"}, default="max"
+        Pooling strategy
 
     Notes
     -----
@@ -66,7 +81,7 @@ class ConvBlock1D(Sequential):
         out_channels: int,
         filter_size: int,
         activation: Activation.FuncType,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
@@ -145,21 +160,36 @@ class ConvBlock2D(Sequential):
     ```
     Parameters
     ----------
-    `in_channels` : Number of input channels
-    `out_channels` : Number of output channels
-    `filter_size` : Size of the convolution filter
-    `activation` : Type of activation function
-    `padding` : Padding method
-    `optimizer` : Type of optimizer for weight updating
-    `initializer` : Type of weight initializer
-    `stride` : Step size for filters during convolution
-    `lambda_` : L2 regularization strength
-    `do_batch_norm` : Whether to perform batch normalization (default `True`)
-    `momentum` : Momentum for batch normalization
-    `do_pooling` : Whether to perform pooling (default `True`)
-    `pool_filter_size` : Filter size for pooling
-    `pool_stride` : Step size for pooling process
-    `pool_mode` : Pooling strategy
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels
+    `filter_size` : int
+        Size of the convolution filter
+    `activation` : FuncType
+        Type of activation function
+    `padding` : {"same", "valid"}, default="same"
+        Padding method
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight updating
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+    `do_pooling` : bool, default=True
+        Whether to perform pooling
+    `pool_filter_size` : int, default=2
+        Filter size for pooling
+    `pool_stride` : int, default=2
+        Step size for pooling process
+    `pool_mode` : {"max", "avg"}, default="max"
+        Pooling strategy
 
     Notes
     -----
@@ -176,7 +206,7 @@ class ConvBlock2D(Sequential):
         out_channels: int,
         filter_size: int,
         activation: Activation.FuncType,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
@@ -255,21 +285,36 @@ class ConvBlock3D(Sequential):
     ```
     Parameters
     ----------
-    `in_channels` : Number of input channels
-    `out_channels` : Number of output channels
-    `filter_size` : Size of the convolution filter
-    `activation` : Type of activation function
-    `padding` : Padding method
-    `optimizer` : Type of optimizer for weight updating
-    `initializer` : Type of weight initializer
-    `stride` : Step size for filters during convolution
-    `lambda_` : L2 regularization strength
-    `do_batch_norm` : Whether to perform batch normalization (default `True`)
-    `momentum` : Momentum for batch normalization
-    `do_pooling` : Whether to perform pooling (default `True`)
-    `pool_filter_size` : Filter size for pooling
-    `pool_stride` : Step size for pooling process
-    `pool_mode` : Pooling strategy
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels
+    `filter_size` : int
+        Size of the convolution filter
+    `activation` : FuncType
+        Type of activation function
+    `padding` : {"same", "valid"}, default="same"
+        Padding method
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight updating
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+    `do_pooling` : bool, default=True
+        Whether to perform pooling
+    `pool_filter_size` : int, default=2
+        Filter size for pooling
+    `pool_stride` : int, default=2
+        Step size for pooling process
+    `pool_mode` : {"max", "avg"}, default="max"
+        Pooling strategy
 
     Notes
     -----
@@ -286,7 +331,7 @@ class ConvBlock3D(Sequential):
         out_channels: int,
         filter_size: int,
         activation: Activation.FuncType,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
@@ -365,16 +410,26 @@ class DenseBlock(Sequential):
     ```
     Parameters
     ----------
-    `in_features` : Number of input features
-    `out_features` : Number of output features
-    `activation` : Type of activation function
-    `optimizer` : Type of optimizer for weight update
-    `initializer` : Type of weight initializer
-    `lambda_` : L2 regularization strength
-    `do_batch_norm` : Whether to perform batch normalization (default `True`)
-    `momentum` : Momentum for batch normalization
-    `do_dropout` : Whethter to perform dropout (default `True`)
-    `dropout_rate` : Dropout rate
+    `in_features` : int
+        Number of input features
+    `out_features` : int
+        Number of output features
+    `activation` : FuncType
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+    `do_dropout` : bool, default=True
+        Whethter to perform dropout
+    `dropout_rate` : float, default=0.5
+        Dropout rate
 
     """
 

@@ -33,19 +33,16 @@ class Estimator(ModelBase, metaclass=ABCMeta):
         @abstractmethod
         def fit(self, *args) -> Self
     ```
-
     For prediction:
     ```py
         @abstractmethod
         def predict(self, *args) -> Vector
     ```
-
     For scoring
     ```py
         @abstractmethod
         def score(self, *args) -> float
     ```
-
     For setting parameters when tuning
     ```py
         def set_params(self, *args) -> None
@@ -122,19 +119,16 @@ class Transformer(ModelBase, metaclass=ABCMeta):
         @abstractmethod
         def fit(self, *args) -> Self
     ```
-
     For transformation:
     ```py
         @abstractmethod
         def transform(self, *args) -> Matrix
     ```
-
     For fitting and transformation at once:
     ```py
         @abstractmethod
         def fit_transform(self, *args) -> Matrix
     ```
-
     For setting parameters when tuning:
     ```py
         def set_params(self, *args) -> None
@@ -194,7 +188,7 @@ class Transformer(ModelBase, metaclass=ABCMeta):
         * `transform` method gets `X` and `y` and returns transformed `X` and `y`
 
             ```py
-            def transform(self, X: Matrix, y: Vector) -> Tuple[Matrix, Matrix | Vector]
+            def transform(self, X: Matrix, y: Vector) -> tuple[Matrix, Matrix | Vector]
             ```
         """
 
@@ -233,7 +227,7 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
     ```py
         @property
         def best_model(self) -> Estimator | Transformer
-
+    ```
     """
 
     class Neural:
@@ -244,8 +238,13 @@ class Optimizer(ModelBase, metaclass=ABCMeta):
         -------
         For updating weights:
         ```py
-        @abstractmethod
-        def update(self, **kwargs) -> tuple
+        def update(
+            self,
+            weights: TensorLike | None,
+            biases: TensorLike | None,
+            grad_weights: TensorLike,
+            grad_biases: TensorLike,
+        ) -> None
         ```
         """
 
@@ -290,13 +289,13 @@ class Evaluator(MetricBase, metaclass=ABCMeta):
     -------
     For scoring:
     ```py
-        @staticmethod
+        @classmethod
         @abstractmethod
         def score(*args) -> float
     ```
     """
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def score(*args) -> float: ...
 
@@ -362,11 +361,12 @@ class Distance(MetricBase, metaclass=ABCMeta):
     -------
     For computing the distance:
     ```py
-        @staticmethod
+        @classmethod
         @abstractmethod
         def compute(*args) -> float
     ```
     """
 
+    @classmethod
     @abstractmethod
     def score(*args) -> float: ...

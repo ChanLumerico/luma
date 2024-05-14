@@ -26,15 +26,24 @@ class GridSearchCV(Optimizer):
 
     Parameters
     ----------
-    `estimator` : An estimator to fit and evaluate
-    `param_grid` : Parameter grid for repetitive search
-    `cv` : K-fold size for cross validation
-    `metric` : Scoring metric for evaluation
-    `maximize` : Whether to optimize in a way of maximizing certain metric
-    `shuffle` : Whether to shuffle the dataset
-    `fold_type` : Fold type (Default `KFold`)
-    `refit` : Whether to re-fit the estimator with the best parameters found
-    `random_state` : Seed for random sampling for cross validation
+    `estimator` : Estimator
+        An estimator to fit and evaluate
+    `param_grid` : dict
+        Parameter grid for repetitive search
+    `cv` : int, default=5
+        K-fold size for cross validation
+    `metric` : Evaluator, optional, default = None
+        Scoring metric for evaluation
+    `maximize` : bool, default=True
+        Whether to optimize in a way of maximizing certain metric
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `fold_type` : FoldType, default=KFold
+        Fold type (pass the class itself, not its instance)
+    `refit` : bool, default=True
+        Whether to re-fit the estimator with the best parameters found
+    `random_state` : int, optional, default=None
+        Seed for random sampling for cross validation
 
     Properties
     ----------
@@ -43,7 +52,6 @@ class GridSearchCV(Optimizer):
         @property
         def best_model(self) -> Estimator
         ```
-
     Notes
     -----
     * An instance of the estimator must be passed to `estimator`
@@ -74,12 +82,12 @@ class GridSearchCV(Optimizer):
         estimator: Estimator,
         param_grid: dict,
         cv: int = 5,
-        metric: Evaluator = None,
+        metric: Evaluator | None = None,
         maximize: bool = True,
         refit: bool = True,
         shuffle: bool = True,
         fold_type: FoldType = KFold,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimator = estimator
@@ -189,17 +197,26 @@ class RandomizedSearchCV(Optimizer):
 
     Parameters
     ----------
-    `estimator` : An estimator to fit and evaluate
-    `param_dist` : Parameter distributions for random search
-    `max_iter` : Number of parameter settings that are sampled
-    `cv` : K-fold size for cross-validation
-    `metric` : Scoring metric for evaluation
-    `maximize` : Whether to optimize in a way of maximizing certain metric
-    `refit` : Whether to re-fit the estimator with the best parameters found
-    `shuffle` : Whether to shuffle the dataset
-    `fold_type` : Fold type (Default `KFold`)
-    `random_state` : Seed for random sampling for cross-validation and random search
-    `verbose` : Whether to print progress messages
+    `estimator` : Estimator
+        An estimator to fit and evaluate
+    `param_dist` : dict[str, Vector | DT]
+        Parameter distributions for random search
+    `max_iter` : int, default=100
+        Number of parameter settings that are sampled
+    `cv` : int, default=5
+        K-fold size for cross-validation
+    `metric` : Evaluator, optional, default=None
+        Scoring metric for evaluation
+    `maximize` : bool, default=True
+        Whether to optimize in a way of maximizing certain metric
+    `refit` : bool, default=True
+        Whether to re-fit the estimator with the best parameters found
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `fold_type` : FoldType, default=KFold
+        Fold type
+    `random_state` : int, optional, default=None
+        Seed for random sampling for cross-validation and random search
 
     Properties
     ----------
@@ -208,29 +225,31 @@ class RandomizedSearchCV(Optimizer):
         @property
         def best_model(self) -> Estimator
         ```
-
     Notes
     -----
-    * An instance of the estimator must be passed to `estimator`
-    * For `metric`, both class or instance are possible
-    * Only `Pipeline` is allowed for meta estimator
-    * Type `DT` is a generic type for `scipy`'s distribution types
+    - An instance of the estimator must be passed to `estimator`
+    - For `metric`, both class or instance are possible
+    - Only `Pipeline` is allowed for meta estimator
+    - Type `DT` is a generic type for `scipy`'s distribution types
         (e.g. `rv_continuous`, `rv_discrete`)
 
     Examples
     --------
-    >>> param_dist = {'param_1': [...],
-                      'param_2': [...],
-                      ...,
-                      AnyStr: Vector | DT }
-
-    >>> rand = RandomizedSearchCV(estimator=AnyEstimator(),
-                                  param_dist=param_dist,
-                                  max_iter=100,
-                                  cv=5,
-                                  metric=AnyEvaluator,
-                                  refit=True,
-                                  random_state=None)
+    >>> param_dist = {
+            'param_1': [...],
+            'param_2': [...],
+            ...,
+            AnyStr: Vector | DT,
+        }
+    >>> rand = RandomizedSearchCV(
+            estimator=AnyEstimator(),
+            param_dist=param_dist,
+            max_iter=100,
+            cv=5,
+            metric=AnyEvaluator,
+            refit=True,
+            random_state=None,
+        )
     >>> rand.fit(X, y)
     >>> score = rand.best_score
     >>> model = rand.best_model
@@ -243,12 +262,12 @@ class RandomizedSearchCV(Optimizer):
         param_dist: Dict[str, Vector | DT],
         max_iter: int = 100,
         cv: int = 5,
-        metric: Evaluator = None,
+        metric: Evaluator | None = None,
         maximize: bool = True,
         refit: bool = True,
         shuffle: bool = True,
         fold_type: FoldType = KFold,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimator = estimator

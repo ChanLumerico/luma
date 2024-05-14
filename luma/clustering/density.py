@@ -26,8 +26,12 @@ class DBSCAN(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `epsilon` : Radius of a neighborhood hypersphere
-    `min_points` : Minimum required points to form a cluster
+    `epsilon` : float, default=0.1
+        Radius of a neighborhood hypersphere
+    `min_points` : int, default=5
+        Minimum required points to form a cluster
+    `metric` : {"euclidean", "minkowski"}, default="euclidean"
+        Distance metric for radius measurement
 
     """
 
@@ -130,9 +134,12 @@ class OPTICS(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `epsilon` : Radius of neighborhood hypersphere
-    `min_points` : Minimum nuber of points to form a cluster
-    `threshold` : Threshold for filtering samples with large reachabilities
+    `epsilon` : float, default=1.0
+        Radius of neighborhood hypersphere
+    `min_points` : int, default=5
+        Minimum nuber of points to form a cluster
+    `threshold` : float, default=1.5
+        Threshold for filtering samples with large reachabilities
 
     """
 
@@ -285,15 +292,20 @@ class DENCLUE(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `h` : Smoothing parameter of local density estimation
-    `tol` : Threshold for early convergence
-    `max_climb` : Maximum number of climbing process for finding local maxima
-    `min_density` : Minimum local densities to be considered
-    `sample_weight` : Custom individual weights for sample data
+    `h` : float or {"auto"}, default="auto"
+        Smoothing parameter of local density estimation
+    `tol` : float, default=1e-3
+        Threshold for early convergence
+    `max_climb` : int, default=100
+        Maximum number of climbing process for finding local maxima
+    `min_density` : float, default=0.0
+        Minimum local densities to be considered
+    `sample_weight` : Vector, optional, default=None
+        Custom individual weights for sample data
 
     Reference
     ---------
-    Hinneburg, A., & Gabriel, H. H. (2007, September). Denclue 2.0: Fast
+    1. Hinneburg, A., & Gabriel, H. H. (2007, September). Denclue 2.0: Fast
     clustering based on kernel density estimation. In International symposium
     on intelligent data analysis (pp. 70-80). Berlin, Heidelberg: Springer
     Berlin Heidelberg.
@@ -306,7 +318,7 @@ class DENCLUE(Estimator, Unsupervised):
         tol: float = 1e-3,
         max_climb: int = 100,
         min_density: float = 0.0,
-        sample_weight: Vector = None,
+        sample_weight: Vector | None = None,
     ) -> None:
         self.h = h
         self.tol = tol
@@ -452,9 +464,12 @@ class MeanShiftClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `bandwidth` : Window size for kernel density estimation
-    `max_iter` : Maximum iteration
-    `tol` : Tolerence threshold for early convergence
+    `bandwidth` : float, default=2.0
+        Window size for kernel density estimation
+    `max_iter` : int, default=300
+        Maximum iteration
+    `tol` : float, default=1e-3
+        Tolerence threshold for early convergence
 
     """
 

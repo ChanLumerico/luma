@@ -24,11 +24,16 @@ class KFold:
 
     Parameters
     ----------
-    `X` : Input data
-    `y` : Target data
-    `n_folds` : Number of folds
-    `shuffle` : Whether to shuffle the dataset
-    `random_state` : Seed for random shuffling
+    `X` : Matrix
+        Input data
+    `y` : Vector
+        Target data
+    `n_folds` : int, default=5
+        Number of folds
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `random_state` : int, optional, default=True
+        Seed for random shuffling
 
     Properties
     ----------
@@ -45,7 +50,6 @@ class KFold:
     Examples
     --------
     Usage of the generator returned by the property `split`:
-
     ```py
     kfold = KFold(X, y, n_folds=5, shuffle=True)
 
@@ -100,11 +104,16 @@ class StratifiedKFold:
 
     Parameters
     ----------
-    `X` : Input data
-    `y` : Target data
-    `n_folds` : Number of folds
-    `shuffle` : Whether to shuffle the dataset
-    `random_state` : Seed for random shuffling
+    `X` : Matrix
+        Input data
+    `y` : Vector
+        Target data
+    `n_folds` : int, default=5
+        Number of folds
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `random_state` : int, optional, default=None
+        Seed for random shuffling
 
     Properties
     ----------
@@ -121,7 +130,6 @@ class StratifiedKFold:
     Examples
     --------
     Usage of the generator returned by the property `split`:
-
     ```py
     kfold = StratifiedKFold(X, y, n_folds=5, shuffle=True)
 
@@ -188,12 +196,18 @@ class GroupKFold:
 
     Parameters
     ----------
-    `X` : Input data
-    `y` : Target data
-    `groups` : Array of group labels for the samples
-    `n_folds` : Number of folds. Must be at least 2.
-    `shuffle` : Whether to shuffle the dataset
-    `random_state` : Seed for random shuffling
+    `X` : Matrix
+        Input data
+    `y` : Vector
+        Target data
+    `groups` : Vector
+        Array of group labels for the samples
+    `n_folds` : int, default=5
+        Number of folds. Must be at least 2.
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `random_state` : int, optional, default=None
+        Seed for random shuffling
 
     Properties
     ----------
@@ -210,7 +224,6 @@ class GroupKFold:
     Examples
     --------
     Usage of the generator returned by the property `split`:
-
     ```py
     kfold = GroupKFold(X, y, n_folds=5, shuffle=True)
 

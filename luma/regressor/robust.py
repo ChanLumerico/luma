@@ -24,12 +24,18 @@ class RANSAC(Estimator, Supervised):
 
     Parameters
     ----------
-    `estimator` : Regression estimator (Default `LinearRegressor()`)
-    `min_points` : Mininum sample size for each random sample
-    `max_iter` : Maximum iteration
-    `min_inliers` : Minimum number of inliers for a model to be considered valid
-    `threshold` : Maximum distance a point can have to be considered an inlier
-    `random_state` : Seed for random sampling the data
+    `estimator` : Estimator, default=LinearRegressor()
+        Regression estimator
+    `min_points` : int or float, default=2
+        Mininum sample size for each random sample
+    `max_iter` : int, default=1000
+        Maximum iteration
+    `min_inliers` : int or float, default=0.5
+        Minimum number of inliers for a model to be considered valid
+    `threshold` : float, optional, default=None
+        Maximum distance a point can have to be considered an inlier
+    `random_state` : int, optional, default=None
+        Seed for random sampling the data
 
     Properties
     ----------
@@ -46,8 +52,8 @@ class RANSAC(Estimator, Supervised):
         min_points: int | float = 2,
         max_iter: int = 1000,
         min_inliers: int | float = 0.5,
-        threshold: float = None,
-        random_state: int = None,
+        threshold: float | None = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimator = estimator
@@ -162,12 +168,18 @@ class MLESAC(Estimator, Supervised):
 
     Parameters
     ----------
-    `estimator` : Regression estimator (Default `LinearRegressor()`)
-    `min_points` : Minimum sample size for each random sample
-    `max_iter` : Maximum number of iterations
-    `min_inliers` : Minimum number of inliers for a model to be considered valid
-    `threshold` : Maximum distance a point can have to be considered an inlier
-    `random_state` : Seed for random sampling the data
+    `estimator` : Estimator, default=LinearRegressor()
+        Regression estimator
+    `min_points` : int or float, default=2
+        Minimum sample size for each random sample
+    `max_iter` : int, default=1000
+        Maximum number of iterations
+    `min_inliers` : int or float, default=0.5
+        Minimum number of inliers for a model to be considered valid
+    `threshold` : float, optional, default=None
+        Maximum distance a point can have to be considered an inlier
+    `random_state` : int, optional, default=None
+        Seed for random sampling the data
 
     Properties
     ----------
@@ -189,8 +201,8 @@ class MLESAC(Estimator, Supervised):
         min_points: int | float = 2,
         max_iter: int = 1000,
         min_inliers: int | float = 0.5,
-        threshold: float = None,
-        random_state: int = None,
+        threshold: float | None = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimator = estimator

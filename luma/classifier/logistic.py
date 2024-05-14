@@ -19,11 +19,16 @@ class LogisticRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `learning_rate` : Step size of the gradient descent update
-    `max_iter` : Number of iteration
-    `l1_ratio` : Balancing parameter of `elastic-net`
-    `alpha` : Regularization strength
-    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
+    `learning_rate` : float, default=0.01
+        Step size of the gradient descent update
+    `max_iter` : int, default=100
+        Number of iteration
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balancing parameter of elastic-net
+    `alpha` : float, default=0.01
+        Regularization strength
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularization type
 
     """
 
@@ -33,7 +38,7 @@ class LogisticRegressor(Estimator, Supervised):
         max_iter: int = 100,
         l1_ratio: float = 0.5,
         alpha: float = 0.01,
-        regularization: Literal["l1", "l2", "elastic-net"] = None,
+        regularization: Literal["l1", "l2", "elastic-net"] | None = None,
         verbose: bool = False,
     ):
         self.learning_rate = learning_rate
@@ -120,11 +125,16 @@ class SoftmaxRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `learning_rate` : Step size of the gradient descent update
-    `max_iter` : Number of iteration
-    `l1_ratio` : Balancing parameter of `elastic-net`
-    `alpha` : Regularization strength
-    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
+    `learning_rate` : float, default=0.01
+        Step size of the gradient descent update
+    `max_iter` : int, default=100
+        Number of iteration
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balancing parameter of elastic-net
+    `alpha` : float, default=0.01
+        Regularization strength
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularization type
 
     """
 
@@ -134,7 +144,7 @@ class SoftmaxRegressor(Estimator, Supervised):
         max_iter: int = 100,
         l1_ratio: float = 0.5,
         alpha: float = 0.01,
-        regularization: Literal["l1", "l2", "elastic-net"] = None,
+        regularization: Literal["l1", "l2", "elastic-net"] | None = None,
         verbose: bool = False,
     ) -> None:
         self.learning_rate = learning_rate

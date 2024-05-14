@@ -21,8 +21,10 @@ class LocalOutlierFactor(Transformer, Transformer.Both):
 
     Parameters
     ----------
-    `n_neighbors` : Number of neighbors to estimate the local densities
-    `threshold` : Cutoff value deciding whether a point is considered an outlier
+    `n_neighbors` : int, default=10
+        Number of neighbors to estimate the local densities
+    `threshold` : float, default=1.5
+        Cutoff value deciding whether a point is considered an outlier
 
     Examples
     --------

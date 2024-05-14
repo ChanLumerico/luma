@@ -23,13 +23,20 @@ class DecisionTreeRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `max_depth` : Maximum depth of the tree
-    `min_samples_split` : Minimum samples required to split a node
-    `min_samples_leaf` : Minimum samples required to be at a leaf node
-    `max_features` : Number of features to consider
-    `min_variance_decrease` : Minimum decrement of variance for a split
-    `max_leaf_nodes` : Maximum amount of leaf nodes
-    `random_state` : The randomness seed of the estimator
+    `max_depth` : int, default=10
+        Maximum depth of the tree
+    `min_samples_split` : int, default=2
+        Minimum samples required to split a node
+    `min_samples_leaf` : int, default=1
+        Minimum samples required to be at a leaf node
+    `max_features` : int, optional, default=None
+        Number of features to consider
+    `min_variance_decrease` : float, default=0.0
+        Minimum decrement of variance for a split
+    `max_leaf_nodes` : int, optional, default=None
+        Maximum amount of leaf nodes
+    `random_state` : int, optional, default=None
+        The randomness seed of the estimator
 
     """
 
@@ -38,10 +45,10 @@ class DecisionTreeRegressor(Estimator, Supervised):
         max_depth: int = 10,
         min_samples_split: int = 2,
         min_samples_leaf: int = 1,
-        max_features: int = None,
+        max_features: int | None = None,
         min_variance_decrease: float = 0.0,
-        max_leaf_nodes: int = None,
-        random_state: int = None,
+        max_leaf_nodes: int | None = None,
+        random_state: int | None = None,
     ) -> None:
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split

@@ -1,5 +1,5 @@
 from itertools import combinations
-from typing import Tuple
+from typing import Self, Tuple
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Transformer, Supervised
@@ -26,29 +26,40 @@ class SBS(Transformer, Transformer.Feature, Supervised):
 
     Parameters
     ----------
-    `estimator` : An estimator to fit and evaluate
-    `n_features` : Number of features to select (`0~1` value for proportion)
-    `metric` : Scoring metric for selecting features
-    `test_size` : Proportional size of the validation set
-    `cv` : K-fold size for cross validation (`0` to disable CV)
-    `shuffle` : Whether to shuffle the dataset
-    `stratify` : Whether to perform stratified split
-    `fold_type` : Fold type (Default `KFold`)
-    `random_state` : Seed for splitting the data
+    `estimator` : Estimator, optional, default=None
+        An estimator to fit and evaluate
+    `n_features` : int or float, default=1
+        Number of features to select (`0~1` value for proportion)
+    `metric` : Evaluator, optional, default=None
+        Scoring metric for selecting features
+    `test_size` : float, default=0.2
+        Proportional size of the validation set
+    `cv` : int, default=5
+        K-fold size for cross validation (`0` to disable CV)
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `stratify` : bool, default=False
+        Whether to perform stratified split
+    `fold_type` : FoldType, default=KFold
+        Fold type
+    `random_state` : int, optional, default=None
+        Seed for splitting the data
 
     Notes
     -----
-    * An instance of the estimator must be passed to `estimator`
-    * For `metric`, both class or instance are possible
+    - An instance of the estimator must be passed to `estimator`
+    - For `metric`, both class or instance are possible
 
     Examples
     --------
-    >>> sbs = SBS(estimator=AnyEstimator(),
-                  n_features=0.25,
-                  metric=AnyEvaluator,
-                  test_size=0.2,
-                  cv=5,
-                  random_state=None)
+    >>> sbs = SBS(
+            estimator=AnyEstimator(),
+            n_features=0.25,
+            metric=AnyEvaluator,
+            test_size=0.2,
+            cv=5,
+            random_state=None,
+        )
     >>> sbs.fit(X, y)
     >>> Z = sbs.transform(X)
 
@@ -56,15 +67,15 @@ class SBS(Transformer, Transformer.Feature, Supervised):
 
     def __init__(
         self,
-        estimator: Estimator = None,
+        estimator: Estimator | None = None,
         n_features: int | float = 1,
-        metric: Evaluator = None,
+        metric: Evaluator | None = None,
         test_size: float = 0.2,
         cv: int = 5,
         shuffle: bool = True,
         stratify: bool = False,
         fold_type: FoldType = KFold,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimator = estimator
@@ -88,7 +99,7 @@ class SBS(Transformer, Transformer.Feature, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "SBS":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         _, n = X.shape
         self.estimator = Clone(self.estimator).get
 
@@ -197,22 +208,31 @@ class SFS(Transformer, Transformer.Feature, Supervised):
 
     Parameters
     ----------
-    `estimator` : An estimator to fit and evaluate
-    `n_features` : Number of features to select (`0~1` value for proportion)
-    `metric` : Scoring metric for selecting features
-    `test_size` : Proportional size of the validation set
-    `cv` : K-fold size for cross validation (`0` to disable CV)
-    `shuffle` : Whether to shuffle the dataset
-    `stratify` : Whether to perform stratified split
-    `fold_type` : Fold type (Default `KFold`)
-    `random_state` : Seed for splitting the data
+    `estimator` : Estimator, required optional, default=None
+        An estimator to fit and evaluate
+    `n_features` : int or float
+        Number of features to select (`0~1` value for proportion)
+    `metric` : Evaluator, optional, default=None
+        Scoring metric for selecting features
+    `test_size` : float, default=0.2
+        Proportional size of the validation set
+    `cv` : int, default=5
+        K-fold size for cross validation (`0` to disable CV)
+    `shuffle` : bool, defalut=True
+        Whether to shuffle the dataset
+    `stratify` : bool, default=False
+        Whether to perform stratified split
+    `fold_type` : FoldType, default=Kfold
+        Fold type
+    `random_state` : int, optional, default=None
+        Seed for splitting the data
 
     Notes
     -----
-    * An instance of the estimator must be passed to `estimator`
-    * Do not use the estimator for `SFS` if it is supposed to be the
+    - An instance of the estimator must be passed to `estimator`
+    - Do not use the estimator for `SFS` if it is supposed to be the
         main estimator for the model
-    * For `metric`, both class or instance are possible
+    - For `metric`, both class or instance are possible
 
     Examples
     --------
@@ -229,15 +249,15 @@ class SFS(Transformer, Transformer.Feature, Supervised):
 
     def __init__(
         self,
-        estimator: Estimator = None,
+        estimator: Estimator | None = None,
         n_features: int | float = 1,
-        metric: Evaluator = None,
+        metric: Evaluator | None = None,
         test_size: float = 0.2,
         cv: int = 5,
         shuffle: bool = True,
         stratify: bool = False,
         fold_type: FoldType = KFold,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimator = estimator
@@ -261,7 +281,7 @@ class SFS(Transformer, Transformer.Feature, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "SFS":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         _, n = X.shape
         self.estimator = Clone(self.estimator).get
 
@@ -362,14 +382,22 @@ class RFE(Transformer, Transformer.Feature, Supervised):
 
     Parameters
     ----------
-    `estimator` : An estimator to fit and evaluate
-    `n_features` : Number of features to select (`0~1` value for proportion)
-    `metric` : Scoring metric for selecting features
-    `step_size` : Number of features to eliminate in each step
-    `cv` : K-fold size for cross validation (`0` to disable CV)
-    `shuffle` : Whether to shuffle the dataset
-    `fold_type` : Fold type (Default `KFold`)
-    `random_state` : Seed for splitting the data
+    `estimator` : Estimator, required optional, default=None
+        An estimator to fit and evaluate
+    `n_features` : int or float
+        Number of features to select (`0~1` value for proportion)
+    `metric` : Evaluator, optional, default=None
+        Scoring metric for selecting features
+    `step_size` : int, default=1
+        Number of features to eliminate in each step
+    `cv` : int, default=5
+        K-fold size for cross validation (`0` to disable CV)
+    `shuffle` : bool, defalut=True
+        Whether to shuffle the dataset
+    `fold_type` : FoldType, default=Kfold
+        Fold type
+    `random_state` : int, optional, default=None
+        Seed for splitting the data
 
     Notes
     -----
@@ -423,7 +451,7 @@ class RFE(Transformer, Transformer.Feature, Supervised):
         )
         self.check_param_ranges()
 
-    def fit(self, X: Matrix, y: Vector) -> "RFE":
+    def fit(self, X: Matrix, y: Vector) -> Self:
         _, n = X.shape
         self.estimator = Clone(self.estimator).get
 

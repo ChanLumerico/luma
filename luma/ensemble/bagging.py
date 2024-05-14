@@ -1,4 +1,4 @@
-from typing import Any, Dict, Self
+from typing import Any, Self
 import numpy as np
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -28,24 +28,33 @@ class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `base_estimator` : Base estimator for training multiple models
-    (Default `DecisionTreeClassifier`)
-    `n_estimators` : Number of base estimators to fit
-    `max_samples` : Maximum number of data to sample (`0~1` proportion)
-    `max_features` : Maximum number of features to sample (`0~1` proporton)
-    `bootstrap` : Whether to bootstrap data samples
-    `bootstrap_feature`: Whether to bootstrap features
-    `random_state` : Seed for random sampling
-    `**kwargs` : Additional parameters for base estimator (i.e. `max_depth`)
+    `base_estimator` : Estimator, default=DecisionTreeClassifier()
+        Base estimator for training multiple models
+    `n_estimators` : int, default=50
+        Number of base estimators to fit
+    `max_samples` : float or int, default=1.0
+        Maximum number of data to sample (`0~1` proportion)
+    `max_features` : float or int, default=1.0
+        Maximum number of features to sample (`0~1` proporton)
+    `bootstrap` : bool, default=True
+        Whether to bootstrap data samples
+    `bootstrap_feature`: bool, default=False
+        Whether to bootstrap features
+    `random_state` : int, optional, default=None
+        Seed for random sampling
+    `**kwargs` : dict[str, Any]
+        Additional parameters for base estimator (i.e. `max_depth`)
 
     Examples
     --------
-    >>> bag = BaggingClassifier(base_estimator=AnyEstimator(),
-                                n_estimators=100,
-                                max_samples=1.0,
-                                max_features=1.0,
-                                bootstrap=True,
-                                bootstrap_feature=False)
+    >>> bag = BaggingClassifier(
+            base_estimator=AnyEstimator(),
+            n_estimators=100,
+            max_samples=1.0,
+            max_features=1.0,
+            bootstrap=True,
+            bootstrap_feature=False,
+        )
     >>> bag.fit(X, y)
     >>> y_pred = bag.predict(X)
     >>> est = bag[i] # Get i-th base estimator from `bag`
@@ -60,9 +69,9 @@ class BaggingClassifier(Estimator, Estimator.Meta, Supervised):
         max_features: float | int = 1.0,
         bootstrap: bool = True,
         bootstrap_feature: bool = False,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
-        **kwargs: Dict[str, Any],
+        **kwargs: dict[str, Any],
     ) -> None:
         self.base_estimator = base_estimator
         self.n_estimators = n_estimators
@@ -154,24 +163,33 @@ class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `base_estimator` : Base estimator for training multiple models
-    (Default `DecisionTreeRegressor`)
-    `n_estimators` : Number of base estimators to fit
-    `max_samples` : Maximum number of data to sample (`0~1` proportion)
-    `max_features` : Maximum number of features to sample (`0~1` proporton)
-    `bootstrap` : Whether to bootstrap data samples
-    `bootstrap_feature`: Whether to bootstrap features
-    `random_state` : Seed for random sampling
-    `**kwargs` : Additional parameters for base estimator (i.e. `max_depth`)
+    `base_estimator` : Estimator, default=DecisionTreeRegressor()
+        Base estimator for training multiple models
+    `n_estimators` : int, default=50
+        Number of base estimators to fit
+    `max_samples` : float or int, default=1.0
+        Maximum number of data to sample (`0~1` proportion)
+    `max_features` : float or int, default=1.0
+        Maximum number of features to sample (`0~1` proporton)
+    `bootstrap` : bool, default=True
+        Whether to bootstrap data samples
+    `bootstrap_feature`: bool, default=False
+        Whether to bootstrap features
+    `random_state` : int, optional, default=None
+        Seed for random sampling
+    `**kwargs` : dict[str, Any]
+        Additional parameters for base estimator (i.e. `max_depth`)
 
     Examples
     --------
-    >>> bag = BaggingRegressor(base_estimator=AnyEstimator(),
-                               n_estimators=100,
-                               max_samples=1.0,
-                               max_features=1.0,
-                               bootstrap=True,
-                               bootstrap_feature=False)
+    >>> bag = BaggingRegressor(
+            base_estimator=AnyEstimator(),
+            n_estimators=100,
+            max_samples=1.0,
+            max_features=1.0,
+            bootstrap=True,
+            bootstrap_feature=False,
+        )
     >>> bag.fit(X, y)
     >>> y_pred = bag.predict(X)
     >>> est = bag[i] # Get i-th base estimator from `bag`
@@ -186,9 +204,9 @@ class BaggingRegressor(Estimator, Estimator.Meta, Supervised):
         max_features: float | int = 1.0,
         bootstrap: bool = True,
         bootstrap_feature: bool = False,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
-        **kwargs: Dict[str, Any],
+        **kwargs: dict[str, Any],
     ) -> None:
         self.base_estimator = base_estimator
         self.n_estimators = n_estimators

@@ -27,11 +27,16 @@ class PoissonRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `learning_rate` : Step size of the gradient descent update
-    `max_iter` : Number of iteration
-    `l1_ratio` : Balancing parameter of `elastic-net`
-    `alpha` : Regularization strength
-    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
+    `learning_rate` : float, default=0.01
+        Step size of the gradient descent update
+    `max_iter` : int, default=100
+        Number of iteration
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balancing parameter of `elastic-net`
+    `alpha` : float, default=0.01
+        Regularization strength
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularization type
 
     """
 
@@ -41,7 +46,7 @@ class PoissonRegressor(Estimator, Supervised):
         max_iter: int = 100,
         l1_ratio: float = 0.5,
         alpha: float = 0.01,
-        regularization: Literal["l1", "l2", "elastic-net"] = None,
+        regularization: Literal["l1", "l2", "elastic-net"] | None = None,
         verbose: bool = False,
     ) -> None:
         self.learning_rate = learning_rate
@@ -125,12 +130,18 @@ class NegativeBinomialRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `learning_rate` : Step size of the gradient descent update
-    `max_iter` : Number of iteration
-    `alpha` : Regularization strength
-    `l1_ratio` : Balancing parameter of `elastic-net`
-    `phi` : Dispersion parameter
-    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
+    `learning_rate` : float, default=0.01
+        Step size of the gradient descent update
+    `max_iter` : int, default=100
+        Number of iteration
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balancing parameter of `elastic-net`
+    `alpha` : float, default=0.01
+        Regularization strength
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularization type
+    `phi` : float, default=1.0
+        Dispersion parameter
 
     """
 
@@ -229,13 +240,18 @@ class GammaRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `alpha` : Shape parameter of gamma distribution
-    `beta` : Scale parameter of gamma distribution
-    `learning_rate` : Step size of the gradient descent update
-    `max_iter` : Number of iteration
-    `reg_strength` : Regularization strength
-    `l1_ratio` : Balancing parameter of `elastic-net`
-    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
+    `alpha`, `beta` : float, default=1.0
+        Shape parameter of gamma distribution
+    `learning_rate` : float, default=0.01
+        Step size of the gradient descent update
+    `max_iter` : int, default=100
+        Number of iteration
+    `reg_strength` : float, default=0.01
+        Regularization strength
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balancing parameter of `elastic-net`
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularization type
 
     """
 
@@ -341,12 +357,18 @@ class BetaRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `alpha`, `beta` : Shape parameters of beta function
-    `learning_rate` : Step size of the gradient descent update
-    `max_iter` : Number of iteration
-    `reg_strength` : Regularization strength
-    `l1_ratio` : Balacing parameter of `elastic-net`
-    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
+    `alpha`, `beta` : float, default=1.0
+        Shape parameters of beta function
+    `learning_rate` : float, default=1.0
+        Step size of the gradient descent update
+    `max_iter` : int, default=100
+        Number of iteration
+    `reg_strength` : float, default=0.01
+        Regularization strength
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balacing parameter of `elastic-net`
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularization type
 
     """
 
@@ -450,12 +472,18 @@ class InverseGaussianRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `learning_rate` : Step size of the gradient descent update
-    `max_iter` : Number of iteration
-    `phi` : Shape parameter of inverse Gaussian density
-    `l1_ratio` : Balacing parameter of `elastic-net`
-    `alpha` : Regularization strength
-    `regularization` : Regularization type (e.g. `l1`, `l2`, `elastic-net`)
+    `learning_rate` : float, default=0.01
+        Step size of the gradient descent update
+    `max_iter` : int, default=100
+        Number of iteration
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Balancing parameter of `elastic-net`
+    `alpha` : float, default=0.01
+        Regularization strength
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularization type
+    `phi` : float, default=1.0
+        Dispersion parameter
 
     """
 

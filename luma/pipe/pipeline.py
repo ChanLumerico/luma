@@ -23,15 +23,17 @@ class Pipeline(Estimator, Estimator.Meta, Transformer):
 
     Parameters
     ----------
-    `models` : List of models \n
-    You can assign labels to each model by encapsulating the label and the model
-    inside a tuple. \n
-    Otherwise, the name of the model is automatically assigned by default.
+    `models` : list of Tuple[str, Model] or list of Model
+        List of model; You can assign labels to each model by encapsulating the
+        label and the model inside a tuple.
 
-    `param_dict` : Dictionary of parameters for each models \n
-    You must specify the name(or label) of the model and its parameter name
-    in the key of the dictionary. \n
-    e.g. `{'model_name__param_name': value}`
+        Otherwise, the name of the model is automatically assigned by default.
+
+    `param_dict` : Dict[str, Any], default={}
+        Dictionary of parameters for each models
+
+        You must specify the name(or label) of the model and its parameter name
+        in the key of the dictionary. e.g. `{'model_name__param_name': value}`
 
     Examples
     --------
@@ -59,27 +61,24 @@ class Pipeline(Estimator, Estimator.Meta, Transformer):
         @property
         def transformers(self) -> List[Transformer]
         ```
-
     Getting final estimator:
         ```py
         @property
         def estimator(self) -> Estimator
         ```
-
     Getting transformed data:
         ```py
         @property
         def transformed_data(self) -> Tuple[Matrix, Matrix]
         ```
-
     Notes
     -----
-    * To use `Pipeline` with visual methods of `luma.visual`, make sure to
-    transform data using `pipe.transform()` if the pipeline sequence contains
-    transformers
+    - To use `Pipeline` with visual methods of `luma.visual`, make sure to
+        transform data using `pipe.transform()` if the pipeline sequence contains
+        transformers
 
-    * More than one estimator might cause procedural failure
-    * Not all the models are compatible with `Pipeline`
+    - More than one estimator might cause procedural failure
+    - Not all the models are compatible with `Pipeline`
 
     """
 

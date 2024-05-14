@@ -22,17 +22,25 @@ class CrossValidator(Evaluator):
 
     Parameters
     ----------
-    `estimator` : An estimator to validate
-    `metric` : Evaluation metric for validation
-    `cv` : Number of folds in splitting data
-    `fold_type` : Fold type (Default `KFold`)
-    `shuffle` : Whether to shuffle the dataset
-    `random_state` : Seed for random sampling upon splitting data
+    `estimator` : Estimator
+        An estimator to validate
+    `metric` : Evaluator
+        Evaluation metric for validation
+    `cv` : int, default=5
+        Number of folds in splitting data
+    `fold_type` : FoldType, default=KFold
+        Fold type
+    `shuffle` : bool, default=True
+        Whether to shuffle the dataset
+    `random_state` : int, optional, default=None
+        Seed for random sampling upon splitting data
 
     Attributes
     ----------
-    `train_scores_` : List of training scores for each fold
-    `test_scores_` : List of test(validation) scores for each fold
+    `train_scores_` : list
+        List of training scores for each fold
+    `test_scores_` : list
+        List of test(validation) scores for each fold
 
     Methods
     -------
@@ -49,7 +57,7 @@ class CrossValidator(Evaluator):
         cv: int = 5,
         fold_type: FoldType = KFold,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.estimator = estimator

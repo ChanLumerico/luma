@@ -25,12 +25,16 @@ class PerceptronClassifier(Estimator, Supervised):
 
     Parameters
     ----------
-    `learning_rate` : Step size for updating weights
-    `max_iter` : Maximum iteration
-    `regularization` : Regularizing methods (e.g. `l1`, `l2`, `elastic-net`)
-    `alpha` : Regularization strength
-    `l1_ratio` : Ratio of `l1` (Only use when `elastic-net` regularization)
-    `random_state` : Seed for random shuffling during SGD
+    `learning_rate` : float, default=0.01
+        Step size for updating weights
+    `max_iter` : int, default=1000
+        Maximum iteration
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularizing methods
+    `alpha` : float, default=1e-4
+        Regularization strength
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Ratio of L1 regularization (Only used for elastic-net)
 
     """
 
@@ -38,7 +42,7 @@ class PerceptronClassifier(Estimator, Supervised):
         self,
         learning_rate: float = 0.01,
         max_iter: int = 1000,
-        regularization: Literal["l1", "l2", "elastic-net"] = None,
+        regularization: Literal["l1", "l2", "elastic-net"] | None = None,
         alpha: float = 0.0001,
         l1_ratio: float = 0.5,
         random_state: int = None,
@@ -141,9 +145,16 @@ class PerceptronRegressor(Estimator, Supervised):
 
     Parameters
     ----------
-    `learning_rate` : Step size for updating weights
-    `max_iter` : Maximum iteration
-    `random_state` : Seed for random shuffling during SGD
+    `learning_rate` : float, default=0.01
+        Step size for updating weights
+    `max_iter` : int, default=1000
+        Maximum iteration
+    `regularization` : {"l1", "l2", "elastic-net"}, optional, default=None
+        Regularizing methods
+    `alpha` : float, default=1e-4
+        Regularization strength
+    `l1_ratio` : float, default=0.5, range=[0,1]
+        Ratio of L1 regularization (Only used for elastic-net)
 
     """
 

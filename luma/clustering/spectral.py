@@ -33,8 +33,10 @@ class SpectralClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `gamma` : Scaling factor for Gaussian kernel
+    `n_clusters` : int
+        Number of clusters to estimate
+    `gamma` : float, default=1.0
+        Scaling factor for Gaussian kernel
 
     Examples
     --------
@@ -103,9 +105,12 @@ class NormalizedSpectralClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `gamma` : Scaling factor for Gaussian kernel
-    `strategy` : Normalization strategy (e.g. `symmetric`, `random-walk`)
+    `n_clusters` : int
+        Number of clusters to estimate
+    `gamma` : float, default=1.0
+        Scaling factor for Gaussian kernel
+    `strategy` : {"symmetric", "random-walk"}, default="symmetric"
+        Normalization strategy
 
     """
 
@@ -184,12 +189,14 @@ class HierarchicalSpectralClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `method` : Method for hierarchical clustering
-    (e.g. `agglomerative`, `divisive`)
-    `linkage` : Linkage method for `agglomerative` clustering
-    (e.g. `single`, `complete`, `average`, `ward`)
-    `gamma` : Scaling factor for Gaussian kernel
+    `n_clusters` : int
+        Number of clusters to estimate
+    `method` : {"agglomerative", "divisive"}
+        Method for hierarchical clustering
+    `linkage` : {"single", "complete", "average"}, default="single"
+        Linkage method for agglomerative clustering
+    `gamma` : float, default=1.0
+        Scaling factor for Gaussian kernel
 
     """
 
@@ -278,8 +285,10 @@ class AdaptiveSpectralClustering(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `gamma` : Scaling factor for Gaussian kernel
-    `max_clusters` : Upper-bound of the number of clusters to estimate
+    `gamma` : float, default=1.0
+        Scaling factor for Gaussian kernel
+    `max_clusters` : int, default=10
+        Upper-bound of the number of clusters to estimate
 
     """
 

@@ -19,6 +19,17 @@ class ModelPorter:
     automatic naming and enforcing model extension, as well as loading models
     ensuring the correct file extension is used.
 
+    Parameters
+    ----------
+    `model` : Estimator or Transformer
+        A model to port
+    `path` : str
+        Filepath of the model (both for import and export)
+    `filename` : str or {"auto"}, default="auto"
+        Filename of the model
+    `replace` : bool, default=False
+        Whether to replace the existing original file
+
     Methods
     -------
     To save(export) models:

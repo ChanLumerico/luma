@@ -1,9 +1,9 @@
-from typing import Any, Callable, Iterable, Literal, Type, TypeGuard
+from typing import Any, Callable, Iterable, Literal, Self, Type, TypeGuard
 from rich.progress import Progress, BarColumn, TextColumn
 import numpy as np
 
 from luma.interface.exception import UnsupportedParameterError, InvalidRangeError
-from luma.interface.typing import Matrix, Scalar
+from luma.interface.typing import Matrix, Scalar, Vector
 from luma.neural import init
 
 
@@ -27,21 +27,26 @@ class DecisionTreeNode:
 
     Parameters
     ----------
-    `feature_index` : Feature of node
-    `threshold` : Threshold for split point
-    `left` : Left-child node
-    `right` : Right-child node
-    `value` : Most popular label of leaf node
+    `feature_index` : int, optional, default=None
+        Feature of node
+    `threshold` : float, optional, default=None
+        Threshold for split point
+    `left` : Self, optional, default=None
+        Left-child node
+    `right` : Self, optional, default=None
+        Right-child node
+    `value` : Any, optional, default=None
+        Most popular label of leaf node
 
     """
 
     def __init__(
         self,
-        feature_index: int = None,
-        threshold: float = None,
-        left: "DecisionTreeNode" = None,
-        right: "DecisionTreeNode" = None,
-        value: Any = None,
+        feature_index: int | None = None,
+        threshold: float | None = None,
+        left: Self | None = None,
+        right: Self | None = None,
+        value: Any | None = None,
     ) -> None:
         self.feature_index = feature_index
         self.threshold = threshold
@@ -60,8 +65,10 @@ class NearestNeighbors:
 
     Parameters
     ----------
-    `data` : Data to be handled
-    `n_neighbors` : Number of nearest neighbors
+    `data` : Matrix
+        Data to be handled
+    `n_neighbors` : int
+        Number of nearest neighbors
 
     """
 
@@ -94,15 +101,19 @@ class SilhouetteUtil:
 
     Parameters
     ----------
-    `idx` : Index of a single data point
-    `cluster` : Current cluster number
-    `labels` : Labels assigned by clustering estimator
-    `distances` : Square-form distance matrix of the data
+    `idx` : int
+        Index of a single data point
+    `cluster` : int
+        Current cluster number
+    `labels` : Vector
+        Labels assigned by clustering estimator
+    `distances` : Matrix
+        Square-form distance matrix of the data
 
     """
 
     def __init__(
-        self, idx: int, cluster: int, labels: Matrix, distances: Matrix
+        self, idx: int, cluster: int, labels: Vector, distances: Matrix
     ) -> None:
         self.idx = idx
         self.cluster = cluster
@@ -135,12 +146,14 @@ class DBUtil:
 
     Parameters
     ----------
-    `data` : Original data
-    `labels` : Labels assigned by clustering estimator
+    `data` : Matrix
+        Original data
+    `labels` : Vector
+        Labels assigned by clustering estimator
 
     """
 
-    def __init__(self, data: Matrix, labels: Matrix) -> None:
+    def __init__(self, data: Matrix, labels: Vector) -> None:
         self.data = data
         self.labels = labels
 
@@ -187,6 +200,19 @@ class KernelUtil:
     This class facilitates transferring kernel type strings
     into actual specific kernel function.
 
+    Parameters
+    ----------
+    `kernel` : FuncType
+        Type of kernel
+    `alpha` : float, default=1.0
+        Shape parameter for RBF and sigmoid kernels
+     `gamma` : float, default=0.0
+        Shape parameter of Gaussian curve for RBF kernel
+    `coef` : float, default=1.0
+        Coefficient for polynomial and sigmoid kernel
+    `deg` : int, default=3
+        Polynomial Degree for polynomial kernel
+
     Example
     -------
     >>> util = KernelUtil(kernel='rbf', **params)
@@ -211,7 +237,7 @@ class KernelUtil:
 
     def __init__(
         self,
-        kernel: str,
+        kernel: FuncType,
         alpha: float = 1.0,
         gamma: float = 1.0,
         coef: float = 0.0,
@@ -281,8 +307,10 @@ class Clone:
 
     Parameters
     ----------
-    `model` : The model to be cloned
-    `pass_fitted` : Whether to copy the fitted state of the original model
+    `model` : object, optional, default=None
+        The model to be cloned
+    `pass_fitted` : bool, default=True
+        Whether to copy the fitted state of the original model
 
     Examples
     --------
@@ -291,7 +319,11 @@ class Clone:
 
     """
 
-    def __init__(self, model: object = None, pass_fitted: bool = False) -> None:
+    def __init__(
+        self,
+        model: object | None = None,
+        pass_fitted: bool = False,
+    ) -> None:
         self.model = model
         self.pass_fitted = pass_fitted
 
@@ -322,9 +354,11 @@ class ParamRange:
 
     Parameters
     ----------
-    `param_range` : An interval of a parameter (customizable)
-    `param_type` : Data type of a parameter to be forced to have
-    (`None` for both `int` and `float` types)
+    `param_range` : RangeStr
+        An interval of a parameter (customizable)
+    `param_type` : Type[Scalar], optional, default=None
+        Data type of a parameter to be forced to have
+        (None for both `int` and `float` types)
 
     Method
     ------
@@ -424,7 +458,8 @@ class InitUtil:
 
     Parameters
     ----------
-    `initializer` : Name of an initializer (`InitStr`)
+    `initializer` : InitStr, optional, default=True
+        Name of an initializer
 
     Properties
     ----------
@@ -457,6 +492,13 @@ class TrainProgress:
 
     It facilitates the progress bar from the module `rich`, which provides
     well-structured progress bar with colored indications for better readability.
+
+    Parameters
+    ----------
+    `n_iter` : int
+        Number of iterations(or epochs)
+    `bar_width` : int, default=50
+        Width size of a progress bar
 
     Property
     --------

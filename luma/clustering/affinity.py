@@ -27,23 +27,29 @@ class AffinityPropagation(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `max_iter` : Maximum iterations for message exchange
-    `damping` : Balancing factor for ensuring numerical stability and convergence
-    `tol` : Early-stopping threshold
-    `preference` : Parameter which determines the selectivity of choosing exemplars
+    `max_iter` : int, default=100
+        Maximum iterations for message exchange
+    `damping` : float, default=0.7
+        Balancing factor for ensuring numerical stability and convergence
+    `preference` : Scalar or Vector or {"median", "min"}, default="median"
+        Parameter which determines the selectivity of choosing exemplars
+    `tol` : float, optional, default=None
+        Early-stopping threshold
 
-    * Self-Similarity Setting:
+    Notes
+    -----
+    - Self-Similarity Setting:
         The preference value represents the "self-similarity" of each data point.
         It is the value on the diagonal of the similarity matrix, which influences
         how likely a data point is to be chosen as an exemplar (a cluster center).
 
-    * Influencing Cluster Count:
+    - Influencing Cluster Count:
         A higher preference value suggests a greater likelihood for a data point to
         become an exemplar, potentially leading to more clusters. Conversely, a lower
         preference value tends to produce fewer clusters, as fewer points are strong
         candidates for being exemplars.
 
-    * Default Setting:
+    - Default Setting:
         If not explicitly set, the preference is often chosen automatically based on
         the input data. Common practices include setting it to the median or mean of
         the similarity values.
@@ -55,7 +61,7 @@ class AffinityPropagation(Estimator, Unsupervised):
         max_iter: int = 100,
         damping: float = 0.7,
         preference: Scalar | Vector | Literal["median", "min"] = "median",
-        tol: float = None,
+        tol: float | None = None,
         verbose: bool = False,
     ) -> None:
         self.max_iter = max_iter
@@ -190,12 +196,20 @@ class AdaptiveAffinityPropagation(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `max_iter` : Maximum iterations for message exchange
-    `damping` : Balancing factor for ensuring numerical stability and convergence
-    `tol` : Early-stopping threshold
-    `lambda_param` : Preference updating factor
-    `preference` : Parameter which determines the selectivity of choosing exemplars
-    (more details in `AffinityPropagation`)
+    `max_iter` : int, default=100
+        Maximum iterations for message exchange
+    `damping` : float, default=0.7
+        Balancing factor for ensuring numerical stability and convergence
+    `preference` : Scalar or Vector or {"median", "min"}, default="median"
+        Parameter which determines the selectivity of choosing exemplars
+    `lambda_param` : float, default=0.5
+        Preference updating factor
+    `tol` : float, optional, default=None
+        Early-stopping threshold
+
+    See Also
+    --------
+    For more detailed explanation of `preference`, refer to `AffinityPropagation`.
 
     """
 
@@ -205,7 +219,7 @@ class AdaptiveAffinityPropagation(Estimator, Unsupervised):
         damping: float = 0.7,
         preference: Scalar | Vector | Literal["median", "min"] = "median",
         lambda_param: float = 0.5,
-        tol: float = None,
+        tol: float | None = None,
         verbose: bool = False,
     ) -> None:
         self.max_iter = max_iter
@@ -354,12 +368,22 @@ class KernelAffinityPropagation(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `max_iter` : Maximum iterations for message exchange
-    `damping` : Balancing factor for ensuring numerical stability and convergence
-    `preference` : Parameter which determines the selectivity of choosing exemplars
-    `tol` : Early-stopping threshold
-    `kernel`: Kernel method (`rbf`, `sigmoid`, `laplacian` are supported)
-    `gamma` : Scaling factor for kernel function
+    `max_iter` : int, default=1000
+        Maximum iterations for message exchange
+    `damping` : float, default=0.7
+        Balancing factor for ensuring numerical stability and convergence
+    `preference` : Scalar or Vector or {"median", "min"}, default="median"
+        Parameter which determines the selectivity of choosing exemplars
+    `tol` : float, optional, default=None
+        Early-stopping threshold
+    `kernel`: FuncType, default="rbf"
+        Kernel method (`rbf`, `sigmoid`, `laplacian` are supported)
+    `gamma` : float, default=1.0
+        Scaling factor for kernel function
+
+    See Also
+    --------
+    For more detailed explanation of `preference`, refer to `AffinityPropagation`.
 
     """
 
@@ -368,7 +392,7 @@ class KernelAffinityPropagation(Estimator, Unsupervised):
         max_iter: int = 100,
         damping: float = 0.7,
         preference: Scalar | Vector | Literal["median", "min"] = "median",
-        tol: float = None,
+        tol: float | None = None,
         kernel: KernelUtil.FuncType = "rbf",
         gamma: float = 1.0,
         verbose: bool = False,

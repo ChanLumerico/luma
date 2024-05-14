@@ -36,6 +36,7 @@ class ModelBase(Luma):
     ```
     This method iterates over the given keyword arguments and sets the
     attributes of the instance accordingly.
+
     If an attribute corresponding to a given keyword does not exist,
     a message is printed indicating that the attribute was not found.
 

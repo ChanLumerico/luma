@@ -21,10 +21,14 @@ class GaussianMixture(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `max_iter` : Maximum amount of iteration
-    `tol` : Tolerance for early convergence
-    `random_state` : Seed for random permutation
+    `n_clusters` : int
+        Number of clusters to estimate
+    `max_iter` : int, default=100
+        Maximum amount of iteration
+    `tol` : float, default=1e-5
+        Tolerance for early convergence
+    `random_state` : int, optional, default=None
+        Seed for random permutation
 
     """
 
@@ -33,7 +37,7 @@ class GaussianMixture(Estimator, Unsupervised):
         n_clusters: int,
         max_iter: int = 100,
         tol: float = 1e-5,
-        random_state: int = None,
+        random_state: int | None = None,
         verbose: bool = False,
     ) -> None:
         self.n_clusters = n_clusters
@@ -136,9 +140,12 @@ class MultinomialMixture(Estimator, Unsupervised):
 
     Parameters
     ----------
-    `n_clusters` : Number of clusters to estimate
-    `max_iter` : Maximum amount of iteration
-    `tol` : Tolerance for early convergence
+    `n_clusters` : int
+        Number of clusters to estimate
+    `max_iter` : int, default=100
+        Maximum amount of iteration
+    `tol` : float, default=1e-5
+        Tolerance for early convergence
 
     """
 

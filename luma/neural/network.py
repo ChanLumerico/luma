@@ -40,24 +40,38 @@ class SimpleMLP(_simple._SimpleMLP):
     ```
     Parameters
     ----------
-    `in_features` : Number of input features
-    `out_features` : Number of output features
-    `hidden_layers` : Numbers of the features in hidden layers
-    (`int` for a single layer)
-    `batch_size` : Size of a single mini-batch
-    `n_epochs` : Number of epochs for training
-    `learning_rate` : Step size during optimization process
-    `valid_size` : Fractional size of validation set
-    `initializer` : Type of weight initializer
-    `activation` : Type of activation function
-    `optimizer` : An optimizer used in weight update process
-    `loss` : Type of loss function
-    `dropout_rate` : Dropout rate
-    `lambda_` : L2 regularization strength
-    `early_stopping` : Whether to early-stop the training when the valid
-    score stagnates
-    `patience` : Number of epochs to wait until early-stopping
-    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
+    `in_features` : int
+        Number of input features
+    `out_features` : int
+        Number of output features
+    `hidden_layers` : int of list of int
+        Numbers of the features in hidden layers (int for a single layer)
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.001
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `activation` : FuncType
+        Type of activation function
+    `optimizer` : Optimizer
+        An optimizer used in weight update process
+    `loss` : Loss
+        Type of loss function
+    `dropout_rate` : float, default=0.5
+        Dropout rate
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
 
     Notes
     -----
@@ -75,7 +89,7 @@ class SimpleMLP(_simple._SimpleMLP):
         out_features: int,
         hidden_layers: list[int] | int,
         *,
-        activation: Activation,
+        activation: Activation.FuncType,
         optimizer: Optimizer,
         loss: Loss,
         initializer: InitUtil.InitStr = None,
@@ -88,7 +102,7 @@ class SimpleMLP(_simple._SimpleMLP):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False
     ) -> None:
         super().__init__(
@@ -131,34 +145,60 @@ class SimpleCNN(_simple._SimpleCNN):
     ```
     Parameters
     ----------
-    `in_channels_list` : List of input channels for convolutional blocks
-    `in_features_list` : List of input features for dense blocks
-    `out_channels` : Output channels for the last convolutional layer
-    `out_features` : Output features for the last dense layer
-    `filter_size` : Size of filters for convolution layers
-    `activation` : Type of activation function
-    `optimizer` : Type of optimizer for weight update
-    `loss` : Type of loss function
-    `initializer` : Type of weight initializer (`None` for dense layers)
-    `padding` : Padding strategy (default `same`)
-    `stride` : Step size of filters during convolution
-    `do_batch_norm` : Whether to perform batch normalization (default `True`)
-    `momentum` : Momentum for batch normalization
-    `do_pooling` : Whether to perform pooling
-    `pool_filter_size` : Size of filters for pooling layers
-    `pool_stride` : Step size of filters during pooling
-    `pool_mode` : Pooling strategy (default `max`)
-    `do_dropout` : Whether to perform dropout
-    `dropout_rate` : Dropout rate
-    `batch_size` : Size of a single mini-batch
-    `n_epochs` : Number of epochs for training
-    `learning_rate` : Step size during optimization process
-    `valid_size` : Fractional size of validation set
-    `lambda_` : L2 regularization strength
-    `early_stopping` : Whether to early-stop the training when the valid
-    score stagnates
-    `patience` : Number of epochs to wait until early-stopping
-    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
+    `in_channels_list` : int or list of int
+        List of input channels for convolutional blocks
+    `in_features_list` : int or list of int
+        List of input features for dense blocks
+    `out_channels` : int
+        Output channels for the last convolutional layer
+    `out_features` : int
+        Output features for the last dense layer
+    `filter_size` : int
+        Size of filters for convolution layers
+    `activation` : FuncType
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer (None for dense layers)
+    `padding` : {"same", "valid"}, default="same"
+        Padding strategy
+    `stride` : int, default=1
+        Step size of filters during convolution
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+    `do_pooling` : bool, default=True
+        Whether to perform pooling
+    `pool_filter_size` : int, default=2
+        Size of filters for pooling layers
+    `pool_stride` : int, default=2
+        Step size of filters during pooling
+    `pool_mode` : {"max", "avg"}, default="max"
+        Pooling strategy (default `max`)
+    `do_dropout` : bool, default=True
+        Whether to perform dropout
+    `dropout_rate` : float, default=0.5
+        Dropout rate
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.001
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
 
     Notes
     -----
@@ -208,7 +248,7 @@ class SimpleCNN(_simple._SimpleCNN):
         out_features: int,
         *,
         filter_size: int,
-        activation: Activation,
+        activation: Activation.FuncType,
         optimizer: Optimizer,
         loss: Loss,
         initializer: InitUtil.InitStr = None,
@@ -230,7 +270,7 @@ class SimpleCNN(_simple._SimpleCNN):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False
     ) -> None:
         super().__init__(
@@ -302,20 +342,32 @@ class LeNet_1(_lenet._LeNet_1):
     ```
     Parameters
     ----------
-    `activation` : Type of activation function (Default `Tanh`)
-    `optimizer` : Type of optimizer for weight update
-    `loss` : Type of loss function (Default `CrossEntropy`)
-    `initializer` : Type of weight initializer (`None` for dense layers)
-    `out_features` : Number of output features (Default `10`)
-    `batch_size` : Size of a single mini-batch
-    `n_epochs` : Number of epochs for training
-    `learning_rate` : Step size during optimization process
-    `valid_size` : Fractional size of validation set
-    `lambda_` : L2 regularization strength
-    `early_stopping` : Whether to early-stop the training when the valid
-    score stagnates
-    `patience` : Number of epochs to wait until early-stopping
-    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
+    `activation` : FuncType, default=Activation.Tanh()
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=10
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.001
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
 
     References
     ----------
@@ -327,7 +379,7 @@ class LeNet_1(_lenet._LeNet_1):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -339,7 +391,7 @@ class LeNet_1(_lenet._LeNet_1):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
@@ -392,20 +444,32 @@ class LeNet_4(_lenet._LeNet_4):
     ```
     Parameters
     ----------
-    `activation` : Type of activation function (Default `Tanh`)
-    `optimizer` : Type of optimizer for weight update
-    `loss` : Type of loss function (Default `CrossEntropy`)
-    `initializer` : Type of weight initializer (`None` for dense layers)
-    `out_features` : Number of output features (Default `10`)
-    `batch_size` : Size of a single mini-batch
-    `n_epochs` : Number of epochs for training
-    `learning_rate` : Step size during optimization process
-    `valid_size` : Fractional size of validation set
-    `lambda_` : L2 regularization strength
-    `early_stopping` : Whether to early-stop the training when the valid
-    score stagnates
-    `patience` : Number of epochs to wait until early-stopping
-    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
+    `activation` : FuncType, default=Activation.Tanh()
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=10
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.001
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
 
     References
     ----------
@@ -416,7 +480,7 @@ class LeNet_4(_lenet._LeNet_4):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -429,7 +493,7 @@ class LeNet_4(_lenet._LeNet_4):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
@@ -484,20 +548,32 @@ class LeNet_5(_lenet._LeNet_5):
     ```
     Parameters
     ----------
-    `activation` : Type of activation function (Default `Tanh`)
-    `optimizer` : Type of optimizer for weight update
-    `loss` : Type of loss function (Default `CrossEntropy`)
-    `initializer` : Type of weight initializer (`None` for dense layers)
-    `out_features` : Number of output features (Default `10`)
-    `batch_size` : Size of a single mini-batch
-    `n_epochs` : Number of epochs for training
-    `learning_rate` : Step size during optimization process
-    `valid_size` : Fractional size of validation set
-    `lambda_` : L2 regularization strength
-    `early_stopping` : Whether to early-stop the training when the valid
-    score stagnates
-    `patience` : Number of epochs to wait until early-stopping
-    `shuffle` : Whethter to shuffle the data at the beginning of every epoch
+    `activation` : FuncType, default=Activation.Tanh()
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=10
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.001
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
 
     References
     ----------
@@ -508,7 +584,7 @@ class LeNet_5(_lenet._LeNet_5):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -521,7 +597,7 @@ class LeNet_5(_lenet._LeNet_5):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
@@ -584,20 +660,32 @@ class AlexNet(_imagenet._AlexNet):
     ```
     Parameters
     ----------
-    `activation` : Type of activation function (Default `ReLU`)
-    `optimizer` : Type of optimizer for weight update
-    `loss` : Type of loss function (Default `CrossEntropy`)
-    `initializer` : Type of weight initializer (Default None)
-    `out_features` : Number of output features (Default `1000`)
-    `batch_size` : Size of a single mini-batch
-    `n_epochs` : Number of epochs for training
-    `learning_rate` : Step size during optimization process
-    `valid_size` : Fractional size of validation set
-    `lambda_` : L2 regularization strength
-    `early_stopping` : Whether to early-stop the training when the valid
-    score stagnates
-    `patience` : Number of epochs to wait until early-stopping
-    `shuffle` : Whether to shuffle the data at the beginning of every epoch
+    `activation` : FuncType, default=Activation.ReLU()
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
 
     References
     ----------
@@ -610,7 +698,7 @@ class AlexNet(_imagenet._AlexNet):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation = Activation.ReLU(),
+        activation: Activation.FuncType = Activation.ReLU(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
@@ -623,7 +711,7 @@ class AlexNet(_imagenet._AlexNet):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
@@ -687,20 +775,32 @@ class ZFNet(_imagenet._ZFNet):
     ```
     Parameters
     ----------
-    `activation` : Type of activation function (Default `ReLU`)
-    `optimizer` : Type of optimizer for weight update
-    `loss` : Type of loss function (Default `CrossEntropy`)
-    `initializer` : Type of weight initializer (Default None)
-    `out_features` : Number of output features (Default `1000`)
-    `batch_size` : Size of a single mini-batch
-    `n_epochs` : Number of epochs for training
-    `learning_rate` : Step size during optimization process
-    `valid_size` : Fractional size of validation set
-    `lambda_` : L2 regularization strength
-    `early_stopping` : Whether to early-stop the training when the valid
-    score stagnates
-    `patience` : Number of epochs to wait until early-stopping
-    `shuffle` : Whether to shuffle the data at the beginning of every epoch
+    `activation` : FuncType, default=Activation.ReLU()
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
 
     References
     ----------
@@ -712,7 +812,7 @@ class ZFNet(_imagenet._ZFNet):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation = Activation.ReLU(),
+        activation: Activation.FuncType = Activation.ReLU(),
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
@@ -725,7 +825,7 @@ class ZFNet(_imagenet._ZFNet):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(

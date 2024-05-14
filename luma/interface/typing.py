@@ -111,7 +111,7 @@ class Scalar:
     """
 
     def __new__(cls, value: int | float) -> Self:
-        return float(value)
+        return value
 
 
 class ClassType:
@@ -126,10 +126,10 @@ class ClassType:
 
     Decorator Factories
     -------------------
-    - `non_instantiable` : Makes a class non-instantiable.
-
-    - `private` : Makes a class private; accesses are restricted
-                  outside its module.
+    `non_instantiable` : callable
+        Makes a class non-instantiable.
+    `private` : callable
+        Makes a class private; accesses are restricted outside its module.
 
     """
 

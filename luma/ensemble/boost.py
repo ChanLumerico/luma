@@ -36,11 +36,14 @@ class AdaBoostClassifier(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `base_estimator` : Base est for training multiple models
-    (Default `DecisionTreeClassifier`)
-    `n_estimators` : Number of base estimators to fit
-    `learning_rate` : Step size of class weights(`alpha`) update
-    `**kwargs` : Additional parameters for base est (i.e. `max_depth`)
+    `base_estimator` : Estimator, default=DecisionTreeClassifier()
+        Base est for training multiple models
+    `n_estimators` : int, default=50
+        Number of base estimators to fit
+    `learning_rate` : float, default=1.0
+        Step size of class weights(`alpha`) update
+    `**kwargs` : dict[str, Any]
+        Additional parameters for base est (i.e. `max_depth`)
 
     Examples
     --------
@@ -162,12 +165,16 @@ class AdaBoostRegressor(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `base_estimator` : Base est for training multiple models
-    (Default `DecisionTreeRegressor`)
-    `n_estimators` : Number of base estimators to fit
-    `learning_rate` : Step size of class weights(`alpha`) update
-    `loss` : Type of loss function (e.g. `linear`, `square`, `exp`)
-    `**kwargs` : Additional parameters for base est (i.e. `max_depth`)
+    `base_estimator` : Estimator, default=DecisionTreeRegressor()
+        Base est for training multiple models
+    `n_estimators` : int, default=50
+        Number of base estimators to fit
+    `learning_rate` : float, default=1.0
+        Step size of class weights(`alpha`) update
+    `loss` : {"linear", "square", "exp"}, default="linear"
+        Type of loss function
+    `**kwargs` : dict[str, Any]
+        Additional parameters for base est (i.e. `max_depth`)
 
     Examples
     --------
@@ -297,17 +304,21 @@ class GradientBoostingClassifier(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `base_estimator` : Base est for training multiple models
-    (Default `DecisionTreeRegressor`)
-    `n_estimators` : Number of boosting stages to be run
-    `learning_rate` : Shrinking factor of the contribution of each est
-    `subsample` : Fraction of samples to be used for fitting each est
-    `**kwargs` : Additional parameters for base est (i.e. `max_depth`)
+    `base_estimator` : Estimator, default=DecisionTreeRegressor()
+        Base est for training multiple models
+    `n_estimators` : int, default=50
+        Number of boosting stages to be run
+    `learning_rate` : float, default=0.01
+        Shrinking factor of the contribution of each est
+    `subsample` : float, default=1.0, range=[0,1]
+        Fraction of samples to be used for fitting each est
+    `**kwargs` : dict[str, Any]
+        Additional parameters for base est (i.e. `max_depth`)
 
     Notes
     -----
     - Upon using `__getitem__`, it returns a list of base estimators
-    of the passed class index:
+        of the passed class index:
 
         ```py
         gb_model = GradientBoostingClassifier(...)
@@ -427,16 +438,20 @@ class GradientBoostingRegressor(Estimator, Estimator.Meta, Supervised):
 
     Parameters
     ----------
-    `base_estimator` : Base est for training multiple models
-    (Default `DecisionTreeRegressor`)
-    `n_estimators` : Number of boosting stages to be run
-    `learning_rate` : Rate of contribution of each est
-    `subsample` : Fraction of samples to be used for fitting each est
-    `loss` : Type of loss function (Default `mse`)
-    `delta` : Balancing factor between `mse` and `mae`
-    `verbose` : Whether to output progress messages
-    `**kwargs` : Additional parameters for the base est
-    (i.e. `max_depth`)
+    `base_estimator` : Estimator, default=DecisionTreeRegressor()
+        Base est for training multiple models
+    `n_estimators` : int, default=50
+        Number of boosting stages to be run
+    `learning_rate` : float, default=0.01
+        Rate of contribution of each est
+    `subsample` : float, default=1.0, range=[0,1]
+        Fraction of samples to be used for fitting each est
+    `loss` : {"mse", "mae", "huber"}, default="mse"
+        Type of loss function
+    `delta` : float, default=1.0
+        Balancing factor between `mse` and `mae`
+    `**kwargs` : dict[str, Any]
+        Additional parameters for the base estimator (i.e. `max_depth`)
 
     """
 
