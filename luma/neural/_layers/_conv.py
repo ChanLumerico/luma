@@ -55,6 +55,7 @@ class _Conv1D(Layer):
         )
         self.check_param_ranges()
 
+    @Tensor.force_dim(3)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         _ = is_train
         self.input_ = X
@@ -89,6 +90,7 @@ class _Conv1D(Layer):
         out += self.biases_[:, :, np.newaxis]
         return out
 
+    @Tensor.force_dim(3)
     def backward(self, d_out: Tensor) -> Tensor:
         X = self.input_
         batch_size, channels, width = X.shape
@@ -194,6 +196,7 @@ class _Conv2D(Layer):
         )
         self.check_param_ranges()
 
+    @Tensor.force_dim(4)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         _ = is_train
         self.input_ = X
@@ -241,6 +244,7 @@ class _Conv2D(Layer):
         out += self.biases_[:, :, np.newaxis, np.newaxis]
         return out
 
+    @Tensor.force_dim(4)
     def backward(self, d_out: Tensor) -> Tensor:
         X = self.input_
         batch_size, channels, height, width = X.shape
@@ -360,6 +364,7 @@ class _Conv3D(Layer):
         )
         self.check_param_ranges()
 
+    @Tensor.force_dim(5)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         _ = is_train
         self.input_ = X
@@ -412,6 +417,7 @@ class _Conv3D(Layer):
         out += self.biases_[:, :, np.newaxis, np.newaxis, np.newaxis]
         return out
 
+    @Tensor.force_dim(5)
     def backward(self, d_out: Tensor) -> Tensor:
         X = self.input_
         batch_size, channels, depth, height, width = X.shape

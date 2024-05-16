@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Any, Callable, NoReturn, Self, Type, TypeVar
+from typing import Any, Callable, Generic, NoReturn, Self, Tuple, Type, TypeVar
 import sys
 import numpy as np
 
@@ -12,6 +12,10 @@ __all__ = (
     "Scalar",
     "ClassType",
 )
+
+
+T = TypeVar("T", bound=type)
+D = TypeVar("D", bound=int)
 
 
 class TensorLike(np.ndarray):
@@ -77,7 +81,7 @@ class Vector(TensorLike):
         return obj
 
 
-class Tensor(TensorLike):
+class Tensor(TensorLike, Generic[D]):
     """
     Internal class for tensors(>=3D-arrray) that extends `TensorLike`.
 
@@ -98,6 +102,33 @@ class Tensor(TensorLike):
         else:
             obj = array_like
         return obj
+
+    @classmethod
+    def force_dim(cls, *dim_consts: int) -> Callable:
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            @wraps(func)
+            def wrapper(self, *args: Any, **kwargs: Any) -> Any:
+                arg_names = func.__code__.co_varnames
+                all_args = {**dict(zip(arg_names, (self,) + args)), **kwargs}
+
+                for i, n_dim in enumerate(dim_consts):
+                    param_name = arg_names[i + 1]
+
+                    if param_name in all_args:
+                        tensor = all_args[param_name]
+                        if not isinstance(tensor, (Tensor, np.ndarray)):
+                            raise TypeError(f"'{param_name}' must be of type Tensor.")
+                        if tensor.ndim != n_dim:
+                            raise ValueError(
+                                f"'{param_name}' must be {n_dim}D-tensor",
+                                +f" got {tensor.ndim}D-tensor.",
+                            )
+
+                return func(self, *args, **kwargs)
+
+            return wrapper
+
+        return decorator
 
 
 class Scalar:
@@ -130,11 +161,9 @@ class ClassType:
 
     """
 
-    T = TypeVar("T", bound=type)
-
     @classmethod
     def non_instantiable(cls) -> Callable:
-        def decorator(cls: Type[cls.T]) -> Type[cls.T]:
+        def decorator(cls: Type[T]) -> Type[T]:
             def wrapper(*args, **kwargs) -> NoReturn:
                 args, kwargs
                 raise TypeError(
@@ -148,7 +177,7 @@ class ClassType:
 
     @classmethod
     def private(cls) -> Callable:
-        def decorator(cls: Type[cls.T]) -> Type[cls.T]:
+        def decorator(cls: Type[T]) -> Type[T]:
 
             @wraps(cls, updated=())
             class PrivateClassWrapper(cls):

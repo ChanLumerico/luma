@@ -53,12 +53,14 @@ class _Dropout1D(Layer):
         self.set_param_ranges({"dropout_rate": ("0,1", None)})
         self.check_param_ranges()
 
+    @Tensor.force_dim(3)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         if is_train:
             self.mask_ = self.rs_.rand(*X.shape[:2], 1) < (1 - self.dropout_rate)
             return X * self.mask_ / (1 - self.dropout_rate)
         return X
 
+    @Tensor.force_dim(3)
     def backward(self, d_out: Tensor) -> Tensor:
         if self.mask_ is not None:
             return d_out * self.mask_ / (1 - self.dropout_rate)
@@ -83,12 +85,14 @@ class _Dropout2D(Layer):
         self.set_param_ranges({"dropout_rate": ("0,1", None)})
         self.check_param_ranges()
 
+    @Tensor.force_dim(4)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         if is_train:
             self.mask_ = self.rs_.rand(*X.shape[:2], 1, 1) < (1 - self.dropout_rate)
             return X * self.mask_ / (1 - self.dropout_rate)
         return X
 
+    @Tensor.force_dim(4)
     def backward(self, d_out: Tensor) -> Tensor:
         if self.mask_ is not None:
             return d_out * self.mask_ / (1 - self.dropout_rate)
@@ -113,12 +117,14 @@ class _Dropout3D(Layer):
         self.set_param_ranges({"dropout_rate": ("0,1", None)})
         self.check_param_ranges()
 
+    @Tensor.force_dim(5)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         if is_train:
             self.mask_ = self.rs_.rand(*X.shape[:2], 1, 1, 1) < (1 - self.dropout_rate)
             return X * self.mask_ / (1 - self.dropout_rate)
         return X
 
+    @Tensor.force_dim(5)
     def backward(self, d_out: Tensor) -> Tensor:
         if self.mask_ is not None:
             return d_out * self.mask_ / (1 - self.dropout_rate)

@@ -29,6 +29,7 @@ class _Pool1D(Layer):
         )
         self.check_param_ranges()
 
+    @Tensor.force_dim(3)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         _ = is_train
         self.input_ = X
@@ -50,6 +51,7 @@ class _Pool1D(Layer):
 
         return out
 
+    @Tensor.force_dim(3)
     def backward(self, d_out: Tensor) -> Tensor:
         X = self.input_
         _, _, out_width = d_out.shape
@@ -103,6 +105,7 @@ class _Pool2D(Layer):
         )
         self.check_param_ranges()
 
+    @Tensor.force_dim(4)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         _ = is_train
         self.input_ = X
@@ -126,6 +129,7 @@ class _Pool2D(Layer):
 
         return out
 
+    @Tensor.force_dim(4)
     def backward(self, d_out: Tensor) -> Tensor:
         X = self.input_
         _, _, out_height, out_width = d_out.shape
@@ -186,6 +190,7 @@ class _Pool3D(Layer):
         )
         self.check_param_ranges()
 
+    @Tensor.force_dim(5)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         _ = is_train
         self.input_ = X
@@ -221,6 +226,7 @@ class _Pool3D(Layer):
 
         return out
 
+    @Tensor.force_dim(5)
     def backward(self, d_out: Tensor) -> Tensor:
         X = self.input_
         _, _, out_depth, out_height, out_width = d_out.shape

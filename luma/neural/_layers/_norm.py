@@ -33,6 +33,7 @@ class _BatchNorm1D(Layer):
         self.running_mean = np.zeros((1, in_features, 1))
         self.running_var = np.ones((1, in_features, 1))
 
+    @Tensor.force_dim(3)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         if is_train:
             batch_mean = np.mean(X, axis=(0, 2), keepdims=True)
@@ -54,6 +55,7 @@ class _BatchNorm1D(Layer):
         out = self.weights_[0] * self.X_norm + self.weights_[1]
         return out
 
+    @Tensor.force_dim(3)
     def backward(self, d_out: Tensor) -> Tensor:
         batch_size, _, width = d_out.shape
 
@@ -99,6 +101,7 @@ class _BatchNorm2D(Layer):
         self.running_mean = np.zeros((1, in_features, 1, 1))
         self.running_var = np.ones((1, in_features, 1, 1))
 
+    @Tensor.force_dim(4)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         if is_train:
             batch_mean = np.mean(X, axis=(0, 2, 3), keepdims=True)
@@ -120,6 +123,7 @@ class _BatchNorm2D(Layer):
         out = self.weights_[0] * self.X_norm + self.weights_[1]
         return out
 
+    @Tensor.force_dim(4)
     def backward(self, d_out: Tensor) -> Tensor:
         batch_size, _, height, width = d_out.shape
         dX_norm = d_out * self.weights_[0]
@@ -164,6 +168,7 @@ class _BatchNorm3D(Layer):
         self.running_mean = np.zeros((1, in_features, 1, 1, 1))
         self.running_var = np.ones((1, in_features, 1, 1, 1))
 
+    @Tensor.force_dim(5)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
         if is_train:
             batch_mean = np.mean(X, axis=(0, 2, 3, 4), keepdims=True)
@@ -185,6 +190,7 @@ class _BatchNorm3D(Layer):
         out = self.weights_[0] * self.X_norm + self.weights_[1]
         return out
 
+    @Tensor.force_dim(5)
     def backward(self, d_out: Tensor) -> Tensor:
         batch_size, _, depth, height, width = d_out.shape
 
