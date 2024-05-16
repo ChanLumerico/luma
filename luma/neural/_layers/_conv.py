@@ -20,9 +20,9 @@ class _Conv1D(Layer):
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         lambda_: float = 0.0,
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super().__init__()
         self.in_channels = in_channels
@@ -158,9 +158,9 @@ class _Conv2D(Layer):
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         lambda_: float = 0.0,
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super().__init__()
         self.in_channels = in_channels
@@ -323,9 +323,9 @@ class _Conv3D(Layer):
         stride: int = 1,
         padding: Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         lambda_: float = 0.0,
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super().__init__()
         self.in_channels = in_channels

@@ -92,7 +92,7 @@ class ConvBlock1D(Sequential):
         pool_filter_size: int = 2,
         pool_stride: int = 2,
         pool_mode: Literal["max", "avg"] = "max",
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super(ConvBlock1D, self).__init__(
             Convolution1D(
@@ -217,7 +217,7 @@ class ConvBlock2D(Sequential):
         pool_filter_size: int = 2,
         pool_stride: int = 2,
         pool_mode: Literal["max", "avg"] = "max",
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super(ConvBlock2D, self).__init__(
             Convolution2D(
@@ -342,7 +342,7 @@ class ConvBlock3D(Sequential):
         pool_filter_size: int = 2,
         pool_stride: int = 2,
         pool_mode: Literal["max", "avg"] = "max",
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super(ConvBlock3D, self).__init__(
             Convolution3D(
@@ -445,7 +445,7 @@ class DenseBlock(Sequential):
         momentum: float = 0.9,
         do_dropout: bool = True,
         dropout_rate: float = 0.5,
-        random_state: int = None,
+        random_state: int | None = None,
     ) -> None:
         super(DenseBlock, self).__init__(
             Dense(

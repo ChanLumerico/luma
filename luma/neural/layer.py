@@ -24,6 +24,9 @@ __all__ = (
     "Pooling3D",
     "Dense",
     "Dropout",
+    "Dropout1D",
+    "Dropout2D",
+    "Dropout3D",
     "Flatten",
     "Activation",
     "BatchNorm1D",
@@ -416,9 +419,100 @@ class Dropout(_drop._Dropout):
 
     Notes
     -----
-    - During inference, dropout is typically turned off, and the layer behaves
-      as the identity function.
+    - This class applies dropout for every element in the input with any shape.
+    """
 
+    def __init__(
+        self, dropout_rate: float = 0.5, random_state: int | None = None
+    ) -> None:
+        super().__init__(dropout_rate, random_state)
+
+
+class Dropout1D(_drop._Dropout1D):
+    """
+    Dropout layer for 1-dimensional data.
+
+    Dropout is a regularization technique used during training to prevent
+    overfitting by randomly setting a fraction of input units to zero during
+    the forward pass. This helps in reducing co-adaptation of neurons and
+    encourages the network to learn more robust features.
+
+    Parameters
+    ----------
+    `dropout_rate` : float, default=0.5
+        The fraction of input units to drop during training
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
+
+    Notes
+    -----
+    - The input `X` must have the form of 3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, width)
+        ```
+    """
+
+    def __init__(
+        self, dropout_rate: float = 0.5, random_state: int | None = None
+    ) -> None:
+        super().__init__(dropout_rate, random_state)
+
+
+class Dropout2D(_drop._Dropout2D):
+    """
+    Dropout layer for 2-dimensional data.
+
+    Dropout is a regularization technique used during training to prevent
+    overfitting by randomly setting a fraction of input units to zero during
+    the forward pass. This helps in reducing co-adaptation of neurons and
+    encourages the network to learn more robust features.
+
+    Parameters
+    ----------
+    `dropout_rate` : float, default=0.5
+        The fraction of input units to drop during training
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
+
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
+    """
+
+    def __init__(
+        self, dropout_rate: float = 0.5, random_state: int | None = None
+    ) -> None:
+        super().__init__(dropout_rate, random_state)
+
+
+class Dropout3D(_drop._Dropout3D):
+    """
+    Dropout layer for 3-dimensional data.
+
+    Dropout is a regularization technique used during training to prevent
+    overfitting by randomly setting a fraction of input units to zero during
+    the forward pass. This helps in reducing co-adaptation of neurons and
+    encourages the network to learn more robust features.
+
+    Parameters
+    ----------
+    `dropout_rate` : float, default=0.5
+        The fraction of input units to drop during training
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
+
+    Notes
+    -----
+    - The input `X` must have the form of 5D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, depth, height, width)
+        ```
     """
 
     def __init__(

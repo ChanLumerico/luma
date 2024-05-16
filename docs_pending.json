@@ -41,7 +41,17 @@
             "inheriting": "Layer"
         },
         {
+            "name": "Dropout2D & 3D",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer"
+        },
+        {
             "name": "AlexNet",
+            "script": "luma.neural.network",
+            "inheriting": ["Estimator", "Supervised", "NeuralModel"]
+        },
+        {
+            "name": "ZFNet",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         }

@@ -92,9 +92,6 @@ class Tensor(TensorLike):
     refers to an array with its dimensionality higher then 2.
     """
 
-    type Tensor_3D = Self
-    type Tensor_4D = Self
-
     def __new__(cls, array_like: Any) -> Self:
         if isinstance(array_like, list):
             obj = Matrix(array_like)
