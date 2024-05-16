@@ -18,6 +18,7 @@ __all__ = (
     "LeNet_5",
     "AlexNet",
     "ZFNet",
+    "VGGNet_11",
 )
 
 
@@ -807,6 +808,122 @@ class ZFNet(_imagenet._ZFNet):
     1. Zeiler, Matthew D., and Rob Fergus. "Visualizing and Understanding
     Convolutional Networks." European conference on computer vision, 2014.
 
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU(),
+        loss: Loss = CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 100,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        dropout_rate: float = 0.5,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class VGGNet_11(_imagenet._VGGNet_11):
+    """
+    VGG11 is a simplified variant of the VGG network architecture that was designed
+    to enhance image recognition performance through deeper networks with smaller
+    convolutional filters. This model was introduced by Karen Simonyan and Andrew
+    Zisserman in their paper and is notable for its simplicity and effectiveness
+    in image classification tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Convolutional Blocks:
+    ```py
+    ConvBlock2D(3, 64) -> Pooling2D(2, 2, "max") ->  # Conv_1
+    ConvBlock2D(64, 128) -> Pooling2D(2, 2, "max") ->  # Conv_2
+
+    ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_3
+    ConvBlock2D(256, 256) -> Pooling2D(2, 2, "max") ->  # Conv_4
+
+    ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_5
+    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_6
+
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_7
+    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_8
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten ->
+    DenseBlock(512 * 7 * 7, 4096) -> DenseBlock(4096, 4096) ->
+    Dense(4096, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    132,851,392 weights, 11,944 biases -> 132,863,336 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU()
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. Simonyan, Karen, and Andrew Zisserman. "Very Deep Convolutional Networks for
+    Large-Scale Image Recognition." arXiv preprint arXiv:1409.1556, 2014.
     """
 
     def __init__(
