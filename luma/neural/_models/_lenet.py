@@ -2,7 +2,7 @@ from typing import Self, override
 
 from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
-from luma.interface.util import Clone, InitUtil
+from luma.interface.util import InitUtil
 from luma.metric.classification import Accuracy
 
 from luma.neural.base import Loss, NeuralModel
@@ -18,7 +18,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -87,7 +87,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
             4,
             filter_size=5,
             stride=1,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             initializer=self.initializer,
             padding="valid",
             lambda_=self.lambda_,
@@ -102,7 +102,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
             8,
             filter_size=5,
             stride=1,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             initializer=self.initializer,
             padding="valid",
             lambda_=self.lambda_,
@@ -121,14 +121,17 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
+    @Tensor.force_dim(4)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_LeNet_1, self).fit_nn(X, y)
 
     @override
+    @Tensor.force_dim(4)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_LeNet_1, self).predict_nn(X, argmax)
 
     @override
+    @Tensor.force_dim(4)
     def score(
         self,
         X: Tensor,
@@ -143,7 +146,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -214,7 +217,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
             4,
             filter_size=5,
             stride=1,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             initializer=self.initializer,
             padding="valid",
             lambda_=self.lambda_,
@@ -229,7 +232,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
             16,
             filter_size=5,
             stride=1,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             initializer=self.initializer,
             padding="valid",
             lambda_=self.lambda_,
@@ -244,7 +247,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
         self.model += DenseBlock(
             16 * 5 * 5,
             120,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             lambda_=self.lambda_,
             do_batch_norm=False,
             do_dropout=False,
@@ -257,14 +260,17 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
+    @Tensor.force_dim(4)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_LeNet_4, self).fit_nn(X, y)
 
     @override
+    @Tensor.force_dim(4)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_LeNet_4, self).predict_nn(X, argmax)
 
     @override
+    @Tensor.force_dim(4)
     def score(
         self,
         X: Tensor,
@@ -279,7 +285,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -350,7 +356,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
             6,
             filter_size=5,
             stride=1,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             initializer=self.initializer,
             padding="valid",
             lambda_=self.lambda_,
@@ -365,7 +371,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
             16,
             filter_size=5,
             stride=1,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             initializer=self.initializer,
             padding="valid",
             lambda_=self.lambda_,
@@ -380,7 +386,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
         self.model += DenseBlock(
             16 * 5 * 5,
             120,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             lambda_=self.lambda_,
             do_batch_norm=False,
             do_dropout=False,
@@ -389,7 +395,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
         self.model += DenseBlock(
             120,
             84,
-            activation=Clone(self.activation).get,
+            activation=self.activation,
             lambda_=self.lambda_,
             do_batch_norm=False,
             do_dropout=False,
@@ -402,14 +408,17 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
+    @Tensor.force_dim(4)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_LeNet_5, self).fit_nn(X, y)
 
     @override
+    @Tensor.force_dim(4)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_LeNet_5, self).predict_nn(X, argmax)
 
     @override
+    @Tensor.force_dim(4)
     def score(
         self,
         X: Tensor,

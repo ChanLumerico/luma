@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Literal, override
 import numpy as np
 
@@ -14,6 +15,24 @@ __all__ = (
     "ConvBlock3D",
     "DenseBlock",
 )
+
+
+@dataclass
+class ConvBlockArgs:
+    filter_size: int
+    activation: Activation.FuncType
+    optimizer: Optimizer | None = None
+    initializer: InitUtil.InitStr = None
+    padding: Literal["same", "valid"] = "same"
+    stride: int = 1
+    lambda_: float = 0.0
+    do_batch_norm: bool = True
+    momentum: float = 0.9
+    do_pooling: bool = True
+    pool_filter_size: int = 2
+    pool_stride: int = 2
+    pool_mode: Literal["max", "avg"] = "max"
+    random_state: int | None = None
 
 
 class ConvBlock1D(Sequential):
@@ -115,7 +134,7 @@ class ConvBlock1D(Sequential):
                 )
             )
         super(ConvBlock1D, self).__add__(
-            activation,
+            activation(),
         )
         if do_pooling:
             super(ConvBlock1D, self).__add__(
@@ -240,7 +259,7 @@ class ConvBlock2D(Sequential):
                 )
             )
         super(ConvBlock2D, self).__add__(
-            activation,
+            activation(),
         )
         if do_pooling:
             super(ConvBlock2D, self).__add__(
@@ -365,7 +384,7 @@ class ConvBlock3D(Sequential):
                 )
             )
         super(ConvBlock3D, self).__add__(
-            activation,
+            activation(),
         )
         if do_pooling:
             super(ConvBlock3D, self).__add__(
@@ -389,6 +408,19 @@ class ConvBlock3D(Sequential):
             }
         )
         self.check_param_ranges()
+
+
+@dataclass
+class DenseBlockArgs:
+    activation: Activation.FuncType
+    optimizer: Optimizer | None = None
+    initializer: InitUtil.InitStr = None
+    lambda_: float = 0.0
+    do_batch_norm: float = True
+    momentum: float = 0.9
+    do_dropout: bool = True
+    dropout_rate: float = 0.5
+    random_state: int | None = None
 
 
 class DenseBlock(Sequential):
@@ -465,7 +497,7 @@ class DenseBlock(Sequential):
                 )
             )
         super(DenseBlock, self).__add__(
-            activation,
+            activation(),
         )
         if do_dropout:
             super(DenseBlock, self).__add__(

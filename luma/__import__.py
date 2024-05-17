@@ -106,7 +106,16 @@ from luma.neural.loss import CrossEntropy, BinaryCrossEntropy, MSELoss
 from luma.neural.init import KaimingInit, XavierInit
 from luma.neural.block import ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock
 from luma.neural.network import SimpleMLP, SimpleCNN
-from luma.neural.network import LeNet_1, LeNet_4, AlexNet, ZFNet
+from luma.neural.network import (
+    LeNet_1,
+    LeNet_4,
+    AlexNet,
+    ZFNet,
+    VGGNet_11,
+    VGGNet_13,
+    VGGNet_16,
+    VGGNet_19,
+)
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -265,7 +274,8 @@ if __name__ == "__main__":
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock
 
-    SimpleMLP, SimpleCNN, LeNet_1, LeNet_4, AlexNet, ZFNet
+    SimpleMLP, SimpleCNN, LeNet_1, LeNet_4, AlexNet, ZFNet,
+    VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

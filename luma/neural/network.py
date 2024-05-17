@@ -19,6 +19,9 @@ __all__ = (
     "AlexNet",
     "ZFNet",
     "VGGNet_11",
+    "VGGNet_13",
+    "VGGNet_16",
+    "VGGNet_19",
 )
 
 
@@ -216,7 +219,7 @@ class SimpleCNN(_simple._SimpleCNN):
         in_features_list=[96, 16],
         out_channels=12,
         out_features=10,
-        activation=Activation.ReLU(),
+        activation=Activation.ReLU,
         ...,
     )
     ```
@@ -224,16 +227,16 @@ class SimpleCNN(_simple._SimpleCNN):
     ```py
     model = Sequential(
         Convolution(1, 6),  # First convolution block
-        Activation.ReLU(),
+        Activation.ReLU,
         Pooling(),
 
         Convolution(6, 12),  # Second convolution block
-        Activation.ReLU(),
+        Activation.ReLU,
         Pooling(),
 
         Flatten(),
         Dense(96, 16),  # Dense block
-        Activation.ReLU(),
+        Activation.ReLU,
         Dropout(),
 
         Dense(16, 10),  # Final dense layer
@@ -343,7 +346,7 @@ class LeNet_1(_lenet._LeNet_1):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.Tanh()
+    `activation` : FuncType, default=Activation.Tanh
         Type of activation function
     `optimizer` : Optimizer
         Type of optimizer for weight update
@@ -380,7 +383,7 @@ class LeNet_1(_lenet._LeNet_1):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -445,7 +448,7 @@ class LeNet_4(_lenet._LeNet_4):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.Tanh()
+    `activation` : FuncType, default=Activation.Tanh
         Type of activation function
     `optimizer` : Optimizer
         Type of optimizer for weight update
@@ -481,7 +484,7 @@ class LeNet_4(_lenet._LeNet_4):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -549,7 +552,7 @@ class LeNet_5(_lenet._LeNet_5):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.Tanh()
+    `activation` : FuncType, default=Activation.Tanh
         Type of activation function
     `optimizer` : Optimizer
         Type of optimizer for weight update
@@ -585,7 +588,7 @@ class LeNet_5(_lenet._LeNet_5):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.Tanh(),
+        activation: Activation.FuncType = Activation.Tanh,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
@@ -661,7 +664,7 @@ class AlexNet(_imagenet._AlexNet):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU()
+    `activation` : FuncType, default=Activation.ReLU
         Type of activation function
     `optimizer` : Optimizer
         Type of optimizer for weight update
@@ -699,7 +702,7 @@ class AlexNet(_imagenet._AlexNet):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.ReLU(),
+        activation: Activation.FuncType = Activation.ReLU,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
@@ -776,7 +779,7 @@ class ZFNet(_imagenet._ZFNet):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU()
+    `activation` : FuncType, default=Activation.ReLU
         Type of activation function
     `optimizer` : Optimizer
         Type of optimizer for weight update
@@ -813,7 +816,7 @@ class ZFNet(_imagenet._ZFNet):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.ReLU(),
+        activation: Activation.FuncType = Activation.ReLU,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
@@ -893,7 +896,7 @@ class VGGNet_11(_imagenet._VGGNet_11):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU()
+    `activation` : FuncType, default=Activation.ReLU
         Type of activation function
     `optimizer` : Optimizer
         Type of optimizer for weight update
@@ -929,7 +932,373 @@ class VGGNet_11(_imagenet._VGGNet_11):
     def __init__(
         self,
         optimizer: Optimizer,
-        activation: Activation.FuncType = Activation.ReLU(),
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 100,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        dropout_rate: float = 0.5,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class VGGNet_13(_imagenet._VGGNet_13):
+    """
+    VGG13 is ont of the variants of the VGG network architecture that was designed
+    to enhance image recognition performance through deeper networks with smaller
+    convolutional filters. This model was introduced by Karen Simonyan and Andrew
+    Zisserman in their paper and is notable for its simplicity and effectiveness
+    in image classification tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Convolutional Blocks:
+    ```py
+    ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
+    ConvBlock2D(64, 64) -> Pooling2D(2, 2, "max") ->  # Conv_2
+
+    ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
+    ConvBlock2D(128, 128) -> Pooling2D(2, 2, "max") ->  # Conv_4
+
+    ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
+    ConvBlock2D(256, 256) -> Pooling2D(2, 2, "max") ->  # Conv_6
+
+    ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_7
+    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_8
+
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_9
+    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_10
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten ->
+    DenseBlock(512 * 7 * 7, 4096) -> DenseBlock(4096, 4096) ->
+    Dense(4096, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    133,035,712 weights, 12,136 biases -> 133,047,848 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. Simonyan, Karen, and Andrew Zisserman. "Very Deep Convolutional Networks for
+    Large-Scale Image Recognition." arXiv preprint arXiv:1409.1556, 2014.
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 100,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        dropout_rate: float = 0.5,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class VGGNet_16(_imagenet._VGGNet_16):
+    """
+    VGG16 is ont of the variants of the VGG network architecture that was designed
+    to enhance image recognition performance through deeper networks with smaller
+    convolutional filters. This model was introduced by Karen Simonyan and Andrew
+    Zisserman in their paper and is notable for its simplicity and effectiveness
+    in image classification tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Convolutional Blocks:
+    ```py
+    ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
+    ConvBlock2D(64, 64) -> Pooling2D(2, 2, "max") ->  # Conv_2
+
+    ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
+    ConvBlock2D(128, 128) -> Pooling2D(2, 2, "max") ->  # Conv_4
+
+    ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
+    ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_6
+    ConvBlock2D(256, 256) -> Pooling2D(2, 2, "max") ->  # Conv_7
+
+    ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_8
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_9
+    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_10
+
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_11
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_12
+    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_13
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten ->
+    DenseBlock(512 * 7 * 7, 4096) -> DenseBlock(4096, 4096) ->
+    Dense(4096, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    138,344,128 weights, 13,416 biases -> 138,357,544 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. Simonyan, Karen, and Andrew Zisserman. "Very Deep Convolutional Networks for
+    Large-Scale Image Recognition." arXiv preprint arXiv:1409.1556, 2014.
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 100,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        dropout_rate: float = 0.5,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class VGGNet_19(_imagenet._VGGNet_19):
+    """
+    VGG19 is ont of the variants of the VGG network architecture that was designed
+    to enhance image recognition performance through deeper networks with smaller
+    convolutional filters. This model was introduced by Karen Simonyan and Andrew
+    Zisserman in their paper and is notable for its simplicity and effectiveness
+    in image classification tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Convolutional Blocks:
+    ```py
+    ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
+    ConvBlock2D(64, 64) -> Pooling2D(2, 2, "max") ->  # Conv_2
+
+    ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
+    ConvBlock2D(128, 128) -> Pooling2D(2, 2, "max") ->  # Conv_4
+
+    ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
+    ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_6
+    ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_7
+    ConvBlock2D(256, 256) -> Pooling2D(2, 2, "max") ->  # Conv_8
+
+    ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_9
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_10
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_11
+    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_12
+
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_13
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_14
+    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_15
+    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_16
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten ->
+    DenseBlock(512 * 7 * 7, 4096) -> DenseBlock(4096, 4096) ->
+    Dense(4096, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    143,652,544 weights, 14,696 biases -> 143,667,240 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. Simonyan, Karen, and Andrew Zisserman. "Very Deep Convolutional Networks for
+    Large-Scale Image Recognition." arXiv preprint arXiv:1409.1556, 2014.
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
         loss: Loss = CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,

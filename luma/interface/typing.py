@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Any, Callable, Generic, NoReturn, Self, Tuple, Type, TypeVar
+from typing import Any, Callable, Generic, NoReturn, Self, Type, TypeVar
 import sys
 import numpy as np
 
@@ -105,6 +105,51 @@ class Tensor(TensorLike, Generic[D]):
 
     @classmethod
     def force_dim(cls, *dim_consts: int) -> Callable:
+        """
+        Decorator factory to enforce the dimensionality of tensor arguments.
+
+        This decorator ensures that specified tensor arguments to the decorated
+        function have the expected number of dimensions.
+
+        Parameters
+        ----------
+        `*dim_constraints` : int
+            Variable length argument list where each value specifies the required
+            number of dimensions for the corresponding tensor argument in the
+            decorated function.
+
+        Returns
+        -------
+        `Callable`
+            The decorated function with dimensionality constraints enforced on
+            specified tensor arguments.
+
+        Raises
+        ------
+        `TypeError`
+            If the argument is not a numpy ndarray.
+        `ValueError`
+            If the argument does not have the specified number of dimensions.
+
+        Examples
+        --------
+        >>> class MyModel:
+        ...     @Tensor.force_dim(4)
+        ...     def foo(self, tensor: Tensor) -> Any:
+        ...         print("Processing foo")
+        ...
+        >>> model = MyModel()
+        >>> tensor_4d = np.random.rand(2, 3, 4, 5).view(Tensor)
+        >>> model.forward(tensor_4d)
+        Processing foo
+
+        >>> tensor_3d = np.random.rand(2, 3, 4).view(Tensor)
+        >>> model.foo(tensor_3d)
+        Traceback (most recent call last): ...
+        ValueError: 'X' must be 4-dimensional, got 3 dimensions
+
+        """
+
         def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
             @wraps(func)
             def wrapper(self, *args: Any, **kwargs: Any) -> Any:

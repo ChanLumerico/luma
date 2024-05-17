@@ -2,7 +2,7 @@ from typing import Literal, Self, override
 
 from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
-from luma.interface.util import Clone, InitUtil
+from luma.interface.util import InitUtil
 
 from luma.neural.base import Loss, NeuralModel
 from luma.neural.block import ConvBlock2D, DenseBlock
@@ -98,7 +98,7 @@ class _SimpleMLP(Estimator, Supervised, NeuralModel):
                 random_state=self.random_state,
             )
             if i < len(self.feature_shapes_) - 1:
-                self.model += Clone(self.activation).get
+                self.model += self.activation()
                 self.model += Dropout(
                     dropout_rate=self.dropout_rate,
                     random_state=self.random_state,
@@ -232,7 +232,7 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
                 in_,
                 out_,
                 self.filter_size,
-                activation=Clone(self.activation).get,
+                activation=self.activation,
                 initializer=self.initializer,
                 padding=self.padding,
                 stride=self.stride,
@@ -252,7 +252,7 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
                 self.model += DenseBlock(
                     in_,
                     out_,
-                    activation=Clone(self.activation).get,
+                    activation=self.activation,
                     lambda_=self.lambda_,
                     do_dropout=self.do_dropout,
                     dropout_rate=self.dropout_rate,
@@ -266,14 +266,17 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
                     random_state=self.random_state,
                 )
 
+    @Tensor.force_dim(4)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_SimpleCNN, self).fit_nn(X, y)
 
     @override
+    @Tensor.force_dim(4)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_SimpleCNN, self).predict_nn(X, argmax)
 
     @override
+    @Tensor.force_dim(4)
     def score(
         self, X: Tensor, y: Matrix, metric: Evaluator, argmax: bool = True
     ) -> float:
