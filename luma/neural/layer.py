@@ -58,7 +58,7 @@ class Convolution1D(_conv._Conv1D):
         Length of each filter
     `stride` : int, default=1
         Step size for filters during convolution
-    `padding` : {"valid", "same"}, default="same"
+    `padding` : tuple of int or int or {"valid", "same"}, default="same"
         Padding strategies ("valid" for no padding, "same" for zero-padding)
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -84,7 +84,7 @@ class Convolution1D(_conv._Conv1D):
         out_channels: int,
         filter_size: int,
         stride: int = 1,
-        padding: Literal["valid", "same"] = "same",
+        padding: Tuple[int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer | None = None,
         lambda_: float = 0,
@@ -123,7 +123,7 @@ class Convolution2D(_conv._Conv2D):
         Length of each filter
     `stride` : int, default=1
         Step size for filters during convolution
-    `padding` : {"valid", "same"}, default="same"
+    `padding` : tuple of int or int or {"valid", "same"}, default="same"
         Padding strategies ("valid" for no padding, "same" for zero-padding)
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -149,7 +149,7 @@ class Convolution2D(_conv._Conv2D):
         out_channels: int,
         filter_size: int,
         stride: int = 1,
-        padding: Literal["valid", "same"] = "same",
+        padding: Tuple[int, int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
         lambda_: float = 0,
@@ -188,7 +188,7 @@ class Convolution3D(_conv._Conv3D):
         Length of each filter
     `stride` : int, default=1
         Step size for filters during convolution
-    `padding` : {"valid", "same"}, default="same"
+    `padding` : tuple of int or int or {"valid", "same"}, default="same"
         Padding strategies ("valid" for no padding, "same" for zero-padding)
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -214,7 +214,7 @@ class Convolution3D(_conv._Conv3D):
         out_channels: int,
         filter_size: int,
         stride: int = 1,
-        padding: Literal["valid", "same"] = "same",
+        padding: Tuple[int, int, int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer = None,
         lambda_: float = 0,
@@ -253,6 +253,8 @@ class Pooling1D(_pool._Pool1D):
         Step size of the filter during pooling
     `mode` : {"max", "avg"}, default="max"
         Pooling strategy (i.e., 'max' or 'avg')
+    `padding` : tuple of int or int or {"valid", "same"}, default="valid"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
 
     Notes
     -----
@@ -268,8 +270,9 @@ class Pooling1D(_pool._Pool1D):
         filter_size: int = 2,
         stride: int = 2,
         mode: Literal["max", "avg"] = "max",
+        padding: Tuple[int] | int | Literal["valid", "same"] = "valid",
     ) -> None:
-        super().__init__(filter_size, stride, mode)
+        super().__init__(filter_size, stride, mode, padding)
 
 
 class Pooling2D(_pool._Pool2D):
@@ -292,6 +295,8 @@ class Pooling2D(_pool._Pool2D):
         Step size of the filter during pooling
     `mode` : {"max", "avg"}, default="max"
         Pooling strategy (i.e., 'max' or 'avg')
+    `padding` : tuple of int or int or {"valid", "same"}, default="valid"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
 
     Notes
     -----
@@ -307,8 +312,9 @@ class Pooling2D(_pool._Pool2D):
         filter_size: int = 2,
         stride: int = 2,
         mode: Literal["max", "avg"] = "max",
+        padding: Tuple[int, int] | int | Literal["valid", "same"] = "valid",
     ) -> None:
-        super().__init__(filter_size, stride, mode)
+        super().__init__(filter_size, stride, mode, padding)
 
 
 class Pooling3D(_pool._Pool3D):
@@ -331,6 +337,8 @@ class Pooling3D(_pool._Pool3D):
         Step size of the filter during pooling
     `mode` : {"max", "avg"}, default="max"
         Pooling strategy (i.e., 'max' or 'avg')
+    `padding` : tuple of int or int or {"valid", "same"}, default="valid"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
 
     Notes
     -----
@@ -346,8 +354,9 @@ class Pooling3D(_pool._Pool3D):
         filter_size: int = 2,
         stride: int = 2,
         mode: Literal["max", "avg"] = "max",
+        padding: Tuple[int, int, int] | int | Literal["valid", "same"] = "valid",
     ) -> None:
-        super().__init__(filter_size, stride, mode)
+        super().__init__(filter_size, stride, mode, padding)
 
 
 class Dense(_linear._Dense):
@@ -736,7 +745,7 @@ class Sequential(Layer):
 
     Parameters
     ----------
-    `*layers` : Layer or tuple[str, Layer]
+    `*layers` : Layer or tuple[str, Layer], optional
         Layers or layers with its name assigned
         (class name of the layer assigned by default)
 
@@ -784,7 +793,7 @@ class Sequential(Layer):
     ```
     """
 
-    def __init__(self, *layers: Layer | tuple[str, Layer]) -> None:
+    def __init__(self, *layers: Layer | tuple[str, Layer] | None) -> None:
         super().__init__()
         self.layers: List[tuple[str, Layer]] = list()
         for layer in layers:
@@ -826,13 +835,23 @@ class Sequential(Layer):
                 + f"Call '{self}().set_optimizer' to assign an optimizer."
             )
 
-    def add(self, layer: Layer | tuple[str, Layer]) -> None:
+    def add(self, layer: Layer | tuple[str, Layer] | None) -> None:
+        if layer is None:
+            return
         if not isinstance(layer, tuple):
             layer = (str(layer), layer)
         self.layers.append(layer)
 
         if self.optimizer is not None:
             self.set_optimizer(self.optimizer)
+
+    def extend(self, *layers: Self | Layer | tuple[str, Layer] | None) -> None:
+        for layer in layers:
+            if hasattr(layer, "layers"):
+                for sub_layer in layer.layers:
+                    self.add(sub_layer)
+                continue
+            self.add(layer)
 
     @override
     @property
@@ -850,7 +869,7 @@ class Sequential(Layer):
             in_shape = layer.out_shape(in_shape)
         return in_shape
 
-    def __add__(self, other: Layer | tuple[str, Layer]) -> Self:
+    def __add__(self, other: Layer | tuple[str, Layer] | None) -> Self:
         if isinstance(other, (Layer, tuple)):
             self.add(other)
         else:

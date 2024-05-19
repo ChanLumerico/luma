@@ -7,7 +7,7 @@ from luma.neural.base import Loss
 from luma.neural.layer import Activation
 from luma.neural.loss import CrossEntropy
 
-from ._models import _simple, _lenet, _imagenet
+from ._models import _simple, _lenet, _alex, _vgg
 
 
 __all__ = (
@@ -624,7 +624,7 @@ class LeNet_5(_lenet._LeNet_5):
         )
 
 
-class AlexNet(_imagenet._AlexNet):
+class AlexNet(_alex._AlexNet):
     """
     AlexNet is a deep convolutional neural network that is designed for
     challenging image recognition tasks and was the winning entry in ILSVRC 2012.
@@ -738,7 +738,7 @@ class AlexNet(_imagenet._AlexNet):
         )
 
 
-class ZFNet(_imagenet._ZFNet):
+class ZFNet(_alex._ZFNet):
     """
     ZFNet is a refinement of the AlexNet architecture that was specifically
     designed to improve model understanding and performance on image recognition
@@ -852,7 +852,7 @@ class ZFNet(_imagenet._ZFNet):
         )
 
 
-class VGGNet_11(_imagenet._VGGNet_11):
+class VGGNet_11(_vgg._VGGNet_11):
     """
     VGG11 is a simplified variant of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -968,7 +968,7 @@ class VGGNet_11(_imagenet._VGGNet_11):
         )
 
 
-class VGGNet_13(_imagenet._VGGNet_13):
+class VGGNet_13(_vgg._VGGNet_13):
     """
     VGG13 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -1087,7 +1087,7 @@ class VGGNet_13(_imagenet._VGGNet_13):
         )
 
 
-class VGGNet_16(_imagenet._VGGNet_16):
+class VGGNet_16(_vgg._VGGNet_16):
     """
     VGG16 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -1209,7 +1209,7 @@ class VGGNet_16(_imagenet._VGGNet_16):
         )
 
 
-class VGGNet_19(_imagenet._VGGNet_19):
+class VGGNet_19(_vgg._VGGNet_19):
     """
     VGG19 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller

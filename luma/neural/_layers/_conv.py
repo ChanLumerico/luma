@@ -18,7 +18,7 @@ class _Conv1D(Layer):
         out_channels: int,
         filter_size: int,
         stride: int = 1,
-        padding: Literal["valid", "same"] = "same",
+        padding: Tuple[int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer | None = None,
         lambda_: float = 0.0,
@@ -131,16 +131,21 @@ class _Conv1D(Layer):
         return self.dX
 
     def _get_padding_dim(self, width: int) -> Tuple[int, ...]:
-        if self.padding == "same":
-            pad_w = (self.filter_size - 1) // 2
-            padded_w = width + 2 * pad_w
+        if isinstance(self.padding, tuple):
+            if len(self.padding) != 1:
+                raise ValueError("Padding tuple must have exactly one value.")
+            pad_w = self.padding[0]
 
+        elif isinstance(self.padding, int):
+            pad_w = self.padding
+        elif self.padding == "same":
+            pad_w = (self.filter_size - 1) // 2
         elif self.padding == "valid":
             pad_w = 0
-            padded_w = width
         else:
             raise UnsupportedParameterError(self.padding)
 
+        padded_w = width + 2 * pad_w
         return pad_w, padded_w
 
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
@@ -158,7 +163,7 @@ class _Conv2D(Layer):
         out_channels: int,
         filter_size: int,
         stride: int = 1,
-        padding: Literal["valid", "same"] = "same",
+        padding: Tuple[int, int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer | None = None,
         lambda_: float = 0.0,
@@ -294,17 +299,22 @@ class _Conv2D(Layer):
         return self.dX
 
     def _get_padding_dim(self, height: int, width: int) -> Tuple[int, ...]:
-        if self.padding == "same":
-            pad_h = pad_w = (self.filter_size - 1) // 2
-            padded_h = height + 2 * pad_h
-            padded_w = width + 2 * pad_w
+        if isinstance(self.padding, tuple):
+            if len(self.padding) != 2:
+                raise ValueError("Padding tuple must have exactly two values.")
+            pad_h, pad_w = self.padding
+        elif isinstance(self.padding, int):
+            pad_h = pad_w = self.padding
 
+        elif self.padding == "same":
+            pad_h = pad_w = (self.filter_size - 1) // 2
         elif self.padding == "valid":
             pad_h = pad_w = 0
-            padded_h = height
-            padded_w = width
         else:
             raise UnsupportedParameterError(self.padding)
+
+        padded_h = height + 2 * pad_h
+        padded_w = width + 2 * pad_w
 
         return pad_h, pad_w, padded_h, padded_w
 
@@ -325,7 +335,7 @@ class _Conv3D(Layer):
         out_channels: int,
         filter_size: int,
         stride: int = 1,
-        padding: Literal["valid", "same"] = "same",
+        padding: Tuple[int, int, int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
         optimizer: Optimizer | None = None,
         lambda_: float = 0.0,
@@ -495,19 +505,23 @@ class _Conv3D(Layer):
         height: int,
         width: int,
     ) -> Tuple[int, ...]:
-        if self.padding == "same":
-            pad_d = pad_h = pad_w = (self.filter_size - 1) // 2
-            padded_d = depth + 2 * pad_d
-            padded_h = height + 2 * pad_h
-            padded_w = width + 2 * pad_w
+        if isinstance(self.padding, tuple):
+            if len(self.padding) != 3:
+                raise ValueError("Padding tuple must have exactly three values.")
+            pad_d, pad_h, pad_w = self.padding
 
+        elif isinstance(self.padding, int):
+            pad_d = pad_h = pad_w = self.padding
+        elif self.padding == "same":
+            pad_d = pad_h = pad_w = (self.filter_size - 1) // 2
         elif self.padding == "valid":
             pad_d = pad_h = pad_w = 0
-            padded_d = depth
-            padded_h = height
-            padded_w = width
         else:
             raise UnsupportedParameterError(self.padding)
+
+        padded_d = depth + 2 * pad_d
+        padded_h = height + 2 * pad_h
+        padded_w = width + 2 * pad_w
 
         return pad_d, pad_h, pad_w, padded_d, padded_h, padded_w
 

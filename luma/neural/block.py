@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from typing import Literal, override
+from typing import Literal, Tuple, override
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.typing import TensorLike
+from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
@@ -14,6 +14,7 @@ __all__ = (
     "ConvBlock2D",
     "ConvBlock3D",
     "DenseBlock",
+    "InceptionBlock",
 )
 
 
@@ -23,7 +24,7 @@ class ConvBlockArgs:
     activation: Activation.FuncType
     optimizer: Optimizer | None = None
     initializer: InitUtil.InitStr = None
-    padding: Literal["same", "valid"] = "same"
+    padding: Tuple[int, ...] | int | Literal["same", "valid"] = "same"
     stride: int = 1
     lambda_: float = 0.0
     do_batch_norm: bool = True
@@ -62,7 +63,7 @@ class ConvBlock1D(Sequential):
         Size of the convolution filter
     `activation` : FuncType
         Type of activation function
-    `padding` : {"same", "valid"}, default="same"
+    `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
     `optimizer` : Optimizer, optional, default=None
         Type of optimizer for weight updating
@@ -102,7 +103,7 @@ class ConvBlock1D(Sequential):
         activation: Activation.FuncType,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
-        padding: Literal["same", "valid"] = "same",
+        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
         stride: int = 1,
         lambda_: float = 0.0,
         do_batch_norm: bool = True,
@@ -113,6 +114,13 @@ class ConvBlock1D(Sequential):
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
     ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
         super(ConvBlock1D, self).__init__(
             Convolution1D(
                 in_channels,
@@ -120,10 +128,7 @@ class ConvBlock1D(Sequential):
                 filter_size,
                 stride,
                 padding,
-                initializer,
-                optimizer,
-                lambda_,
-                random_state,
+                **basic_args,
             )
         )
         if do_batch_norm:
@@ -187,7 +192,7 @@ class ConvBlock2D(Sequential):
         Size of the convolution filter
     `activation` : FuncType
         Type of activation function
-    `padding` : {"same", "valid"}, default="same"
+    `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
     `optimizer` : Optimizer, optional, default=None
         Type of optimizer for weight updating
@@ -227,7 +232,7 @@ class ConvBlock2D(Sequential):
         activation: Activation.FuncType,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
-        padding: Literal["same", "valid"] = "same",
+        padding: Tuple[int, int] | int | Literal["same", "valid"] = "same",
         stride: int = 1,
         lambda_: float = 0.0,
         do_batch_norm: bool = True,
@@ -238,6 +243,13 @@ class ConvBlock2D(Sequential):
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
     ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
         super(ConvBlock2D, self).__init__(
             Convolution2D(
                 in_channels,
@@ -245,10 +257,7 @@ class ConvBlock2D(Sequential):
                 filter_size,
                 stride,
                 padding,
-                initializer,
-                optimizer,
-                lambda_,
-                random_state,
+                **basic_args,
             )
         )
         if do_batch_norm:
@@ -312,7 +321,7 @@ class ConvBlock3D(Sequential):
         Size of the convolution filter
     `activation` : FuncType
         Type of activation function
-    `padding` : {"same", "valid"}, default="same"
+    `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
     `optimizer` : Optimizer, optional, default=None
         Type of optimizer for weight updating
@@ -352,7 +361,7 @@ class ConvBlock3D(Sequential):
         activation: Activation.FuncType,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
-        padding: Literal["same", "valid"] = "same",
+        padding: Tuple[int, int, int] | int | Literal["same", "valid"] = "same",
         stride: int = 1,
         lambda_: float = 0.0,
         do_batch_norm: bool = True,
@@ -363,6 +372,13 @@ class ConvBlock3D(Sequential):
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
     ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
         super(ConvBlock3D, self).__init__(
             Convolution3D(
                 in_channels,
@@ -370,10 +386,7 @@ class ConvBlock3D(Sequential):
                 filter_size,
                 stride,
                 padding,
-                initializer,
-                optimizer,
-                lambda_,
-                random_state,
+                **basic_args,
             )
         )
         if do_batch_norm:
@@ -479,14 +492,18 @@ class DenseBlock(Sequential):
         dropout_rate: float = 0.5,
         random_state: int | None = None,
     ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
         super(DenseBlock, self).__init__(
             Dense(
                 in_features,
                 out_features,
-                initializer,
-                optimizer,
-                lambda_,
-                random_state,
+                **basic_args,
             )
         )
         if do_batch_norm:
@@ -538,3 +555,143 @@ class DenseBlock(Sequential):
                 continue
             d_out = layer.backward(d_out)
         return d_out
+
+
+class InceptionBlock(Sequential):
+    """
+    TODO: Finish docstring
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_1x1: int,
+        red_3x3: int,
+        out_3x3: int,
+        red_5x5: int,
+        out_5x5: int,
+        out_pool: int,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = False,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.out_1x1 = out_1x1
+        self.out_3x3 = out_3x3
+        self.out_5x5 = out_5x5
+        self.out_pool = out_pool
+
+        basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+        super(InceptionBlock, self).__init__()
+
+        self.branch_1x1 = Sequential(
+            Convolution2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
+            BatchNorm2D(out_1x1, momentum) if do_batch_norm else None,
+            activation(),
+        )
+
+        self.branch_3x3 = Sequential(
+            Convolution2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
+            BatchNorm2D(red_3x3, momentum) if do_batch_norm else None,
+            activation(),
+            Convolution2D(red_3x3, out_3x3, 3, 1, "same", **basic_args),
+            BatchNorm2D(out_3x3, momentum) if do_batch_norm else None,
+            activation(),
+        )
+
+        self.branch_5x5 = Sequential(
+            Convolution2D(in_channels, red_5x5, 1, 1, "valid", **basic_args),
+            BatchNorm2D(red_5x5, momentum) if do_batch_norm else None,
+            activation(),
+            Convolution2D(red_5x5, out_5x5, 5, 1, 2, **basic_args),
+            BatchNorm2D(out_5x5, momentum) if do_batch_norm else None,
+            activation(),
+        )
+
+        self.branch_pool = Sequential(
+            Pooling2D(3, 1, "max", "same"),
+            Convolution2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
+            BatchNorm2D(out_pool, momentum) if do_batch_norm else None,
+            activation(),
+        )
+
+        self.layers = [
+            *self.branch_1x1.layers,
+            *self.branch_3x3.layers,
+            *self.branch_5x5.layers,
+            *self.branch_pool.layers,
+        ]
+
+    @override
+    @Tensor.force_dim(4)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        branch_1x1 = self.branch_1x1(X, is_train)
+        branch_3x3 = self.branch_3x3(X, is_train)
+        branch_5x5 = self.branch_5x5(X, is_train)
+        branch_pool = self.branch_pool(X, is_train)
+
+        self.out_channels = [
+            out_.shape[1]
+            for out_ in [
+                branch_1x1,
+                branch_3x3,
+                branch_5x5,
+                branch_pool,
+            ]
+        ]
+        out = np.concatenate(
+            (
+                branch_1x1,
+                branch_3x3,
+                branch_5x5,
+                branch_pool,
+            ),
+            axis=1,
+        )
+        return out
+
+    @override
+    @Tensor.force_dim(4)
+    def backward(self, d_out: Tensor) -> Tensor:
+        d_out_1x1 = d_out[:, : self.out_channels[0], ...]
+        d_out_3x3 = d_out[
+            :,
+            self.out_channels[0] : self.out_channels[0] + self.out_channels[1],
+            ...,
+        ]
+        d_out_5x5 = d_out[
+            :,
+            self.out_channels[0]
+            + self.out_channels[1] : self.out_channels[0]
+            + self.out_channels[1]
+            + self.out_channels[2],
+            ...,
+        ]
+        d_out_pool = d_out[:, -self.out_channels[3] :, ...]
+
+        dX_1x1 = self.branch_1x1.backward(d_out_1x1)
+        dX_3x3 = self.branch_3x3.backward(d_out_3x3)
+        dX_5x5 = self.branch_5x5.backward(d_out_5x5)
+        dX_pool = self.branch_pool.backward(d_out_pool)
+
+        self.dX = dX_1x1 + dX_3x3 + dX_5x5 + dX_pool
+        return self.dX
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, height, width = in_shape
+        return (
+            batch_size,
+            self.out_1x1 + self.out_3x3 + self.out_5x5 + self.out_pool,
+            height,
+            width,
+        )

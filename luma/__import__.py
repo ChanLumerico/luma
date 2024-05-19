@@ -82,6 +82,9 @@ from luma.neural.layer import (
     Pooling3D,
     Dense,
     Dropout,
+    Dropout1D,
+    Dropout2D,
+    Dropout3D,
     Flatten,
     Activation,
     BatchNorm1D,
@@ -104,11 +107,18 @@ from luma.neural.optimizer import (
 )
 from luma.neural.loss import CrossEntropy, BinaryCrossEntropy, MSELoss
 from luma.neural.init import KaimingInit, XavierInit
-from luma.neural.block import ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock
+from luma.neural.block import (
+    ConvBlock1D,
+    ConvBlock2D,
+    ConvBlock3D,
+    DenseBlock,
+    InceptionBlock,
+)
 from luma.neural.network import SimpleMLP, SimpleCNN
 from luma.neural.network import (
     LeNet_1,
     LeNet_4,
+    LeNet_5,
     AlexNet,
     ZFNet,
     VGGNet_11,
@@ -265,17 +275,20 @@ if __name__ == "__main__":
     Convolution1D, Convolution2D, Convolution3D,
     Pooling1D, Pooling2D, Pooling3D,
     BatchNorm1D, BatchNorm2D, BatchNorm3D,
+    Dropout, Dropout1D, Dropout2D, Dropout3D,
     LocalResponseNorm, LayerNorm,
-    Dense, Dropout, Flatten, Activation, Sequential
+    Dense, Flatten, Activation,
+    Sequential
 
     CrossEntropy, BinaryCrossEntropy, MSELoss
 
     KaimingInit, XavierInit
 
-    ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock
+    ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,
+    InceptionBlock
 
-    SimpleMLP, SimpleCNN, LeNet_1, LeNet_4, AlexNet, ZFNet,
-    VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19
+    SimpleMLP, SimpleCNN, LeNet_1, LeNet_4, LeNet_5, AlexNet,
+    ZFNet, VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

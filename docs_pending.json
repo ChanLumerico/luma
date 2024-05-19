@@ -49,6 +49,11 @@
             "name": "VGGNet series",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
+        },
+        {
+            "name": "InceptionBlock",
+            "script": "luma.neural.block",
+            "inheriting": "Sequential"
         }
     ]
 }
