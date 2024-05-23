@@ -188,14 +188,14 @@ from luma.visual.eda import (
     JointPlot,
     MissingProportion,
 )
-from luma.visual.evaluation import (
+from luma.visual.eval import (
     DecisionRegion,
     ClusterPlot,
     ROCCurve,
     PrecisionRecallCurve,
 )
-from luma.visual.evaluation import ConfusionMatrix, ResidualPlot, LearningCurve
-from luma.visual.evaluation import ValidationCurve, InertiaPlot
+from luma.visual.eval import ConfusionMatrix, ResidualPlot, LearningCurve
+from luma.visual.eval import ValidationCurve, InertiaPlot
 
 from luma.migrate.port import ModelPorter
 

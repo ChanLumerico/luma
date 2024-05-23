@@ -12,7 +12,15 @@ from luma.interface.exception import (
 )
 
 
-__all__ = ("PCA", "LDA", "KDA", "CCA", "KernelPCA", "TruncatedSVD", "FactorAnalysis")
+__all__ = (
+    "PCA", 
+    "LDA", 
+    "KDA", 
+    "CCA", 
+    "KernelPCA", 
+    "TruncatedSVD", 
+    "FactorAnalysis",
+)
 
 
 class PCA(Transformer, Unsupervised):
