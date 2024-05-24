@@ -42,7 +42,7 @@ class _VGGNet_11(Estimator, Supervised, NeuralModel):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         self.activation = activation
@@ -214,7 +214,7 @@ class _VGGNet_13(Estimator, Supervised, NeuralModel):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         self.activation = activation
@@ -398,7 +398,7 @@ class _VGGNet_16(Estimator, Supervised, NeuralModel):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         self.activation = activation
@@ -594,7 +594,7 @@ class _VGGNet_19(Estimator, Supervised, NeuralModel):
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
-        random_state: int = None,
+        random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
         self.activation = activation

@@ -557,9 +557,85 @@ class DenseBlock(Sequential):
         return d_out
 
 
+@dataclass
+class InceptionBlockArgs:
+    activation: Activation.FuncType
+    optimizer: Optimizer | None = None
+    initializer: InitUtil.InitStr = None
+    lambda_: float = 0.0
+    do_batch_norm: float = True
+    momentum: float = 0.9
+    random_state: int | None = None
+
+
 class InceptionBlock(Sequential):
     """
-    TODO: Finish docstring
+    Inception block for neural networks.
+
+    An inception block allows for multiple convolutional operations to be
+    performed in parallel. This structure is inspired by the Inception modules
+    of Google's Inception network, and it concatenates the outputs of different
+    convolutions to capture rich and varied features from input data.
+
+    Structure
+    ---------
+    1x1 Branch:
+    ```py
+    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
+    ```
+    3x3 Branch:
+    ```py
+    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
+    Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation
+    ```
+    5x5 Branch:
+    ```py
+    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
+    Convolution2D(filter_size=5) -> Optional[BatchNorm2D] -> Activation
+    ```
+    Pooling Branch:
+    ```py
+    Pooling2D(3, 1, mode="max", padding="same") ->
+    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
+    ```
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels.
+    `out_1x1` : int
+        Number of output channels for the 1x1 convolution.
+    `red_3x3` : int
+        Number of output channels for the dimension reduction before
+        the 3x3 convolution.
+    `out_3x3` : int
+        Number of output channels for the 3x3 convolution.
+    `red_5x5` : int
+        Number of output channels for the dimension reduction before
+        the 5x5 convolution.
+    `out_5x5` : int
+        Number of output channels for the 5x5 convolution.
+    `out_pool` : int
+        Number of output channels for the 1x1 convolution after max pooling.
+    `activation` : FuncType
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of a 4D-array (`Tensor`).
+
+        ```py
+        X.shape = (batch_size, height, width, channels)
+        ```
     """
 
     def __init__(

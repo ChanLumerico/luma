@@ -410,3 +410,6 @@ class _Pool3D(Layer):
         out_width = 1 + (padded_w - self.filter_size) // self.stride
 
         return (batch_size, channels, out_depth, out_height, out_width)
+
+
+# TODO: Implement _GlobalAvgPool

@@ -845,13 +845,21 @@ class Sequential(Layer):
         if self.optimizer is not None:
             self.set_optimizer(self.optimizer)
 
-    def extend(self, *layers: Self | Layer | tuple[str, Layer] | None) -> None:
+    def extend(
+        self,
+        *layers: Self | Layer | tuple[str, Layer] | None,
+        deep_add: bool = True,
+    ) -> None:
         for layer in layers:
-            if hasattr(layer, "layers"):
+            new_layer = layer
+            if isinstance(layer, tuple):
+                name, layer = layer
+                new_layer = (name, layer)
+            if hasattr(layer, "layers") and deep_add:
                 for sub_layer in layer.layers:
                     self.add(sub_layer)
                 continue
-            self.add(layer)
+            self.add(new_layer)
 
     @override
     @property
