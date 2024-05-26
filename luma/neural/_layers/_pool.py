@@ -6,7 +6,14 @@ from luma.interface.exception import UnsupportedParameterError
 from luma.neural.base import Layer
 
 
-__all__ = ("_Pool1D", "_Pool2D", "_Pool3D")
+__all__ = (
+    "_Pool1D",
+    "_Pool2D",
+    "_Pool3D",
+    "_GlobalAvgPool1D",
+    "_GlobalAvgPool2D",
+    "_GlobalAvgPool3D",
+)
 
 
 class _Pool1D(Layer):
@@ -412,4 +419,82 @@ class _Pool3D(Layer):
         return (batch_size, channels, out_depth, out_height, out_width)
 
 
-# TODO: Implement _GlobalAvgPool
+class _GlobalAvgPool1D(Layer):
+    def __init__(self) -> None:
+        super().__init__()
+
+    @Tensor.force_dim(3)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        out = np.mean(X, axis=2, keepdims=True)
+
+        return out
+
+    @Tensor.force_dim(3)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, width = X.shape
+
+        dX = np.zeros_like(X)
+        dX += d_out / width
+        self.dX = dX
+        return self.dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, _ = in_shape
+        return (batch_size, channels, 1)
+
+
+class _GlobalAvgPool2D(Layer):
+    def __init__(self) -> None:
+        super().__init__()
+
+    @Tensor.force_dim(4)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        out = np.mean(X, axis=(2, 3), keepdims=True)
+
+        return out
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, height, width = X.shape
+
+        dX = np.zeros_like(X)
+        dX += d_out / (height * width)
+        self.dX = dX
+        return self.dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, _ = in_shape
+        return (batch_size, channels, 1, 1)
+
+
+class _GlobalAvgPool3D(Layer):
+    def __init__(self) -> None:
+        super().__init__()
+
+    @Tensor.force_dim(5)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        out = np.mean(X, axis=(2, 3, 4), keepdims=True)
+
+        return out
+
+    @Tensor.force_dim(5)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, depth, height, width = X.shape
+
+        dX = np.zeros_like(X)
+        dX += d_out / (depth * height * width)
+        self.dX = dX
+        return self.dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, _ = in_shape
+        return (batch_size, channels, 1, 1, 1)

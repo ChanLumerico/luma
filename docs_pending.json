@@ -1,7 +1,7 @@
 {
     "class": [
         {
-            "name": "ConvBlock",
+            "name": "ConvBlockND",
             "script": "luma.neural.block",
             "inheriting": "Sequential"
         },
@@ -11,7 +11,7 @@
             "inheriting": "Sequential"
         },
         {
-            "name": "BatchNorm",
+            "name": "BatchNormND",
             "script": "luma.neural.layer",
             "inheriting": "Layer"
         },
@@ -26,7 +26,7 @@
             "inheriting": "Layer"
         },
         {
-            "name": "Dropout1D, 2D & 3D",
+            "name": "DropoutND",
             "script": "luma.neural.layer",
             "inheriting": "Layer"
         },

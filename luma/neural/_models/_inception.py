@@ -199,6 +199,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
         return super(_Inception_V1, self).score_nn(X, y, metric, argmax)
 
 
+# Test code
 from luma.neural.optimizer import AdamOptimizer
 
 model = _Inception_V1(optimizer=AdamOptimizer())
