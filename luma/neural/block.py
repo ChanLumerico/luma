@@ -20,7 +20,7 @@ __all__ = (
 
 @dataclass
 class ConvBlockArgs:
-    filter_size: int
+    filter_size: Tuple[int, ...] | int
     activation: Activation.FuncType
     optimizer: Optimizer | None = None
     initializer: InitUtil.InitStr = None
@@ -59,8 +59,8 @@ class ConvBlock1D(Sequential):
         Number of input channels
     `out_channels` : int
         Number of output channels
-    `filter_size` : int
-        Size of the convolution filter
+    `filter_size`: tuple of int or int
+        Size of each filter
     `activation` : FuncType
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
@@ -99,7 +99,7 @@ class ConvBlock1D(Sequential):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int] | int,
         activation: Activation.FuncType,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
@@ -188,8 +188,8 @@ class ConvBlock2D(Sequential):
         Number of input channels
     `out_channels` : int
         Number of output channels
-    `filter_size` : int
-        Size of the convolution filter
+    `filter_size`: tuple of int or int
+        Size of each filter
     `activation` : FuncType
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
@@ -228,7 +228,7 @@ class ConvBlock2D(Sequential):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int, int] | int,
         activation: Activation.FuncType,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
@@ -317,8 +317,8 @@ class ConvBlock3D(Sequential):
         Number of input channels
     `out_channels` : int
         Number of output channels
-    `filter_size` : int
-        Size of the convolution filter
+    `filter_size`: tuple of int or int
+        Size of each filter
     `activation` : FuncType
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
@@ -357,7 +357,7 @@ class ConvBlock3D(Sequential):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int, int, int] | int,
         activation: Activation.FuncType,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,

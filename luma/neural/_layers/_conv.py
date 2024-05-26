@@ -16,7 +16,7 @@ class _Conv1D(Layer):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int] | int,
         stride: int = 1,
         padding: Tuple[int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
@@ -27,7 +27,6 @@ class _Conv1D(Layer):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.filter_size = filter_size
         self.stride = stride
         self.padding = padding
         self.initializer = initializer
@@ -36,11 +35,16 @@ class _Conv1D(Layer):
         self.random_state = random_state
         self.rs_ = np.random.RandomState(self.random_state)
 
+        if isinstance(filter_size, int):
+            self.filter_size = (filter_size,)
+        else:
+            self.filter_size = filter_size
+
         self.init_params(
             w_shape=(
                 self.out_channels,
                 self.in_channels,
-                self.filter_size,
+                *self.filter_size,
             ),
             b_shape=(1, self.out_channels),
         )
@@ -48,7 +52,6 @@ class _Conv1D(Layer):
             {
                 "in_channels": ("0<,+inf", int),
                 "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
                 "stride": ("0<,+inf", int),
                 "lambda_": ("0,+inf", None),
             }
@@ -69,7 +72,7 @@ class _Conv1D(Layer):
 
         pad_w, padded_w = self._get_padding_dim(width)
 
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size[0]) // self.stride) + 1
         out: Tensor = np.zeros((batch_size, self.out_channels, out_width))
 
         X_padded = np.pad(X, ((0, 0), (0, 0), (pad_w, pad_w)), mode="constant")
@@ -113,9 +116,10 @@ class _Conv1D(Layer):
                     X_fft[:, c] * d_out_fft[:, f].conj(),
                     axis=0,
                 )
-                self.dW[f, c] = np.fft.irfft(filter_d_out_fft, n=padded_w)[
-                    : self.filter_size
-                ]
+                self.dW[f, c] = np.fft.irfftn(
+                    filter_d_out_fft,
+                    s=(padded_w,),
+                )[pad_w : pad_w + self.filter_size[0]]
 
         self.dW += 2 * self.lambda_ * self.weights_
 
@@ -139,7 +143,7 @@ class _Conv1D(Layer):
         elif isinstance(self.padding, int):
             pad_w = self.padding
         elif self.padding == "same":
-            pad_w = (self.filter_size - 1) // 2
+            pad_w = (self.filter_size[0] - 1) // 2
         elif self.padding == "valid":
             pad_w = 0
         else:
@@ -151,7 +155,7 @@ class _Conv1D(Layer):
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, width = in_shape
         _, padded_w = self._get_padding_dim(width)
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size[0]) // self.stride) + 1
 
         return (batch_size, self.out_channels, out_width)
 
@@ -161,7 +165,7 @@ class _Conv2D(Layer):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int, int] | int,
         stride: int = 1,
         padding: Tuple[int, int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
@@ -172,7 +176,6 @@ class _Conv2D(Layer):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.filter_size = filter_size
         self.stride = stride
         self.padding = padding
         self.initializer = initializer
@@ -181,12 +184,16 @@ class _Conv2D(Layer):
         self.random_state = random_state
         self.rs_ = np.random.RandomState(self.random_state)
 
+        if isinstance(filter_size, int):
+            self.filter_size = (filter_size, filter_size)
+        else:
+            self.filter_size = filter_size
+
         self.init_params(
             w_shape=(
                 self.out_channels,
                 self.in_channels,
-                self.filter_size,
-                self.filter_size,
+                *self.filter_size,
             ),
             b_shape=(1, self.out_channels),
         )
@@ -194,7 +201,6 @@ class _Conv2D(Layer):
             {
                 "in_channels": ("0<,+inf", int),
                 "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
                 "stride": ("0<,+inf", int),
                 "lambda_": ("0,+inf", None),
             }
@@ -215,8 +221,8 @@ class _Conv2D(Layer):
 
         pad_h, pad_w, padded_h, padded_w = self._get_padding_dim(height, width)
 
-        out_height = ((padded_h - self.filter_size) // self.stride) + 1
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+        out_height = ((padded_h - self.filter_size[0]) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size[1]) // self.stride) + 1
         out: Tensor = np.zeros(
             (
                 batch_size,
@@ -277,7 +283,10 @@ class _Conv2D(Layer):
                 self.dW[f, c] = np.fft.irfftn(
                     filter_d_out_fft,
                     s=(padded_h, padded_w),
-                )[pad_h : pad_h + self.filter_size, pad_w : pad_w + self.filter_size]
+                )[
+                    pad_h : pad_h + self.filter_size[0],
+                    pad_w : pad_w + self.filter_size[1],
+                ]
 
         self.dW += 2 * self.lambda_ * self.weights_
 
@@ -307,7 +316,8 @@ class _Conv2D(Layer):
             pad_h = pad_w = self.padding
 
         elif self.padding == "same":
-            pad_h = pad_w = (self.filter_size - 1) // 2
+            pad_h = (self.filter_size[0] - 1) // 2
+            pad_w = (self.filter_size[1] - 1) // 2
         elif self.padding == "valid":
             pad_h = pad_w = 0
         else:
@@ -322,8 +332,8 @@ class _Conv2D(Layer):
         batch_size, _, height, width = in_shape
         _, _, padded_h, padded_w = self._get_padding_dim(height, width)
 
-        out_height = ((padded_h - self.filter_size) // self.stride) + 1
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+        out_height = ((padded_h - self.filter_size[0]) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size[1]) // self.stride) + 1
 
         return (batch_size, self.out_channels, out_height, out_width)
 
@@ -333,7 +343,7 @@ class _Conv3D(Layer):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int, int, int] | int,
         stride: int = 1,
         padding: Tuple[int, int, int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
@@ -344,7 +354,6 @@ class _Conv3D(Layer):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.filter_size = filter_size
         self.stride = stride
         self.padding = padding
         self.initializer = initializer
@@ -353,13 +362,16 @@ class _Conv3D(Layer):
         self.random_state = random_state
         self.rs_ = np.random.RandomState(self.random_state)
 
+        if isinstance(filter_size, int):
+            self.filter_size = (filter_size, filter_size, filter_size)
+        else:
+            self.filter_size = filter_size
+
         self.init_params(
             w_shape=(
                 self.out_channels,
                 self.in_channels,
-                self.filter_size,
-                self.filter_size,
-                self.filter_size,
+                *self.filter_size,
             ),
             b_shape=(1, self.out_channels),
         )
@@ -367,7 +379,6 @@ class _Conv3D(Layer):
             {
                 "in_channels": ("0<,+inf", int),
                 "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
                 "stride": ("0<,+inf", int),
                 "lambda_": ("0,+inf", None),
             }
@@ -389,9 +400,9 @@ class _Conv3D(Layer):
         pad_d, pad_h, pad_w, padded_d, padded_h, padded_w = self._get_padding_dim(
             depth, height, width
         )
-        out_depth = ((padded_d - self.filter_size) // self.stride) + 1
-        out_height = ((padded_h - self.filter_size) // self.stride) + 1
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+        out_depth = ((padded_d - self.filter_size[0]) // self.stride) + 1
+        out_height = ((padded_h - self.filter_size[1]) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size[2]) // self.stride) + 1
         out: Tensor = np.zeros(
             (batch_size, self.out_channels, out_depth, out_height, out_width)
         )
@@ -468,9 +479,9 @@ class _Conv3D(Layer):
                     filter_d_out_fft,
                     s=(padded_d, padded_h, padded_w),
                 )[
-                    pad_d : pad_d + self.filter_size,
-                    pad_h : pad_h + self.filter_size,
-                    pad_w : pad_w + self.filter_size,
+                    pad_d : pad_d + self.filter_size[0],
+                    pad_h : pad_h + self.filter_size[1],
+                    pad_w : pad_w + self.filter_size[2],
                 ]
 
         self.dW += 2 * self.lambda_ * self.weights_
@@ -513,7 +524,9 @@ class _Conv3D(Layer):
         elif isinstance(self.padding, int):
             pad_d = pad_h = pad_w = self.padding
         elif self.padding == "same":
-            pad_d = pad_h = pad_w = (self.filter_size - 1) // 2
+            pad_d = (self.filter_size[0] - 1) // 2
+            pad_h = (self.filter_size[1] - 1) // 2
+            pad_w = (self.filter_size[2] - 1) // 2
         elif self.padding == "valid":
             pad_d = pad_h = pad_w = 0
         else:
@@ -530,8 +543,8 @@ class _Conv3D(Layer):
         _, _, _, padded_d, padded_h, padded_w = self._get_padding_dim(
             depth, height, width
         )
-        out_depth = ((padded_d - self.filter_size) // self.stride) + 1
-        out_height = ((padded_h - self.filter_size) // self.stride) + 1
-        out_width = ((padded_w - self.filter_size) // self.stride) + 1
+        out_depth = ((padded_d - self.filter_size[0]) // self.stride) + 1
+        out_height = ((padded_h - self.filter_size[1]) // self.stride) + 1
+        out_width = ((padded_w - self.filter_size[2]) // self.stride) + 1
 
         return (batch_size, self.out_channels, out_depth, out_height, out_width)

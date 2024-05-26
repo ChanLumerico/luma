@@ -15,6 +15,7 @@ from luma.neural.block import (
 from luma.neural.layer import (
     Convolution2D,
     Pooling2D,
+    GlobalAvgPooling2D,
     Activation,
     Dropout,
     Dense,
@@ -170,7 +171,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
                 "Inception_5b",
                 InceptionBlock(832, 384, 192, 384, 48, 128, 128, **asdict(incep_args)),
             ),
-            # Pooling2D(7, stride=1, mode="avg"), TODO: Implement Global Avg. Pooling
+            GlobalAvgPooling2D(),
             Dropout(self.dropout_rate, random_state=self.random_state),
             deep_add=False,
         )

@@ -22,12 +22,12 @@ __all__ = (
     "Pooling1D",
     "Pooling2D",
     "Pooling3D",
-    "GlobalAvgPool1D",
-    "GlobalAvgPool2D",
-    "GlobalAvgPool3D",
-    "LpPool1D",
-    "LpPool2D",
-    "LpPool3D",
+    "GlobalAvgPooling1D",
+    "GlobalAvgPooling2D",
+    "GlobalAvgPooling3D",
+    "LpPooling1D",
+    "LpPooling2D",
+    "LpPooling3D",
     "Dense",
     "Dropout",
     "Dropout1D",
@@ -60,8 +60,8 @@ class Convolution1D(_conv._Conv1D):
         Number of input channels
     `out_channels` : int
         Number of output channels(filters)
-    `filter_size`: int
-        Length of each filter
+    `filter_size`: tuple of int or int
+        Size of each filter
     `stride` : int, default=1
         Step size for filters during convolution
     `padding` : tuple of int or int or {"valid", "same"}, default="same"
@@ -88,7 +88,7 @@ class Convolution1D(_conv._Conv1D):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int] | int,
         stride: int = 1,
         padding: Tuple[int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
@@ -125,8 +125,8 @@ class Convolution2D(_conv._Conv2D):
         Number of input channels
     `out_channels` : int
         Number of output channels(filters)
-    `filter_size`: int
-        Length of each filter
+    `filter_size`: tuple of int or int
+        Size of each filter
     `stride` : int, default=1
         Step size for filters during convolution
     `padding` : tuple of int or int or {"valid", "same"}, default="same"
@@ -153,7 +153,7 @@ class Convolution2D(_conv._Conv2D):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int, int] | int,
         stride: int = 1,
         padding: Tuple[int, int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
@@ -190,8 +190,8 @@ class Convolution3D(_conv._Conv3D):
         Number of input channels
     `out_channels` : int
         Number of output channels(filters)
-    `filter_size`: int
-        Length of each filter
+    `filter_size`: tuple of int or int
+        Size of each filter
     `stride` : int, default=1
         Step size for filters during convolution
     `padding` : tuple of int or int or {"valid", "same"}, default="same"
@@ -218,7 +218,7 @@ class Convolution3D(_conv._Conv3D):
         self,
         in_channels: int,
         out_channels: int,
-        filter_size: int,
+        filter_size: Tuple[int, int, int] | int,
         stride: int = 1,
         padding: Tuple[int, int, int] | int | Literal["valid", "same"] = "same",
         initializer: InitUtil.InitStr = None,
@@ -365,7 +365,7 @@ class Pooling3D(_pool._Pool3D):
         super().__init__(filter_size, stride, mode, padding)
 
 
-class GlobalAvgPool1D(_pool._GlobalAvgPool1D):
+class GlobalAvgPooling1D(_pool._GlobalAvgPool1D):
     """
     Global average pooling layer for 1-dimensional data.
 
@@ -390,7 +390,7 @@ class GlobalAvgPool1D(_pool._GlobalAvgPool1D):
         super().__init__()
 
 
-class GlobalAvgPool2D(_pool._GlobalAvgPool2D):
+class GlobalAvgPooling2D(_pool._GlobalAvgPool2D):
     """
     Global average pooling layer for 2-dimensional data.
 
@@ -415,7 +415,7 @@ class GlobalAvgPool2D(_pool._GlobalAvgPool2D):
         super().__init__()
 
 
-class GlobalAvgPool3D(_pool._GlobalAvgPool3D):
+class GlobalAvgPooling3D(_pool._GlobalAvgPool3D):
     """
     Global average pooling layer for 3-dimensional data.
 
@@ -440,7 +440,7 @@ class GlobalAvgPool3D(_pool._GlobalAvgPool3D):
         super().__init__()
 
 
-class LpPool1D(_pool._LpPool1D):
+class LpPooling1D(_pool._LpPool1D):
     """
     Lp pooling layer for 1-dimensional data.
 
@@ -480,7 +480,7 @@ class LpPool1D(_pool._LpPool1D):
         super().__init__(filter_size, stride, p, padding)
 
 
-class LpPool2D(_pool._LpPool2D):
+class LpPooling2D(_pool._LpPool2D):
     """
     Lp pooling layer for 2-dimensional data.
 
@@ -520,7 +520,7 @@ class LpPool2D(_pool._LpPool2D):
         super().__init__(filter_size, stride, p, padding)
 
 
-class LpPool3D(_pool._LpPool3D):
+class LpPooling3D(_pool._LpPool3D):
     """
     Lp pooling layer for 3-dimensional data.
 
