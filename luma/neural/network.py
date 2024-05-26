@@ -22,6 +22,9 @@ __all__ = (
     "VGGNet_13",
     "VGGNet_16",
     "VGGNet_19",
+    "Inception_V1",
+    "Inception_V2",
+    "Inception_V3",
 )
 
 
@@ -1332,3 +1335,137 @@ class VGGNet_19(_vgg._VGGNet_19):
             random_state,
             deep_verbose,
         )
+
+
+class Inception_V1(_inception._Inception_V1):
+    """
+    Inception v1, also known as GoogLeNet, is a deep convolutional neural network
+    architecture designed for image classification. It introduces an "Inception
+    module," which uses multiple convolutional filters of different sizes in
+    parallel to capture various features at different scales. This architecture
+    reduces computational costs by using 1x1 convolutions to decrease the number
+    of input channels. Inception v1 achieved state-of-the-art results on the
+    ImageNet Large Scale Visual Recognition Challenge (ILSVRC) 2014.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Introductory Convolutions:
+    ```py
+    ConvBlock2D(3, 64, filter_size=7, pool_mode="max") ->
+    ConvBlock2D(64, 64, filter_size=1, do_pooling=False) ->
+    ConvBlock2D(64, 192, filter_size=3, pool_mode="max") ->
+    ```
+    Inception Blocks:
+    ```py
+    InceptionBlock(192, 64, 96, 128, 16, 32, 32) ->  # Inception_3a
+    InceptionBlock(256, 128, 128, 192, 32, 96, 64) ->  # Inception_3b
+    Pooling2D(3, 2, mode="max")
+
+    InceptionBlock(480, 192, 96, 208, 16, 48, 64) ->  # Inception_4a
+    InceptionBlock(512, 160, 112, 224, 24, 64, 64) ->  # Inception_4b
+    InceptionBlock(512, 128, 128, 256, 24, 64, 64) ->  # Inception_4c
+    InceptionBlock(512, 112, 144, 288, 32, 64, 64) ->  # Inception_4d
+    InceptionBlock(528, 256, 160, 320, 32, 128, 128) ->  # Inception_4e
+    Pooling2D(3, 2, mode="max")
+
+    InceptionBlock(832, 256, 160, 320, 32, 128, 128) ->  # Inception_5a
+    InceptionBlock(832, 384, 192, 384, 48, 128, 128) ->  # Inception_5b
+    GlobalAvgPooling2D() ->
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(1024, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    6,990,272 weights, 8,280 biases -> 6,998,552 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. Szegedy, Christian, et al. “Going Deeper with Convolutions.” Proceedings
+    of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR),
+    2015, pp. 1-9.
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        dropout_rate: float = 0.4,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class Inception_V2(_inception._Inception_V2):
+    NotImplemented
+
+
+class Inception_V3(_inception._Inception_V3):
+    NotImplemented

@@ -131,6 +131,9 @@ from luma.neural.network import (
     VGGNet_13,
     VGGNet_16,
     VGGNet_19,
+    Inception_V1,
+    Inception_V2,
+    Inception_V3,
 )
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
@@ -296,7 +299,8 @@ if __name__ == "__main__":
     InceptionBlock
 
     SimpleMLP, SimpleCNN, LeNet_1, LeNet_4, LeNet_5, AlexNet,
-    ZFNet, VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19
+    ZFNet, VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19,
+    Inception_V1, Inception_V2, Inception_V3
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

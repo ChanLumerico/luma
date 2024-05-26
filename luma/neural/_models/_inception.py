@@ -24,7 +24,7 @@ from luma.neural.layer import (
 )
 
 
-__all__ = "_Inception_V1"
+__all__ = ("_Inception_V1", "_Inception_V2", "_Inception_V3")
 
 
 class _Inception_V1(Estimator, Supervised, NeuralModel):
@@ -75,7 +75,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
         self.feature_sizes_ = [
             [3, 64, 64, 192],
             [192, 256, 480, 512, 512, 512, 528, 832, 832],
-            # [1024, self.out_features],
+            [1024, self.out_features],
         ]
         self.feature_shapes_ = [
             self._get_feature_shapes(self.feature_sizes_[0]),
@@ -200,8 +200,9 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
         return super(_Inception_V1, self).score_nn(X, y, metric, argmax)
 
 
-# Test code
-from luma.neural.optimizer import AdamOptimizer
+class _Inception_V2(Estimator, Supervised, NeuralModel):
+    NotImplemented
 
-model = _Inception_V1(optimizer=AdamOptimizer())
-model.summarize(in_shape=(-1, 3, 224, 224))
+
+class _Inception_V3(Estimator, Supervised, NeuralModel):
+    NotImplemented
