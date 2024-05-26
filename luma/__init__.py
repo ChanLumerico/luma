@@ -4,7 +4,7 @@
 
 Lumerico's Universal Machine-learning Assistant
 -----------------------------------------------
-Luma is a comprehensive, user-friendly Python module designed for both beginners 
+Luma is a comprehensive, user-friendly Python library designed for both beginners 
 and advanced users in the field of machine learning and data science. It provides 
 a wide range of tools and functionalities to streamline the process of data analysis, 
 model building, evaluation, and deployment.

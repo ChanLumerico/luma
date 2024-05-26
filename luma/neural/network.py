@@ -7,7 +7,7 @@ from luma.neural.base import Loss
 from luma.neural.layer import Activation
 from luma.neural.loss import CrossEntropy
 
-from ._models import _simple, _lenet, _alex, _vgg, _inception
+from luma.neural._models import _simple, _lenet, _alex, _vgg, _inception
 
 
 __all__ = (

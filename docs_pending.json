@@ -31,7 +31,7 @@
             "inheriting": "Layer"
         },
         {
-            "name": "LeNet series",
+            "name": "LeNets",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         },
@@ -46,7 +46,7 @@
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         },
         {
-            "name": "VGGNet series",
+            "name": "VGGNets",
             "script": "luma.neural.network",
             "inheriting": ["Estimator", "Supervised", "NeuralModel"]
         },
@@ -54,6 +54,11 @@
             "name": "InceptionBlock",
             "script": "luma.neural.block",
             "inheriting": "Sequential"
+        },
+        {
+            "name": "GlobalAvgPoolND",
+            "script": "luma.neural.layer",
+            "inheriting": "Layer"
         }
     ]
 }

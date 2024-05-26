@@ -13,6 +13,9 @@ __all__ = (
     "_GlobalAvgPool1D",
     "_GlobalAvgPool2D",
     "_GlobalAvgPool3D",
+    "_LpPool1D",
+    "_LpPool2D",
+    "_LpPool3D",
 )
 
 
@@ -121,7 +124,6 @@ class _Pool1D(Layer):
         _, padded_w = self._get_padding_dim(width)
 
         out_width = 1 + (padded_w - self.filter_size) // self.stride
-
         return (batch_size, channels, out_width)
 
 
@@ -469,7 +471,7 @@ class _GlobalAvgPool2D(Layer):
         return self.dX
 
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, channels, _ = in_shape
+        batch_size, channels, _, _ = in_shape
         return (batch_size, channels, 1, 1)
 
 
@@ -496,5 +498,398 @@ class _GlobalAvgPool3D(Layer):
         return self.dX
 
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, channels, _ = in_shape
+        batch_size, channels, _, _, _ = in_shape
         return (batch_size, channels, 1, 1, 1)
+
+
+class _LpPool1D(Layer):
+    def __init__(
+        self,
+        filter_size: int = 2,
+        stride: int = 2,
+        p: float = 2.0,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
+    ) -> None:
+        super().__init__()
+        self.filter_size = filter_size
+        self.stride = stride
+        self.p = p
+        self.padding = padding
+
+        self.set_param_ranges(
+            {
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "p": ("0<,+inf", float),
+            }
+        )
+        self.check_param_ranges()
+
+    @Tensor.force_dim(3)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        batch_size, channels, width = X.shape
+
+        pad_w, padded_w = self._get_padding_dim(width)
+
+        out_width = 1 + (padded_w - self.filter_size) // self.stride
+        out: Tensor = np.zeros((batch_size, channels, out_width))
+
+        X_padded = np.pad(X, ((0, 0), (0, 0), (pad_w, pad_w)), mode="constant")
+
+        for i in range(out_width):
+            w_start, w_end = self._get_pooling_bounds(i)
+            window = X_padded[:, :, w_start:w_end]
+
+            out[:, :, i] = np.power(
+                np.sum(np.power(np.abs(window), self.p), axis=2), 1 / self.p
+            )
+
+        return out
+
+    @Tensor.force_dim(3)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, width = X.shape
+
+        pad_w, _ = self._get_padding_dim(width)
+        X_padded = np.pad(X, ((0, 0), (0, 0), (pad_w, pad_w)), mode="constant")
+        dX_padded = np.zeros_like(X_padded)
+
+        out_width = d_out.shape[2]
+
+        for i in range(out_width):
+            w_start, w_end = self._get_pooling_bounds(i)
+            window = X_padded[:, :, w_start:w_end]
+
+            window_p_norm = np.power(
+                np.sum(np.power(np.abs(window), self.p), axis=2), 1 / self.p
+            )
+
+            gradient = (np.power(np.abs(window), self.p - 1) * np.sign(window)) / (
+                np.power(window_p_norm, self.p - 1, keepdims=True) + 1e-12
+            )
+
+            dX_padded[:, :, w_start:w_end] += gradient * d_out[:, :, i : i + 1]
+
+        if pad_w > 0:
+            self.dX = dX_padded[:, :, pad_w:-pad_w]
+        else:
+            self.dX = dX_padded
+
+        return self.dX
+
+    def _get_padding_dim(self, width: int) -> Tuple[int, int]:
+        if isinstance(self.padding, tuple):
+            if len(self.padding) != 1:
+                raise ValueError("Padding tuple must have exactly one value.")
+            pad_w = self.padding[0]
+
+        elif isinstance(self.padding, int):
+            pad_w = self.padding
+        elif self.padding == "same":
+            pad_w = (self.filter_size - 1) // 2
+        elif self.padding == "valid":
+            pad_w = 0
+        else:
+            raise UnsupportedParameterError(self.padding)
+
+        padded_w = width + 2 * pad_w
+        return pad_w, padded_w
+
+    def _get_pooling_bounds(self, cur_w: int) -> Tuple[int, int]:
+        w_start = cur_w * self.stride
+        w_end = w_start + self.filter_size
+
+        return w_start, w_end
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, width = in_shape
+        _, padded_w = self._get_padding_dim(width)
+
+        out_width = 1 + (padded_w - self.filter_size) // self.stride
+        return (batch_size, channels, out_width)
+
+
+class _LpPool2D(Layer):
+    def __init__(
+        self,
+        filter_size: int = 2,
+        stride: int = 2,
+        p: float = 2.0,
+        padding: Tuple[int, int] | int | Literal["same", "valid"] = "valid",
+    ) -> None:
+        super().__init__()
+        self.filter_size = filter_size
+        self.stride = stride
+        self.p = p
+        self.padding = padding
+
+        self.set_param_ranges(
+            {
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "p": ("0<,+inf", float),
+            }
+        )
+        self.check_param_ranges()
+
+    @Tensor.force_dim(4)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        batch_size, channels, height, width = X.shape
+
+        pad_h, pad_w, padded_h, padded_w = self._get_padding_dim(height, width)
+
+        out_height = 1 + (padded_h - self.filter_size) // self.stride
+        out_width = 1 + (padded_w - self.filter_size) // self.stride
+        out: Tensor = np.zeros((batch_size, channels, out_height, out_width))
+
+        X_padded = np.pad(
+            X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
+        )
+
+        for i in range(out_height):
+            for j in range(out_width):
+                h_start, h_end, w_start, w_end = self._get_pooling_bounds(i, j)
+                window = X_padded[:, :, h_start:h_end, w_start:w_end]
+
+                out[:, :, i, j] = np.power(
+                    np.sum(np.power(np.abs(window), self.p), axis=(2, 3)), 1 / self.p
+                )
+
+        return out
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, height, width = X.shape
+
+        pad_h, pad_w, _, _ = self._get_padding_dim(height, width)
+        X_padded = np.pad(
+            X, ((0, 0), (0, 0), (pad_h, pad_h), (pad_w, pad_w)), mode="constant"
+        )
+        dX_padded = np.zeros_like(X_padded)
+
+        out_height, out_width = d_out.shape[2], d_out.shape[3]
+
+        for i in range(out_height):
+            for j in range(out_width):
+                h_start, h_end, w_start, w_end = self._get_pooling_bounds(i, j)
+                window = X_padded[:, :, h_start:h_end, w_start:w_end]
+
+                window_p_norm = np.power(
+                    np.sum(np.power(np.abs(window), self.p), axis=(2, 3)), 1 / self.p
+                )
+
+                gradient = (np.power(np.abs(window), self.p - 1) * np.sign(window)) / (
+                    np.power(window_p_norm, self.p - 1) + 1e-12
+                )
+
+                dX_padded[:, :, h_start:h_end, w_start:w_end] += (
+                    gradient * d_out[:, :, i : i + 1, j : j + 1]
+                )
+
+        if pad_h > 0 or pad_w > 0:
+            self.dX = dX_padded[:, :, pad_h:-pad_h, pad_w:-pad_w]
+        else:
+            self.dX = dX_padded
+
+        return self.dX
+
+    def _get_padding_dim(self, height: int, width: int) -> Tuple[int, ...]:
+        if isinstance(self.padding, tuple):
+            if len(self.padding) != 2:
+                raise ValueError("Padding tuple must have exactly two values.")
+            pad_h, pad_w = self.padding
+        elif isinstance(self.padding, int):
+            pad_h = pad_w = self.padding
+
+        elif self.padding == "same":
+            pad_h = pad_w = (self.filter_size - 1) // 2
+        elif self.padding == "valid":
+            pad_h = pad_w = 0
+        else:
+            raise UnsupportedParameterError(self.padding)
+
+        padded_h = height + 2 * pad_h
+        padded_w = width + 2 * pad_w
+
+        return pad_h, pad_w, padded_h, padded_w
+
+    def _get_pooling_bounds(self, cur_h: int, cur_w: int) -> Tuple[int, ...]:
+        h_start = cur_h * self.stride
+        w_start = cur_w * self.stride
+
+        h_end = h_start + self.filter_size
+        w_end = w_start + self.filter_size
+
+        return h_start, h_end, w_start, w_end
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, height, width = in_shape
+        _, _, padded_h, padded_w = self._get_padding_dim(height, width)
+
+        out_height = 1 + (padded_h - self.filter_size) // self.stride
+        out_width = 1 + (padded_w - self.filter_size) // self.stride
+
+        return (batch_size, channels, out_height, out_width)
+
+
+class _LpPool3D(Layer):
+    def __init__(
+        self,
+        filter_size: int = 2,
+        stride: int = 2,
+        p: float = 2.0,
+        padding: Tuple[int, int, int] | int | Literal["same", "valid"] = "valid",
+    ) -> None:
+        super().__init__()
+        self.filter_size = filter_size
+        self.stride = stride
+        self.p = p
+        self.padding = padding
+
+        self.set_param_ranges(
+            {
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "p": ("0<,+inf", float),
+            }
+        )
+        self.check_param_ranges()
+
+    @Tensor.force_dim(5)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        batch_size, channels, depth, height, width = X.shape
+
+        pad_d, pad_h, pad_w, padded_d, padded_h, padded_w = self._get_padding_dim(
+            depth, height, width
+        )
+
+        out_depth = 1 + (padded_d - self.filter_size) // self.stride
+        out_height = 1 + (padded_h - self.filter_size) // self.stride
+        out_width = 1 + (padded_w - self.filter_size) // self.stride
+        out: Tensor = np.zeros((batch_size, channels, out_depth, out_height, out_width))
+
+        X_padded = np.pad(
+            X,
+            ((0, 0), (0, 0), (pad_d, pad_d), (pad_h, pad_h), (pad_w, pad_w)),
+            mode="constant",
+        )
+
+        for i in range(out_depth):
+            for j in range(out_height):
+                for k in range(out_width):
+                    d_start, d_end, h_start, h_end, w_start, w_end = (
+                        self._get_pooling_bounds(i, j, k)
+                    )
+                    window = X_padded[:, :, d_start:d_end, h_start:h_end, w_start:w_end]
+
+                    out[:, :, i, j, k] = np.power(
+                        np.sum(np.power(np.abs(window), self.p), axis=(2, 3, 4)),
+                        1 / self.p,
+                    )
+
+        return out
+
+    @Tensor.force_dim(5)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, depth, height, width = X.shape
+
+        pad_d, pad_h, pad_w, _, _, _ = self._get_padding_dim(depth, height, width)
+        X_padded = np.pad(
+            X,
+            ((0, 0), (0, 0), (pad_d, pad_d), (pad_h, pad_h), (pad_w, pad_w)),
+            mode="constant",
+        )
+        dX_padded = np.zeros_like(X_padded)
+
+        out_depth, out_height, out_width = (
+            d_out.shape[2],
+            d_out.shape[3],
+            d_out.shape[4],
+        )
+        for i in range(out_depth):
+            for j in range(out_height):
+                for k in range(out_width):
+                    d_start, d_end, h_start, h_end, w_start, w_end = (
+                        self._get_pooling_bounds(i, j, k)
+                    )
+                    window = X_padded[:, :, d_start:d_end, h_start:h_end, w_start:w_end]
+
+                    window_p_norm = np.power(
+                        np.sum(np.power(np.abs(window), self.p), axis=(2, 3, 4)),
+                        1 / self.p,
+                    )
+
+                    gradient = (
+                        np.power(np.abs(window), self.p - 1) * np.sign(window)
+                    ) / (np.power(window_p_norm, self.p - 1, keepdims=True) + 1e-12)
+
+                    dX_padded[:, :, d_start:d_end, h_start:h_end, w_start:w_end] += (
+                        gradient * d_out[:, :, i : i + 1, j : j + 1, k : k + 1]
+                    )
+
+        if pad_d > 0 or pad_h > 0 or pad_w > 0:
+            self.dX = dX_padded[:, :, pad_d:-pad_d, pad_h:-pad_h, pad_w:-pad_w]
+        else:
+            self.dX = dX_padded
+
+        return self.dX
+
+    def _get_padding_dim(
+        self,
+        depth: int,
+        height: int,
+        width: int,
+    ) -> Tuple[int, ...]:
+        if isinstance(self.padding, tuple):
+            if len(self.padding) != 3:
+                raise ValueError("Padding tuple must have exactly three values.")
+            pad_d, pad_h, pad_w = self.padding
+        elif isinstance(self.padding, int):
+            pad_d = pad_h = pad_w = self.padding
+
+        elif self.padding == "same":
+            pad_d = pad_h = pad_w = (self.filter_size - 1) // 2
+        elif self.padding == "valid":
+            pad_d = pad_h = pad_w = 0
+        else:
+            raise UnsupportedParameterError(self.padding)
+
+        padded_d = depth + 2 * pad_d
+        padded_h = height + 2 * pad_h
+        padded_w = width + 2 * pad_w
+
+        return pad_d, pad_h, pad_w, padded_d, padded_h, padded_w
+
+    def _get_pooling_bounds(
+        self, cur_d: int, cur_h: int, cur_w: int
+    ) -> Tuple[int, ...]:
+        d_start = cur_d * self.stride
+        h_start = cur_h * self.stride
+        w_start = cur_w * self.stride
+
+        d_end = d_start + self.filter_size
+        h_end = h_start + self.filter_size
+        w_end = w_start + self.filter_size
+
+        return d_start, d_end, h_start, h_end, w_start, w_end
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, depth, height, width = in_shape
+        _, _, _, padded_d, padded_h, padded_w = self._get_padding_dim(
+            depth, height, width
+        )
+
+        out_depth = 1 + (padded_d - self.filter_size) // self.stride
+        out_height = 1 + (padded_h - self.filter_size) // self.stride
+        out_width = 1 + (padded_w - self.filter_size) // self.stride
+
+        return (batch_size, channels, out_depth, out_height, out_width)

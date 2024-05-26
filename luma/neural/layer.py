@@ -5,7 +5,7 @@ from luma.interface.typing import TensorLike
 from luma.interface.util import InitUtil, Clone
 from luma.neural.base import Layer
 
-from ._layers import (
+from luma.neural._layers import (
     _act,
     _conv,
     _drop,
@@ -22,6 +22,12 @@ __all__ = (
     "Pooling1D",
     "Pooling2D",
     "Pooling3D",
+    "GlobalAvgPool1D",
+    "GlobalAvgPool2D",
+    "GlobalAvgPool3D",
+    "LpPool1D",
+    "LpPool2D",
+    "LpPool3D",
     "Dense",
     "Dropout",
     "Dropout1D",
@@ -357,6 +363,201 @@ class Pooling3D(_pool._Pool3D):
         padding: Tuple[int, int, int] | int | Literal["valid", "same"] = "valid",
     ) -> None:
         super().__init__(filter_size, stride, mode, padding)
+
+
+class GlobalAvgPool1D(_pool._GlobalAvgPool1D):
+    """
+    Global average pooling layer for 1-dimensional data.
+
+    Global Average Pooling (GAP) is a downsampling technique in Convolutional
+    Neural Networks (CNNs) that reduces each feature map to a single value by
+    taking the average of all its elements. It effectively transforms a
+    multi-dimensional feature map into a one-dimensional vector, which helps in
+    reducing the number of parameters and avoiding overfitting.
+    GAP is commonly used in classification tasks, particularly in the final layer
+    before the output layer.
+
+    Notes
+    -----
+    - The input `X` must have the form of 3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, width)
+        ```
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class GlobalAvgPool2D(_pool._GlobalAvgPool2D):
+    """
+    Global average pooling layer for 2-dimensional data.
+
+    Global Average Pooling (GAP) is a downsampling technique in Convolutional
+    Neural Networks (CNNs) that reduces each feature map to a single value by
+    taking the average of all its elements. It effectively transforms a
+    multi-dimensional feature map into a one-dimensional vector, which helps in
+    reducing the number of parameters and avoiding overfitting.
+    GAP is commonly used in classification tasks, particularly in the final layer
+    before the output layer.
+
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class GlobalAvgPool3D(_pool._GlobalAvgPool3D):
+    """
+    Global average pooling layer for 3-dimensional data.
+
+    Global Average Pooling (GAP) is a downsampling technique in Convolutional
+    Neural Networks (CNNs) that reduces each feature map to a single value by
+    taking the average of all its elements. It effectively transforms a
+    multi-dimensional feature map into a one-dimensional vector, which helps in
+    reducing the number of parameters and avoiding overfitting.
+    GAP is commonly used in classification tasks, particularly in the final layer
+    before the output layer.
+
+    Notes
+    -----
+    - The input `X` must have the form of 5D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, depth, height, width)
+        ```
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class LpPool1D(_pool._LpPool1D):
+    """
+    Lp pooling layer for 1-dimensional data.
+
+    Lp Pooling is a generalized pooling method where the pooling operation is
+    based on the Lp norm. It computes the p-th power of the absolute values within
+    a pooling window, sums them up, and then takes the p-th root of this sum.
+    This approach provides a smooth transition between average pooling (p=1) and
+    max pooling (p approaching infinity).
+
+    Parameters
+    ----------
+    `filter_size` : int, default=2
+        Size of the pooling filter
+    `stride` : int, default=2
+        Step size of the filter during pooling
+    `p` : float, default=2.0
+        Powering factor for Lp norm.
+    `padding` : tuple of int or int or {"valid", "same"}, default="valid"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+
+    Notes
+    -----
+    - The input `X` must have the form of 3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        filter_size: int = 2,
+        stride: int = 2,
+        p: float = 2,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
+    ) -> None:
+        super().__init__(filter_size, stride, p, padding)
+
+
+class LpPool2D(_pool._LpPool2D):
+    """
+    Lp pooling layer for 2-dimensional data.
+
+    Lp Pooling is a generalized pooling method where the pooling operation is
+    based on the Lp norm. It computes the p-th power of the absolute values within
+    a pooling window, sums them up, and then takes the p-th root of this sum.
+    This approach provides a smooth transition between average pooling (p=1) and
+    max pooling (p approaching infinity).
+
+    Parameters
+    ----------
+    `filter_size` : int, default=2
+        Size of the pooling filter
+    `stride` : int, default=2
+        Step size of the filter during pooling
+    `p` : float, default=2.0
+        Powering factor for Lp norm.
+    `padding` : tuple of int or int or {"valid", "same"}, default="valid"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        filter_size: int = 2,
+        stride: int = 2,
+        p: float = 2,
+        padding: Tuple[int, int] | int | Literal["same", "valid"] = "valid",
+    ) -> None:
+        super().__init__(filter_size, stride, p, padding)
+
+
+class LpPool3D(_pool._LpPool3D):
+    """
+    Lp pooling layer for 3-dimensional data.
+
+    Lp Pooling is a generalized pooling method where the pooling operation is
+    based on the Lp norm. It computes the p-th power of the absolute values within
+    a pooling window, sums them up, and then takes the p-th root of this sum.
+    This approach provides a smooth transition between average pooling (p=1) and
+    max pooling (p approaching infinity).
+
+    Parameters
+    ----------
+    `filter_size` : int, default=2
+        Size of the pooling filter
+    `stride` : int, default=2
+        Step size of the filter during pooling
+    `p` : float, default=2.0
+        Powering factor for Lp norm.
+    `padding` : tuple of int or int or {"valid", "same"}, default="valid"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+
+    Notes
+    -----
+    - The input `X` must have the form of 5D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, depth, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        filter_size: int = 2,
+        stride: int = 2,
+        p: float = 2,
+        padding: Tuple[int, int, int] | int | Literal["same", "valid"] = "valid",
+    ) -> None:
+        super().__init__(filter_size, stride, p, padding)
 
 
 class Dense(_linear._Dense):
