@@ -7,6 +7,7 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
+from neural.base import Layer
 
 
 __all__ = (
@@ -15,6 +16,7 @@ __all__ = (
     "ConvBlock3D",
     "DenseBlock",
     "InceptionBlock",
+    "Inception",
 )
 
 
@@ -771,3 +773,75 @@ class InceptionBlock(Sequential):
             height,
             width,
         )
+
+    class V2A(Sequential):
+        def __init__(
+            self,
+            in_channels: int,
+            out_1x1: int,
+            red_3x3: int,
+            out_3x3: int,
+            red_3x3_db: int,
+            out_3x3_db: Tuple[int, int],
+            out_pool: int,
+            activation: Activation.FuncType = Activation.ReLU,
+            optimizer: Optimizer = None,
+            initializer: InitUtil.InitStr = None,
+            lambda_: float = 0.0,
+            do_batch_norm: bool = False,
+            momentum: float = 0.9,
+            random_state: int | None = None,
+        ) -> None:
+            self.out_1x1 = out_1x1
+            self.out_3x3 = out_3x3
+            self.out_3x3_db = out_3x3_db
+            self.out_pool = out_pool
+
+            basic_args = {
+                "initializer": initializer,
+                "optimizer": optimizer,
+                "lambda_": lambda_,
+                "random_state": random_state,
+            }
+            super(InceptionBlock.V2A, self).__init__()
+
+            self.branch_1x1 = Sequential(
+                Convolution2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
+                BatchNorm2D(out_1x1, momentum) if do_batch_norm else None,
+                activation(),
+            )
+
+            self.branch_3x3 = Sequential(
+                Convolution2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
+                BatchNorm2D(red_3x3, momentum) if do_batch_norm else None,
+                activation(),
+                Convolution2D(red_3x3, out_3x3, 3, 1, "same", **basic_args),
+                BatchNorm2D(out_3x3, momentum) if do_batch_norm else None,
+                activation(),
+            )
+
+            self.branch_3x3_db = Sequential(
+                Convolution2D(in_channels, red_3x3_db, 1, 1, "valid", **basic_args),
+                BatchNorm2D(red_3x3_db, momentum) if do_batch_norm else None,
+                activation(),
+                Convolution2D(red_3x3_db, out_3x3_db[0], 3, 1, "same", **basic_args),
+                BatchNorm2D(out_3x3_db[0], momentum) if do_batch_norm else None,
+                activation(),
+                Convolution2D(out_3x3_db[0], out_3x3_db[1], 3, 1, "same", **basic_args),
+                BatchNorm2D(out_3x3_db[1], momentum) if do_batch_norm else None,
+                activation(),
+            )
+
+            self.branch_pool = Sequential(
+                Pooling2D(3, 1, "avg", "same"),
+                Convolution2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
+                BatchNorm2D(out_pool, momentum) if do_batch_norm else None,
+                activation(),
+            )
+
+            self.layers = [
+                *self.branch_1x1.layers,
+                *self.branch_3x3.layers,
+                *self.branch_3x3_db.layers,
+                *self.branch_pool.layers,
+            ]

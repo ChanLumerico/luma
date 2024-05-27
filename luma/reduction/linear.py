@@ -13,12 +13,12 @@ from luma.interface.exception import (
 
 
 __all__ = (
-    "PCA", 
-    "LDA", 
-    "KDA", 
-    "CCA", 
-    "KernelPCA", 
-    "TruncatedSVD", 
+    "PCA",
+    "LDA",
+    "KDA",
+    "CCA",
+    "KernelPCA",
+    "TruncatedSVD",
     "FactorAnalysis",
 )
 
