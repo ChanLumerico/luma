@@ -7,7 +7,6 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from neural.base import Layer
 
 
 __all__ = (
@@ -774,7 +773,7 @@ class InceptionBlock(Sequential):
             width,
         )
 
-    class V2A(Sequential):
+    class V2_A(Sequential):
         def __init__(
             self,
             in_channels: int,
@@ -845,3 +844,29 @@ class InceptionBlock(Sequential):
                 *self.branch_3x3_db.layers,
                 *self.branch_pool.layers,
             ]
+
+        # TODO: Begin from here
+        def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike: ...
+
+        def backward(self, d_out: TensorLike) -> TensorLike: ...
+
+    class V2_B(Sequential):
+        NotImplemented
+
+    class V2_C(Sequential):
+        NotImplemented
+
+    class V4_A(Sequential):
+        NotImplemented
+
+    class V4_B(Sequential):
+        NotImplemented
+
+    class V4_C(Sequential):
+        NotImplemented
+
+    class V4_ReduxA(Sequential):
+        NotImplemented
+
+    class V4_ReduxB(Sequential):
+        NotImplemented
