@@ -935,6 +935,9 @@ class LayerNorm(_norm._LayerNorm):
         super().__init__(in_shape, epsilon)
 
 
+type LayerLike = Sequential | Layer
+
+
 class Sequential(Layer):
     """
     Sequential represents a linear arrangement of layers in a neural network
@@ -994,9 +997,9 @@ class Sequential(Layer):
     ```
     """
 
-    def __init__(self, *layers: Layer | tuple[str, Layer] | None) -> None:
+    def __init__(self, *layers: LayerLike | tuple[str, LayerLike] | None) -> None:
         super().__init__()
-        self.layers: List[tuple[str, Layer]] = list()
+        self.layers: List[tuple[str, LayerLike]] = list()
         for layer in layers:
             self.add(layer)
 
@@ -1036,7 +1039,7 @@ class Sequential(Layer):
                 + f"Call '{self}().set_optimizer' to assign an optimizer."
             )
 
-    def add(self, layer: Layer | tuple[str, Layer] | None) -> None:
+    def add(self, layer: LayerLike | tuple[str, LayerLike] | None) -> None:
         if layer is None:
             return
         if not isinstance(layer, tuple):
@@ -1048,7 +1051,7 @@ class Sequential(Layer):
 
     def extend(
         self,
-        *layers: Self | Layer | tuple[str, Layer] | None,
+        *layers: LayerLike | tuple[str, LayerLike] | None,
         deep_add: bool = True,
     ) -> None:
         for layer in layers:
@@ -1078,7 +1081,7 @@ class Sequential(Layer):
             in_shape = layer.out_shape(in_shape)
         return in_shape
 
-    def __add__(self, other: Layer | tuple[str, Layer] | None) -> Self:
+    def __add__(self, other: LayerLike | tuple[str, LayerLike] | None) -> Self:
         if isinstance(other, (Layer, tuple)):
             self.add(other)
         else:

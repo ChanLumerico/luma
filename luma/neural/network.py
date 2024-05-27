@@ -3,9 +3,9 @@ from typing import Literal
 from luma.core.super import Optimizer
 from luma.interface.util import InitUtil
 
+from luma.neural import loss
 from luma.neural.base import Loss
 from luma.neural.layer import Activation
-from luma.neural.loss import CrossEntropy
 
 from luma.neural._models import _simple, _lenet, _alex, _vgg, _inception
 
@@ -387,7 +387,7 @@ class LeNet_1(_lenet._LeNet_1):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -488,7 +488,7 @@ class LeNet_4(_lenet._LeNet_4):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -592,7 +592,7 @@ class LeNet_5(_lenet._LeNet_5):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -706,7 +706,7 @@ class AlexNet(_alex._AlexNet):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -820,7 +820,7 @@ class ZFNet(_alex._ZFNet):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -936,7 +936,7 @@ class VGGNet_11(_vgg._VGGNet_11):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -1055,7 +1055,7 @@ class VGGNet_13(_vgg._VGGNet_13):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -1177,7 +1177,7 @@ class VGGNet_16(_vgg._VGGNet_16):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -1302,7 +1302,7 @@ class VGGNet_19(_vgg._VGGNet_19):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -1428,7 +1428,7 @@ class Inception_V1(_inception._Inception_V1):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,

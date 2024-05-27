@@ -3,10 +3,12 @@ from typing import Literal, Tuple, override
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Tensor, TensorLike
+from luma.interface.typing import Tensor, TensorLike, Vector
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
+
+from luma.neural._blocks import _inception_var
 
 
 __all__ = (
@@ -15,7 +17,6 @@ __all__ = (
     "ConvBlock3D",
     "DenseBlock",
     "InceptionBlock",
-    "Inception",
 )
 
 
@@ -122,6 +123,20 @@ class ConvBlock1D(Sequential):
             "random_state": random_state,
         }
 
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+                "pool_filter_size": ("0<,+inf", int),
+                "pool_stride": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
         super(ConvBlock1D, self).__init__(
             Convolution1D(
                 in_channels,
@@ -150,20 +165,6 @@ class ConvBlock1D(Sequential):
                     pool_mode,
                 )
             )
-
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
 
 
 class ConvBlock2D(Sequential):
@@ -251,6 +252,20 @@ class ConvBlock2D(Sequential):
             "random_state": random_state,
         }
 
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+                "pool_filter_size": ("0<,+inf", int),
+                "pool_stride": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
         super(ConvBlock2D, self).__init__(
             Convolution2D(
                 in_channels,
@@ -279,20 +294,6 @@ class ConvBlock2D(Sequential):
                     pool_mode,
                 )
             )
-
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
 
 
 class ConvBlock3D(Sequential):
@@ -380,6 +381,20 @@ class ConvBlock3D(Sequential):
             "random_state": random_state,
         }
 
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+                "pool_filter_size": ("0<,+inf", int),
+                "pool_stride": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+
         super(ConvBlock3D, self).__init__(
             Convolution3D(
                 in_channels,
@@ -408,20 +423,6 @@ class ConvBlock3D(Sequential):
                     pool_mode,
                 )
             )
-
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
 
 
 @dataclass
@@ -500,6 +501,16 @@ class DenseBlock(Sequential):
             "random_state": random_state,
         }
 
+        self.set_param_ranges(
+            {
+                "in_features": ("0<,+inf", int),
+                "out_features": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "dropout_rate": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
         super(DenseBlock, self).__init__(
             Dense(
                 in_features,
@@ -524,16 +535,6 @@ class DenseBlock(Sequential):
                     random_state,
                 ),
             )
-
-        self.set_param_ranges(
-            {
-                "in_features": ("0<,+inf", int),
-                "out_features": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "dropout_rate": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
 
     @override
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -617,7 +618,7 @@ class InceptionBlock(Sequential):
         Number of output channels for the 5x5 convolution.
     `out_pool` : int
         Number of output channels for the 1x1 convolution after max pooling.
-    `activation` : FuncType
+    `activation` : FuncType, default=Activation.ReLU
         Type of activation function
     `optimizer` : Optimizer, optional, default=None
         Type of optimizer for weight update
@@ -637,6 +638,9 @@ class InceptionBlock(Sequential):
         ```py
         X.shape = (batch_size, height, width, channels)
         ```
+    - Other variants of inception blocks are implemented as inner classes.
+        (ex. `V2_TypeA`, `V2_TypeB`, etc.)
+
     """
 
     def __init__(
@@ -667,7 +671,21 @@ class InceptionBlock(Sequential):
             "lambda_": lambda_,
             "random_state": random_state,
         }
-        super(InceptionBlock, self).__init__()
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_1x1": ("0<,+inf", int),
+                "red_3x3": ("0<,+inf", int),
+                "out_3x3": ("0<,+inf", int),
+                "red_5x5": ("0<,+inf", int),
+                "out_5x5": ("0<,+inf", int),
+                "out_pool": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
 
         self.branch_1x1 = Sequential(
             Convolution2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
@@ -700,6 +718,7 @@ class InceptionBlock(Sequential):
             activation(),
         )
 
+        super(InceptionBlock, self).__init__()
         self.layers = [
             *self.branch_1x1.layers,
             *self.branch_3x3.layers,
@@ -716,7 +735,7 @@ class InceptionBlock(Sequential):
         branch_5x5 = self.branch_5x5(X, is_train)
         branch_pool = self.branch_pool(X, is_train)
 
-        self.out_channels = [
+        out_channels = [
             out_.shape[1]
             for out_ in [
                 branch_1x1,
@@ -725,13 +744,9 @@ class InceptionBlock(Sequential):
                 branch_pool,
             ]
         ]
+        self.out_channels = Vector(out_channels)
         out = np.concatenate(
-            (
-                branch_1x1,
-                branch_3x3,
-                branch_5x5,
-                branch_pool,
-            ),
+            (branch_1x1, branch_3x3, branch_5x5, branch_pool),
             axis=1,
         )
         return out
@@ -740,18 +755,9 @@ class InceptionBlock(Sequential):
     @Tensor.force_dim(4)
     def backward(self, d_out: Tensor) -> Tensor:
         d_out_1x1 = d_out[:, : self.out_channels[0], ...]
-        d_out_3x3 = d_out[
-            :,
-            self.out_channels[0] : self.out_channels[0] + self.out_channels[1],
-            ...,
-        ]
+        d_out_3x3 = d_out[:, self.out_channels[0] : self.out_channels[:2].sum(), ...]
         d_out_5x5 = d_out[
-            :,
-            self.out_channels[0]
-            + self.out_channels[1] : self.out_channels[0]
-            + self.out_channels[1]
-            + self.out_channels[2],
-            ...,
+            :, self.out_channels[:2].sum() : self.out_channels[:3].sum(), ...
         ]
         d_out_pool = d_out[:, -self.out_channels[3] :, ...]
 
@@ -773,100 +779,140 @@ class InceptionBlock(Sequential):
             width,
         )
 
-    class V2_A(Sequential):
-        def __init__(
-            self,
-            in_channels: int,
-            out_1x1: int,
-            red_3x3: int,
-            out_3x3: int,
-            red_3x3_db: int,
-            out_3x3_db: Tuple[int, int],
-            out_pool: int,
-            activation: Activation.FuncType = Activation.ReLU,
-            optimizer: Optimizer = None,
-            initializer: InitUtil.InitStr = None,
-            lambda_: float = 0.0,
-            do_batch_norm: bool = False,
-            momentum: float = 0.9,
-            random_state: int | None = None,
-        ) -> None:
-            self.out_1x1 = out_1x1
-            self.out_3x3 = out_3x3
-            self.out_3x3_db = out_3x3_db
-            self.out_pool = out_pool
+    class V2_TypeA(_inception_var._V2_TypeA):
+        """
+        Inception block type-A for Inception V2 network.
 
-            basic_args = {
-                "initializer": initializer,
-                "optimizer": optimizer,
-                "lambda_": lambda_,
-                "random_state": random_state,
-            }
-            super(InceptionBlock.V2A, self).__init__()
+        Structure
+        ---------
+        1x1 Branch:
+        ```py
+        Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
+        ```
+        3x3 Branch:
+        ```py
+        Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation
+        ```
+        Double 3x3 Branch:
+        ```py
+        Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation
+        ```
+        Pooling Branch:
+        ```py
+        Pooling2D(3, 1, mode="avg", padding="same") ->
+        Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
+        ```
+        Parameters
+        ----------
+        `in_channels` : int
+            Number of input channels.
+        `out_1x1` : int
+            Number of output channels for the 1x1 convolution.
+        `red_3x3` : int
+            Number of output channels for the dimension reduction before
+            the 3x3 convolution.
+        `out_3x3` : int
+            Number of output channels for the 3x3 convolution.
+        `red_3x3_db` : int
+            Number of output channels for the dimension reduction before
+            the double 3x3 convolution.
+        `out_3x3_db` : tuple of int
+            Number of output channels for the double 3x3 convolutions.
+        `out_pool` : int
+            Number of output channels for the 1x1 convolution after max pooling.
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `do_batch_norm` : bool, default=False
+            Whether to perform batch normalization
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
 
-            self.branch_1x1 = Sequential(
-                Convolution2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
-                BatchNorm2D(out_1x1, momentum) if do_batch_norm else None,
-                activation(),
-            )
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
 
-            self.branch_3x3 = Sequential(
-                Convolution2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
-                BatchNorm2D(red_3x3, momentum) if do_batch_norm else None,
-                activation(),
-                Convolution2D(red_3x3, out_3x3, 3, 1, "same", **basic_args),
-                BatchNorm2D(out_3x3, momentum) if do_batch_norm else None,
-                activation(),
-            )
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        """
 
-            self.branch_3x3_db = Sequential(
-                Convolution2D(in_channels, red_3x3_db, 1, 1, "valid", **basic_args),
-                BatchNorm2D(red_3x3_db, momentum) if do_batch_norm else None,
-                activation(),
-                Convolution2D(red_3x3_db, out_3x3_db[0], 3, 1, "same", **basic_args),
-                BatchNorm2D(out_3x3_db[0], momentum) if do_batch_norm else None,
-                activation(),
-                Convolution2D(out_3x3_db[0], out_3x3_db[1], 3, 1, "same", **basic_args),
-                BatchNorm2D(out_3x3_db[1], momentum) if do_batch_norm else None,
-                activation(),
-            )
+    class V2_TypeB(_inception_var._V2_TypeB):
+        """
+        Inception block type-B for Inception V2 network.
 
-            self.branch_pool = Sequential(
-                Pooling2D(3, 1, "avg", "same"),
-                Convolution2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
-                BatchNorm2D(out_pool, momentum) if do_batch_norm else None,
-                activation(),
-            )
+        Structure
+        ---------
+        1x1 Branch:
+        ```py
+        Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
+        ```
+        Factorized 7x7 Branch:
+        ```py
+        Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=(1, 7)) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=(7, 1)) -> Optional[BatchNorm2D] -> Activation
+        ```
+        Factorized Double 7x7 Branch:
+        ```py
+        Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=(1, 7)) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=(7, 1)) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=(1, 7)) -> Optional[BatchNorm2D] -> Activation ->
+        Convolution2D(filter_size=(7, 1)) -> Optional[BatchNorm2D] -> Activation
+        ```
+        Pooling Branch:
+        ```py
+        Pooling2D(3, 1, mode="avg", padding="same") ->
+        Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
+        ```
+        Parameters
+        ----------
+        `in_channels` : int
+            Number of input channels.
+        `out_1x1` : int
+            Number of output channels for the 1x1 convolution.
+        `red_7x7` : int
+            Number of output channels for the dimension reduction before
+            the 7x7 convolution.
+        `out_7x7` : int
+            Number of output channels for the factorized 7x7 convolution.
+        `red_7x7_db` : int
+            Number of output channels for the dimension reduction before
+            the factorized double 7x7 convolution.
+        `out_7x7_db` : tuple of int
+            Number of output channels for the factorized double 7x7 convolutions.
+        `out_pool` : int
+            Number of output channels for the 1x1 convolution after max pooling.
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `do_batch_norm` : bool, default=False
+            Whether to perform batch normalization
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
 
-            self.layers = [
-                *self.branch_1x1.layers,
-                *self.branch_3x3.layers,
-                *self.branch_3x3_db.layers,
-                *self.branch_pool.layers,
-            ]
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
 
-        # TODO: Begin from here
-        def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike: ...
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        """
 
-        def backward(self, d_out: TensorLike) -> TensorLike: ...
-
-    class V2_B(Sequential):
-        NotImplemented
-
-    class V2_C(Sequential):
-        NotImplemented
-
-    class V4_A(Sequential):
-        NotImplemented
-
-    class V4_B(Sequential):
-        NotImplemented
-
-    class V4_C(Sequential):
-        NotImplemented
-
-    class V4_ReduxA(Sequential):
-        NotImplemented
-
-    class V4_ReduxB(Sequential):
+    class V2_TypeC:
         NotImplemented

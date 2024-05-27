@@ -412,7 +412,12 @@ class ParamRange:
     def check(self, param_name: str, param_value: Any) -> None:
         if param_value is None:
             return
-        self._type_check(param_value)
+        if isinstance(param_value, (tuple, list)):
+            for element in param_value:
+                self._type_check(element)
+        else:
+            self._type_check(param_value)
+
         if not self.condition(param_value):
             raise InvalidRangeError(param_value, param_name, self.param_range)
 
