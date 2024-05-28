@@ -735,16 +735,6 @@ class InceptionBlock(Sequential):
         branch_5x5 = self.branch_5x5(X, is_train)
         branch_pool = self.branch_pool(X, is_train)
 
-        out_channels = [
-            out_.shape[1]
-            for out_ in [
-                branch_1x1,
-                branch_3x3,
-                branch_5x5,
-                branch_pool,
-            ]
-        ]
-        self.out_channels = Vector(out_channels)
         out = np.concatenate(
             (branch_1x1, branch_3x3, branch_5x5, branch_pool),
             axis=1,
@@ -754,12 +744,14 @@ class InceptionBlock(Sequential):
     @override
     @Tensor.force_dim(4)
     def backward(self, d_out: Tensor) -> Tensor:
-        d_out_1x1 = d_out[:, : self.out_channels[0], ...]
-        d_out_3x3 = d_out[:, self.out_channels[0] : self.out_channels[:2].sum(), ...]
+        d_out_1x1 = d_out[:, : self.out_1x1, ...]
+        d_out_3x3 = d_out[:, self.out_1x1 : self.out_1x1 + self.out_3x3, ...]
         d_out_5x5 = d_out[
-            :, self.out_channels[:2].sum() : self.out_channels[:3].sum(), ...
+            :,
+            self.out_1x1 + self.out_3x3 : self.out_1x1 + self.out_3x3 + self.out_5x5,
+            ...,
         ]
-        d_out_pool = d_out[:, -self.out_channels[3] :, ...]
+        d_out_pool = d_out[:, -self.out_pool :, ...]
 
         dX_1x1 = self.branch_1x1.backward(d_out_1x1)
         dX_3x3 = self.branch_3x3.backward(d_out_3x3)
@@ -915,4 +907,31 @@ class InceptionBlock(Sequential):
         """
 
     class V2_TypeC:
-        NotImplemented
+        """
+        NOTE: Temporary docstring
+
+        Inception block type-C for Inception V2 network.
+
+        Structure
+        ---------
+        1x1 Branch:
+        ```py
+        conv1x1
+        ```
+        Factorized 1x3 and 3x1 Branch:
+        ```py
+        conv1x1 --+--> conv1x3
+                    |
+                    +--> conv3x1
+        ```
+        Factorized 1x3 and 3x1 after 3x3 Branch:
+        ```py
+        conv1x1 -> conv3x3 --+--> conv1x3
+                                |
+                                +--> conv3x1
+        ```
+        Pooling Branch:
+        ```py
+        maxpool -> conv1x1
+        ```
+        """

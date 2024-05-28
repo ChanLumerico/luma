@@ -1065,6 +1065,16 @@ class Sequential(Layer):
                 continue
             self.add(new_layer)
 
+    def override_method(self, func_name: str, func: callable) -> None:
+        if not hasattr(self, func_name):
+            raise RuntimeError(f"'{str(self)}' has no method called '{func_name}'!")
+        if not callable(getattr(self, func_name)):
+            raise TypeError(f"'{func_name}' it not a method!")
+        if not callable(func):
+            raise TypeError(f"Provided method '{func}' it not a method!")
+
+        setattr(self, func_name, func)
+
     @override
     @property
     def param_size(self) -> Tuple[int, int]:
