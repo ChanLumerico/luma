@@ -6,8 +6,8 @@ from luma.interface.typing import Matrix, Tensor, Vector
 from luma.interface.util import InitUtil
 from luma.metric.classification import Accuracy
 
+from luma.neural import loss
 from luma.neural.base import Loss, NeuralModel
-from luma.neural.loss import CrossEntropy
 from luma.neural.block import ConvBlock2D, DenseBlock, ConvBlockArgs, DenseBlockArgs
 from luma.neural.layer import (
     Activation,
@@ -26,7 +26,7 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -239,7 +239,7 @@ class _ZFNet(Estimator, Supervised, NeuralModel):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,

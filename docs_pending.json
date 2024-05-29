@@ -56,6 +56,11 @@
             "inheriting": "Sequential"
         },
         {
+            "name": "InceptionBlock variants",
+            "script": "luma.neural.block",
+            "inheriting": "Sequential"
+        },
+        {
             "name": "GlobalAvgPoolND",
             "script": "luma.neural.layer",
             "inheriting": "Layer"

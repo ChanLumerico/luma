@@ -119,6 +119,9 @@ from luma.neural.block import (
     ConvBlock3D,
     DenseBlock,
     InceptionBlock,
+    InceptionBlockV2A,
+    InceptionBlockV2B,
+    InceptionBlockV2C,
 )
 from luma.neural.network import SimpleMLP, SimpleCNN
 from luma.neural.network import (
@@ -291,12 +294,13 @@ if __name__ == "__main__":
     Dense, Flatten, Activation,
     Sequential
 
+    ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,
+    InceptionBlock, InceptionBlockV2A, InceptionBlockV2B,
+    InceptionBlockV2C
+
     CrossEntropy, BinaryCrossEntropy, MSELoss
 
     KaimingInit, XavierInit
-
-    ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,
-    InceptionBlock
 
     SimpleMLP, SimpleCNN, LeNet_1, LeNet_4, LeNet_5, AlexNet,
     ZFNet, VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19,

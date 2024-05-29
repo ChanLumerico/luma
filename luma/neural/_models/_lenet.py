@@ -5,10 +5,10 @@ from luma.interface.typing import Matrix, Tensor, Vector
 from luma.interface.util import InitUtil
 from luma.metric.classification import Accuracy
 
+from luma.neural import loss
 from luma.neural.base import Loss, NeuralModel
 from luma.neural.block import ConvBlock2D, DenseBlock
 from luma.neural.layer import Activation, Dense, Flatten, Sequential
-from luma.neural.loss import CrossEntropy
 
 
 __all__ = ("_LeNet_1", "_LeNet_4", "_LeNet_5")
@@ -19,7 +19,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -147,7 +147,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -286,7 +286,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
         self,
         optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = CrossEntropy(),
+        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
