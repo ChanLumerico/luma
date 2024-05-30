@@ -1,4 +1,4 @@
-from typing import Self, override
+from typing import Any, Self, override
 from dataclasses import asdict
 
 from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
@@ -10,6 +10,10 @@ from luma.neural import loss
 from luma.neural.base import Loss, NeuralModel
 from luma.neural.block import (
     InceptionBlock,
+    InceptionBlockV2A,
+    InceptionBlockV2B,
+    InceptionBlockV2C,
+    InceptionBlockV2R,
     InceptionBlockArgs,
 )
 from luma.neural.layer import (
@@ -91,7 +95,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
                 "valid_size": ("0<,<1", None),
                 "dropout_rate": ("0,1", None),
                 "lambda_": ("0,+inf", None),
-                "patience": (f"0<,+inf", int),
+                "patience": ("0<,+inf", int),
             }
         )
         self.check_param_ranges()
@@ -117,9 +121,9 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(64, 64, 1, "valid", **base_args),
+            Convolution2D(64, 64, 1, 1, "valid", **base_args),
             self.activation(),
-            Convolution2D(64, 192, 3, "valid", **base_args),
+            Convolution2D(64, 192, 3, 1, "valid", **base_args),
             self.activation(),
             Pooling2D(3, 2, "max", "same"),
         )
@@ -247,10 +251,10 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
 
         self.feature_sizes_ = [
             [3, 32, 32, 64, 64, 80, 192, 288],
-            [...],
-            [...],
-            [...],
-            [...],
+            [288, 288, 288, 768],
+            [768, 768, 768, 768, 768, 1280],
+            [1280, 2048, 2048],
+            [2048, self.out_features],
         ]
         self.feature_shapes_ = [
             self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
@@ -265,7 +269,7 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
                 "valid_size": ("0<,<1", None),
                 "dropout_rate": ("0,1", None),
                 "lambda_": ("0,+inf", None),
-                "patience": (f"0<,+inf", int),
+                "patience": ("0<,+inf", int),
             }
         )
         self.check_param_ranges()
@@ -278,6 +282,11 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
+        incep_args = InceptionBlockArgs(
+            activation=self.activation,
+            do_batch_norm=False,
+            **base_args,
+        )
 
         self.model.extend(
             Convolution2D(3, 32, 3, 2, "valid", **base_args),
@@ -294,9 +303,115 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             self.activation(),
             Convolution2D(80, 192, 3, 2, "valid", **base_args),
             self.activation(),
-            Convolution2D(192, 288, 3, 1, "valid", **base_args),
+            Convolution2D(192, 288, 3, 1, "same", **base_args),
             self.activation(),
         )
+
+        inception_3xA = [
+            InceptionBlockV2A(288, 64, 48, 64, 64, (96, 96), 64, **asdict(incep_args))
+            for _ in range(3)
+        ]
+        self.model.extend(
+            *[
+                (name, block)
+                for name, block in zip(
+                    ["Inception_3a", "Inception_3b", "Inception_3c"], inception_3xA
+                )
+            ],
+            deep_add=False,
+        )
+        self.model.add(
+            (
+                "Inception_Rx1",
+                InceptionBlockV2R(288, 64, 384, 64, (96, 96), **asdict(incep_args)),
+            )
+        )
+
+        inception_5xB = [
+            InceptionBlockV2B(
+                768, 192, 128, 192, 128, (128, 192), 192, **asdict(incep_args)
+            ),
+            InceptionBlockV2B(
+                768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
+            ),
+            InceptionBlockV2B(
+                768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
+            ),
+            InceptionBlockV2B(
+                768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
+            ),
+            InceptionBlockV2B(
+                768, 192, 192, 192, 192, (192, 192), 192, **asdict(incep_args)
+            ),
+        ]
+        self.model.extend(
+            *[
+                (name, block)
+                for name, block in zip(
+                    [
+                        "Inception_4a",
+                        "Inception_4b",
+                        "Inception_4c",
+                        "Inception_4d",
+                        "Inception_4e",
+                    ],
+                    inception_5xB,
+                )
+            ],
+            deep_add=False,
+        )
+        self.model.add(
+            (
+                "Inception_Rx2",
+                InceptionBlockV2R(768, 192, 320, 192, (192, 192), **asdict(incep_args)),
+            ),
+        )
+
+        inception_C_args = [320, 384, (384, 384), 448, 384, (384, 384), 192]
+        inception_2xC = [
+            InceptionBlockV2C(1280, *inception_C_args, **asdict(incep_args)),
+            InceptionBlockV2C(2048, *inception_C_args, **asdict(incep_args)),
+        ]
+        self.model.extend(
+            *[
+                (name, block)
+                for name, block in zip(
+                    [
+                        "Inception_5a",
+                        "Inception_5b",
+                    ],
+                    inception_2xC,
+                )
+            ],
+            deep_add=False,
+        )
+
+        self.model.add(GlobalAvgPooling2D())
+        self.model.add(Flatten())
+        self.model.extend(
+            Dropout(self.dropout_rate, self.random_state),
+            Dense(2048, self.out_features, **base_args),
+        )
+
+    @Tensor.force_dim(4)
+    def fit(self, X: Tensor, y: Matrix) -> Self:
+        return super(_Inception_V2, self).fit_nn(X, y)
+
+    @override
+    @Tensor.force_dim(4)
+    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
+        return super(_Inception_V2, self).predict_nn(X, argmax)
+
+    @override
+    @Tensor.force_dim(4)
+    def score(
+        self,
+        X: Tensor,
+        y: Matrix,
+        metric: Evaluator = Accuracy,
+        argmax: bool = True,
+    ) -> float:
+        return super(_Inception_V2, self).score_nn(X, y, metric, argmax)
 
 
 class _Inception_V3(Estimator, Supervised, NeuralModel):

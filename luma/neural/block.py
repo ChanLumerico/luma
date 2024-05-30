@@ -18,6 +18,7 @@ __all__ = (
     "InceptionBlockV2A",
     "InceptionBlockV2B",
     "InceptionBlockV2C",
+    "InceptionBlockV2R",
 )
 
 
@@ -901,8 +902,6 @@ class InceptionBlockV2A(Sequential):
             Convolution2D(red_3x3_db, out_3x3_db[0], 3, 1, "same", **basic_args),
             BatchNorm2D(out_3x3_db[0], momentum) if do_batch_norm else None,
             activation(),
-        )
-        self.branch_3x3_db.extend(
             Convolution2D(out_3x3_db[0], out_3x3_db[1], 3, 1, "same", **basic_args),
             BatchNorm2D(out_3x3_db[1], momentum) if do_batch_norm else None,
             activation(),
@@ -1462,4 +1461,169 @@ class InceptionBlockV2C(Sequential):
             + self.out_pool,
             height,
             width,
+        )
+
+
+class InceptionBlockV2R(Sequential):
+    """
+    Inception block for grid reduction for Inception V2 network.
+
+    Structure
+    ---------
+    3x3 Branch:
+    ```py
+    Convolution2D(filter_size=1) -> Activation ->
+    Convolution2D(filter_size=3, stride=2) -> Activation
+    ```
+    Double 3x3 Branch:
+    ```py
+    Convolution2D(filter_size=1) -> Activation ->
+    Convolution2D(filter_size=3, padding=1) -> Activation ->
+    Convolution2D(filter_size=3, stride=2) -> Activation
+    ```
+    Pooling Branch:
+    ```py
+    Pooling2D(3, 2, mode="max")
+    ```
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels.
+    `out_1x1` : int
+        Number of output channels for the 1x1 convolution.
+    `red_3x3` : int
+        Number of output channels for the dimension reduction before
+        the 3x3 convolution.
+    `out_3x3` : int
+        Number of output channels for the 3x3 convolution.
+    `red_3x3_db` : int
+        Number of output channels for the dimension reduction before
+        the double 3x3 convolution.
+    `out_3x3_db` : tuple of int
+        Number of output channels for the double 3x3 convolutions.
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=False
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of a 4D-array (`Tensor`).
+
+        ```py
+        X.shape = (batch_size, height, width, channels)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        red_3x3: int,
+        out_3x3: int,
+        red_3x3_db: int,
+        out_3x3_db: Tuple[int, int],
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = False,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.in_channels = in_channels
+        self.out_3x3 = out_3x3
+        self.out_3x3_db = out_3x3_db
+
+        basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "red_3x3": ("0<,+inf", int),
+                "out_3x3": ("0<,+inf", int),
+                "red_3x3_db": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+        self.branch_3x3 = Sequential(
+            Convolution2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
+            BatchNorm2D(red_3x3, momentum) if do_batch_norm else None,
+            activation(),
+            Convolution2D(red_3x3, out_3x3, 3, 2, "valid", **basic_args),
+            BatchNorm2D(out_3x3, momentum) if do_batch_norm else None,
+            activation(),
+        )
+        self.branch_3x3_db = Sequential(
+            Convolution2D(in_channels, red_3x3_db, 1, 1, "valid", **basic_args),
+            BatchNorm2D(red_3x3_db, momentum) if do_batch_norm else None,
+            activation(),
+            Convolution2D(red_3x3_db, out_3x3_db[0], 3, 1, "same", **basic_args),
+            BatchNorm2D(out_3x3_db[0], momentum) if do_batch_norm else None,
+            activation(),
+            Convolution2D(out_3x3_db[0], out_3x3_db[1], 3, 2, "valid", **basic_args),
+            BatchNorm2D(out_3x3_db[1], momentum) if do_batch_norm else None,
+            activation(),
+        )
+        self.branch_pool = Sequential(
+            Pooling2D(3, 2, "max", "valid"),
+        )
+
+        super(InceptionBlockV2R, self).__init__()
+        self.extend(
+            self.branch_3x3,
+            self.branch_3x3_db,
+            self.branch_pool,
+            deep_add=True,
+        )
+
+    @override
+    @Tensor.force_dim(4)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        branch_3x3 = self.branch_3x3(X, is_train)
+        branch_3x3_db = self.branch_3x3_db(X, is_train)
+        branch_pool = self.branch_pool(X, is_train)
+
+        out = np.concatenate((branch_3x3, branch_3x3_db, branch_pool), axis=1)
+        return out
+
+    @override
+    @Tensor.force_dim(4)
+    def backward(self, d_out: Tensor) -> Tensor:
+        d_out_3x3 = d_out[:, : self.out_3x3, ...]
+        d_out_3x3_db = d_out[:, self.out_3x3 : self.out_3x3 + self.out_3x3_db[1], ...]
+        d_out_pool = d_out[:, -self.in_channels :, ...]
+
+        dX_3x3 = self.branch_3x3.backward(d_out_3x3)
+        dX_3x3_db = self.branch_3x3_db.backward(d_out_3x3_db)
+        dX_pool = self.branch_pool.backward(d_out_pool)
+
+        self.dX = dX_3x3 + dX_3x3_db + dX_pool
+        return self.dX
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, _, _ = in_shape
+        red_h, red_w = self.branch_pool.out_shape(in_shape)[2:]
+
+        return (
+            batch_size,
+            self.out_3x3 + self.out_3x3_db[1] + channels,
+            red_h,
+            red_w,
         )

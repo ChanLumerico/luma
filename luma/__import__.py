@@ -122,6 +122,7 @@ from luma.neural.block import (
     InceptionBlockV2A,
     InceptionBlockV2B,
     InceptionBlockV2C,
+    InceptionBlockV2R,
 )
 from luma.neural.network import SimpleMLP, SimpleCNN
 from luma.neural.network import (
@@ -296,7 +297,7 @@ if __name__ == "__main__":
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,
     InceptionBlock, InceptionBlockV2A, InceptionBlockV2B,
-    InceptionBlockV2C
+    InceptionBlockV2C, InceptionBlockV2R
 
     CrossEntropy, BinaryCrossEntropy, MSELoss
 
