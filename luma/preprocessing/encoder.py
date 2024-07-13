@@ -6,7 +6,13 @@ from luma.interface.typing import Matrix, Vector
 from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
 
-__all__ = ("OneHotEncoder", "LabelEncoder", "OrdinalEncoder", "LabelBinarizer")
+__all__ = (
+    "OneHotEncoder", 
+    "LabelEncoder", 
+    "OrdinalEncoder", 
+    "LabelBinarizer",
+    "LabelSmoothing",
+)
 
 
 class OneHotEncoder(Transformer, Transformer.Feature):
@@ -160,3 +166,26 @@ class LabelBinarizer(Transformer, Transformer.Target):
 
     def inverse_transform(self, y: Vector) -> Vector:
         return self.classes_[np.argmax(y, axis=1)]
+
+
+# Created via codespace on mobile - 07/13/24
+class LabelSmoothing(Transformer, Transformer.Target):
+    def __init__(self, smoothing: float=0.1) -> None:
+        self.smoothing = smoothing
+        self.classes_ = None
+
+    def fit(self, y: Matrix) -> Self:
+        self.classes_ = y.shape[1]
+        return self
+
+    def transform(self, y: Matrix) -> Matrix:
+        if self.classes_ is None:
+            raise NotFittedError(self)
+
+        y_smooth = y * (1 - self.smoothing)
+        y_smooth += self.smoothing / self.classes_
+        return y_smooth
+
+    def fit_transform(self, y: Matrix) -> Matrix:
+        return self.fit(y).transform(y)
+
