@@ -639,7 +639,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
         metric: Evaluator = Accuracy,
         argmax: bool = True,
     ) -> float:
-        return super(_Inception_V2, self).score_nn(X, y, metric, argmax)
+        return super(_Inception_V3, self).score_nn(X, y, metric, argmax)
 
 
 class _Inception_V4(Estimator, Supervised, NeuralModel):
