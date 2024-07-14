@@ -30,7 +30,12 @@ from luma.neural.layer import (
 )
 
 
-__all__ = ("_Inception_V1", "_Inception_V2", "_Inception_V3")
+__all__ = (
+    "_Inception_V1", 
+    "_Inception_V2", 
+    "_Inception_V3", 
+    "_Inception_V4",
+)
 
 
 class _Inception_V1(Estimator, Supervised, NeuralModel):
@@ -635,3 +640,8 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
         argmax: bool = True,
     ) -> float:
         return super(_Inception_V2, self).score_nn(X, y, metric, argmax)
+
+
+class _Inception_V4(Estimator, Supervised, NeuralModel):
+    NotImplemented
+

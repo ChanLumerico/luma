@@ -7,7 +7,7 @@ from luma.neural import loss
 from luma.neural.base import Loss
 from luma.neural.layer import Activation
 
-from luma.neural._models import _simple, _lenet, _alex, _vgg, _inception
+from luma.neural._models import (_simple, _lenet, _alex, _vgg, _inception)
 
 
 __all__ = (
@@ -25,6 +25,7 @@ __all__ = (
     "Inception_V1",
     "Inception_V2",
     "Inception_V3",
+    "Inception_V4",
 )
 
 
@@ -1714,4 +1715,8 @@ class Inception_V3(_inception._Inception_V3):
             random_state,
             deep_verbose,
         )
+
+
+class Inception_V4(_inception._Inception_V4):
+    NotImplemented
 
