@@ -19,6 +19,7 @@ __all__ = (
     "InceptionBlockV2B",
     "InceptionBlockV2C",
     "InceptionBlockV2R",
+    "InceptionBlockV4S",
 )
 
 
@@ -1626,4 +1627,48 @@ class InceptionBlockV2R(Sequential):
             self.out_3x3 + self.out_3x3_db[1] + channels,
             red_h,
             red_w,
+        )
+
+
+class InceptionBlockV4S(Sequential):
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+        super(InceptionBlockV4S, self).__init__(
+            Convolution2D(3, 32, 3, 2, "valid", **basic_args),
+            BatchNorm2D(32, momentum),
+            activation(),
+            Convolution2D(32, 32, 3, 1, "valid", **basic_args),
+            BatchNorm2D(32, momentum),
+            activation(),
+            Convolution2D(32, 64, 3, 1, "same", **basic_args),
+            BatchNorm2D(64, momentum),
+            activation(),
+        )
+
+        self.branch_1a = Sequential(Pooling2D(3, 2, "max", "valid"))
+        self.branch_1b = Sequential(
+            ...,
         )
