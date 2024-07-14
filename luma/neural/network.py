@@ -1588,4 +1588,130 @@ class Inception_V2(_inception._Inception_V2):
 
 
 class Inception_V3(_inception._Inception_V3):
-    NotImplemented
+    """
+    Inception v3, an enhancement of Inception v2, further improves 
+    computational efficiency and accuracy in deep learning models. 
+    It includes advanced factorization of convolutions, improved grid 
+    size reduction techniques, extensive Batch Normalization, and 
+    label smoothing to prevent overfitting. These modifications enable 
+    deeper and more complex neural networks with significantly 
+    enhanced performance and robustness.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 299, 299]
+    ```
+    Introductory Convolutions:
+    ```py
+    ConvBlock2D(3, 32, filter_size=3, stride=2) ->
+    ConvBlock2D(32, 32, filter_size=3, stride=1) ->
+    ConvBlock2D(32, 64, filter_size=3, stride=1) ->
+    Pooling2D(3, 2, mode="max") ->
+
+    ConvBlock2D(64, 80, filter_size=3, stride=1) ->
+    ConvBlock2D(80, 192, filter_size=3, stride=2) ->
+    ConvBlock2D(192, 288, filter_size=3, stride=1) ->
+    ```
+    Inception Blocks:
+    ```py
+    3x InceptionBlockV2A(288) ->  # Inception_3
+    InceptionBlockV2R(288) ->  # Inception_Rx1
+
+    5x InceptionBlockV2B(768) ->  # Inception_4
+    InceptionBlockV2R(768) ->  # Inception_Rx2
+
+    2x InceptionBlockV2C([1280, 2048]) ->  # Inception_5
+    GlobalAvgPooling2D() ->
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(2048, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    25,012,960 weights, 20,136 biases -> 25,033,096 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `smoothing` : float, default=0.1
+        Label smoothing factor
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. Szegedy, Christian, et al. “Going Deeper with Convolutions.” Proceedings
+    of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR),
+    2015, pp. 1-9.
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = loss.CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        dropout_rate: float = 0.4,
+        smoothing: float = 0.1,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            smoothing,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+

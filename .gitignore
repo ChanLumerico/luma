@@ -3,6 +3,7 @@
 *.luma
 setup.sh
 token.key
+test.py
 build/
 dist/
 test/
