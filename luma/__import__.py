@@ -159,8 +159,13 @@ from luma.model_selection.cv import CrossValidator
 from luma.model_selection.fold import KFold, StratifiedKFold
 
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
-from luma.preprocessing.encoder import OneHotEncoder, LabelEncoder, OrdinalEncoder
-from luma.preprocessing.encoder import LabelBinarizer
+from luma.preprocessing.encoder import (
+    OneHotEncoder, 
+    LabelEncoder, 
+    OrdinalEncoder, 
+    LabelBinarizer, 
+    LabelSmoothing,
+)
 from luma.preprocessing.imputer import SimpleImputer, KNNImputer, HotDeckImputer
 from luma.preprocessing.outlier import LocalOutlierFactor
 
@@ -331,7 +336,8 @@ if __name__ == "__main__":
     # ---------------- [ luma.preprocessing ] ------------------
     StandardScaler, MinMaxScaler
 
-    OneHotEncoder, LabelEncoder, OrdinalEncoder, LabelBinarizer
+    OneHotEncoder, LabelEncoder, OrdinalEncoder, LabelBinarizer,
+    LabelSmoothing
 
     SimpleImputer, KNNImputer, HotDeckImputer
 

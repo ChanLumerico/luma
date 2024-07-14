@@ -168,18 +168,23 @@ class LabelBinarizer(Transformer, Transformer.Target):
         return self.classes_[np.argmax(y, axis=1)]
 
 
-# Created via codespace on mobile - 07/13/24
 class LabelSmoothing(Transformer, Transformer.Target):
     def __init__(self, smoothing: float=0.1) -> None:
         self.smoothing = smoothing
         self.classes_ = None
+        self.fitted_ = False
 
     def fit(self, y: Matrix) -> Self:
+        if y.ndim != 2:
+            raise ValueError(
+                "Target values must be one-hot encoded!"
+            )
         self.classes_ = y.shape[1]
+        self.fitted_ = True
         return self
 
     def transform(self, y: Matrix) -> Matrix:
-        if self.classes_ is None:
+        if not self.fitted_:
             raise NotFittedError(self)
 
         y_smooth = y * (1 - self.smoothing)

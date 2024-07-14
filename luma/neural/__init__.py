@@ -6,7 +6,7 @@ MLX_TOGGLE: bool = False
 
 try:
     if MLX_TOGGLE:
-        import mlx as _
+        import mlx as _  # type: ignore
 except ModuleNotFoundError as err:
     if arc != "arm64":
         print(f"Your python environment is not running on 'arm64', but on '{arc}'")
