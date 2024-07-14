@@ -1656,7 +1656,7 @@ class InceptionBlockV4S(Sequential):
         )
         self.check_param_ranges()
 
-        super(InceptionBlockV4S, self).__init__(
+        self.stem = Sequential(
             Convolution2D(3, 32, 3, 2, "valid", **basic_args),
             BatchNorm2D(32, momentum),
             activation(),
@@ -1670,5 +1670,104 @@ class InceptionBlockV4S(Sequential):
 
         self.branch_1a = Sequential(Pooling2D(3, 2, "max", "valid"))
         self.branch_1b = Sequential(
-            ...,
+            Convolution2D(64, 96, 3, 2, "valid", **basic_args),
+            BatchNorm2D(96, momentum),
+            activation(),
         )
+
+        self.branch_2a = Sequential(
+            Convolution2D(160, 64, 1, 1, "same", **basic_args),
+            BatchNorm2D(64, momentum),
+            activation(),
+            Convolution2D(64, 96, 3, 1, "valid", **basic_args),
+            BatchNorm2D(96, momentum),
+            activation(),
+        )
+        self.branch_2b = Sequential(
+            Convolution2D(160, 64, 1, 1, "same", **basic_args),
+            BatchNorm2D(64, momentum),
+            activation(),
+            Convolution2D(64, 64, (7, 1), 1, "same", **basic_args),
+            BatchNorm2D(64, momentum),
+            activation(),
+            Convolution2D(64, 64, (1, 7), 1, "same", **basic_args),
+            BatchNorm2D(64, momentum),
+            activation(),
+            Convolution2D(64, 96, 3, 1, "valid", **basic_args),
+            BatchNorm2D(96, momentum),
+            activation(),
+        )
+
+        self.branch_3a = Sequential(
+            Convolution2D(192, 192, 3, 1, "valid", **basic_args),
+            BatchNorm2D(192, momentum),
+            activation(),
+        )
+        self.branch_3b = Sequential(Pooling2D(2, 2, "max", "valid"))
+
+        super(InceptionBlockV4S, self).__init__()
+        self.extend(
+            self.stem,
+            self.branch_1a,
+            self.branch_1b,
+            self.branch_2a,
+            self.branch_2b,
+            self.branch_3a,
+            self.branch_3b,
+            deep_add=True,
+        )
+    
+    @override
+    @Tensor.force_dim(4)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        stem = self.stem(X, is_train)
+        branch_1 = [
+            self.branch_1a(stem, is_train),
+            self.branch_1b(stem, is_train),
+        ]
+        branch_1_cat = np.concatenate(branch_1, axis=1)
+        
+        branch_2 = [
+            self.branch_2a(branch_1_cat, is_train),
+            self.branch_2b(branch_1_cat, is_train),
+        ]
+        branch_2_cat = np.concatenate(branch_2, axis=1)
+
+        branch_3 = [
+            self.branch_3a(branch_2_cat, is_train),
+            self.branch_3b(branch_2_cat, is_train),
+        ]
+        out = np.concatenate(branch_3, axis=1)
+        return out
+    
+    @override
+    @Tensor.force_dim(4)
+    def backward(self, d_out: Tensor) -> Tensor:
+        d_out_3a = d_out[:, :192, ...]
+        d_out_3b = d_out[:, -192:, ...]
+
+        dX_3a = self.branch_3a.backward(d_out_3a)
+        dX_3b = self.branch_3b.backward(d_out_3b)
+        d_out_3 = dX_3a + dX_3b
+
+        d_out_2a = d_out_3[:, :96, ...]
+        d_out_2b = d_out_3[:, -96:, ...]
+        
+        dX_2a = self.branch_2a.backward(d_out_2a)
+        dX_2b = self.branch_2b.backward(d_out_2b)
+        d_out_2 = dX_2a + dX_2b
+
+        d_out_1a = d_out_2[:, :64, ...]
+        d_out_1b = d_out_2[:, -96:, ...]
+
+        dX_1a = self.branch_1a.backward(d_out_1a)
+        dX_1b = self.branch_1b.backward(d_out_1b)
+        d_out_1 = dX_1a + dX_1b
+
+        self.dx = self.stem.backward(d_out_1)
+        return self.dx
+    
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        ...  # TODO: Begin from here
