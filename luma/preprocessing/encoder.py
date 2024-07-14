@@ -169,7 +169,7 @@ class LabelBinarizer(Transformer, Transformer.Target):
 
 
 class LabelSmoothing(Transformer, Transformer.Target):
-    def __init__(self, smoothing: float=0.1) -> None:
+    def __init__(self, smoothing: float = 0.1) -> None:
         self.smoothing = smoothing
         self.classes_ = None
         self.fitted_ = False
