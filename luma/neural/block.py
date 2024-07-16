@@ -1631,6 +1631,52 @@ class InceptionBlockV2R(Sequential):
 
 
 class InceptionBlockV4S(Sequential):
+    """
+    Inception block used in Inception V4 network stem part. 
+    This block has fixed channels of inputs and outputs.
+
+    Structure
+    ---------
+    Convolution2D(3, 32, stride=2) ->
+    Convolution2D(32, 32) -> 
+    Convolution2D(32, 64) ->
+    |-> Pooling2D(filter_size=3, mode="max")
+    |-> Convolution2D(64, 96, stride=2)
+
+    Filter Concat ->
+    |-> Convolution2D(160, 64) -> Convolution2D(64, 96)
+    |-> Convolution2D(160, 64) -> Convolution2D(64, 64) ->
+        Convolution2D(64, 64) -> Convolution2D(64, 96)
+
+    Filter Concat ->
+    |-> Convolution2D(192, 192)
+    |-> Pooling2D(stride=2, mode="max")
+    Filter Concat
+
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=False
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of a 4D-array (`Tensor`).
+
+        ```py
+        X.shape = (batch_size, height, width, channels)
+        ```
+    """
+
     def __init__(
         self,
         activation: Activation.FuncType = Activation.ReLU,
@@ -1770,4 +1816,5 @@ class InceptionBlockV4S(Sequential):
     
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        ...  # TODO: Begin from here
+        batch_size, _, _, _ = in_shape
+        return batch_size, 384, 35, 35
