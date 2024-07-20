@@ -3,6 +3,7 @@ from collections import deque
 import numpy as np
 
 from luma.interface.typing import TensorLike
+from luma.interface.exception import NotFittedError
 from luma.neural.layer import LayerLike
 
 
@@ -68,7 +69,7 @@ class LayerNode:
                 d_out_arr.append(d_out)
 
         return d_out_arr
-    
+
     def flush(self) -> None:
         self.n_forward, self.n_backward = 0, 0
         self.f_queue.clear()
@@ -76,7 +77,7 @@ class LayerNode:
 
         self.f_visited = False
         self.b_visited = False
-    
+
     def __call__(self, is_train: bool = False) -> TensorLike:
         return self.forward(is_train)
 
@@ -94,7 +95,7 @@ class LayerGraph:
 
         self.nodes: List[LayerNode] = []
         self.built: bool = False
-    
+
     def build(self) -> None:
         for kn, vn in self.graph.items():
             if not vn:
@@ -102,22 +103,30 @@ class LayerGraph:
             for v in vn:
                 kn.next_nodes.append(v)
                 v.prev_nodes.append(kn)
-            
+
             if kn not in self.nodes:
                 self.nodes.append(kn)
-        
+
         for node in self.nodes:
             if not node.prev_nodes and not node.next_nodes:
                 raise RuntimeError(f"'{self}' is not fully connected!")
         self.built = True
         return
-    
+
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        self.check_is_built()
         return self._forward_bfs(X, is_train)
-    
+
     def backward(self, d_out: TensorLike) -> TensorLike:
+        self.check_is_built()
         return self._backward_bfs(d_out)
-    
+
+    def check_is_built(self) -> None:
+        if not bool(self):
+            raise NotFittedError(
+                f"'{self}' has not built! Call 'built()' to build the graph."
+            )
+
     def _forward_bfs(self, X: TensorLike, is_train: bool) -> TensorLike:
         queue = deque([self.root])
         self.root.for_enqueue(X)
@@ -134,7 +143,7 @@ class LayerGraph:
                 queue.append(next)
 
         return X
-    
+
     def _backward_bfs(self, d_out: TensorLike) -> TensorLike:
         queue = deque([self.term])
         self.term.back_enqueue(d_out)
@@ -149,11 +158,20 @@ class LayerGraph:
                 prev.back_enqueue(dx)
                 prev.b_visited = True
                 queue.append(prev)
-            
+
             cur.flush()
 
         d_out = d_out_arr.pop()
         if d_out_arr:
             raise RuntimeError(f"'{self}' has more than one root nodes!")
-        
+
         return d_out
+
+    def __bool__(self) -> bool:
+        return self.built
+
+    def __len__(self) -> int:
+        return len(self.nodes)
+
+    def __getitem__(self, key_node: LayerNode) -> List[LayerNode]:
+        return self.graph[key_node]
