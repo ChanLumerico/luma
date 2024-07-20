@@ -1,4 +1,5 @@
-from typing import List, Literal
+from typing import List, Literal, Dict
+from collections import deque
 import numpy as np
 
 from luma.interface.typing import TensorLike
@@ -16,17 +17,18 @@ class LayerNode:
         next_nodes: List[LayerLike] = [],
         merge_mode: Literal["chcat", "sum"] = "chcat",
     ) -> None:
-        self.layer = layer
-        self.prev_nodes = prev_nodes
-        self.next_nodes = next_nodes
+        self.layer: LayerLike = layer
+        self.prev_nodes: List[LayerNode] = prev_nodes
+        self.next_nodes: List[LayerNode] = next_nodes
         self.merge_mode = merge_mode
 
-        self.f_queue = []
-        self.b_queue = []
+        self.f_queue: List[TensorLike] = []
+        self.b_queue: List[TensorLike] = []
         self.n_forward, self.n_backward = 0, 0
 
         self.cum_ch = [0]
-        self.visited: bool = False
+        self.f_visited: bool = False
+        self.b_visited: bool = False
 
     def for_enqueue(self, X: TensorLike) -> None:
         self.n_forward += 1
@@ -71,6 +73,87 @@ class LayerNode:
         self.n_forward, self.n_backward = 0, 0
         self.f_queue.clear()
         self.b_queue.clear()
+
+        self.f_visited = False
+        self.b_visited = False
     
     def __call__(self, is_train: bool = False) -> TensorLike:
         return self.forward(is_train)
+
+
+class LayerGraph:
+    def __init__(
+        self,
+        graph: Dict[LayerNode, List[LayerNode]],
+        root: LayerNode,
+        term: LayerNode,
+    ) -> None:
+        self.graph = graph
+        self.root = root
+        self.term = term
+
+        self.nodes: List[LayerNode] = []
+        self.built: bool = False
+    
+    def build(self) -> None:
+        for kn, vn in self.graph.items():
+            if not vn:
+                continue
+            for v in vn:
+                kn.next_nodes.append(v)
+                v.prev_nodes.append(kn)
+            
+            if kn not in self.nodes:
+                self.nodes.append(kn)
+        
+        for node in self.nodes:
+            if not node.prev_nodes and not node.next_nodes:
+                raise RuntimeError(f"'{self}' is not fully connected!")
+        self.built = True
+        return
+    
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return self._forward_bfs(X, is_train)
+    
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return self._backward_bfs(d_out)
+    
+    def _forward_bfs(self, X: TensorLike, is_train: bool) -> TensorLike:
+        queue = deque([self.root])
+        self.root.for_enqueue(X)
+        self.root.f_visited = True
+
+        while queue:
+            cur = queue.pop()
+            X = cur(is_train)
+            for next in cur.next_nodes:
+                if next.f_visited:
+                    continue
+                next.for_enqueue(X)
+                next.f_visited = True
+                queue.append(next)
+
+        return X
+    
+    def _backward_bfs(self, d_out: TensorLike) -> TensorLike:
+        queue = deque([self.term])
+        self.term.back_enqueue(d_out)
+        self.term.b_visited = True
+
+        while queue:
+            cur = queue.pop()
+            d_out_arr = cur.backward()
+            for prev, dx in zip(cur.prev_nodes, d_out_arr):
+                if prev.b_visited:
+                    continue
+                prev.back_enqueue(dx)
+                prev.b_visited = True
+                queue.append(prev)
+            
+            cur.flush()
+
+        d_out = d_out_arr.pop()
+        if d_out_arr:
+            raise RuntimeError(f"'{self}' has more than one root nodes!")
+        
+        return d_out
