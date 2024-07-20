@@ -7,8 +7,8 @@ from luma.neural.layer import LayerLike
 
 class LayerNode:
     def __init__(
-        self, 
-        layer: LayerLike, 
+        self,
+        layer: LayerLike,
         prev_nodes: List[LayerLike] = [],
         next_nodes: List[LayerLike] = [],
         merge_mode: Literal["chcat", "sum"] = "chcat",
@@ -24,16 +24,16 @@ class LayerNode:
 
         self.cum_ch = [0]
         self.visited: bool = False
-    
+
     def for_enqueue(self, X: TensorLike) -> None:
         self.n_forward += 1
         self.f_queue.append(X)
         self.cum_ch.append(self.cum_ch[-1] + X.shape[1])
-    
+
     def back_enqueue(self, d_out: TensorLike) -> None:
         self.n_backward += 1
         self.b_queue.append(d_out)
-    
+
     def forward(self, is_train: bool = False) -> TensorLike:
         match self.merge_mode:
             case "chcat":
@@ -42,6 +42,32 @@ class LayerNode:
                 X = np.sum(self.f_queue, axis=0)
         out = self.layer(X, is_train)
         return out
-    
+
     def backward(self) -> List[TensorLike]:
-        ...
+        d_cum = np.sum(self.b_queue, axis=0)
+        d_out = self.layer.backward(d_cum)
+        if not self.n_backward:
+            return [d_out]
+
+        d_out_arr = []
+        for i in range(self.n_backward):
+            if self.merge_mode == "chcat":
+                d_out_arr.append(
+                    d_out[
+                        :,
+                        self.cum_ch[i] : self.cum_ch[i + 1],
+                        ...,
+                    ]
+                )
+            elif self.merge_mode == "sum":
+                d_out_arr.append(d_out)
+
+        return d_out_arr
+    
+    def flush(self) -> None:
+        self.n_forward, self.n_backward = 0, 0
+        self.f_queue.clear()
+        self.b_queue.clear()
+    
+    def __call__(self, is_train: bool = False) -> TensorLike:
+        return self.forward(is_train)
