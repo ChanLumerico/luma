@@ -17,11 +17,13 @@ class LayerNode:
         prev_nodes: List[LayerLike] = [],
         next_nodes: List[LayerLike] = [],
         merge_mode: Literal["chcat", "sum"] = "chcat",
+        name: str | None = None,
     ) -> None:
         self.layer: LayerLike = layer
         self.prev_nodes: List[LayerNode] = prev_nodes
         self.next_nodes: List[LayerNode] = next_nodes
         self.merge_mode = merge_mode
+        self.name = name
 
         self.f_queue: List[TensorLike] = []
         self.b_queue: List[TensorLike] = []
@@ -80,6 +82,14 @@ class LayerNode:
 
     def __call__(self, is_train: bool = False) -> TensorLike:
         return self.forward(is_train)
+    
+    def __str__(self) -> str:
+        if self.name is None:
+            return type(self).__name__
+        return self.name
+    
+    def __repr__(self) -> str:
+        return f"({str(self)}: {self.layer})"
 
 
 class LayerGraph:
@@ -98,10 +108,8 @@ class LayerGraph:
 
     def build(self) -> None:
         for kn, vn in self.graph.items():
-            if not vn:
-                continue
-            for v in vn:
-                kn.next_nodes.append(v)
+            kn.next_nodes.extend(vn)
+            for v in vn: 
                 v.prev_nodes.append(kn)
 
             if kn not in self.nodes:
@@ -124,7 +132,7 @@ class LayerGraph:
     def check_is_built(self) -> None:
         if not bool(self):
             raise NotFittedError(
-                f"'{self}' has not built! Call 'built()' to build the graph."
+                f"'{self}' has not built! Call 'build()' to build the graph."
             )
 
     def _forward_bfs(self, X: TensorLike, is_train: bool) -> TensorLike:
@@ -135,6 +143,7 @@ class LayerGraph:
         while queue:
             cur = queue.pop()
             X = cur(is_train)
+            print(X.shape)
             for next in cur.next_nodes:
                 if next.f_visited:
                     continue

@@ -140,6 +140,7 @@ from luma.neural.network import (
     Inception_V2,
     Inception_V3,
 )
+from luma.neural.autoprop import LayerNode, LayerGraph
 
 from luma.metric.classification import Accuracy, Precision, Recall, F1Score, Specificity
 from luma.metric.regression import (
@@ -304,6 +305,8 @@ if __name__ == "__main__":
     ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,
     InceptionBlock, InceptionBlockV2A, InceptionBlockV2B,
     InceptionBlockV2C, InceptionBlockV2R, InceptionBlockV4S
+
+    LayerNode, LayerGraph
 
     CrossEntropy, BinaryCrossEntropy, MSELoss
 
