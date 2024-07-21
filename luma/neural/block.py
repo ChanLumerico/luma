@@ -1632,13 +1632,13 @@ class InceptionBlockV2R(Sequential):
 
 class InceptionBlockV4S(Sequential):
     """
-    Inception block used in Inception V4 network stem part. 
+    Inception block used in Inception V4 network stem part.
     This block has fixed channels of inputs and outputs.
 
     Structure
     ---------
     Convolution2D(3, 32, stride=2) ->
-    Convolution2D(32, 32) -> 
+    Convolution2D(32, 32) ->
     Convolution2D(32, 64) ->
     |-> Pooling2D(filter_size=3, mode="max")
     |-> Convolution2D(64, 96, stride=2)
@@ -1762,7 +1762,7 @@ class InceptionBlockV4S(Sequential):
             self.branch_3b,
             deep_add=True,
         )
-    
+
     @override
     @Tensor.force_dim(4)
     def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
@@ -1773,7 +1773,7 @@ class InceptionBlockV4S(Sequential):
             self.branch_1b(stem, is_train),
         ]
         branch_1_cat = np.concatenate(branch_1, axis=1)
-        
+
         branch_2 = [
             self.branch_2a(branch_1_cat, is_train),
             self.branch_2b(branch_1_cat, is_train),
@@ -1786,7 +1786,7 @@ class InceptionBlockV4S(Sequential):
         ]
         out = np.concatenate(branch_3, axis=1)
         return out
-    
+
     @override
     @Tensor.force_dim(4)
     def backward(self, d_out: Tensor) -> Tensor:
@@ -1799,7 +1799,7 @@ class InceptionBlockV4S(Sequential):
 
         d_out_2a = d_out_3[:, :96, ...]
         d_out_2b = d_out_3[:, -96:, ...]
-        
+
         dX_2a = self.branch_2a.backward(d_out_2a)
         dX_2b = self.branch_2b.backward(d_out_2b)
         d_out_2 = dX_2a + dX_2b
@@ -1813,7 +1813,7 @@ class InceptionBlockV4S(Sequential):
 
         self.dx = self.stem.backward(d_out_1)
         return self.dx
-    
+
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape

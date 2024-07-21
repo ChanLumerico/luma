@@ -7,7 +7,7 @@ from luma.neural import loss
 from luma.neural.base import Loss
 from luma.neural.layer import Activation
 
-from luma.neural._models import (_simple, _lenet, _alex, _vgg, _inception)
+from luma.neural._models import _simple, _lenet, _alex, _vgg, _inception
 
 
 __all__ = (
@@ -1590,12 +1590,12 @@ class Inception_V2(_inception._Inception_V2):
 
 class Inception_V3(_inception._Inception_V3):
     """
-    Inception v3, an enhancement of Inception v2, further improves 
-    computational efficiency and accuracy in deep learning models. 
-    It includes advanced factorization of convolutions, improved grid 
-    size reduction techniques, extensive Batch Normalization, and 
-    label smoothing to prevent overfitting. These modifications enable 
-    deeper and more complex neural networks with significantly 
+    Inception v3, an enhancement of Inception v2, further improves
+    computational efficiency and accuracy in deep learning models.
+    It includes advanced factorization of convolutions, improved grid
+    size reduction techniques, extensive Batch Normalization, and
+    label smoothing to prevent overfitting. These modifications enable
+    deeper and more complex neural networks with significantly
     enhanced performance and robustness.
 
     Structure
@@ -1719,4 +1719,3 @@ class Inception_V3(_inception._Inception_V3):
 
 class Inception_V4(_inception._Inception_V4):
     NotImplemented
-

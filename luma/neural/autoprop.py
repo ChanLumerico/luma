@@ -1,4 +1,4 @@
-from typing import List, Literal, Dict
+from typing import List, Literal, Dict, Self, Any
 from collections import deque
 import numpy as np
 
@@ -164,7 +164,7 @@ class LayerGraph:
             for next_node in node.next_nodes:
                 self[next_node].remove(node)
                 next_node.prev_nodes.remove(node)
-            
+
             node.prev_nodes.clear()
             node.next_nodes.clear()
             node.flush()
@@ -173,8 +173,10 @@ class LayerGraph:
             self.built_ = False
         else:
             raise ValueError(f"'{node}' does not exist in the graph.")
-    
+
     def build(self) -> None:
+        if self.built_:
+            return
         all_nodes = set(self.graph.keys())
         for kn, vn in self.graph.items():
             kn.next_nodes = list(vn)
@@ -283,10 +285,59 @@ class LayerGraph:
 
         return d_out
 
+    def get_path(
+        self,
+        start: LayerNode | None = None,
+        end: LayerNode | None = None,
+    ) -> List[LayerNode]:
+        if not self.built_:
+            raise NotFittedError(
+                f"'{self}' has not built! Call 'build()' to build the graph."
+            )
+        path = []
+        cur = self.root if start is None else start
+        final = self.term if end is None else end
+
+        while cur != final:
+            path.append(cur)
+            if not cur.next_nodes:
+                raise RuntimeError(f"Path is broken at '{cur}'!")
+            cur = cur.next_nodes[0]
+
+        path.append(final)
+        return path
+
     def clear(self) -> None:
         self.graph.clear()
         self.nodes.clear()
         self.built_ = False
+    
+    def __add__(self, other: Any) -> Self:
+        if not isinstance(other, LayerGraph):
+            raise ValueError(f"Can only add another 'LayerGraph'!")
+
+        new_graph = LayerGraph()
+        merged_graph: Dict[LayerNode, list] = {**self.graph}
+
+        for node, edges in other.graph.items():
+            if node in merged_graph:
+                merged_graph[node].extend(edges)
+            else:
+                merged_graph[node] = edges
+        
+        new_graph.graph = merged_graph
+        if self.term in new_graph.graph:
+            new_graph[self.term].append(other.root)
+        else:
+            new_graph.graph[self.term] = list(other.root)
+        
+        new_graph.root = self.root
+        new_graph.term = other.term
+
+        new_graph._init_predefined_graph()
+        new_graph.build()
+
+        return new_graph
 
     def __bool__(self) -> bool:
         return self.built_
