@@ -69,6 +69,9 @@ class LayerNode:
                 d_out_arr.append(d_out)
 
         return d_out_arr
+    
+    def update(self) -> None:
+        self.layer.update()
 
     def flush(self) -> None:
         self.n_forward, self.n_backward = 0, 0
@@ -162,7 +165,6 @@ class LayerGraph:
                 prev_node.next_nodes.remove(node)
 
             for next_node in node.next_nodes:
-                self[next_node].remove(node)
                 next_node.prev_nodes.remove(node)
 
             node.prev_nodes.clear()
@@ -238,6 +240,10 @@ class LayerGraph:
     def backward(self, d_out: TensorLike) -> TensorLike:
         self.check_is_built()
         return self._backward_bfs(d_out)
+    
+    def update(self) -> None:
+        for node in self.nodes:
+            node.update()
 
     def check_is_built(self) -> None:
         if not self.built_:
