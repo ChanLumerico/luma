@@ -110,48 +110,78 @@ class LayerGraph:
         self.term = term
 
         self.nodes: List[LayerNode] = []
-        self.built: bool = False
+        self.built_: bool = False
 
         if self.graph:
             self._init_predefined_graph()
 
     def _init_predefined_graph(self):
         all_nodes = set(self.graph.keys())
-        for kn, vn in self.graph.items():
+        for _, vn in self.graph.items():
             for v in vn:
                 all_nodes.add(v)
         self.nodes = list(all_nodes)
 
-    def add_node(self, node: LayerNode, prev_nodes: List[LayerNode] = [], next_nodes: List[LayerNode] = []) -> None:
+    def add_node(
+        self,
+        node: LayerNode,
+        prev_nodes: List[LayerNode] = [],
+        next_nodes: List[LayerNode] = [],
+    ) -> None:
         if node in self.graph:
             raise ValueError(f"Node {node} already exists in the graph.")
-        
+
         self.graph[node] = next_nodes
         for prev in prev_nodes:
             if prev not in self.graph:
                 self.graph[prev] = []
-            self.graph[prev].append(node)
-        
+            self[prev].append(node)
+
         node.prev_nodes.extend(prev_nodes)
         node.next_nodes.extend(next_nodes)
-        
+
         if node not in self.nodes:
             self.nodes.append(node)
-        
+
         for prev in prev_nodes:
             if prev not in self.nodes:
                 self.nodes.append(prev)
-        
+
         for next in next_nodes:
             if next not in self.nodes:
                 self.nodes.append(next)
 
+        self.built_ = False
+
+    def remove_node(self, node: LayerNode) -> None:
+        if node in self.graph:
+            del self.graph[node]
+
+            for prev_node in node.prev_nodes:
+                self[prev_node].remove(node)
+                prev_node.next_nodes.remove(node)
+
+            for next_node in node.next_nodes:
+                self[next_node].remove(node)
+                next_node.prev_nodes.remove(node)
+            
+            node.prev_nodes.clear()
+            node.next_nodes.clear()
+            node.flush()
+
+            self.nodes.remove(node)
+            self.built_ = False
+        else:
+            raise ValueError(f"'{node}' does not exist in the graph.")
+    
     def build(self) -> None:
         all_nodes = set(self.graph.keys())
         for kn, vn in self.graph.items():
-            kn.next_nodes.extend(vn)
+            kn.next_nodes = list(vn)
+
             for v in vn:
-                v.prev_nodes.append(kn)
+                if kn not in v.prev_nodes:
+                    v.prev_nodes.append(kn)
                 all_nodes.add(v)
 
         self.nodes = list(all_nodes)
@@ -172,7 +202,7 @@ class LayerGraph:
         if self.detect_cycle():
             raise RuntimeError(f"'{self}' contains a cycle!")
 
-        self.built = True
+        self.built_ = True
 
     def detect_cycle(self) -> bool:
         visited = set()
@@ -208,7 +238,7 @@ class LayerGraph:
         return self._backward_bfs(d_out)
 
     def check_is_built(self) -> None:
-        if not self.built:
+        if not self.built_:
             raise NotFittedError(
                 f"'{self}' has not built! Call 'build()' to build the graph."
             )
@@ -253,8 +283,13 @@ class LayerGraph:
 
         return d_out
 
+    def clear(self) -> None:
+        self.graph.clear()
+        self.nodes.clear()
+        self.built_ = False
+
     def __bool__(self) -> bool:
-        return self.built
+        return self.built_
 
     def __len__(self) -> int:
         return len(self.nodes)
