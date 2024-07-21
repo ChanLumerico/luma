@@ -227,3 +227,4 @@ class LayerGraph:
 
     def __getitem__(self, key_node: LayerNode) -> List[LayerNode]:
         return self.graph[key_node]
+
