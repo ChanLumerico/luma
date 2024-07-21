@@ -101,16 +101,50 @@ class LayerNode:
 class LayerGraph:
     def __init__(
         self,
-        graph: Dict[LayerNode, List[LayerNode]],
-        root: LayerNode,
-        term: LayerNode,
+        graph: Dict[LayerNode, List[LayerNode]] | None = None,
+        root: LayerNode | None = None,
+        term: LayerNode | None = None,
     ) -> None:
-        self.graph = graph
+        self.graph = graph if graph is not None else dict()
         self.root = root
         self.term = term
 
         self.nodes: List[LayerNode] = []
         self.built: bool = False
+
+        if self.graph:
+            self._init_predefined_graph()
+
+    def _init_predefined_graph(self):
+        all_nodes = set(self.graph.keys())
+        for kn, vn in self.graph.items():
+            for v in vn:
+                all_nodes.add(v)
+        self.nodes = list(all_nodes)
+
+    def add_node(self, node: LayerNode, prev_nodes: List[LayerNode] = [], next_nodes: List[LayerNode] = []) -> None:
+        if node in self.graph:
+            raise ValueError(f"Node {node} already exists in the graph.")
+        
+        self.graph[node] = next_nodes
+        for prev in prev_nodes:
+            if prev not in self.graph:
+                self.graph[prev] = []
+            self.graph[prev].append(node)
+        
+        node.prev_nodes.extend(prev_nodes)
+        node.next_nodes.extend(next_nodes)
+        
+        if node not in self.nodes:
+            self.nodes.append(node)
+        
+        for prev in prev_nodes:
+            if prev not in self.nodes:
+                self.nodes.append(prev)
+        
+        for next in next_nodes:
+            if next not in self.nodes:
+                self.nodes.append(next)
 
     def build(self) -> None:
         all_nodes = set(self.graph.keys())
@@ -174,7 +208,7 @@ class LayerGraph:
         return self._backward_bfs(d_out)
 
     def check_is_built(self) -> None:
-        if not bool(self):
+        if not self.built:
             raise NotFittedError(
                 f"'{self}' has not built! Call 'build()' to build the graph."
             )
