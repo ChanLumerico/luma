@@ -91,6 +91,14 @@ class LayerNode:
     def __repr__(self) -> str:
         return f"({str(self)}: {self.layer})"
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, LayerNode):
+            return False
+        return self.name == other.name and self.layer == other.layer
+    
+    def __hash__(self) -> int:
+        return hash((self.name, self.layer))
+
 
 class LayerGraph:
     def __init__(
@@ -107,19 +115,57 @@ class LayerGraph:
         self.built: bool = False
 
     def build(self) -> None:
+        all_nodes = set(self.graph.keys())
         for kn, vn in self.graph.items():
             kn.next_nodes.extend(vn)
             for v in vn: 
                 v.prev_nodes.append(kn)
+                all_nodes.add(v)
 
-            if kn not in self.nodes:
-                self.nodes.append(kn)
+        self.nodes = list(all_nodes)
 
-        for node in self.nodes:
-            if not node.prev_nodes and not node.next_nodes:
-                raise RuntimeError(f"'{self}' is not fully connected!")
+        visited = set()
+        def dfs(node: LayerNode):
+            if node in visited:
+                return
+            visited.add(node)
+            for next_node in node.next_nodes:
+                dfs(next_node)
+        dfs(self.root)
+
+        if visited != set(self.nodes):
+            raise RuntimeError(f"'{self}' is not fully connected!")
+
+        if self.detect_cycle():
+            raise RuntimeError(f"'{self}' contains a cycle!")
+
         self.built = True
         return
+
+    def detect_cycle(self) -> bool:
+        visited = set()
+        rec_stack = set()
+
+        def visit(node: LayerNode) -> bool:
+            if node in rec_stack:
+                return True
+            if node in visited:
+                return False
+
+            visited.add(node)
+            rec_stack.add(node)
+
+            for next_node in node.next_nodes:
+                if visit(next_node):
+                    return True
+
+            rec_stack.remove(node)
+            return False
+
+        for node in self.nodes:
+            if visit(node):
+                return True
+        return False
 
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         self.check_is_built()
