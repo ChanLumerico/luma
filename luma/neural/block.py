@@ -7,6 +7,7 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
+from luma.neural.autoprop import LayerNode, LayerGraph
 
 
 __all__ = (
@@ -1532,7 +1533,7 @@ class InceptionBlockV2R(Sequential):
         red_3x3_db: int,
         out_3x3_db: Tuple[int, int],
         activation: Activation.FuncType = Activation.ReLU,
-        optimizer: Optimizer = None,
+        optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
         do_batch_norm: bool = False,
@@ -1630,7 +1631,7 @@ class InceptionBlockV2R(Sequential):
         )
 
 
-class InceptionBlockV4S(Sequential):
+class InceptionBlockV4S(LayerGraph):
     """
     Inception block used in Inception V4 network stem part.
     This block has fixed channels of inputs and outputs.
@@ -1663,8 +1664,6 @@ class InceptionBlockV4S(Sequential):
         Type of weight initializer
     `lambda_` : float, default=0.0
         L2 regularization strength
-    `do_batch_norm` : bool, default=False
-        Whether to perform batch normalization
     `momentum` : float, default=0.9
         Momentum for batch normalization
 
@@ -1676,3 +1675,64 @@ class InceptionBlockV4S(Sequential):
         X.shape = (batch_size, height, width, channels)
         ```
     """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "red_3x3": ("0<,+inf", int),
+                "out_3x3": ("0<,+inf", int),
+                "red_3x3_db": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+        self.init_nodes()
+
+    def init_nodes(self) -> None:
+        self.rt_seq = LayerNode(
+            Sequential(
+                Convolution2D(3, 32, 3, 2, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(32),
+                Convolution2D(32, 32, 3, 1, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(32),
+                Convolution2D(32, 64, 3, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(64),
+            ),
+            name="rt_seq",
+        )
+
+        self.br1_l = LayerNode(Pooling2D(3, 2, "max", "valid"), name="br1_l")
+        self.br1_r = LayerNode(
+            Sequential(
+                Convolution2D(64, 96, 3, 2, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(96),
+            ),
+        )

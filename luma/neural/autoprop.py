@@ -73,10 +73,10 @@ class LayerNode:
                 d_out_arr.append(d_out)
 
         return d_out_arr
-    
+
     def update(self) -> None:
         self.layer.update()
-    
+
     def set_optimizer(self, **optim_params: Any) -> None:
         self.layer.set_optimizer(self.optimizer, **optim_params)
 
@@ -216,10 +216,10 @@ class LayerGraph:
             raise RuntimeError(f"'{self}' is not fully connected!")
         if self.detect_cycle():
             raise RuntimeError(f"'{self}' contains a cycle!")
-        
+
         for node in self.nodes:
             node.set_optimizer(**self.optim_params)
-        
+
         self.built_ = True
 
     def detect_cycle(self) -> bool:
@@ -254,7 +254,7 @@ class LayerGraph:
     def backward(self, d_out: TensorLike) -> TensorLike:
         self.check_is_built()
         return self._backward_bfs(d_out)
-    
+
     def update(self) -> None:
         for node in self.nodes:
             node.update()
@@ -331,7 +331,7 @@ class LayerGraph:
         self.graph.clear()
         self.nodes.clear()
         self.built_ = False
-    
+
     def __add__(self, other: Any) -> Self:
         if not isinstance(other, LayerGraph):
             raise ValueError(f"Can only add another 'LayerGraph'!")
@@ -344,13 +344,13 @@ class LayerGraph:
                 merged_graph[node].extend(edges)
             else:
                 merged_graph[node] = edges
-        
+
         new_graph.graph = merged_graph
         if self.term in new_graph.graph:
             new_graph[self.term].append(other.root)
         else:
             new_graph.graph[self.term] = list(other.root)
-        
+
         new_graph.root = self.root
         new_graph.term = other.term
 
