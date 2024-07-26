@@ -18,7 +18,6 @@ class LayerNode:
         optimizer: Optimizer | None = None,
         merge_mode: Literal["chcat", "sum"] = "sum",
         name: str | None = None,
-        **optim_params: Any,
     ) -> None:
         self.layer: LayerLike = layer
         self.optimizer = optimizer
@@ -35,9 +34,6 @@ class LayerNode:
         self.cum_ch = [0]
         self.f_visited: bool = False
         self.b_visited: bool = False
-
-        self.optimizer.set_params(**optim_params)
-        self.layer.set_optimizer(self.optimizer)
 
     def for_enqueue(self, X: TensorLike) -> None:
         self.n_forward += 1
@@ -80,6 +76,9 @@ class LayerNode:
     
     def update(self) -> None:
         self.layer.update()
+    
+    def set_optimizer(self, **optim_params: Any) -> None:
+        self.layer.set_optimizer(self.optimizer, **optim_params)
 
     def flush(self) -> None:
         self.n_forward, self.n_backward = 0, 0
@@ -115,10 +114,15 @@ class LayerGraph:
         graph: Dict[LayerNode, List[LayerNode]] | None = None,
         root: LayerNode | None = None,
         term: LayerNode | None = None,
+        optimizer: Optimizer | None = None,
+        **optim_params: Any,
     ) -> None:
         self.graph = graph if graph is not None else dict()
         self.root = root
         self.term = term
+
+        self.optimizer = optimizer
+        self.optim_params = optim_params
 
         self.nodes: List[LayerNode] = []
         self.built_: bool = False
@@ -210,10 +214,12 @@ class LayerGraph:
 
         if visited != set(self.nodes):
             raise RuntimeError(f"'{self}' is not fully connected!")
-
         if self.detect_cycle():
             raise RuntimeError(f"'{self}' contains a cycle!")
-
+        
+        for node in self.nodes:
+            node.set_optimizer(**self.optim_params)
+        
         self.built_ = True
 
     def detect_cycle(self) -> bool:
