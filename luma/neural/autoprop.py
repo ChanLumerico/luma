@@ -4,6 +4,7 @@ import numpy as np
 
 from luma.interface.typing import TensorLike
 from luma.interface.exception import NotFittedError
+from luma.core.super import Optimizer
 from luma.neural.layer import LayerLike
 
 
@@ -14,10 +15,14 @@ class LayerNode:
     def __init__(
         self,
         layer: LayerLike,
+        optimizer: Optimizer | None = None,
         merge_mode: Literal["chcat", "sum"] = "sum",
         name: str | None = None,
+        **optim_params: Any,
     ) -> None:
         self.layer: LayerLike = layer
+        self.optimizer = optimizer
+
         self.prev_nodes: List[LayerNode] = []
         self.next_nodes: List[LayerNode] = []
         self.merge_mode = merge_mode
@@ -30,6 +35,9 @@ class LayerNode:
         self.cum_ch = [0]
         self.f_visited: bool = False
         self.b_visited: bool = False
+
+        self.optimizer.set_params(**optim_params)
+        self.layer.set_optimizer(self.optimizer)
 
     def for_enqueue(self, X: TensorLike) -> None:
         self.n_forward += 1
