@@ -54,11 +54,6 @@ class ConvBlock1D(Sequential):
     The pooling layer then reduces the feature dimensionality, helping to
     decrease computational cost and overfitting.
 
-    Structure
-    ---------
-    ```py
-    Convolution1D -> Optional[BatchNorm1D] -> Activation -> Optional[Pooling1D]
-    ```
     Parameters
     ----------
     `in_channels` : int
@@ -183,11 +178,6 @@ class ConvBlock2D(Sequential):
     The pooling layer then reduces the feature dimensionality, helping to
     decrease computational cost and overfitting.
 
-    Structure
-    ---------
-    ```py
-    Convolution2D -> Optional[BatchNorm2D] -> Activation -> Optional[Pooling2D]
-    ```
     Parameters
     ----------
     `in_channels` : int
@@ -312,11 +302,6 @@ class ConvBlock3D(Sequential):
     The pooling layer then reduces the feature dimensionality, helping to
     decrease computational cost and overfitting.
 
-    Structure
-    ---------
-    ```py
-    Convolution3D -> Optional[BatchNorm3D] -> Activation -> Optional[Pooling3D]
-    ```
     Parameters
     ----------
     `in_channels` : int
@@ -454,11 +439,6 @@ class DenseBlock(Sequential):
     included to reduce overfitting by randomly deactivating a portion
     of the neurons during training.
 
-    Structure
-    ---------
-    ```py
-    Dense -> Optional[BatchNorm1D] -> Activation -> Optional[Dropout]
-    ```
     Parameters
     ----------
     `in_features` : int
@@ -583,27 +563,6 @@ class InceptionBlock(Sequential):
     of Google's Inception network, and it concatenates the outputs of different
     convolutions to capture rich and varied features from input data.
 
-    Structure
-    ---------
-    1x1 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
-    ```
-    3x3 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation
-    ```
-    5x5 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=5) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Pooling Branch:
-    ```py
-    Pooling2D(3, 1, mode="max", padding="same") ->
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
-    ```
     Parameters
     ----------
     `in_channels` : int
@@ -777,28 +736,6 @@ class InceptionBlockV2A(Sequential):
     """
     Inception block type-A for Inception V2 network.
 
-    Structure
-    ---------
-    1x1 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
-    ```
-    3x3 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Double 3x3 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Pooling Branch:
-    ```py
-    Pooling2D(3, 1, mode="avg", padding="same") ->
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
-    ```
     Parameters
     ----------
     `in_channels` : int
@@ -976,31 +913,6 @@ class InceptionBlockV2B(Sequential):
     """
     Inception block type-B for Inception V2 network.
 
-    Structure
-    ---------
-    1x1 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Factorized 7x7 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=(1, 7)) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=(7, 1)) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Factorized Double 7x7 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=(1, 7)) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=(7, 1)) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=(1, 7)) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=(7, 1)) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Pooling Branch:
-    ```py
-    Pooling2D(3, 1, mode="avg", padding="same") ->
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
-    ```
     Parameters
     ----------
     `in_channels` : int
@@ -1193,30 +1105,6 @@ class InceptionBlockV2C(Sequential):
     """
     Inception block type-C for Inception V2 network.
 
-    Structure
-    ---------
-    1x1 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Expanded 1x3 + 3x1 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
-    |-> Convolution2D(filter_size=(1, 3)) -> Optional[BatchNorm2D] -> Activation
-    |-> Convolution2D(filter_size=(3, 1)) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Deep Expanded 1x3 + 3x1 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation ->
-    Convolution2D(filter_size=3) -> Optional[BatchNorm2D] -> Activation ->
-    |-> Convolution2D(filter_size=(1, 3)) -> Optional[BatchNorm2D] -> Activation
-    |-> Convolution2D(filter_size=(3, 1)) -> Optional[BatchNorm2D] -> Activation
-    ```
-    Pooling Branch:
-    ```py
-    Pooling2D(3, 1, mode="max", padding="same") ->
-    Convolution2D(filter_size=1) -> Optional[BatchNorm2D] -> Activation
-    ```
     Parameters
     ----------
     `in_channels` : int
@@ -1470,23 +1358,6 @@ class InceptionBlockV2R(Sequential):
     """
     Inception block for grid reduction for Inception V2 network.
 
-    Structure
-    ---------
-    3x3 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Activation ->
-    Convolution2D(filter_size=3, stride=2) -> Activation
-    ```
-    Double 3x3 Branch:
-    ```py
-    Convolution2D(filter_size=1) -> Activation ->
-    Convolution2D(filter_size=3, padding=1) -> Activation ->
-    Convolution2D(filter_size=3, stride=2) -> Activation
-    ```
-    Pooling Branch:
-    ```py
-    Pooling2D(3, 2, mode="max")
-    ```
     Parameters
     ----------
     `in_channels` : int
@@ -1635,24 +1506,6 @@ class InceptionBlockV4S(LayerGraph):
     """
     Inception block used in Inception V4 network stem part.
     This block has fixed channels of inputs and outputs.
-
-    Structure
-    ---------
-    Convolution2D(3, 32, stride=2) ->
-    Convolution2D(32, 32) ->
-    Convolution2D(32, 64) ->
-    |-> Pooling2D(filter_size=3, mode="max")
-    |-> Convolution2D(64, 96, stride=2)
-
-    Filter Concat ->
-    |-> Convolution2D(160, 64) -> Convolution2D(64, 96)
-    |-> Convolution2D(160, 64) -> Convolution2D(64, 64) ->
-        Convolution2D(64, 64) -> Convolution2D(64, 96)
-
-    Filter Concat ->
-    |-> Convolution2D(192, 192)
-    |-> Pooling2D(stride=2, mode="max")
-    Filter Concat
 
     Parameters
     ----------
