@@ -1929,4 +1929,153 @@ class InceptionBlockV4B(LayerGraph):
 
 
 class InceptionBlockV4C(LayerGraph):
-    NotImplemented
+    """
+    Inception block type C used in Inception V4 network.
+
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of a 4D-array (`Tensor`).
+
+        ```py
+        X.shape = (batch_size, height, width, channels)
+        ```
+    - This block has fixed shape of input and ouput tensors.
+
+        ```py
+        Input: Tensor[-1, 1536, 8, 8]
+        Output: Tensor[-1, 1536, 8, 8]
+        ```
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+        super(InceptionBlockV4C, self).__init__(
+            graph={
+                self.rt_: [self.br_a, self.br_b, self.br_c, self.br_d],
+                self.br_a: [self.cat_],
+                self.br_b: [self.cat_],
+                self.br_c: [self.br_cl, self.br_cr],
+                self.br_d: [self.br_dl, self.br_dr],
+                self.br_cl: [self.cat_],
+                self.br_cr: [self.cat_],
+                self.br_dl: [self.cat_],
+                self.br_dr: [self.cat_],
+            },
+            root=self.rt_,
+            term=self.cat_,
+        )
+        self.build()
+    
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+
+        self.br_a = LayerNode(
+            Sequential(
+                Pooling2D(2, 2, "avg", "same"),
+                Convolution2D(1536, 256, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+            ),
+            name="br_a",
+        )
+        self.br_b = LayerNode(
+            Sequential(
+                Convolution2D(1536, 256, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+            ),
+            name="br_b",
+        )
+
+        self.br_c = LayerNode(
+            Sequential(
+                Convolution2D(1536, 384, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(384),
+            ),
+            name="br_c",
+        )
+        self.br_cl = LayerNode(
+            Sequential(
+                Convolution2D(384, 256, (1, 3), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+            ),
+            name="br_cl",
+        )
+        self.br_cr = LayerNode(
+            Sequential(
+                Convolution2D(384, 256, (3, 1), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+            ),
+            name="br_cr",
+        )
+
+        self.br_d = LayerNode(
+            Sequential(
+                Convolution2D(1536, 384, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(384),
+                Convolution2D(384, 448, (1, 3), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(448),
+                Convolution2D(448, 512, (3, 1), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(512),
+            ),
+            name="br_d",
+        )
+        self.br_dl = LayerNode(
+            Sequential(
+                Convolution2D(512, 256, (3, 1), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+            ),
+            name="br_dl",
+        )
+        self.br_dr = LayerNode(
+            Sequential(
+                Convolution2D(512, 256, (1, 3), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+            ),
+            name="br_dr",
+        )
+
+        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+
