@@ -1508,7 +1508,6 @@ class InceptionBlockV2R(Sequential):
 class InceptionBlockV4S(LayerGraph):
     """
     Inception block used in Inception V4 network stem part.
-    This block has fixed channels of inputs and outputs.
 
     Parameters
     ----------
@@ -1529,6 +1528,12 @@ class InceptionBlockV4S(LayerGraph):
 
         ```py
         X.shape = (batch_size, height, width, channels)
+        ```
+    - This block has fixed shape of input and ouput tensors.
+
+        ```py
+        Input: Tensor[-1, 3, 299, 299]
+        Output: Tensor[-1, 384, 35, 35]
         ```
     """
 
@@ -1639,6 +1644,130 @@ class InceptionBlockV4S(LayerGraph):
         )
         self.br3_r = LayerNode(Pooling2D(2, 2, "max", "valid"), name="br3_r")
         self.br3_cat = LayerNode(Identity(), merge_mode="chcat", name="br3_cat")
+
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, _, _ = in_shape
+        return batch_size, 384, 35, 35
+
+
+class InceptionBlockV4A(LayerGraph):
+    """
+    Inception block type A used in Inception V4 network
+
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of a 4D-array (`Tensor`).
+
+        ```py
+        X.shape = (batch_size, height, width, channels)
+        ```
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+        super(InceptionBlockV4A, self).__init__(
+            graph={
+                self.rt_: [self.br_a, self.br_b, self.br_c, self.br_d],
+                self.br_a: [self.cat_],
+                self.br_b: [self.cat_],
+                self.br_c: [self.cat_],
+                self.br_d: [self.cat_],
+            },
+            root=self.rt_,
+            term=self.cat_,
+        )
+        self.build()
+
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+
+        self.br_a = LayerNode(
+            Sequential(
+                Pooling2D(2, 2, "avg", "same"),
+                Convolution2D(384, 96, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(96),
+            ),
+            name="br1_a",
+        )
+        self.br_b = LayerNode(
+            Sequential(
+                Convolution2D(384, 96, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(96),
+            ),
+            name="br1_b",
+        )
+        self.br_c = LayerNode(
+            Sequential(
+                Convolution2D(384, 64, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(64),
+                Convolution2D(64, 96, 3, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(96),
+            ),
+            name="br1_c",
+        )
+        self.br_d = LayerNode(
+            Sequential(
+                Convolution2D(384, 64, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(64),
+                Convolution2D(64, 96, 3, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(96),
+                Convolution2D(96, 96, 3, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(96),
+            ),
+            name="br_d",
+        )
+
+        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
     
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -1652,10 +1781,6 @@ class InceptionBlockV4S(LayerGraph):
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
         return batch_size, 384, 35, 35
-
-
-class InceptionBlockV4A(LayerGraph):
-    NotImplemented
 
 
 class InceptionBlockV4B(LayerGraph):
