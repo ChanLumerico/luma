@@ -938,21 +938,21 @@ class LayerNorm(_norm._LayerNorm):
 
 class Identity(Layer):
     """
-    This layer passes the input directly to the output without any 
-    modifications. Useful for creating skip connections and maintaining 
+    This layer passes the input directly to the output without any
+    modifications. Useful for creating skip connections and maintaining
     the shape of the data in complex architectures.
     """
 
     def __init__(self) -> None:
         super().__init__()
-    
+
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         _ = is_train
         return X
-    
+
     def backward(self, d_out: TensorLike) -> TensorLike:
         return d_out
-    
+
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         return in_shape
 

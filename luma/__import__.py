@@ -163,10 +163,10 @@ from luma.model_selection.fold import KFold, StratifiedKFold
 
 from luma.preprocessing.scaler import StandardScaler, MinMaxScaler
 from luma.preprocessing.encoder import (
-    OneHotEncoder, 
-    LabelEncoder, 
-    OrdinalEncoder, 
-    LabelBinarizer, 
+    OneHotEncoder,
+    LabelEncoder,
+    OrdinalEncoder,
+    LabelBinarizer,
     LabelSmoothing,
 )
 from luma.preprocessing.imputer import SimpleImputer, KNNImputer, HotDeckImputer

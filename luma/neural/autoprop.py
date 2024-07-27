@@ -74,7 +74,7 @@ class LayerNode:
 
     def update(self) -> None:
         self.layer.update()
-    
+
     def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
         if hasattr(self.layer, "set_optimizer"):
             self.layer.set_optimizer(optimizer, **params)
@@ -82,7 +82,7 @@ class LayerNode:
             optim: Optimizer = Clone(optimizer).get
             optim.set_params(**params)
             self.layer.optimizer = optim
-    
+
     def flush(self) -> None:
         self.n_forward, self.n_backward = 0, 0
         self.f_queue.clear()
@@ -90,11 +90,11 @@ class LayerNode:
 
         self.f_visited = False
         self.b_visited = False
-    
+
     @property
     def param_size(self) -> Tuple[int, int]:
         return self.layer.param_size
-    
+
     def out_shape(self, in_shape: tuple[int]) -> tuple[int]:
         return self.layer.out_shape(in_shape)
 
@@ -128,7 +128,7 @@ class LayerGraph:
         self.graph = graph if graph is not None else dict()
         self.root = root
         self.term = term
-        
+
         self.nodes: List[LayerNode] = []
         self.built_: bool = False
 
@@ -221,7 +221,7 @@ class LayerGraph:
             raise RuntimeError(f"'{self}' is not fully connected!")
         if self.detect_cycle():
             raise RuntimeError(f"'{self}' contains a cycle!")
-        
+
         self.built_ = True
 
     def detect_cycle(self) -> bool:
@@ -248,7 +248,7 @@ class LayerGraph:
                 return True
 
         return False
-     
+
     def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
         self.check_is_built()
         for node in self.nodes:
@@ -339,7 +339,7 @@ class LayerGraph:
         self.graph.clear()
         self.nodes.clear()
         self.built_ = False
-    
+
     @property
     def param_size(self) -> Tuple[int, int]:
         w_size, b_size = 0, 0
@@ -347,9 +347,9 @@ class LayerGraph:
             w_, b_ = node.param_size
             w_size += w_
             b_size += b_
-        
+
         return w_size, b_size
-    
+
     def out_shape(self, in_shape: tuple[int]) -> tuple[int]:
         return self.term.out_shape(in_shape)
 

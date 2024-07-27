@@ -1698,19 +1698,23 @@ class InceptionBlockV4S(LayerGraph):
             "random_state": random_state,
         }
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "red_3x3": ("0<,+inf", int),
-                "out_3x3": ("0<,+inf", int),
-                "red_3x3_db": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
         self.init_nodes()
+        super(InceptionBlockV4S, self).__init__(
+            graph={
+                self.rt_seq: [self.br1_l, self.br1_r],
+                self.br1_l: [self.br1_cat],
+                self.br1_r: [self.br1_cat],
+                self.br1_cat: [self.br2_l, self.br2_r],
+                self.br2_l: [self.br2_cat],
+                self.br2_r: [self.br2_cat],
+                self.br2_cat: [self.br3_l, self.br3_r],
+                self.br3_l: [self.br3_cat],
+                self.br3_r: [self.br3_cat],
+            },
+            root=self.rt_seq,
+            term=self.br3_cat,
+        )
+        self.build()
 
     def init_nodes(self) -> None:
         self.rt_seq = LayerNode(
@@ -1747,5 +1751,48 @@ class InceptionBlockV4S(LayerGraph):
                 Convolution2D(64, 96, 3, 1, "valid", **self.basic_args),
                 self.activation(),
                 BatchNorm2D(96),
-            )
+            ),
+            name="br2_l",
         )
+        self.br2_r = LayerNode(
+            Sequential(
+                Convolution2D(160, 64, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(64),
+                Convolution2D(64, 64, (7, 1), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(64),
+                Convolution2D(64, 64, (1, 7), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(64),
+                Convolution1D(64, 96, 3, 1, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(96),
+            ),
+            name="br2_r",
+        )
+        self.br2_cat = LayerNode(Identity(), merge_mode="chcat", name="br2_cat")
+
+        self.br3_l = LayerNode(
+            Sequential(
+                Convolution2D(192, 192, 3, 1, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(192),
+            ),
+            name="br3_l",
+        )
+        self.br3_r = LayerNode(Pooling2D(2, 2, "max", "valid"), name="br3_r")
+        self.br3_cat = LayerNode(Identity(), merge_mode="chcat", name="br3_cat")
+    
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+    
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+    
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, _, _ = in_shape
+        return batch_size, 384, 35, 35
