@@ -1,4 +1,4 @@
-from typing import List, Literal, Dict, Self, Any
+from typing import List, Literal, Dict, Self, Any, Tuple
 from collections import deque
 import numpy as np
 
@@ -87,6 +87,13 @@ class LayerNode:
 
         self.f_visited = False
         self.b_visited = False
+    
+    @property
+    def param_size(self) -> Tuple[int, int]:
+        return self.layer.param_size
+    
+    def out_shape(self, in_shape: tuple[int]) -> tuple[int]:
+        return self.layer.out_shape(in_shape)
 
     def __call__(self, is_train: bool = False) -> TensorLike:
         return self.forward(is_train)
@@ -331,6 +338,19 @@ class LayerGraph:
         self.graph.clear()
         self.nodes.clear()
         self.built_ = False
+    
+    @property
+    def param_size(self) -> Tuple[int, int]:
+        w_size, b_size = 0, 0
+        for node in self.nodes:
+            w_, b_ = node.param_size
+            w_size += w_
+            b_size += b_
+        
+        return w_size, b_size
+    
+    def out_shape(self, in_shape: tuple[int]) -> tuple[int]:
+        return self.term.out_shape(in_shape)
 
     def __add__(self, other: Any) -> Self:
         if not isinstance(other, LayerGraph):

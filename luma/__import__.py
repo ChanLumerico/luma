@@ -98,6 +98,7 @@ from luma.neural.layer import (
     BatchNorm3D,
     LocalResponseNorm,
     LayerNorm,
+    Identity,
     Sequential,
 )
 from luma.neural.optimizer import (
@@ -299,7 +300,7 @@ if __name__ == "__main__":
     Dropout, Dropout1D, Dropout2D, Dropout3D,
     BatchNorm1D, BatchNorm2D, BatchNorm3D,
     LocalResponseNorm, LayerNorm,
-    Dense, Flatten, Activation,
+    Dense, Flatten, Activation, Identity,
     Sequential
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,

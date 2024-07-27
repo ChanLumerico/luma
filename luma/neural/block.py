@@ -1735,4 +1735,6 @@ class InceptionBlockV4S(LayerGraph):
                 self.activation(),
                 BatchNorm2D(96),
             ),
+            name="br1_r",
         )
+        self.br1_cat = LayerNode(...)
