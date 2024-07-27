@@ -1683,6 +1683,12 @@ class InceptionBlockV4A(LayerGraph):
         ```py
         X.shape = (batch_size, height, width, channels)
         ```
+    - This block has fixed shape of input and ouput tensors.
+
+        ```py
+        Input: Tensor[-1, 384, 35, 35]
+        Output: Tensor[-1, 384, 35, 35]
+        ```
     """
 
     def __init__(
@@ -1784,7 +1790,115 @@ class InceptionBlockV4A(LayerGraph):
 
 
 class InceptionBlockV4B(LayerGraph):
-    NotImplemented
+    """
+    Inception block type B used in Inception V4 network.
+
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of a 4D-array (`Tensor`).
+
+        ```py
+        X.shape = (batch_size, height, width, channels)
+        ```
+    - This block has fixed shape of input and ouput tensors.
+
+        ```py
+        Input: Tensor[-1, 1024, 17, 17]
+        Output: Tensor[-1, 1024, 17, 17]
+        ```
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "optimizer": optimizer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+    
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+
+        self.br_a = LayerNode(
+            Sequential(
+                Pooling2D(2, 2, "avg", "same"),
+                Convolution2D(1024, 128, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(128),
+            ),
+            name="br_a"
+        )
+        self.br_b = LayerNode(
+            Sequential(
+                Convolution2D(1024, 384, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(384),
+            ),
+            name="br_b",
+        )
+        self.br_c = LayerNode(
+            Sequential(
+                Convolution2D(1024, 192, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(192),
+                Convolution2D(192, 224, (1, 7), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(224),
+                Convolution2D(224, 256, (7, 1), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+            ),
+            name="br_c",
+        )
+        self.br_d = LayerNode(
+            Sequential(
+                Convolution2D(1024, 192, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(192),
+                Convolution2D(192, 192, (1, 7), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(192),
+                Convolution2D(192, 224, (7, 1), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(224),
+                Convolution2D(224, 224, (1, 7), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(224),
+                Convolution2D(224, 256, (7, 1), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+            ),
+            name="br_d",
+        )
 
 
 class InceptionBlockV4C(LayerGraph):
