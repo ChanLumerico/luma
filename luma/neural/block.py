@@ -1737,4 +1737,15 @@ class InceptionBlockV4S(LayerGraph):
             ),
             name="br1_r",
         )
-        self.br1_cat = LayerNode(...)
+        self.br1_cat = LayerNode(Identity(), merge_mode="chcat", name="br1_cat")
+
+        self.br2_l = LayerNode(
+            Sequential(
+                Convolution2D(160, 64, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(64),
+                Convolution2D(64, 96, 3, 1, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(96),
+            )
+        )

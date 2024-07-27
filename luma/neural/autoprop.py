@@ -4,6 +4,7 @@ import numpy as np
 
 from luma.interface.typing import TensorLike
 from luma.interface.exception import NotFittedError
+from luma.interface.util import Clone
 from luma.core.super import Optimizer
 from luma.neural.layer import LayerLike
 
@@ -15,13 +16,10 @@ class LayerNode:
     def __init__(
         self,
         layer: LayerLike,
-        optimizer: Optimizer | None = None,
         merge_mode: Literal["chcat", "sum"] = "sum",
         name: str | None = None,
     ) -> None:
         self.layer: LayerLike = layer
-        self.optimizer = optimizer
-
         self.prev_nodes: List[LayerNode] = []
         self.next_nodes: List[LayerNode] = []
         self.merge_mode = merge_mode
@@ -76,10 +74,15 @@ class LayerNode:
 
     def update(self) -> None:
         self.layer.update()
-
-    def set_optimizer(self, **optim_params: Any) -> None:
-        self.layer.set_optimizer(self.optimizer, **optim_params)
-
+    
+    def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
+        if hasattr(self.layer, "set_optimizer"):
+            self.layer.set_optimizer(optimizer, **params)
+        else:
+            optim: Optimizer = Clone(optimizer).get
+            optim.set_params(**params)
+            self.layer.optimizer = optim
+    
     def flush(self) -> None:
         self.n_forward, self.n_backward = 0, 0
         self.f_queue.clear()
@@ -121,16 +124,11 @@ class LayerGraph:
         graph: Dict[LayerNode, List[LayerNode]] | None = None,
         root: LayerNode | None = None,
         term: LayerNode | None = None,
-        optimizer: Optimizer | None = None,
-        **optim_params: Any,
     ) -> None:
         self.graph = graph if graph is not None else dict()
         self.root = root
         self.term = term
-
-        self.optimizer = optimizer
-        self.optim_params = optim_params
-
+        
         self.nodes: List[LayerNode] = []
         self.built_: bool = False
 
@@ -223,10 +221,7 @@ class LayerGraph:
             raise RuntimeError(f"'{self}' is not fully connected!")
         if self.detect_cycle():
             raise RuntimeError(f"'{self}' contains a cycle!")
-
-        for node in self.nodes:
-            node.set_optimizer(**self.optim_params)
-
+        
         self.built_ = True
 
     def detect_cycle(self) -> bool:
@@ -253,6 +248,11 @@ class LayerGraph:
                 return True
 
         return False
+     
+    def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
+        self.check_is_built()
+        for node in self.nodes:
+            node.set_optimizer(optimizer, **params)
 
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         self.check_is_built()
@@ -263,6 +263,7 @@ class LayerGraph:
         return self._backward_bfs(d_out)
 
     def update(self) -> None:
+        self.check_is_built()
         for node in self.nodes:
             node.update()
 
