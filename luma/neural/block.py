@@ -24,6 +24,8 @@ __all__ = (
     "InceptionBlockV4A",
     "InceptionBlockV4B",
     "InceptionBlockV4C",
+    "InceptionBlockV4RA",
+    "InceptionBlockV4RB",
 )
 
 
@@ -2078,4 +2080,24 @@ class InceptionBlockV4C(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+    
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+    
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+    
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, _, _ = in_shape
+        return batch_size, 1536, 8, 8
+
+
+class InceptionBlockV4RA(LayerGraph):
+    NotImplemented
+
+class InceptionBlockV4RB(LayerGraph):
+    NotImplemented
 
