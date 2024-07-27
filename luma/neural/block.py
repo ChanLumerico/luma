@@ -21,6 +21,9 @@ __all__ = (
     "InceptionBlockV2C",
     "InceptionBlockV2R",
     "InceptionBlockV4S",
+    "InceptionBlockV4A",
+    "InceptionBlockV4B",
+    "InceptionBlockV4C",
 )
 
 
@@ -1649,3 +1652,15 @@ class InceptionBlockV4S(LayerGraph):
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
         return batch_size, 384, 35, 35
+
+
+class InceptionBlockV4A(LayerGraph):
+    NotImplemented
+
+
+class InceptionBlockV4B(LayerGraph):
+    NotImplemented
+
+
+class InceptionBlockV4C(LayerGraph):
+    NotImplemented
