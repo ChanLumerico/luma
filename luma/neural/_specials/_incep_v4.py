@@ -1,5 +1,4 @@
-from typing import Literal, Tuple, override
-import numpy as np
+from typing import Tuple, override
 
 from luma.core.super import Optimizer
 from luma.interface.typing import Tensor, TensorLike

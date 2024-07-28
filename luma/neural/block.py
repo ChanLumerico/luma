@@ -7,7 +7,9 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural.autoprop import LayerNode, LayerGraph
+from luma.neural.autoprop import LayerNode
+
+from luma.neural import _specials
 
 
 __all__ = (
@@ -741,7 +743,7 @@ class InceptionBlock(Sequential):
         )
 
 
-class InceptionBlockV2A(Sequential):
+class InceptionBlockV2A(_specials._incep_v2._Incep_V2_TypeA):
     """
     Inception block type-A for Inception V2 network.
 
@@ -918,7 +920,7 @@ class InceptionBlockV2A(Sequential):
         )
 
 
-class InceptionBlockV2B(Sequential):
+class InceptionBlockV2B(_specials._incep_v2._Incep_V2_TypeB):
     """
     Inception block type-B for Inception V2 network.
 
@@ -1110,7 +1112,7 @@ class InceptionBlockV2B(Sequential):
         )
 
 
-class InceptionBlockV2C(Sequential):
+class InceptionBlockV2C(_specials._incep_v2._Incep_V2_TypeC):
     """
     Inception block type-C for Inception V2 network.
 
@@ -1363,7 +1365,7 @@ class InceptionBlockV2C(Sequential):
         )
 
 
-class InceptionBlockV2R(Sequential):
+class InceptionBlockV2R(_specials._incep_v2._Incep_V2_Redux):
     """
     Inception block for grid reduction for Inception V2 network.
 
@@ -1511,7 +1513,7 @@ class InceptionBlockV2R(Sequential):
         )
 
 
-class InceptionBlockV4S(LayerGraph):
+class InceptionBlockV4S(_specials._incep_v4._Incep_V4_Stem):
     """
     Inception block used in Inception V4 network stem part.
 
@@ -1666,7 +1668,7 @@ class InceptionBlockV4S(LayerGraph):
         return batch_size, 384, 35, 35
 
 
-class InceptionBlockV4A(LayerGraph):
+class InceptionBlockV4A(_specials._incep_v4._Incep_V4_TypeA):
     """
     Inception block type A used in Inception V4 network
 
@@ -1797,7 +1799,7 @@ class InceptionBlockV4A(LayerGraph):
         return batch_size, 384, 35, 35
 
 
-class InceptionBlockV4B(LayerGraph):
+class InceptionBlockV4B(_specials._incep_v4._Incep_V4_TypeB):
     """
     Inception block type B used in Inception V4 network.
 
@@ -1937,7 +1939,7 @@ class InceptionBlockV4B(LayerGraph):
         return batch_size, 1024, 17, 17
 
 
-class InceptionBlockV4C(LayerGraph):
+class InceptionBlockV4C(_specials._incep_v4._Incep_V4_TypeC):
     """
     Inception block type C used in Inception V4 network.
 
@@ -2103,9 +2105,9 @@ class InceptionBlockV4C(LayerGraph):
         return batch_size, 1536, 8, 8
 
 
-class InceptionBlockV4RA(LayerGraph):
+class InceptionBlockV4RA:
     NotImplemented
 
-class InceptionBlockV4RB(LayerGraph):
+class InceptionBlockV4RB:
     NotImplemented
 
