@@ -1719,10 +1719,10 @@ class Inception_V3(_models.incep._Inception_V3):
 
 class Inception_V4(_models.incep._Inception_V4):
     """
-    Inception v4, an enhancement of Inception v3, improves computational 
-    efficiency and accuracy. It includes sophisticated convolution 
-    factorization, refined grid size reduction, extensive Batch 
-    Normalization, and label smoothing. These advancements enable deeper 
+    Inception v4, an enhancement of Inception v3, improves computational
+    efficiency and accuracy. It includes sophisticated convolution
+    factorization, refined grid size reduction, extensive Batch
+    Normalization, and label smoothing. These advancements enable deeper
     and more robust neural networks.
 
     Structure
@@ -1734,13 +1734,13 @@ class Inception_V4(_models.incep._Inception_V4):
     Overall:
     ```py
     InceptionBlockV4S() ->  # Stem
-    
+
     4x InceptionBlockV4A() ->  # Type A
     InceptionBlockV4RA(384, (192, 224, 256, 384)) ->  # Redux Type A
-    
+
     7x InceptionBlockV4B() ->  # Type B
     InceptionBlockV4RB() ->  # Redux Type B
-    
+
     3x InceptionBlockV4C() ->  # Type C
     GlobalAvgPooling2D() ->
     Dropout(0.8) ->
@@ -1790,8 +1790,8 @@ class Inception_V4(_models.incep._Inception_V4):
 
     References
     ----------
-    1. Szegedy, Christian, et al. “Inception-v4, Inception-ResNet and the 
-    Impact of Residual Connections on Learning.” Proceedings of the Thirty-First 
+    1. Szegedy, Christian, et al. “Inception-v4, Inception-ResNet and the
+    Impact of Residual Connections on Learning.” Proceedings of the Thirty-First
     AAAI Conference on Artificial Intelligence, 2017, pp. 4278-4284.
     """
 
