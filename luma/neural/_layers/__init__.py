@@ -24,8 +24,9 @@ Note
 
 """
 
-import luma.neural._models.simple as simple
-import luma.neural._models.lenet as lenet
-import luma.neural._models.alex as alex
-import luma.neural._models.vgg as vgg
-import luma.neural._models.incep as incep
+import luma.neural._layers.act as act
+import luma.neural._layers.conv as conv
+import luma.neural._layers.drop as drop
+import luma.neural._layers.linear as linear
+import luma.neural._layers.norm as norm
+import luma.neural._layers.pool as pool

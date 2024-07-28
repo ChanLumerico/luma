@@ -7,7 +7,6 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-
 from luma.neural import _specials
 
 
