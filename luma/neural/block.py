@@ -7,7 +7,6 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural.autoprop import LayerNode
 
 from luma.neural import _specials
 
@@ -26,8 +25,8 @@ __all__ = (
     "InceptionBlockV4A",
     "InceptionBlockV4B",
     "InceptionBlockV4C",
-    "InceptionBlockV4RA",
-    "InceptionBlockV4RB",
+    # "InceptionBlockV4RA",
+    # "InceptionBlockV4RB"
 )
 
 
@@ -170,8 +169,9 @@ class ConvBlock1D(Sequential):
                     pool_mode,
                 )
             )
-        
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
 
 class ConvBlock2D(Sequential):
@@ -295,8 +295,9 @@ class ConvBlock2D(Sequential):
                     pool_mode,
                 )
             )
-        
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
 
 class ConvBlock3D(Sequential):
@@ -420,8 +421,9 @@ class ConvBlock3D(Sequential):
                     pool_mode,
                 )
             )
-        
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
 
 @dataclass
@@ -528,8 +530,9 @@ class DenseBlock(Sequential):
                     random_state,
                 ),
             )
-        
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
     @override
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -695,7 +698,9 @@ class InceptionBlock(Sequential):
             *self.branch_5x5.layers,
             *self.branch_pool.layers,
         ]
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
     @override
     @Tensor.force_dim(4)
@@ -743,7 +748,7 @@ class InceptionBlock(Sequential):
         )
 
 
-class InceptionBlockV2A(_specials._incep_v2._Incep_V2_TypeA):
+class InceptionBlockV2A(_specials.incep_v2._Incep_V2_TypeA):
     """
     Inception block type-A for Inception V2 network.
 
@@ -788,7 +793,7 @@ class InceptionBlockV2A(_specials._incep_v2._Incep_V2_TypeA):
     """
 
 
-class InceptionBlockV2B(_specials._incep_v2._Incep_V2_TypeB):
+class InceptionBlockV2B(_specials.incep_v2._Incep_V2_TypeB):
     """
     Inception block type-B for Inception V2 network.
 
@@ -833,7 +838,7 @@ class InceptionBlockV2B(_specials._incep_v2._Incep_V2_TypeB):
     """
 
 
-class InceptionBlockV2C(_specials._incep_v2._Incep_V2_TypeC):
+class InceptionBlockV2C(_specials.incep_v2._Incep_V2_TypeC):
     """
     Inception block type-C for Inception V2 network.
 
@@ -881,7 +886,7 @@ class InceptionBlockV2C(_specials._incep_v2._Incep_V2_TypeC):
     """
 
 
-class InceptionBlockV2R(_specials._incep_v2._Incep_V2_Redux):
+class InceptionBlockV2R(_specials.incep_v2._Incep_V2_Redux):
     """
     Inception block for grid reduction for Inception V2 network.
 
@@ -924,7 +929,7 @@ class InceptionBlockV2R(_specials._incep_v2._Incep_V2_Redux):
     """
 
 
-class InceptionBlockV4S(_specials._incep_v4._Incep_V4_Stem):
+class InceptionBlockV4S(_specials.incep_v4._Incep_V4_Stem):
     """
     Inception block used in Inception V4 network stem part.
 
@@ -957,7 +962,7 @@ class InceptionBlockV4S(_specials._incep_v4._Incep_V4_Stem):
     """
 
 
-class InceptionBlockV4A(_specials._incep_v4._Incep_V4_TypeA):
+class InceptionBlockV4A(_specials.incep_v4._Incep_V4_TypeA):
     """
     Inception block type A used in Inception V4 network
 
@@ -990,7 +995,7 @@ class InceptionBlockV4A(_specials._incep_v4._Incep_V4_TypeA):
     """
 
 
-class InceptionBlockV4B(_specials._incep_v4._Incep_V4_TypeB):
+class InceptionBlockV4B(_specials.incep_v4._Incep_V4_TypeB):
     """
     Inception block type B used in Inception V4 network.
 
@@ -1023,7 +1028,7 @@ class InceptionBlockV4B(_specials._incep_v4._Incep_V4_TypeB):
     """
 
 
-class InceptionBlockV4C(_specials._incep_v4._Incep_V4_TypeC):
+class InceptionBlockV4C(_specials.incep_v4._Incep_V4_TypeC):
     """
     Inception block type C used in Inception V4 network.
 

@@ -7,7 +7,7 @@ from luma.neural import loss
 from luma.neural.base import Loss
 from luma.neural.layer import Activation
 
-from luma.neural._models import _simple, _lenet, _alex, _vgg, _inception
+from luma.neural import _models
 
 
 __all__ = (
@@ -29,7 +29,7 @@ __all__ = (
 )
 
 
-class SimpleMLP(_simple._SimpleMLP):
+class SimpleMLP(_models.simple._SimpleMLP):
     """
     An MLP (Multilayer Perceptron) is a type of artificial neural network
     composed of at least three layers: an input layer, one or more hidden
@@ -135,7 +135,7 @@ class SimpleMLP(_simple._SimpleMLP):
         )
 
 
-class SimpleCNN(_simple._SimpleCNN):
+class SimpleCNN(_models.simple._SimpleCNN):
     """
     A Convolutional Neural Network (CNN) is a type of deep neural network
     primarily used in image recognition and processing that is particularly
@@ -314,7 +314,7 @@ class SimpleCNN(_simple._SimpleCNN):
         )
 
 
-class LeNet_1(_lenet._LeNet_1):
+class LeNet_1(_models.lenet._LeNet_1):
     """
     LeNet-1 is an early convolutional neural network (CNN) proposed by
     Yann LeCun in 1988, primarily designed for handwritten character
@@ -421,7 +421,7 @@ class LeNet_1(_lenet._LeNet_1):
         )
 
 
-class LeNet_4(_lenet._LeNet_4):
+class LeNet_4(_models.lenet._LeNet_4):
     """
     LeNet-4 is a specific convolutional neural network structure designed
     for more advanced image recognition tasks than its predecessors.
@@ -524,7 +524,7 @@ class LeNet_4(_lenet._LeNet_4):
         )
 
 
-class LeNet_5(_lenet._LeNet_5):
+class LeNet_5(_models.lenet._LeNet_5):
     """
     LeNet-5 is a specific convolutional neural network structure designed
     for more advanced image recognition tasks than its predecessors.
@@ -628,7 +628,7 @@ class LeNet_5(_lenet._LeNet_5):
         )
 
 
-class AlexNet(_alex._AlexNet):
+class AlexNet(_models.alex._AlexNet):
     """
     AlexNet is a deep convolutional neural network that is designed for
     challenging image recognition tasks and was the winning entry in ILSVRC 2012.
@@ -742,7 +742,7 @@ class AlexNet(_alex._AlexNet):
         )
 
 
-class ZFNet(_alex._ZFNet):
+class ZFNet(_models.alex._ZFNet):
     """
     ZFNet is a refinement of the AlexNet architecture that was specifically
     designed to improve model understanding and performance on image recognition
@@ -856,7 +856,7 @@ class ZFNet(_alex._ZFNet):
         )
 
 
-class VGGNet_11(_vgg._VGGNet_11):
+class VGGNet_11(_models.vgg._VGGNet_11):
     """
     VGG11 is a simplified variant of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -972,7 +972,7 @@ class VGGNet_11(_vgg._VGGNet_11):
         )
 
 
-class VGGNet_13(_vgg._VGGNet_13):
+class VGGNet_13(_models.vgg._VGGNet_13):
     """
     VGG13 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -1091,7 +1091,7 @@ class VGGNet_13(_vgg._VGGNet_13):
         )
 
 
-class VGGNet_16(_vgg._VGGNet_16):
+class VGGNet_16(_models.vgg._VGGNet_16):
     """
     VGG16 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -1213,7 +1213,7 @@ class VGGNet_16(_vgg._VGGNet_16):
         )
 
 
-class VGGNet_19(_vgg._VGGNet_19):
+class VGGNet_19(_models.vgg._VGGNet_19):
     """
     VGG19 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -1338,7 +1338,7 @@ class VGGNet_19(_vgg._VGGNet_19):
         )
 
 
-class Inception_V1(_inception._Inception_V1):
+class Inception_V1(_models.incep._Inception_V1):
     """
     Inception v1, also known as GoogLeNet, is a deep convolutional neural network
     architecture designed for image classification. It introduces an "Inception
@@ -1464,7 +1464,7 @@ class Inception_V1(_inception._Inception_V1):
         )
 
 
-class Inception_V2(_inception._Inception_V2):
+class Inception_V2(_models.incep._Inception_V2):
     """
     Inception v2, an improvement of the original Inception architecture,
     enhances computational efficiency and accuracy in deep learning models.
@@ -1588,7 +1588,7 @@ class Inception_V2(_inception._Inception_V2):
         )
 
 
-class Inception_V3(_inception._Inception_V3):
+class Inception_V3(_models.incep._Inception_V3):
     """
     Inception v3, an enhancement of Inception v2, further improves
     computational efficiency and accuracy in deep learning models.
@@ -1717,5 +1717,5 @@ class Inception_V3(_inception._Inception_V3):
         )
 
 
-class Inception_V4(_inception._Inception_V4):
+class Inception_V4(_models.incep._Inception_V4):
     NotImplemented

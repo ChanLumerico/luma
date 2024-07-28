@@ -92,7 +92,9 @@ class _Incep_V2_TypeA(Sequential):
             *self.branch_3x3_db.layers,
             *self.branch_pool.layers,
         ]
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
     @override
     @Tensor.force_dim(4)
@@ -241,7 +243,9 @@ class _Incep_V2_TypeB(Sequential):
             *self.branch_7x7_db.layers,
             *self.branch_pool.layers,
         ]
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
     @override
     @Tensor.force_dim(4)
@@ -398,7 +402,9 @@ class _Incep_V2_TypeC(Sequential):
             *self.branch_3x3_right.layers,
             *self.branch_pool.layers,
         ]
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
         self.branch_1x3_3x1.override_method("forward", self._forward_1x3_3x1)
         self.branch_1x3_3x1.override_method("backward", self._backward_1x3_3x1)
@@ -566,7 +572,9 @@ class _Incep_V2_Redux(Sequential):
             self.branch_pool,
             deep_add=True,
         )
-        self.set_optimizer(optimizer)
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
     @override
     @Tensor.force_dim(4)
@@ -603,4 +611,3 @@ class _Incep_V2_Redux(Sequential):
             red_h,
             red_w,
         )
-

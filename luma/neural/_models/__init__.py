@@ -24,4 +24,8 @@ Note
 
 """
 
-import luma.neural._specials.incep_v2 as incep_v2, luma.neural._specials.incep_v4 as incep_v4
+import simple
+import lenet
+import alex
+import vgg
+import incep

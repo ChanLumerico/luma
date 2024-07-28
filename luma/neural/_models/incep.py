@@ -31,9 +31,9 @@ from luma.neural.layer import (
 
 
 __all__ = (
-    "_Inception_V1", 
-    "_Inception_V2", 
-    "_Inception_V3", 
+    "_Inception_V1",
+    "_Inception_V2",
+    "_Inception_V3",
     "_Inception_V4",
 )
 
@@ -494,7 +494,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
         )
         self.check_param_ranges()
         self._build_model()
-    
+
     def _build_model(self) -> None:
         base_args = {
             "initializer": self.initializer,
@@ -618,18 +618,18 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(2048, self.out_features, **base_args),
         )
-    
+
     @Tensor.force_dim(4)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         ls = LabelSmoothing(smoothing=self.smoothing)
         y_ls = ls.fit_transform(y)
         return super(_Inception_V3, self).fit_nn(X, y_ls)
-    
+
     @override
     @Tensor.force_dim(4)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_Inception_V3, self).predict_nn(X, argmax)
-    
+
     @override
     @Tensor.force_dim(4)
     def score(
@@ -644,4 +644,3 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
 
 class _Inception_V4(Estimator, Supervised, NeuralModel):
     NotImplemented
-
