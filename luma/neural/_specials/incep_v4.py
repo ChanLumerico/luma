@@ -15,6 +15,7 @@ class _Incep_V4_Stem(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
+        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -22,6 +23,7 @@ class _Incep_V4_Stem(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.basic_args = {
@@ -140,6 +142,7 @@ class _Incep_V4_TypeA(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
+        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -147,6 +150,7 @@ class _Incep_V4_TypeA(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.basic_args = {
@@ -241,6 +245,7 @@ class _Incep_V4_TypeB(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
+        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -248,6 +253,7 @@ class _Incep_V4_TypeB(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.basic_args = {
@@ -351,6 +357,7 @@ class _Incep_V4_TypeC(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
+        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -358,6 +365,7 @@ class _Incep_V4_TypeC(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.basic_args = {
@@ -489,6 +497,7 @@ class _Incep_V4_ReduxA(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
+        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -496,6 +505,7 @@ class _Incep_V4_ReduxA(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.in_channels = in_channels
@@ -579,6 +589,7 @@ class _Incep_V4_ReduxB(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
+        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -586,6 +597,7 @@ class _Incep_V4_ReduxB(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.basic_args = {

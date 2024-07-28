@@ -383,6 +383,9 @@ class LayerGraph:
     def __bool__(self) -> bool:
         return self.built_
 
+    def __str__(self) -> str:
+        return type(self).__name__
+
     def __len__(self) -> int:
         return len(self.nodes)
 
