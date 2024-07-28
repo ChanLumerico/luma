@@ -478,3 +478,11 @@ class _Incep_V4_TypeC(LayerGraph):
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
         return batch_size, 1536, 8, 8
+
+
+class _Incep_V4_ReduxA(LayerGraph):
+    NotImplemented
+
+
+class _Incep_V4_ReduxB(LayerGraph):
+    NotImplemented
