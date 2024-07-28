@@ -481,8 +481,166 @@ class _Incep_V4_TypeC(LayerGraph):
 
 
 class _Incep_V4_ReduxA(LayerGraph):
-    NotImplemented
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels_arr: tuple[int, int, int, int],
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.momentum = momentum
+
+        self.in_channels = in_channels
+        self.k_, self.l_, self.m_, self.n_ = out_channels_arr
+
+        self.basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+        super(_Incep_V4_ReduxA, self).__init__(
+            graph={
+                self.rt_: [self.br_a, self.br_b, self.br_c],
+                self.br_a: [self.cat_],
+                self.br_b: [self.cat_],
+                self.br_c: [self.cat_],
+            },
+            root=self.rt_,
+            term=self.cat_,
+        )
+
+        self.build()
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+
+        self.br_a = LayerNode(Pooling2D(3, 2, "max", "valid"), name="br_a")
+        self.br_b = LayerNode(
+            Sequential(
+                Convolution2D(
+                    self.in_channels, self.n_, 3, 2, "valid", **self.basic_args
+                ),
+                self.activation(),
+                BatchNorm2D(self.n_),
+            ),
+            name="br_b",
+        )
+        self.br_c = LayerNode(
+            Sequential(
+                Convolution2D(
+                    self.in_channels, self.k_, 1, 1, "same", **self.basic_args
+                ),
+                self.activation(),
+                BatchNorm2D(self.k_),
+                Convolution2D(self.k_, self.l_, 3, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(self.l_),
+                Convolution2D(self.l_, self.m_, 3, 2, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(self.m_),
+            ),
+            name="br_c",
+        )
+
+        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, _, _ = in_shape
+        _, _, height, width = self.br_a.out_shape(in_shape)
+
+        return batch_size, (channels + self.n_ + self.m_), height, width
 
 
 class _Incep_V4_ReduxB(LayerGraph):
-    NotImplemented
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+        super(_Incep_V4_ReduxB, self).__init__(
+            graph={
+                self.rt_: [self.br_a, self.br_b, self.br_c],
+                self.br_a: [self.cat_],
+                self.br_b: [self.cat_],
+                self.br_c: [self.cat_]
+            },
+            root=self.rt_, term=self.cat_,
+        )
+
+        self.build()
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+    
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+
+        self.br_a = LayerNode(Pooling2D(3, 2, "max", "valid"), name="br_a")
+        self.br_b = LayerNode(
+            Sequential(
+                Convolution2D(1024, 192, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(192),
+                Convolution2D(192, 192, 3, 2, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(192),
+            ),
+            name="br_b",
+        )
+        self.br_c = LayerNode(
+            Sequential(
+                Convolution2D(1024, 256, 1, 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+                Convolution2D(256, 256, (1, 7), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(256),
+                Convolution2D(256, 320, (7, 1), 1, "same", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(320),
+                Convolution2D(320, 320, 3, 2, "valid", **self.basic_args),
+                self.activation(),
+                BatchNorm2D(320),
+            ),
+            name="br_c",
+        )
+
+        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+
