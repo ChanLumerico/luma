@@ -168,7 +168,7 @@ class ConvBlock1D(Sequential):
                     pool_mode,
                 )
             )
-
+        
         self.set_optimizer(optimizer)
 
 
@@ -293,7 +293,7 @@ class ConvBlock2D(Sequential):
                     pool_mode,
                 )
             )
-
+        
         self.set_optimizer(optimizer)
 
 
@@ -418,7 +418,7 @@ class ConvBlock3D(Sequential):
                     pool_mode,
                 )
             )
-
+        
         self.set_optimizer(optimizer)
 
 
@@ -526,7 +526,7 @@ class DenseBlock(Sequential):
                     random_state,
                 ),
             )
-
+        
         self.set_optimizer(optimizer)
 
     @override
@@ -1731,7 +1731,7 @@ class InceptionBlockV4A(LayerGraph):
             root=self.rt_,
             term=self.cat_,
         )
-
+        
         self.build()
         self.set_optimizer(optimizer)
 
@@ -1782,15 +1782,15 @@ class InceptionBlockV4A(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
-
+    
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
-
+    
     @Tensor.force_dim(4)
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
-
+    
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
@@ -1865,7 +1865,7 @@ class InceptionBlockV4B(LayerGraph):
 
         self.build()
         self.set_optimizer(optimizer)
-
+    
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
 
@@ -1876,7 +1876,7 @@ class InceptionBlockV4B(LayerGraph):
                 self.activation(),
                 BatchNorm2D(128),
             ),
-            name="br_a",
+            name="br_a"
         )
         self.br_b = LayerNode(
             Sequential(
@@ -1922,15 +1922,15 @@ class InceptionBlockV4B(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
-
+    
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
-
+    
     @Tensor.force_dim(4)
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
-
+    
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
@@ -2006,10 +2006,10 @@ class InceptionBlockV4C(LayerGraph):
             root=self.rt_,
             term=self.cat_,
         )
-
+       
         self.build()
         self.set_optimizer(optimizer)
-
+    
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
 
@@ -2088,15 +2088,15 @@ class InceptionBlockV4C(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
-
+    
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
-
+    
     @Tensor.force_dim(4)
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
-
+    
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
@@ -2106,6 +2106,6 @@ class InceptionBlockV4C(LayerGraph):
 class InceptionBlockV4RA(LayerGraph):
     NotImplemented
 
-
 class InceptionBlockV4RB(LayerGraph):
     NotImplemented
+

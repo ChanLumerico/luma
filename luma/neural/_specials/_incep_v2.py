@@ -1,11 +1,12 @@
-from typing import Tuple, override
+from typing import Literal, Tuple, override
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Tensor
+from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
+from luma.neural.autoprop import LayerNode, LayerGraph
 
 
 class _Incep_V2_TypeA(Sequential):
@@ -603,3 +604,4 @@ class _Incep_V2_Redux(Sequential):
             red_h,
             red_w,
         )
+
