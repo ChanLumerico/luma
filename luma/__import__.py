@@ -128,6 +128,8 @@ from luma.neural.block import (
     InceptionBlockV4A,
     InceptionBlockV4B,
     InceptionBlockV4C,
+    InceptionBlockV4RA,
+    InceptionBlockV4RB,
 )
 from luma.neural.network import SimpleMLP, SimpleCNN
 from luma.neural.network import (
@@ -310,6 +312,7 @@ if __name__ == "__main__":
     InceptionBlock, InceptionBlockV2A, InceptionBlockV2B,
     InceptionBlockV2C, InceptionBlockV2R, InceptionBlockV4S,
     InceptionBlockV4A, InceptionBlockV4B, InceptionBlockV4C,
+    InceptionBlockV4RA, InceptionBlockV4RB,
 
     LayerNode, LayerGraph
 
