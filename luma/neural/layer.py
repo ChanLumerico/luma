@@ -1051,7 +1051,7 @@ class Sequential(Layer):
             cloned_opt = Clone(self.optimizer).get
             if hasattr(layer, "set_optimizer"):
                 layer.set_optimizer(cloned_opt)
-            else:
+            elif hasattr(layer, "optimizer"):
                 layer.optimizer = cloned_opt
 
     def _check_no_optimizer(self) -> None:

@@ -78,7 +78,7 @@ class LayerNode:
     def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
         if hasattr(self.layer, "set_optimizer"):
             self.layer.set_optimizer(optimizer, **params)
-        else:
+        elif hasattr(self.layer, "optimizer"):
             optim: Optimizer = Clone(optimizer).get
             optim.set_params(**params)
             self.layer.optimizer = optim

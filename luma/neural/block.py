@@ -122,7 +122,6 @@ class ConvBlock1D(Sequential):
     ) -> None:
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -169,6 +168,8 @@ class ConvBlock1D(Sequential):
                     pool_mode,
                 )
             )
+        
+        self.set_optimizer(optimizer)
 
 
 class ConvBlock2D(Sequential):
@@ -246,7 +247,6 @@ class ConvBlock2D(Sequential):
     ) -> None:
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -293,6 +293,8 @@ class ConvBlock2D(Sequential):
                     pool_mode,
                 )
             )
+        
+        self.set_optimizer(optimizer)
 
 
 class ConvBlock3D(Sequential):
@@ -370,7 +372,6 @@ class ConvBlock3D(Sequential):
     ) -> None:
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -417,6 +418,8 @@ class ConvBlock3D(Sequential):
                     pool_mode,
                 )
             )
+        
+        self.set_optimizer(optimizer)
 
 
 @dataclass
@@ -485,7 +488,6 @@ class DenseBlock(Sequential):
     ) -> None:
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -524,6 +526,8 @@ class DenseBlock(Sequential):
                     random_state,
                 ),
             )
+        
+        self.set_optimizer(optimizer)
 
     @override
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -632,7 +636,6 @@ class InceptionBlock(Sequential):
 
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -690,6 +693,7 @@ class InceptionBlock(Sequential):
             *self.branch_5x5.layers,
             *self.branch_pool.layers,
         ]
+        self.set_optimizer(optimizer)
 
     @override
     @Tensor.force_dim(4)
@@ -805,7 +809,6 @@ class InceptionBlockV2A(Sequential):
 
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -865,6 +868,7 @@ class InceptionBlockV2A(Sequential):
             *self.branch_3x3_db.layers,
             *self.branch_pool.layers,
         ]
+        self.set_optimizer(optimizer)
 
     @override
     @Tensor.force_dim(4)
@@ -982,7 +986,6 @@ class InceptionBlockV2B(Sequential):
 
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -1057,6 +1060,7 @@ class InceptionBlockV2B(Sequential):
             *self.branch_7x7_db.layers,
             *self.branch_pool.layers,
         ]
+        self.set_optimizer(optimizer)
 
     @override
     @Tensor.force_dim(4)
@@ -1178,7 +1182,6 @@ class InceptionBlockV2C(Sequential):
 
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -1260,6 +1263,7 @@ class InceptionBlockV2C(Sequential):
             *self.branch_3x3_right.layers,
             *self.branch_pool.layers,
         ]
+        self.set_optimizer(optimizer)
 
         self.branch_1x3_3x1.override_method("forward", self._forward_1x3_3x1)
         self.branch_1x3_3x1.override_method("backward", self._backward_1x3_3x1)
@@ -1422,7 +1426,6 @@ class InceptionBlockV2R(Sequential):
 
         basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -1469,6 +1472,7 @@ class InceptionBlockV2R(Sequential):
             self.branch_pool,
             deep_add=True,
         )
+        self.set_optimizer(optimizer)
 
     @override
     @Tensor.force_dim(4)
@@ -1556,7 +1560,6 @@ class InceptionBlockV4S(LayerGraph):
 
         self.basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -1577,7 +1580,9 @@ class InceptionBlockV4S(LayerGraph):
             root=self.rt_seq,
             term=self.br3_cat,
         )
+
         self.build()
+        self.set_optimizer(optimizer)
 
     def init_nodes(self) -> None:
         self.rt_seq = LayerNode(
@@ -1710,7 +1715,6 @@ class InceptionBlockV4A(LayerGraph):
 
         self.basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -1727,7 +1731,9 @@ class InceptionBlockV4A(LayerGraph):
             root=self.rt_,
             term=self.cat_,
         )
+        
         self.build()
+        self.set_optimizer(optimizer)
 
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
@@ -1840,7 +1846,6 @@ class InceptionBlockV4B(LayerGraph):
 
         self.basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -1857,7 +1862,9 @@ class InceptionBlockV4B(LayerGraph):
             root=self.rt_,
             term=self.cat_,
         )
+
         self.build()
+        self.set_optimizer(optimizer)
     
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
@@ -1979,7 +1986,6 @@ class InceptionBlockV4C(LayerGraph):
 
         self.basic_args = {
             "initializer": initializer,
-            "optimizer": optimizer,
             "lambda_": lambda_,
             "random_state": random_state,
         }
@@ -2000,7 +2006,9 @@ class InceptionBlockV4C(LayerGraph):
             root=self.rt_,
             term=self.cat_,
         )
+       
         self.build()
+        self.set_optimizer(optimizer)
     
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
