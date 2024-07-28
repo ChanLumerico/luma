@@ -756,7 +756,9 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
 
     @Tensor.force_dim(4)
     def fit(self, X: Tensor, y: Matrix) -> Self:
-        return super(_Inception_V4, self).fit_nn(X, y)
+        ls = LabelSmoothing(smoothing=self.smoothing)
+        y_ls = ls.fit_transform(y)
+        return super(_Inception_V4, self).fit_nn(X, y_ls)
 
     @override
     @Tensor.force_dim(4)
