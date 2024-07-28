@@ -1,5 +1,4 @@
-from typing import Literal, Tuple, override
-import numpy as np
+from typing import Tuple, override
 
 from luma.core.super import Optimizer
 from luma.interface.typing import Tensor, TensorLike
@@ -167,7 +166,7 @@ class _Incep_V4_TypeA(LayerGraph):
             root=self.rt_,
             term=self.cat_,
         )
-        
+
         self.build()
         self.set_optimizer(optimizer)
 
@@ -218,15 +217,15 @@ class _Incep_V4_TypeA(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
-    
+
     @Tensor.force_dim(4)
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
-    
+
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
@@ -270,7 +269,7 @@ class _Incep_V4_TypeB(LayerGraph):
 
         self.build()
         self.set_optimizer(optimizer)
-    
+
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
 
@@ -281,7 +280,7 @@ class _Incep_V4_TypeB(LayerGraph):
                 self.activation(),
                 BatchNorm2D(128),
             ),
-            name="br_a"
+            name="br_a",
         )
         self.br_b = LayerNode(
             Sequential(
@@ -327,15 +326,15 @@ class _Incep_V4_TypeB(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
-    
+
     @Tensor.force_dim(4)
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
-    
+
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
@@ -380,10 +379,10 @@ class _Incep_V4_TypeC(LayerGraph):
             root=self.rt_,
             term=self.cat_,
         )
-       
+
         self.build()
         self.set_optimizer(optimizer)
-    
+
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
 
@@ -462,17 +461,16 @@ class _Incep_V4_TypeC(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
-    
+
     @Tensor.force_dim(4)
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
-    
+
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
         return batch_size, 1536, 8, 8
-
