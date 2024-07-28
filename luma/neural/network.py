@@ -1718,4 +1718,119 @@ class Inception_V3(_models.incep._Inception_V3):
 
 
 class Inception_V4(_models.incep._Inception_V4):
-    NotImplemented
+    """
+    Inception v4, an enhancement of Inception v3, improves computational 
+    efficiency and accuracy. It includes sophisticated convolution 
+    factorization, refined grid size reduction, extensive Batch 
+    Normalization, and label smoothing. These advancements enable deeper 
+    and more robust neural networks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 299, 299]
+    ```
+    Overall:
+    ```py
+    InceptionBlockV4S() ->  # Stem
+    
+    4x InceptionBlockV4A() ->  # Type A
+    InceptionBlockV4RA(384, (192, 224, 256, 384)) ->  # Redux Type A
+    
+    7x InceptionBlockV4B() ->  # Type B
+    InceptionBlockV4RB() ->  # Redux Type B
+    
+    3x InceptionBlockV4C() ->  # Type C
+    GlobalAvgPooling2D() ->
+    Dropout(0.8) ->
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten() -> Dense(1536, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    42,641,952 weights, 32,584 biases -> 42,674,536 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `smoothing` : float, default=0.1
+        Label smoothing factor
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. Szegedy, Christian, et al. “Inception-v4, Inception-ResNet and the 
+    Impact of Residual Connections on Learning.” Proceedings of the Thirty-First 
+    AAAI Conference on Artificial Intelligence, 2017, pp. 4278-4284.
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = loss.CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        dropout_rate: float = 0.4,
+        smoothing: float = 0.1,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            smoothing,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
