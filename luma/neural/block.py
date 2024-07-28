@@ -24,8 +24,8 @@ __all__ = (
     "InceptionBlockV4A",
     "InceptionBlockV4B",
     "InceptionBlockV4C",
-    # "InceptionBlockV4RA",
-    # "InceptionBlockV4RB"
+    "InceptionBlockV4RA",
+    "InceptionBlockV4RB",
 )
 
 
@@ -1055,6 +1055,77 @@ class InceptionBlockV4C(_specials.incep_v4._Incep_V4_TypeC):
 
         ```py
         Input: Tensor[-1, 1536, 8, 8]
+        Output: Tensor[-1, 1536, 8, 8]
+        ```
+    """
+
+
+class InceptionBlockV4RA(_specials.incep_v4._Incep_V4_ReduxA):
+    """
+    Inception block type A for grid reduction used in
+    Inception V4 network.
+
+    Parameters
+    ----------
+    `out_channels_arr` : tuple of int
+        Tuple of filter bank sizes mentioned in the original
+        paper, with an order of (k, l, m, n) shown at Fig. 7
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of a 4D-array (`Tensor`).
+
+        ```py
+        X.shape = (batch_size, height, width, channels)
+        ```
+    - This block has fixed shape of input and ouput tensors.
+
+        ```py
+        Input: Tensor[-1, 384, 35, 35]
+        Output: Tensor[-1, 1024, 17, 17]
+        ```
+    """
+
+
+class InceptionBlockV4RB(_specials.incep_v4._Incep_V4_ReduxB):
+    """
+    Inception block type B for grid reduction used in
+    Inception V4 network.
+
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of a 4D-array (`Tensor`).
+
+        ```py
+        X.shape = (batch_size, height, width, channels)
+        ```
+    - This block has fixed shape of input and ouput tensors.
+
+        ```py
+        Input: Tensor[-1, 1024, 17, 17]
         Output: Tensor[-1, 1536, 8, 8]
         ```
     """

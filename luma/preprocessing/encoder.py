@@ -7,9 +7,9 @@ from luma.interface.exception import NotFittedError, UnsupportedParameterError
 
 
 __all__ = (
-    "OneHotEncoder", 
-    "LabelEncoder", 
-    "OrdinalEncoder", 
+    "OneHotEncoder",
+    "LabelEncoder",
+    "OrdinalEncoder",
     "LabelBinarizer",
     "LabelSmoothing",
 )
@@ -176,9 +176,7 @@ class LabelSmoothing(Transformer, Transformer.Target):
 
     def fit(self, y: Matrix) -> Self:
         if y.ndim != 2:
-            raise ValueError(
-                "Target values must be one-hot encoded!"
-            )
+            raise ValueError("Target values must be one-hot encoded!")
         self.classes_ = y.shape[1]
         self.fitted_ = True
         return self
@@ -193,4 +191,3 @@ class LabelSmoothing(Transformer, Transformer.Target):
 
     def fit_transform(self, y: Matrix) -> Matrix:
         return self.fit(y).transform(y)
-

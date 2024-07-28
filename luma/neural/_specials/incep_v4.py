@@ -600,15 +600,16 @@ class _Incep_V4_ReduxB(LayerGraph):
                 self.rt_: [self.br_a, self.br_b, self.br_c],
                 self.br_a: [self.cat_],
                 self.br_b: [self.cat_],
-                self.br_c: [self.cat_]
+                self.br_c: [self.cat_],
             },
-            root=self.rt_, term=self.cat_,
+            root=self.rt_,
+            term=self.cat_,
         )
 
         self.build()
         if optimizer is not None:
             self.set_optimizer(optimizer)
-    
+
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
 
@@ -644,3 +645,15 @@ class _Incep_V4_ReduxB(LayerGraph):
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
 
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, _, _ = in_shape
+        return batch_size, 1536, 8, 8
