@@ -1492,13 +1492,13 @@ class Inception_V2(_models.incep._Inception_V2):
     ```
     Inception Blocks:
     ```py
-    3x InceptionBlockV2A(288) ->  # Inception_3
-    InceptionBlockV2R(288) ->  # Inception_Rx1
+    3x IncepBlock.V2_TypeA(288) ->  # Inception_3
+    IncepBlock.V2_Redux(288) ->  # Inception_Rx1
 
-    5x InceptionBlockV2B(768) ->  # Inception_4
-    InceptionBlockV2R(768) ->  # Inception_Rx2
+    5x IncepBlock.V2_TypeB(768) ->  # Inception_4
+    IncepBlock.V2_Redux(768) ->  # Inception_Rx2
 
-    2x InceptionBlockV2C([1280, 2048]) ->  # Inception_5
+    2x IncepBlock.V2_TypeC([1280, 2048]) ->  # Inception_5
     GlobalAvgPooling2D() ->
     ```
     Fully Connected Layers:
@@ -1617,13 +1617,13 @@ class Inception_V3(_models.incep._Inception_V3):
     ```
     Inception Blocks:
     ```py
-    3x InceptionBlockV2A(288) ->  # Inception_3
-    InceptionBlockV2R(288) ->  # Inception_Rx1
+    3x IncepBlock.V2_TypeA(288) ->  # Inception_3
+    IncepBlock.V2_Redux(288) ->  # Inception_Rx1
 
-    5x InceptionBlockV2B(768) ->  # Inception_4
-    InceptionBlockV2R(768) ->  # Inception_Rx2
+    5x IncepBlock.V2_TypeB(768) ->  # Inception_4
+    IncepBlock.V2_Redux(768) ->  # Inception_Rx2
 
-    2x InceptionBlockV2C([1280, 2048]) ->  # Inception_5
+    2x IncepBlock.V2_TypeC([1280, 2048]) ->  # Inception_5
     GlobalAvgPooling2D() ->
     ```
     Fully Connected Layers:
@@ -1733,15 +1733,15 @@ class Inception_V4(_models.incep._Inception_V4):
     ```
     Overall:
     ```py
-    InceptionBlockV4S() ->  # Stem
+    IncepBlock.V4_Stem() ->  # Stem
 
-    4x InceptionBlockV4A() ->  # Type A
-    InceptionBlockV4RA(384, (192, 224, 256, 384)) ->  # Redux Type A
+    4x IncepBlock.V4_TypeA() ->  # Type A
+    IncepBlock.V4_ReduxA(384, (192, 224, 256, 384)) ->  # Redux Type A
 
-    7x InceptionBlockV4B() ->  # Type B
-    InceptionBlockV4RB() ->  # Redux Type B
+    7x IncepBlock.V4_TypeB() ->  # Type B
+    IncepBlock.V4_ReduxB() ->  # Redux Type B
 
-    3x InceptionBlockV4C() ->  # Type C
+    3x IncepBlock.V4_TypeC() ->  # Type C
     GlobalAvgPooling2D() ->
     Dropout(0.8) ->
     ```
