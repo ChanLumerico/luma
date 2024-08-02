@@ -1362,19 +1362,19 @@ class Inception_V1(_models.incep._Inception_V1):
     ```
     Inception Blocks:
     ```py
-    InceptionBlock(192) ->  # Inception_3a
-    InceptionBlock(256) ->  # Inception_3b
+    IncepBlock.V1(192) ->  # Inception_3a
+    IncepBlock.V1(256) ->  # Inception_3b
     Pooling2D(3, 2, mode="max") ->
 
-    InceptionBlock(480) ->  # Inception_4a
-    InceptionBlock(512) ->  # Inception_4b
-    InceptionBlock(512) ->  # Inception_4c
-    InceptionBlock(512) ->  # Inception_4d
-    InceptionBlock(528) ->  # Inception_4e
+    IncepBlock.V1(480) ->  # Inception_4a
+    IncepBlock.V1(512) ->  # Inception_4b
+    IncepBlock.V1(512) ->  # Inception_4c
+    IncepBlock.V1(512) ->  # Inception_4d
+    IncepBlock.V1(528) ->  # Inception_4e
     Pooling2D(3, 2, mode="max") ->
 
-    InceptionBlock(832) ->  # Inception_5a
-    InceptionBlock(832) ->  # Inception_5b
+    IncepBlock.V1(832) ->  # Inception_5a
+    IncepBlock.V1(832) ->  # Inception_5b
     GlobalAvgPooling2D() ->
     ```
     Fully Connected Layers:
