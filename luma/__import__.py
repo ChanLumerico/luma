@@ -119,17 +119,7 @@ from luma.neural.block import (
     ConvBlock2D,
     ConvBlock3D,
     DenseBlock,
-    InceptionBlock,
-    InceptionBlockV2A,
-    InceptionBlockV2B,
-    InceptionBlockV2C,
-    InceptionBlockV2R,
-    InceptionBlockV4S,
-    InceptionBlockV4A,
-    InceptionBlockV4B,
-    InceptionBlockV4C,
-    InceptionBlockV4RA,
-    InceptionBlockV4RB,
+    IncepBlock,
 )
 from luma.neural.network import SimpleMLP, SimpleCNN
 from luma.neural.network import (
@@ -309,10 +299,7 @@ if __name__ == "__main__":
     Sequential
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,
-    InceptionBlock, InceptionBlockV2A, InceptionBlockV2B,
-    InceptionBlockV2C, InceptionBlockV2R, InceptionBlockV4S,
-    InceptionBlockV4A, InceptionBlockV4B, InceptionBlockV4C,
-    InceptionBlockV4RA, InceptionBlockV4RB,
+    IncepBlock,
 
     LayerNode, LayerGraph
 
