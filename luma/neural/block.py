@@ -560,24 +560,425 @@ class IncepBlockArgs:
 @ClassType.non_instantiable()
 class IncepBlock:
 
-    class V1(_specials.incep_v1._Incep_V1_Default): ...
+    class V1(_specials.incep_v1._Incep_V1_Default):
+        """
+        Inception block for neural networks.
 
-    class V2_TypeA(_specials.incep_v2._Incep_V2_TypeA): ...
+        An inception block allows for multiple convolutional operations to be
+        performed in parallel. This structure is inspired by the Inception modules
+        of Google's Inception network, and it concatenates the outputs of different
+        convolutions to capture rich and varied features from input data.
 
-    class V2_TypeB(_specials.incep_v2._Incep_V2_TypeB): ...
+        Parameters
+        ----------
+        `in_channels` : int
+            Number of input channels.
+        `out_1x1` : int
+            Number of output channels for the 1x1 convolution.
+        `red_3x3` : int
+            Number of output channels for the dimension reduction before
+            the 3x3 convolution.
+        `out_3x3` : int
+            Number of output channels for the 3x3 convolution.
+        `red_5x5` : int
+            Number of output channels for the dimension reduction before
+            the 5x5 convolution.
+        `out_5x5` : int
+            Number of output channels for the 5x5 convolution.
+        `out_pool` : int
+            Number of output channels for the 1x1 convolution after max pooling.
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `do_batch_norm` : bool, default=True
+            Whether to perform batch normalization
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
 
-    class V2_TypeC(_specials.incep_v2._Incep_V2_TypeC): ...
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
 
-    class V2_Redux(_specials.incep_v2._Incep_V2_Redux): ...
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        """
 
-    class V4_Stem(_specials.incep_v4._Incep_V4_Stem): ...
+    class V2_TypeA(_specials.incep_v2._Incep_V2_TypeA):
+        """
+        Inception block type-A for Inception V2 network.
 
-    class V4_TypeA(_specials.incep_v4._Incep_V4_TypeA): ...
+        Parameters
+        ----------
+        `in_channels` : int
+            Number of input channels.
+        `out_1x1` : int
+            Number of output channels for the 1x1 convolution.
+        `red_3x3` : int
+            Number of output channels for the dimension reduction before
+            the 3x3 convolution.
+        `out_3x3` : int
+            Number of output channels for the 3x3 convolution.
+        `red_3x3_db` : int
+            Number of output channels for the dimension reduction before
+            the double 3x3 convolution.
+        `out_3x3_db` : tuple of int
+            Number of output channels for the double 3x3 convolutions.
+        `out_pool` : int
+            Number of output channels for the 1x1 convolution after max pooling.
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `do_batch_norm` : bool, default=False
+            Whether to perform batch normalization
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
 
-    class V4_TypeB(_specials.incep_v4._Incep_V4_TypeB): ...
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
 
-    class V4_TypeC(_specials.incep_v4._Incep_V4_TypeC): ...
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        """
 
-    class V4_ReduxA(_specials.incep_v4._Incep_V4_ReduxA): ...
+    class V2_TypeB(_specials.incep_v2._Incep_V2_TypeB):
+        """
+        Inception block type-B for Inception V2 network.
 
-    class V4_ReduxB(_specials.incep_v4._Incep_V4_ReduxB): ...
+        Parameters
+        ----------
+        `in_channels` : int
+            Number of input channels.
+        `out_1x1` : int
+            Number of output channels for the 1x1 convolution.
+        `red_7x7` : int
+            Number of output channels for the dimension reduction before
+            the 7x7 convolution.
+        `out_7x7` : int
+            Number of output channels for the factorized 7x7 convolution.
+        `red_7x7_db` : int
+            Number of output channels for the dimension reduction before
+            the factorized double 7x7 convolution.
+        `out_7x7_db` : tuple of int
+            Number of output channels for the factorized double 7x7 convolutions.
+        `out_pool` : int
+            Number of output channels for the 1x1 convolution after max pooling.
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `do_batch_norm` : bool, default=False
+            Whether to perform batch normalization
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        """
+
+    class V2_TypeC(_specials.incep_v2._Incep_V2_TypeC):
+        """
+        Inception block type-C for Inception V2 network.
+
+        Parameters
+        ----------
+        `in_channels` : int
+            Number of input channels.
+        `out_1x1` : int
+            Number of output channels for the 1x1 convolution.
+        `red_1x3_3x1` : int
+            Number of output channels for the dimension reduction before
+            the 1x3 and 3x1 convolution sub-branch.
+        `out_1x3_3x1` : tuple of int
+            Number of output channels for the 1x3 and 3x1 convolution sub-branch.
+        `red_3x3` : int
+            Number of output channels for the dimension reduction before
+            the 3x3 convolution.
+        `out_3x3` : int
+            Number of output channels for the 3x3 convolution.
+        `out_1x3_3x1_after` tuple of int
+            Number of output channels for the 1x3 and 3x1 convolution sub-branch
+            after 3x3 convolution.
+        `out_pool` : int
+            Number of output channels for the 1x1 convolution after max pooling.
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `do_batch_norm` : bool, default=False
+            Whether to perform batch normalization
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        """
+
+    class V2_Redux(_specials.incep_v2._Incep_V2_Redux):
+        """
+        Inception block for grid reduction for Inception V2 network.
+
+        Parameters
+        ----------
+        `in_channels` : int
+            Number of input channels.
+        `out_1x1` : int
+            Number of output channels for the 1x1 convolution.
+        `red_3x3` : int
+            Number of output channels for the dimension reduction before
+            the 3x3 convolution.
+        `out_3x3` : int
+            Number of output channels for the 3x3 convolution.
+        `red_3x3_db` : int
+            Number of output channels for the dimension reduction before
+            the double 3x3 convolution.
+        `out_3x3_db` : tuple of int
+            Number of output channels for the double 3x3 convolutions.
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `do_batch_norm` : bool, default=False
+            Whether to perform batch normalization
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        """
+
+    class V4_Stem(_specials.incep_v4._Incep_V4_Stem):
+        """
+        Inception block used in Inception V4 network stem part.
+
+        Parameters
+        ----------
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 3, 299, 299]
+            Output: Tensor[-1, 384, 35, 35]
+            ```
+        """
+
+    class V4_TypeA(_specials.incep_v4._Incep_V4_TypeA):
+        """
+        Inception block type A used in Inception V4 network
+
+        Parameters
+        ----------
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 384, 35, 35]
+            Output: Tensor[-1, 384, 35, 35]
+            ```
+        """
+
+    class V4_TypeB(_specials.incep_v4._Incep_V4_TypeB):
+        """
+        Inception block type B used in Inception V4 network.
+
+        Parameters
+        ----------
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 1024, 17, 17]
+            Output: Tensor[-1, 1024, 17, 17]
+            ```
+        """
+
+    class V4_TypeC(_specials.incep_v4._Incep_V4_TypeC):
+        """
+        Inception block type C used in Inception V4 network.
+
+        Parameters
+        ----------
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 1536, 8, 8]
+            Output: Tensor[-1, 1536, 8, 8]
+            ```
+        """
+
+    class V4_ReduxA(_specials.incep_v4._Incep_V4_ReduxA):
+        """
+        Inception block type A for grid reduction used in
+        Inception V4 network.
+
+        Parameters
+        ----------
+        `out_channels_arr` : tuple of int
+            Tuple of filter bank sizes mentioned in the original
+            paper, with an order of (k, l, m, n) shown at Fig. 7
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 384, 35, 35]
+            Output: Tensor[-1, 1024, 17, 17]
+            ```
+        """
+
+    class V4_ReduxB(_specials.incep_v4._Incep_V4_ReduxB):
+        """
+        Inception block type B for grid reduction used in
+        Inception V4 network.
+
+        Parameters
+        ----------
+        `activation` : FuncType, default=Activation.ReLU
+            Type of activation function
+        `optimizer` : Optimizer, optional, default=None
+            Type of optimizer for weight update
+        `initializer` : InitStr, default=None
+            Type of weight initializer
+        `lambda_` : float, default=0.0
+            L2 regularization strength
+        `momentum` : float, default=0.9
+            Momentum for batch normalization
+
+        Notes
+        -----
+        - The input `X` must have the form of a 4D-array (`Tensor`).
+
+            ```py
+            X.shape = (batch_size, height, width, channels)
+            ```
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 1024, 17, 17]
+            Output: Tensor[-1, 1536, 8, 8]
+            ```
+        """
