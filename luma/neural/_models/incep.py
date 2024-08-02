@@ -10,18 +10,8 @@ from luma.preprocessing.encoder import LabelSmoothing
 from luma.neural import loss
 from luma.neural.base import Loss, NeuralModel
 from luma.neural.block import (
-    InceptionBlock,
-    InceptionBlockV2A,
-    InceptionBlockV2B,
-    InceptionBlockV2C,
-    InceptionBlockV2R,
-    InceptionBlockV4S,
-    InceptionBlockV4A,
-    InceptionBlockV4B,
-    InceptionBlockV4C,
-    InceptionBlockV4RA,
-    InceptionBlockV4RB,
     IncepBlockArgs,
+    IncepBlock,
 )
 from luma.neural.layer import (
     Convolution2D,
@@ -143,11 +133,11 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
         self.model.extend(
             (
                 "Inception_3a",
-                InceptionBlock(192, 64, 96, 128, 16, 32, 32, **asdict(incep_args)),
+                IncepBlock.V1(192, 64, 96, 128, 16, 32, 32, **asdict(incep_args)),
             ),
             (
                 "Inception_3b",
-                InceptionBlock(256, 128, 128, 192, 32, 96, 64, **asdict(incep_args)),
+                IncepBlock.V1(256, 128, 128, 192, 32, 96, 64, **asdict(incep_args)),
             ),
             Pooling2D(3, 2, "max", "same"),
             deep_add=False,
@@ -156,23 +146,23 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
         self.model.extend(
             (
                 "Inception_4a",
-                InceptionBlock(480, 192, 96, 208, 16, 48, 64, **asdict(incep_args)),
+                IncepBlock.V1(480, 192, 96, 208, 16, 48, 64, **asdict(incep_args)),
             ),
             (
                 "Inception_4b",
-                InceptionBlock(512, 160, 112, 224, 24, 64, 64, **asdict(incep_args)),
+                IncepBlock.V1(512, 160, 112, 224, 24, 64, 64, **asdict(incep_args)),
             ),
             (
                 "Inception_4c",
-                InceptionBlock(512, 128, 128, 256, 24, 64, 64, **asdict(incep_args)),
+                IncepBlock.V1(512, 128, 128, 256, 24, 64, 64, **asdict(incep_args)),
             ),
             (
                 "Inception_4d",
-                InceptionBlock(512, 112, 144, 288, 32, 64, 64, **asdict(incep_args)),
+                IncepBlock.V1(512, 112, 144, 288, 32, 64, 64, **asdict(incep_args)),
             ),
             (
                 "Inception_4e",
-                InceptionBlock(528, 256, 160, 320, 32, 128, 128, **asdict(incep_args)),
+                IncepBlock.V1(528, 256, 160, 320, 32, 128, 128, **asdict(incep_args)),
             ),
             Pooling2D(3, 2, "max", "same"),
             deep_add=False,
@@ -181,11 +171,11 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
         self.model.extend(
             (
                 "Inception_5a",
-                InceptionBlock(832, 256, 160, 320, 32, 128, 128, **asdict(incep_args)),
+                IncepBlock.V1(832, 256, 160, 320, 32, 128, 128, **asdict(incep_args)),
             ),
             (
                 "Inception_5b",
-                InceptionBlock(832, 384, 192, 384, 48, 128, 128, **asdict(incep_args)),
+                IncepBlock.V1(832, 384, 192, 384, 48, 128, 128, **asdict(incep_args)),
             ),
             GlobalAvgPooling2D(),
             Dropout(self.dropout_rate, self.random_state),
@@ -319,7 +309,7 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
         )
 
         inception_3xA = [
-            InceptionBlockV2A(288, 64, 48, 64, 64, (96, 96), 64, **asdict(incep_args))
+            IncepBlock.V2_TypeA(288, 64, 48, 64, 64, (96, 96), 64, **asdict(incep_args))
             for _ in range(3)
         ]
         self.model.extend(
@@ -334,24 +324,24 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
         self.model.add(
             (
                 "Inception_Rx1",
-                InceptionBlockV2R(288, 64, 384, 64, (96, 96), **asdict(incep_args)),
+                IncepBlock.V2_Redux(288, 64, 384, 64, (96, 96), **asdict(incep_args)),
             )
         )
 
         inception_5xB = [
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 128, 192, 128, (128, 192), 192, **asdict(incep_args)
             ),
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
             ),
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
             ),
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
             ),
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 192, 192, 192, (192, 192), 192, **asdict(incep_args)
             ),
         ]
@@ -374,14 +364,16 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
         self.model.add(
             (
                 "Inception_Rx2",
-                InceptionBlockV2R(768, 192, 320, 192, (192, 192), **asdict(incep_args)),
+                IncepBlock.V2_Redux(
+                    768, 192, 320, 192, (192, 192), **asdict(incep_args)
+                ),
             ),
         )
 
         inception_C_args = [320, 384, (384, 384), 448, 384, (384, 384), 192]
         inception_2xC = [
-            InceptionBlockV2C(1280, *inception_C_args, **asdict(incep_args)),
-            InceptionBlockV2C(2048, *inception_C_args, **asdict(incep_args)),
+            IncepBlock.V2_TypeC(1280, *inception_C_args, **asdict(incep_args)),
+            IncepBlock.V2_TypeC(2048, *inception_C_args, **asdict(incep_args)),
         ]
         self.model.extend(
             *[
@@ -537,7 +529,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
         )
 
         inception_3xA = [
-            InceptionBlockV2A(288, 64, 48, 64, 64, (96, 96), 64, **asdict(incep_args))
+            IncepBlock.V2_TypeA(288, 64, 48, 64, 64, (96, 96), 64, **asdict(incep_args))
             for _ in range(3)
         ]
         self.model.extend(
@@ -552,24 +544,24 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
         self.model.add(
             (
                 "Inception_Rx1",
-                InceptionBlockV2R(288, 64, 384, 64, (96, 96), **asdict(incep_args)),
+                IncepBlock.V2_Redux(288, 64, 384, 64, (96, 96), **asdict(incep_args)),
             )
         )
 
         inception_5xB = [
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 128, 192, 128, (128, 192), 192, **asdict(incep_args)
             ),
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
             ),
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
             ),
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 160, 192, 160, (160, 192), 192, **asdict(incep_args)
             ),
-            InceptionBlockV2B(
+            IncepBlock.V2_TypeB(
                 768, 192, 192, 192, 192, (192, 192), 192, **asdict(incep_args)
             ),
         ]
@@ -592,14 +584,16 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
         self.model.add(
             (
                 "Inception_Rx2",
-                InceptionBlockV2R(768, 192, 320, 192, (192, 192), **asdict(incep_args)),
+                IncepBlock.V2_Redux(
+                    768, 192, 320, 192, (192, 192), **asdict(incep_args)
+                ),
             ),
         )
 
         inception_C_args = [320, 384, (384, 384), 448, 384, (384, 384), 192]
         inception_2xC = [
-            InceptionBlockV2C(1280, *inception_C_args, **asdict(incep_args)),
-            InceptionBlockV2C(2048, *inception_C_args, **asdict(incep_args)),
+            IncepBlock.V2_TypeC(1280, *inception_C_args, **asdict(incep_args)),
+            IncepBlock.V2_TypeC(2048, *inception_C_args, **asdict(incep_args)),
         ]
         self.model.extend(
             *[
@@ -723,28 +717,28 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
         )
 
         self.model.add(
-            ("Stem", InceptionBlockV4S(**asdict(incep_args))),
+            ("Stem", IncepBlock.V4_Stem(**asdict(incep_args))),
         )
         for i in range(1, 5):
             self.model.add(
-                (f"Inception_A{i}", InceptionBlockV4A(**asdict(incep_args))),
+                (f"Inception_A{i}", IncepBlock.V4_TypeA(**asdict(incep_args))),
             )
         self.model.add(
             (
                 "Inception_RA",
-                InceptionBlockV4RA(384, (192, 224, 256, 384), **asdict(incep_args)),
+                IncepBlock.V4_ReduxA(384, (192, 224, 256, 384), **asdict(incep_args)),
             )
         )
         for i in range(1, 8):
             self.model.add(
-                (f"Inception_B{i}", InceptionBlockV4B(**asdict(incep_args))),
+                (f"Inception_B{i}", IncepBlock.V4_TypeB(**asdict(incep_args))),
             )
         self.model.add(
-            ("Inception_RB", InceptionBlockV4RB(**asdict(incep_args))),
+            ("Inception_RB", IncepBlock.V4_ReduxB(**asdict(incep_args))),
         )
         for i in range(1, 4):
             self.model.add(
-                (f"Inception_C{i}", InceptionBlockV4C(**asdict(incep_args))),
+                (f"Inception_C{i}", IncepBlock.V4_TypeC(**asdict(incep_args))),
             )
 
         self.model.extend(
