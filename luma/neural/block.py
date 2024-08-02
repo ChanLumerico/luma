@@ -571,35 +571,12 @@ class IncepBlock:
 
         Parameters
         ----------
-        `in_channels` : int
-            Number of input channels.
-        `out_1x1` : int
-            Number of output channels for the 1x1 convolution.
-        `red_3x3` : int
-            Number of output channels for the dimension reduction before
-            the 3x3 convolution.
-        `out_3x3` : int
-            Number of output channels for the 3x3 convolution.
-        `red_5x5` : int
-            Number of output channels for the dimension reduction before
-            the 5x5 convolution.
-        `out_5x5` : int
-            Number of output channels for the 5x5 convolution.
-        `out_pool` : int
-            Number of output channels for the 1x1 convolution after max pooling.
-        `activation` : FuncType, default=Activation.ReLU
-            Type of activation function
-        `optimizer` : Optimizer, optional, default=None
-            Type of optimizer for weight update
-        `initializer` : InitStr, default=None
-            Type of weight initializer
-        `lambda_` : float, default=0.0
-            L2 regularization strength
-        `do_batch_norm` : bool, default=True
-            Whether to perform batch normalization
-        `momentum` : float, default=0.9
-            Momentum for batch normalization
-
+        Refer to the figures shown in the original paper:
+        
+        Szegedy, Christian, et al. “Going Deeper with Convolutions.” 
+        Proceedings of the IEEE Conference on Computer Vision and 
+        Pattern Recognition (CVPR), 2015, pp. 1-9, arxiv.org/abs/1409.4842.
+        
         Notes
         -----
         - The input `X` must have the form of a 4D-array (`Tensor`).
