@@ -24,5 +24,6 @@ Note
 
 """
 
+import luma.neural._specials.incep_v1 as incep_v1
 import luma.neural._specials.incep_v2 as incep_v2
 import luma.neural._specials.incep_v4 as incep_v4
