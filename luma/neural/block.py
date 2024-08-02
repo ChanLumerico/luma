@@ -3,7 +3,7 @@ from typing import Literal, Tuple, override
 import numpy as np
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Tensor, TensorLike
+from luma.interface.typing import Tensor, TensorLike, ClassType
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
@@ -16,16 +16,7 @@ __all__ = (
     "ConvBlock3D",
     "DenseBlock",
     "InceptionBlock",
-    "InceptionBlockV2A",
-    "InceptionBlockV2B",
-    "InceptionBlockV2C",
-    "InceptionBlockV2R",
-    "InceptionBlockV4S",
-    "InceptionBlockV4A",
-    "InceptionBlockV4B",
-    "InceptionBlockV4C",
-    "InceptionBlockV4RA",
-    "InceptionBlockV4RB",
+    "IncepBlock",
 )
 
 
@@ -557,7 +548,7 @@ class DenseBlock(Sequential):
 
 
 @dataclass
-class InceptionBlockArgs:
+class IncepBlockArgs:
     activation: Activation.FuncType
     optimizer: Optimizer | None = None
     initializer: InitUtil.InitStr = None
@@ -745,3 +736,37 @@ class InceptionBlock(Sequential):
             height,
             width,
         )
+
+
+@ClassType.non_instantiable()
+class IncepBlock:
+
+    class V1:
+        ...
+
+    class V2_TypeA(_specials.incep_v2._Incep_V2_TypeA):
+        ...
+    
+    class V2_TypeB(_specials.incep_v2._Incep_V2_TypeB):
+        ...
+    
+    class V2_TypeC(_specials.incep_v2._Incep_V2_TypeC):
+        ...
+    
+    class V2_Redux(_specials.incep_v2._Incep_V2_Redux):
+        ...
+    
+    class V4_TypeA(_specials.incep_v4._Incep_V4_TypeA):
+        ...
+    
+    class V4_TypeB(_specials.incep_v4._Incep_V4_TypeB):
+        ...
+    
+    class V4_TypeC(_specials.incep_v4._Incep_V4_TypeC):
+        ...
+    
+    class V4_ReduxA(_specials.incep_v4._Incep_V4_ReduxA):
+        ...
+    
+    class V4_ReduxB(_specials.incep_v4._Incep_V4_ReduxB):
+        ...

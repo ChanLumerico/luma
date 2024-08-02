@@ -21,7 +21,7 @@ from luma.neural.block import (
     InceptionBlockV4C,
     InceptionBlockV4RA,
     InceptionBlockV4RB,
-    InceptionBlockArgs,
+    IncepBlockArgs,
 )
 from luma.neural.layer import (
     Convolution2D,
@@ -120,7 +120,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
-        incep_args = InceptionBlockArgs(
+        incep_args = IncepBlockArgs(
             activation=self.activation,
             do_batch_norm=False,
             **base_args,
@@ -293,7 +293,7 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
-        incep_args = InceptionBlockArgs(
+        incep_args = IncepBlockArgs(
             activation=self.activation,
             do_batch_norm=False,
             **base_args,
@@ -505,7 +505,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
-        incep_args = InceptionBlockArgs(
+        incep_args = IncepBlockArgs(
             activation=self.activation,
             do_batch_norm=True,
             **base_args,
@@ -715,7 +715,7 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
         self._build_model()
 
     def _build_model(self) -> None:
-        incep_args = InceptionBlockArgs(
+        incep_args = IncepBlockArgs(
             activation=self.activation,
             initializer=self.initializer,
             lambda_=self.lambda_,
