@@ -775,7 +775,7 @@ class IncepBlock:
             Output: Tensor[-1, 1536, 8, 8]
             ```
         """
-    
+
 
 @ClassType.non_instantiable()
 class IncepResBlock:
@@ -789,5 +789,3 @@ class IncepResBlock:
     class V1_TypeC(_specials.incep_res_v1._IncepRes_V1_TypeC): ...
 
     class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux): ...
-
-
