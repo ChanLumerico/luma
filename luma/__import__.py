@@ -123,8 +123,8 @@ from luma.neural.block import (
     IncepBlock,
     IncepResBlock,
 )
-from luma.neural.network import SimpleMLP, SimpleCNN
-from luma.neural.network import (
+from luma.neural.model import SimpleMLP, SimpleCNN
+from luma.neural.model import (
     LeNet_1,
     LeNet_4,
     LeNet_5,

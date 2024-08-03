@@ -46,7 +46,7 @@ class _IncepRes_V1_Stem(Sequential):
             activation(),
             Pooling2D(3, 2, "max", "valid"),
         )
-        self.model.extend(
+        self.extend(
             Convolution2D(64, 80, 1, 1, "same", **basic_args),
             BatchNorm2D(80, momentum),
             activation(),
