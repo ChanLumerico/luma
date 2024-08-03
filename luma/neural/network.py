@@ -26,6 +26,8 @@ __all__ = (
     "Inception_V2",
     "Inception_V3",
     "Inception_V4",
+    "InceptionResNet_V1",
+    "InceptionResNet_V2",
 )
 
 
@@ -1834,3 +1836,11 @@ class Inception_V4(_models.incep._Inception_V4):
             random_state,
             deep_verbose,
         )
+
+
+class InceptionResNet_V1:
+    NotImplemented
+
+
+class InceptionResNet_V2:
+    NotImplemented
