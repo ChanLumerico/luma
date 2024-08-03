@@ -362,3 +362,88 @@ class _IncepRes_V1_TypeC(LayerGraph):
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
         return batch_size, 1792, 8, 8
+
+
+class _IncepRes_V1_Redux(LayerGraph):
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+        super(_IncepRes_V1_Redux, self).__init__(
+            graph={
+                self.rt_: [self.br_a, self.br_b, self.br_c, self.br_d],
+                self.br_a: [self.cat_],
+                self.br_b: [self.cat_],
+                self.br_c: [self.cat_],
+                self.br_d: [self.cat_],
+            },
+            root=self.rt_,
+            term=self.cat_,
+        )
+
+        self.build()
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+    
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+
+        self.br_a = LayerNode(Pooling2D(3, 2, "max", "valid"), name="br_a")
+        self.br_b = LayerNode(
+            Sequential(
+                Convolution2D(896, 256, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(256, self.momentum),
+                self.activation(),
+                Convolution2D(256, 384, 3, 2, "valid", **self.basic_args),
+                BatchNorm2D(384, self.momentum),
+                self.activation(),
+            ),
+            name="br_b",
+        )
+        self.br_c = LayerNode(
+            Sequential(
+                Convolution2D(896, 256, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(256),
+                self.activation(),
+                Convolution2D(256, 256, 3, 2, "valid", **self.basic_args),
+                BatchNorm2D(256, self.momentum),
+                self.activation(),
+            ),
+            name="br_c",
+        )
+        self.br_d = LayerNode(
+            Sequential(
+                Convolution2D(896, 256, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(256, self.momentum),
+                self.activation(),
+                Convolution2D(256, 256, 3, 1, "same", **self.basic_args),
+                BatchNorm2D(256, self.momentum),
+                self.activation(),
+                Convolution2D(256, 256, 3, 2, "valid", **self.basic_args),
+                BatchNorm2D(256, self.momentum),
+                self.activation(),
+            ),
+            name="br_d",
+        )
+
+        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
