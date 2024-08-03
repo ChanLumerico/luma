@@ -742,16 +742,16 @@ class IncepBlock:
 class IncepResBlock:
     """
     Container class for various Inception-ResNet blocks.
-    
+
     References
     ----------
-    Inception-ResNet V1, V2 : 
+    Inception-ResNet V1, V2 :
         [1] Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
         and the Impact of Residual Connections on Learning.”
         Proceedings of the Thirty-First AAAI Conference on
         Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
         arxiv.org/abs/1602.07261.
-    
+
     """
 
     class Stem(_specials.incep_res._IncepRes_Stem):
@@ -762,44 +762,89 @@ class IncepResBlock:
         Parameters
         ----------
         Refer to the figures shown in the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 3, 299, 299]
+            Output: Tensor[-1, 256, 35, 35]
+            ```
         """
 
     class V1_TypeA(_specials.incep_res._IncepRes_V1_TypeA):
         """
-        Inception block type A used in Inception-ResNet V1 
+        Inception block type A used in Inception-ResNet V1
         network.
 
         Parameters
         ----------
         Refer to the figures shown in the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 256, 35, 35]
+            Output: Tensor[-1, 256, 35, 35]
+            ```
         """
 
     class V1_TypeB(_specials.incep_res._IncepRes_V1_TypeB):
         """
-        Inception block type B used in Inception-ResNet V1 
+        Inception block type B used in Inception-ResNet V1
         network.
 
         Parameters
         ----------
         Refer to the figures shown in the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 892, 17, 17]
+            Output: Tensor[-1, 892, 17, 17]
+            ```
         """
 
     class V1_TypeC(_specials.incep_res._IncepRes_V1_TypeC):
         """
-        Inception block type C used in Inception-ResNet V1 
+        Inception block type C used in Inception-ResNet V1
         network.
 
         Parameters
         ----------
         Refer to the figures shown in the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 1792, 8, 8]
+            Output: Tensor[-1, 1792, 8, 8]
+            ```
         """
 
     class V1_Redux(_specials.incep_res._IncepRes_V1_Redux):
         """
-        Inception block for grid reduction used in 
+        Inception block for grid reduction used in
         Inception-ResNet V1 network.
 
         Parameters
         ----------
         Refer to the figures shown in the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 896, 17, 17]
+            Output: Tensor[-1, 1792, 8, 8]
+            ```
         """

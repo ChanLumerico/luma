@@ -313,9 +313,9 @@ if __name__ == "__main__":
 
     KaimingInit, XavierInit
 
-    SimpleMLP, SimpleCNN, 
-    LeNet_1, LeNet_4, LeNet_5, 
-    AlexNet, ZFNet, 
+    SimpleMLP, SimpleCNN,
+    LeNet_1, LeNet_4, LeNet_5,
+    AlexNet, ZFNet,
     VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19,
     Inception_V1, Inception_V2, Inception_V3, Inception_V4,
     InceptionResNet_V1, InceptionResNet_V2

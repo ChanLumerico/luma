@@ -840,7 +840,7 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
         )
         self.check_param_ranges()
         self._build_model()
-    
+
     def _build_model(self) -> None:
         incep_args = IncepBlockArgs(
             activation=self.activation,
@@ -852,6 +852,55 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
         self.model.add(
             ("Stem", IncepResBlock.Stem(**asdict(incep_args))),
         )
+        for i in range(1, 6):
+            self.model.add(
+                (f"IncepRes_A{i}", IncepResBlock.V1_TypeA(**asdict(incep_args)))
+            )
+        self.model.add(
+            (
+                "IncepRes_RA",
+                IncepBlock.V4_ReduxA(256, (192, 192, 256, 384), **asdict(incep_args)),
+            )
+        )
+        for i in range(1, 11):
+            self.model.add(
+                (f"IncepRes_B{i}", IncepResBlock.V1_TypeB(**asdict(incep_args)))
+            )
+        self.model.add(("IncepRes_RB", IncepResBlock.V1_Redux(**asdict(incep_args))))
+
+        for i in range(1, 6):
+            self.model.add(
+                (f"IncepRes_C{i}", IncepResBlock.V1_TypeC(**asdict(incep_args)))
+            )
+
+        self.model.extend(
+            GlobalAvgPooling2D(),
+            Flatten(),
+            Dropout(self.dropout_rate, self.random_state),
+            Dense(1792, self.out_features),
+        )
+
+    @Tensor.force_dim(4)
+    def fit(self, X: Tensor, y: Matrix) -> Self:
+        ls = LabelSmoothing(smoothing=self.smoothing)
+        y_ls = ls.fit_transform(y)
+        return super(_InceptionRes_V1, self).fit_nn(X, y_ls)
+
+    @override
+    @Tensor.force_dim(4)
+    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
+        return super(_InceptionRes_V1, self).predict_nn(X, argmax)
+
+    @override
+    @Tensor.force_dim(4)
+    def score(
+        self,
+        X: Tensor,
+        y: Matrix,
+        metric: Evaluator = Accuracy,
+        argmax: bool = True,
+    ) -> float:
+        return super(_InceptionRes_V1, self).score_nn(X, y, metric, argmax)
 
 
 class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
