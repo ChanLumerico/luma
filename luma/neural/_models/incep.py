@@ -31,6 +31,8 @@ __all__ = (
     "_Inception_V2",
     "_Inception_V3",
     "_Inception_V4",
+    "_InceptionRes_V1",
+    "_InceptionRes_V2",
 )
 
 
@@ -769,3 +771,11 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
         argmax: bool = True,
     ) -> float:
         return super(_Inception_V4, self).score_nn(X, y, metric, argmax)
+
+
+class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
+    NotImplemented
+
+
+class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
+    NotImplemented
