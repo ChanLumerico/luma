@@ -16,6 +16,7 @@ __all__ = (
     "ConvBlock3D",
     "DenseBlock",
     "IncepBlock",
+    "IncepResBlock",
 )
 
 
@@ -774,3 +775,19 @@ class IncepBlock:
             Output: Tensor[-1, 1536, 8, 8]
             ```
         """
+    
+
+@ClassType.non_instantiable()
+class IncepResBlock:
+
+    class V1_Stem(_specials.incep_res_v1._IncepRes_V1_Stem): ...
+
+    class V1_TypeA(_specials.incep_res_v1._IncepRes_V1_TypeA): ...
+
+    class V1_TypeB(_specials.incep_res_v1._IncepRes_V1_TypeB): ...
+
+    class V1_TypeC(_specials.incep_res_v1._IncepRes_V1_TypeC): ...
+
+    class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux): ...
+
+
