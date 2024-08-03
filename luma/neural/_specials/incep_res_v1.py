@@ -24,6 +24,7 @@ class _IncepRes_V1_Stem(Sequential):
             "lambda_": lambda_,
             "random_state": random_state,
         }
+        _ = do_batch_norm
 
         self.set_param_ranges(
             {
@@ -44,6 +45,8 @@ class _IncepRes_V1_Stem(Sequential):
             BatchNorm2D(64, momentum),
             activation(),
             Pooling2D(3, 2, "max", "valid"),
+        )
+        self.model.extend(
             Convolution2D(64, 80, 1, 1, "same", **basic_args),
             BatchNorm2D(80, momentum),
             activation(),
@@ -57,5 +60,3 @@ class _IncepRes_V1_Stem(Sequential):
 
         if optimizer is not None:
             self.set_optimizer(optimizer)
-        
-        _ = do_batch_norm
