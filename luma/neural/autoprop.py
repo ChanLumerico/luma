@@ -296,7 +296,7 @@ class LayerGraph:
         self.term.b_visited = True
 
         while queue:
-            cur = queue.pop()
+            cur = queue.popleft()
             d_out_arr = cur.backward()
 
             for prev, dx in zip(cur.prev_nodes, d_out_arr):
