@@ -562,22 +562,22 @@ class IncepBlockArgs:
 class IncepBlock:
     """
     Container class for various Inception blocks.
-    
+
     References
     ----------
-    Inception V1 & V2 : 
+    `Inception V1, V2` :
         [1] Szegedy, Christian, et al. “Going Deeper with Convolutions.”
         Proceedings of the IEEE Conference on Computer Vision and
-        Pattern Recognition (CVPR), 2015, pp. 1-9, 
+        Pattern Recognition (CVPR), 2015, pp. 1-9,
         arxiv.org/abs/1409.4842.
-    
-    Inception V4, Inception-ResNet V1 & V2:
+
+    `Inception V4` :
         [2] Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
         and the Impact of Residual Connections on Learning.”
         Proceedings of the Thirty-First AAAI Conference on
         Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
         arxiv.org/abs/1602.07261.
-    
+
     """
 
     class V1(_specials.incep_v1._Incep_V1_Default):
@@ -707,7 +707,7 @@ class IncepBlock:
         Parameters
         ----------
         Refer to the figures shown in the original paper[2].
-        
+
         Notes
         -----
         - This block has fixed shape of input and ouput tensors.
@@ -740,13 +740,72 @@ class IncepBlock:
 
 @ClassType.non_instantiable()
 class IncepResBlock:
+    """
+    Container class for various Inception-ResNet blocks.
+    
+    References
+    ----------
+    Inception V1 & V2 : 
+        [1] Szegedy, Christian, et al. “Going Deeper with Convolutions.”
+        Proceedings of the IEEE Conference on Computer Vision and
+        Pattern Recognition (CVPR), 2015, pp. 1-9, 
+        arxiv.org/abs/1409.4842.
+    
+    Inception V4, Inception-ResNet V1 & V2:
+        [2] Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
+        and the Impact of Residual Connections on Learning.”
+        Proceedings of the Thirty-First AAAI Conference on
+        Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
+        arxiv.org/abs/1602.07261.
+    
+    """
 
-    class V1_Stem(_specials.incep_res_v1._IncepRes_V1_Stem): ...
+    class V1_Stem(_specials.incep_res_v1._IncepRes_V1_Stem):
+        """
+        Inception block used in Inception-ResNet V1 network 
+        stem part.
 
-    class V1_TypeA(_specials.incep_res_v1._IncepRes_V1_TypeA): ...
+        Parameters
+        ----------
+        Refer to the figures shown in the original paper[1].
+        """
 
-    class V1_TypeB(_specials.incep_res_v1._IncepRes_V1_TypeB): ...
+    class V1_TypeA(_specials.incep_res_v1._IncepRes_V1_TypeA):
+        """
+        Inception block type A used in Inception-ResNet V1 
+        network.
 
-    class V1_TypeC(_specials.incep_res_v1._IncepRes_V1_TypeC): ...
+        Parameters
+        ----------
+        Refer to the figures shown in the original paper[1].
+        """
 
-    class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux): ...
+    class V1_TypeB(_specials.incep_res_v1._IncepRes_V1_TypeB):
+        """
+        Inception block type B used in Inception-ResNet V1 
+        network.
+
+        Parameters
+        ----------
+        Refer to the figures shown in the original paper[1].
+        """
+
+    class V1_TypeC(_specials.incep_res_v1._IncepRes_V1_TypeC):
+        """
+        Inception block type C used in Inception-ResNet V1 
+        network.
+
+        Parameters
+        ----------
+        Refer to the figures shown in the original paper[1].
+        """
+
+    class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux):
+        """
+        Inception block for grid reduction used in 
+        Inception-ResNet V1 network.
+
+        Parameters
+        ----------
+        Refer to the figures shown in the original paper[1].
+        """

@@ -121,6 +121,7 @@ from luma.neural.block import (
     ConvBlock3D,
     DenseBlock,
     IncepBlock,
+    IncepResBlock,
 )
 from luma.neural.network import SimpleMLP, SimpleCNN
 from luma.neural.network import (
@@ -300,7 +301,7 @@ if __name__ == "__main__":
     Sequential
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,
-    IncepBlock,
+    IncepBlock, IncepResBlock
 
     LayerNode, LayerGraph
 
