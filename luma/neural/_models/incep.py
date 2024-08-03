@@ -850,7 +850,7 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
         )
 
         self.model.add(
-            ("Stem", IncepResBlock.Stem(**asdict(incep_args))),
+            ("Stem", IncepResBlock.V1_Stem(**asdict(incep_args))),
         )
         for i in range(1, 6):
             self.model.add(

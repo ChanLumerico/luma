@@ -754,9 +754,9 @@ class IncepResBlock:
 
     """
 
-    class Stem(_specials.incep_res._IncepRes_Stem):
+    class V1_Stem(_specials.incep_res_v1._IncepRes_V1_Stem):
         """
-        Inception block used in Inception-ResNet networks'
+        Inception block used in Inception-ResNet V1 network
         stem part.
 
         Parameters
@@ -773,7 +773,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeA(_specials.incep_res._IncepRes_V1_TypeA):
+    class V1_TypeA(_specials.incep_res_v1._IncepRes_V1_TypeA):
         """
         Inception block type A used in Inception-ResNet V1
         network.
@@ -792,7 +792,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeB(_specials.incep_res._IncepRes_V1_TypeB):
+    class V1_TypeB(_specials.incep_res_v1._IncepRes_V1_TypeB):
         """
         Inception block type B used in Inception-ResNet V1
         network.
@@ -811,7 +811,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeC(_specials.incep_res._IncepRes_V1_TypeC):
+    class V1_TypeC(_specials.incep_res_v1._IncepRes_V1_TypeC):
         """
         Inception block type C used in Inception-ResNet V1
         network.
@@ -830,7 +830,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_Redux(_specials.incep_res._IncepRes_V1_Redux):
+    class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux):
         """
         Inception block for grid reduction used in
         Inception-ResNet V1 network.
