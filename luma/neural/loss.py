@@ -11,6 +11,7 @@ __all__ = (
     "HingeLoss",
     "HuberLoss",
     "KLDivergenceLoss",
+    "NLLLoss",
 )
 
 
