@@ -560,6 +560,25 @@ class IncepBlockArgs:
 
 @ClassType.non_instantiable()
 class IncepBlock:
+    """
+    Container class for various Inception blocks.
+    
+    References
+    ----------
+    Inception V1 & V2 : 
+        [1] Szegedy, Christian, et al. “Going Deeper with Convolutions.”
+        Proceedings of the IEEE Conference on Computer Vision and
+        Pattern Recognition (CVPR), 2015, pp. 1-9, 
+        arxiv.org/abs/1409.4842.
+    
+    Inception V4, Inception-ResNet V1 & V2:
+        [2] Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
+        and the Impact of Residual Connections on Learning.”
+        Proceedings of the Thirty-First AAAI Conference on
+        Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
+        arxiv.org/abs/1602.07261.
+    
+    """
 
     class V1(_specials.incep_v1._Incep_V1_Default):
         """
@@ -567,11 +586,7 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Going Deeper with Convolutions.”
-        Proceedings of the IEEE Conference on Computer Vision and
-        Pattern Recognition (CVPR), 2015, pp. 1-9, arxiv.org/abs/1409.4842.
+        Refer to the figures shown in the original paper[1].
         """
 
     class V2_TypeA(_specials.incep_v2._Incep_V2_TypeA):
@@ -580,12 +595,7 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Going Deeper with Convolutions.”
-        Proceedings of the IEEE Conference on Computer Vision and
-        Pattern Recognition (CVPR), 2015, pp. 1-9,
-        arxiv.org/abs/1409.4842.
+        Refer to the figures shown in the original paper[1].
         """
 
     class V2_TypeB(_specials.incep_v2._Incep_V2_TypeB):
@@ -594,12 +604,7 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Going Deeper with Convolutions.”
-        Proceedings of the IEEE Conference on Computer Vision and
-        Pattern Recognition (CVPR), 2015, pp. 1-9,
-        arxiv.org/abs/1409.4842.
+        Refer to the figures shown in the original paper[1].
         """
 
     class V2_TypeC(_specials.incep_v2._Incep_V2_TypeC):
@@ -608,12 +613,8 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
+        Refer to the figures shown in the original paper[1].
 
-        Szegedy, Christian, et al. “Going Deeper with Convolutions.”
-        Proceedings of the IEEE Conference on Computer Vision and
-        Pattern Recognition (CVPR), 2015, pp. 1-9,
-        arxiv.org/abs/1409.4842.
         """
 
     class V2_Redux(_specials.incep_v2._Incep_V2_Redux):
@@ -622,12 +623,8 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
+        Refer to the figures shown in the original paper[1].
 
-        Szegedy, Christian, et al. “Going Deeper with Convolutions.”
-        Proceedings of the IEEE Conference on Computer Vision and
-        Pattern Recognition (CVPR), 2015, pp. 1-9,
-        arxiv.org/abs/1409.4842.
         """
 
     class V4_Stem(_specials.incep_v4._Incep_V4_Stem):
@@ -636,13 +633,7 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
-        and the Impact of Residual Connections on Learning.”
-        Proceedings of the Thirty-First AAAI Conference on
-        Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
-        arxiv.org/abs/1602.07261.
+        Refer to the figures shown in the original paper[2].
 
         Notes
         -----
@@ -660,13 +651,7 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
-        and the Impact of Residual Connections on Learning.”
-        Proceedings of the Thirty-First AAAI Conference on
-        Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
-        arxiv.org/abs/1602.07261.
+        Refer to the figures shown in the original paper[2].
 
         Notes
         -----
@@ -684,13 +669,7 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
-        and the Impact of Residual Connections on Learning.”
-        Proceedings of the Thirty-First AAAI Conference on
-        Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
-        arxiv.org/abs/1602.07261.
+        Refer to the figures shown in the original paper[2].
 
         Notes
         -----
@@ -708,13 +687,7 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
-        and the Impact of Residual Connections on Learning.”
-        Proceedings of the Thirty-First AAAI Conference on
-        Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
-        arxiv.org/abs/1602.07261.
+        Refer to the figures shown in the original paper[2].
 
         Notes
         -----
@@ -733,14 +706,8 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
-        and the Impact of Residual Connections on Learning.”
-        Proceedings of the Thirty-First AAAI Conference on
-        Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
-        arxiv.org/abs/1602.07261.
-
+        Refer to the figures shown in the original paper[2].
+        
         Notes
         -----
         - This block has fixed shape of input and ouput tensors.
@@ -758,13 +725,7 @@ class IncepBlock:
 
         Parameters
         ----------
-        Refer to the figures shown in the original paper:
-
-        Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
-        and the Impact of Residual Connections on Learning.”
-        Proceedings of the Thirty-First AAAI Conference on
-        Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
-        arxiv.org/abs/1602.07261.
+        Refer to the figures shown in the original paper[2].
 
         Notes
         -----
