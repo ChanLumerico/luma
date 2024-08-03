@@ -12,6 +12,7 @@ from luma.neural.base import Loss, NeuralModel
 from luma.neural.block import (
     IncepBlockArgs,
     IncepBlock,
+    IncepResBlock,
 )
 from luma.neural.layer import (
     Convolution2D,
@@ -689,7 +690,6 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
         self.model.set_optimizer(optimizer=self.optimizer)
 
         self.feature_sizes_ = []
-
         self.feature_shapes_ = [
             self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
         ]
@@ -774,7 +774,84 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
 
 
 class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
-    NotImplemented
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = loss.CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        dropout_rate: float = 0.8,
+        smoothing: float = 0.1,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.loss = loss
+        self.initializer = initializer
+        self.out_features = out_features
+        self.lambda_ = lambda_
+        self.dropout_rate = dropout_rate
+        self.smoothing = smoothing
+        self.shuffle = shuffle
+        self.random_state = random_state
+        self._fitted = False
+
+        super().__init__(
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            early_stopping,
+            patience,
+            deep_verbose,
+        )
+        super().__init_model__()
+        self.model = Sequential()
+        self.optimizer.set_params(learning_rate=self.learning_rate)
+        self.model.set_optimizer(optimizer=self.optimizer)
+
+        self.feature_sizes_ = []
+        self.feature_shapes_ = [
+            self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
+        ]
+
+        self.set_param_ranges(
+            {
+                "out_features": ("0<,+inf", int),
+                "batch_size": ("0<,+inf", int),
+                "n_epochs": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+                "valid_size": ("0<,<1", None),
+                "dropout_rate": ("0,1", None),
+                "lambda_": ("0,+inf", None),
+                "patience": ("0<,+inf", int),
+                "smoothing": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+        self._build_model()
+    
+    def _build_model(self) -> None:
+        incep_args = IncepBlockArgs(
+            activation=self.activation,
+            initializer=self.initializer,
+            lambda_=self.lambda_,
+            random_state=self.random_state,
+        )
+
+        self.model.add(
+            ("Stem", IncepResBlock.Stem(**asdict(incep_args))),
+        )
 
 
 class _InceptionRes_V2(Estimator, Supervised, NeuralModel):

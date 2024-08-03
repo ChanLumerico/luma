@@ -745,14 +745,8 @@ class IncepResBlock:
     
     References
     ----------
-    Inception V1 & V2 : 
-        [1] Szegedy, Christian, et al. “Going Deeper with Convolutions.”
-        Proceedings of the IEEE Conference on Computer Vision and
-        Pattern Recognition (CVPR), 2015, pp. 1-9, 
-        arxiv.org/abs/1409.4842.
-    
-    Inception V4, Inception-ResNet V1 & V2:
-        [2] Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
+    Inception-ResNet V1, V2 : 
+        [1] Szegedy, Christian, et al. “Inception-v4, Inception-ResNet
         and the Impact of Residual Connections on Learning.”
         Proceedings of the Thirty-First AAAI Conference on
         Artificial Intelligence (AAAI), 2017, pp. 4278-4284,
@@ -760,9 +754,9 @@ class IncepResBlock:
     
     """
 
-    class V1_Stem(_specials.incep_res_v1._IncepRes_V1_Stem):
+    class Stem(_specials.incep_res._IncepRes_Stem):
         """
-        Inception block used in Inception-ResNet V1 network 
+        Inception block used in Inception-ResNet networks'
         stem part.
 
         Parameters
@@ -770,7 +764,7 @@ class IncepResBlock:
         Refer to the figures shown in the original paper[1].
         """
 
-    class V1_TypeA(_specials.incep_res_v1._IncepRes_V1_TypeA):
+    class V1_TypeA(_specials.incep_res._IncepRes_V1_TypeA):
         """
         Inception block type A used in Inception-ResNet V1 
         network.
@@ -780,7 +774,7 @@ class IncepResBlock:
         Refer to the figures shown in the original paper[1].
         """
 
-    class V1_TypeB(_specials.incep_res_v1._IncepRes_V1_TypeB):
+    class V1_TypeB(_specials.incep_res._IncepRes_V1_TypeB):
         """
         Inception block type B used in Inception-ResNet V1 
         network.
@@ -790,7 +784,7 @@ class IncepResBlock:
         Refer to the figures shown in the original paper[1].
         """
 
-    class V1_TypeC(_specials.incep_res_v1._IncepRes_V1_TypeC):
+    class V1_TypeC(_specials.incep_res._IncepRes_V1_TypeC):
         """
         Inception block type C used in Inception-ResNet V1 
         network.
@@ -800,7 +794,7 @@ class IncepResBlock:
         Refer to the figures shown in the original paper[1].
         """
 
-    class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux):
+    class V1_Redux(_specials.incep_res._IncepRes_V1_Redux):
         """
         Inception block for grid reduction used in 
         Inception-ResNet V1 network.

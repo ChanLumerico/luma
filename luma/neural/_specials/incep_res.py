@@ -8,7 +8,7 @@ from luma.neural.layer import *
 from luma.neural.autoprop import LayerNode, LayerGraph
 
 
-class _IncepRes_V1_Stem(Sequential):
+class _IncepRes_Stem(Sequential):
     def __init__(
         self,
         activation: Activation.FuncType = Activation.ReLU,
@@ -34,7 +34,7 @@ class _IncepRes_V1_Stem(Sequential):
         )
         self.check_param_ranges()
 
-        super(_IncepRes_V1_Stem, self).__init__(
+        super(_IncepRes_Stem, self).__init__(
             Convolution2D(3, 32, 3, 2, "valid", **basic_args),
             BatchNorm2D(32, momentum),
             activation(),
