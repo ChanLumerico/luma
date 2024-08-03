@@ -252,7 +252,7 @@ class _IncepRes_V1_TypeB(LayerGraph):
             merge_mode="chcat",
             name="br_cat",
         )
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
@@ -306,14 +306,11 @@ class _IncepRes_V1_TypeC(LayerGraph):
         self.build()
         if optimizer is not None:
             self.set_optimizer(optimizer)
-    
+
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
         self.res_sum = LayerNode(
-            Sequential(
-                Identity(),
-                self.activation()
-            ),
+            Sequential(Identity(), self.activation()),
             merge_mode="sum",
             name="res_sum",
         )
@@ -340,7 +337,7 @@ class _IncepRes_V1_TypeC(LayerGraph):
             ),
             name="br_b",
         )
-        
+
         self.br_cat = LayerNode(
             Sequential(
                 Convolution2D(384, 1792, 1, 1, "same", **self.basic_args),
@@ -349,7 +346,7 @@ class _IncepRes_V1_TypeC(LayerGraph):
             merge_mode="chcat",
             name="br_cat",
         )
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
@@ -404,7 +401,7 @@ class _IncepRes_V1_Redux(LayerGraph):
         self.build()
         if optimizer is not None:
             self.set_optimizer(optimizer)
-    
+
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
 
