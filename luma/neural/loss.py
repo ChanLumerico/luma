@@ -144,7 +144,7 @@ class HuberLoss(Loss):
 
     Parameters
     ----------
-    delta : float
+    `delta` : float
         The point where the loss function changes from a quadratic
         to linear.
 
