@@ -253,6 +253,7 @@ class NeuralModel(ABC, NeuralBase):
         self.valid_loss_: list[float] = []
 
         self.model: object
+        self.lr_scheduler: object | None = None
 
     @abstractmethod
     def build_model(self) -> None: ...
@@ -352,6 +353,9 @@ class NeuralModel(ABC, NeuralBase):
             valid_loss.append(loss)
 
         return valid_loss
+    
+    def set_lr_scheduler(self, scheduler: object, *args) -> ...:
+        NotImplemented
 
     @property
     def param_size(self) -> tuple[int, int]:
