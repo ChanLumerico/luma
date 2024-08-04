@@ -904,4 +904,133 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
 
 
 class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
-    NotImplemented
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = loss.CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        dropout_rate: float = 0.8,
+        smoothing: float = 0.1,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.loss = loss
+        self.initializer = initializer
+        self.out_features = out_features
+        self.lambda_ = lambda_
+        self.dropout_rate = dropout_rate
+        self.smoothing = smoothing
+        self.shuffle = shuffle
+        self.random_state = random_state
+        self._fitted = False
+
+        super().__init__(
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            early_stopping,
+            patience,
+            deep_verbose,
+        )
+        super().__init_model__()
+        self.model = Sequential()
+        self.optimizer.set_params(learning_rate=self.learning_rate)
+        self.model.set_optimizer(optimizer=self.optimizer)
+
+        self.feature_sizes_ = []
+        self.feature_shapes_ = [
+            self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
+        ]
+
+        self.set_param_ranges(
+            {
+                "out_features": ("0<,+inf", int),
+                "batch_size": ("0<,+inf", int),
+                "n_epochs": ("0<,+inf", int),
+                "learning_rate": ("0<,+inf", None),
+                "valid_size": ("0<,<1", None),
+                "dropout_rate": ("0,1", None),
+                "lambda_": ("0,+inf", None),
+                "patience": ("0<,+inf", int),
+                "smoothing": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+        self._build_model()
+
+    def _build_model(self) -> None:
+        incep_args = IncepBlockArgs(
+            activation=self.activation,
+            initializer=self.initializer,
+            lambda_=self.lambda_,
+            random_state=self.random_state,
+        )
+
+        self.model.add(
+            ("Stem", IncepBlock.V4_Stem(**asdict(incep_args))),
+        )
+        for i in range(1, 6):
+            self.model.add(
+                (f"IncepRes_A{i}", IncepResBlock.V2_TypeA(**asdict(incep_args))),
+            )
+        self.model.add(
+            (
+                "IncepRes_RA",
+                IncepBlock.V4_ReduxA(384, (256, 256, 384, 384), **asdict(incep_args)),
+            ),
+        )
+
+        for i in range(1, 11):
+            self.model.add(
+                (f"IncepRes_B{i}", IncepResBlock.V2_TypeB(**asdict(incep_args))),
+            )
+        self.model.add(
+            ("IncepRes_RB", IncepResBlock.V2_Redux(**asdict(incep_args))),
+        )
+
+        for i in range(1, 6):
+            self.model.add(
+                (f"IncepRes_C{i}", IncepResBlock.V2_TypeC(**asdict(incep_args))),
+            )
+
+        self.model.extend(
+            GlobalAvgPooling2D(),
+            Flatten(),
+            Dropout(self.dropout_rate, self.random_state),
+            Dense(2272, self.out_features),
+        )
+
+    @Tensor.force_dim(4)
+    def fit(self, X: Tensor, y: Matrix) -> Self:
+        ls = LabelSmoothing(smoothing=self.smoothing)
+        y_ls = ls.fit_transform(y)
+        return super(_InceptionRes_V2, self).fit_nn(X, y_ls)
+
+    @override
+    @Tensor.force_dim(4)
+    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
+        return super(_InceptionRes_V2, self).predict_nn(X, argmax)
+
+    @override
+    @Tensor.force_dim(4)
+    def score(
+        self,
+        X: Tensor,
+        y: Matrix,
+        metric: Evaluator = Accuracy,
+        argmax: bool = True,
+    ) -> float:
+        return super(_InceptionRes_V2, self).score_nn(X, y, metric, argmax)
