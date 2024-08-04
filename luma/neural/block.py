@@ -597,7 +597,7 @@ class IncepBlock:
     class V2_TypeB(_specials.incep_v2._Incep_V2_TypeB):
         """
         Inception block type-B for Inception V2 network.
-        
+
         Refer to the figures shown in the original paper[1].
         """
 
@@ -816,7 +816,7 @@ class IncepResBlock:
             Output: Tensor[-1, 1792, 8, 8]
             ```
         """
-    
+
     class V2_TypeA(_specials.incep_res_v2._IncepRes_V2_TypeA): ...
 
     class V2_TypeB(_specials.incep_res_v2._IncepRes_V2_TypeB): ...

@@ -164,7 +164,7 @@ class _IncepRes_V2_TypeB(LayerGraph):
 
         self.br_a = LayerNode(
             Sequential(
-                Convolution2D(1154, 192, 1, 1, "same", **self.basic_args),
+                Convolution2D(1280, 192, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(192, self.momentum),
                 self.activation(),
             ),
@@ -172,7 +172,7 @@ class _IncepRes_V2_TypeB(LayerGraph):
         )
         self.br_b = LayerNode(
             Sequential(
-                Convolution2D(1154, 128, 1, 1, "same", **self.basic_args),
+                Convolution2D(1280, 128, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(128, self.momentum),
                 self.activation(),
                 Convolution2D(128, 160, (1, 7), 1, "same", **self.basic_args),
@@ -187,13 +187,13 @@ class _IncepRes_V2_TypeB(LayerGraph):
 
         self.br_cat = LayerNode(
             Sequential(
-                Convolution2D(384, 1154, 1, 1, "same", **self.basic_args),
-                BatchNorm2D(1154, self.momentum),
+                Convolution2D(384, 1280, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(1280, self.momentum),
             ),
             merge_mode="chcat",
             name="br_cat",
         )
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
@@ -205,7 +205,7 @@ class _IncepRes_V2_TypeB(LayerGraph):
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
-        return batch_size, 1154, 17, 17
+        return batch_size, 1280, 17, 17
 
 
 class _IncepRes_V2_TypeC(LayerGraph):
@@ -247,7 +247,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
         self.build()
         if optimizer is not None:
             self.set_optimizer(optimizer)
-    
+
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
         self.res_sum = LayerNode(
@@ -258,7 +258,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
 
         self.br_a = LayerNode(
             Sequential(
-                Convolution2D(2048, 192, 1, 1, "same", **self.basic_args),
+                Convolution2D(2272, 192, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(192, self.momentum),
                 self.activation(),
             ),
@@ -266,7 +266,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
         )
         self.br_b = LayerNode(
             Sequential(
-                Convolution2D(2048, 192, 1, 1, "same", **self.basic_args),
+                Convolution2D(2272, 192, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(192, self.momentum),
                 self.activation(),
                 Convolution2D(192, 234, (1, 3), 1, "same", **self.basic_args),
@@ -281,13 +281,13 @@ class _IncepRes_V2_TypeC(LayerGraph):
 
         self.br_cat = LayerNode(
             Sequential(
-                Convolution2D(448, 2048, 1, 1, "same", **self.basic_args),
-                BatchNorm2D(2048, self.momentum),
+                Convolution2D(448, 2272, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(2272, self.momentum),
             ),
             merge_mode="chcat",
             name="br_cat",
         )
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
@@ -299,7 +299,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
-        return batch_size, 2048, 8, 8
+        return batch_size, 2272, 8, 8
 
 
 class _IncepRes_V2_Redux(LayerGraph):
@@ -327,6 +327,74 @@ class _IncepRes_V2_Redux(LayerGraph):
         }
 
         self.init_nodes()
-    
+        super(_IncepRes_V2_Redux, self).__init__(
+            graph={
+                self.rt_: [self.br_a, self.br_b, self.br_c, self.br_d],
+                self.br_a: [self.cat_],
+                self.br_b: [self.cat_],
+                self.br_c: [self.cat_],
+                self.br_d: [self.cat_],
+            },
+            root=self.rt_,
+            term=self.cat_,
+        )
+
+        self.build()
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
     def init_nodes(self) -> None:
-        ...
+        self.rt_ = LayerNode(Identity(), name="rt_")
+
+        self.br_a = LayerNode(Pooling2D(3, 2, "max", "valid"), name="br_a")
+        self.br_b = LayerNode(
+            Sequential(
+                Convolution2D(1280, 256, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(256, self.momentum),
+                self.activation(),
+                Convolution2D(256, 384, 3, 2, "valid", **self.basic_args),
+                BatchNorm2D(384, self.momentum),
+                self.activation(),
+            ),
+            name="br_b",
+        )
+        self.br_c = LayerNode(
+            Sequential(
+                Convolution2D(1280, 256, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(256, self.momentum),
+                self.activation(),
+                Convolution2D(256, 288, 3, 2, "valid", **self.basic_args),
+                BatchNorm2D(288, self.momentum),
+                self.activation(),
+            ),
+            name="br_c",
+        )
+        self.br_d = LayerNode(
+            Sequential(
+                Convolution2D(1280, 256, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(256, self.momentum),
+                self.activation(),
+                Convolution2D(256, 288, 3, 1, "same", **self.basic_args),
+                BatchNorm2D(288, self.momentum),
+                self.activation(),
+                Convolution2D(288, 320, 3, 2, "valid", **self.basic_args),
+                BatchNorm2D(320, self.momentum),
+                self.activation(),
+            ),
+            name="br_d",
+        )
+
+        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+    
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, _, _ = in_shape
+        return batch_size, 2272, 8, 8
