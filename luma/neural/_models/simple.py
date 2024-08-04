@@ -57,7 +57,7 @@ class _SimpleMLP(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -86,9 +86,9 @@ class _SimpleMLP(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         for i, (in_, out_) in enumerate(self.feature_shapes_):
             self.model += Dense(
                 in_,
@@ -185,7 +185,7 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -224,9 +224,9 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         for in_, out_ in self.feature_shapes_[0]:
             self.model += ConvBlock2D(
                 in_,

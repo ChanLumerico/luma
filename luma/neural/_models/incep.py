@@ -77,7 +77,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -105,9 +105,9 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         base_args = {
             "initializer": self.initializer,
             "lambda_": self.lambda_,
@@ -249,7 +249,7 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -278,9 +278,9 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         base_args = {
             "initializer": self.initializer,
             "lambda_": self.lambda_,
@@ -462,7 +462,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -492,9 +492,9 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         base_args = {
             "initializer": self.initializer,
             "lambda_": self.lambda_,
@@ -684,7 +684,7 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -708,9 +708,9 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         incep_args = IncepBlockArgs(
             activation=self.activation,
             initializer=self.initializer,
@@ -815,7 +815,7 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -839,9 +839,9 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         incep_args = IncepBlockArgs(
             activation=self.activation,
             initializer=self.initializer,
@@ -945,7 +945,7 @@ class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -969,9 +969,9 @@ class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         incep_args = IncepBlockArgs(
             activation=self.activation,
             initializer=self.initializer,

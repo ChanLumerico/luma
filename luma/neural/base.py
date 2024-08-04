@@ -96,8 +96,8 @@ class Layer(ABC, ModelBase):
         self.biases_ = Tensor(biases_)
 
     def init_params(self, w_shape: tuple, b_shape: tuple) -> None:
-        init_type_: type = InitUtil(self.initializer).initializer_type
-
+        init_type_: type | None = InitUtil(self.initializer).initializer_type
+        
         if init_type_ is None:
             self.weights_ = 0.01 * self.rs_.randn(*w_shape)
         else:
@@ -244,7 +244,7 @@ class NeuralModel(ABC, NeuralBase):
         self.patience = patience
         self.deep_verbose = deep_verbose
 
-    def __init_model__(self) -> None:
+    def init_model(self) -> None:
         self.feature_sizes_: list = []
         self.feature_shapes_: list = []
 
@@ -255,7 +255,7 @@ class NeuralModel(ABC, NeuralBase):
         self.model: object
 
     @abstractmethod
-    def _build_model(self) -> None: ...
+    def build_model(self) -> None: ...
 
     def _get_feature_shapes(self, sizes: list) -> list[tuple]:
         return [(i, j) for i, j in zip(sizes[:-1], sizes[1:])]

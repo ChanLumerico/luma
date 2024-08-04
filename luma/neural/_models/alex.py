@@ -61,7 +61,7 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -88,9 +88,9 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         conv_3x3_no_pool_arg = ConvBlockArgs(
             filter_size=3,
             stride=1,
@@ -274,7 +274,7 @@ class _ZFNet(Estimator, Supervised, NeuralModel):
             patience,
             deep_verbose,
         )
-        super().__init_model__()
+        super().init_model()
         self.model = Sequential()
         self.optimizer.set_params(learning_rate=self.learning_rate)
         self.model.set_optimizer(optimizer=self.optimizer)
@@ -301,9 +301,9 @@ class _ZFNet(Estimator, Supervised, NeuralModel):
             }
         )
         self.check_param_ranges()
-        self._build_model()
+        self.build_model()
 
-    def _build_model(self) -> None:
+    def build_model(self) -> None:
         conv_3x3_no_pool_arg = ConvBlockArgs(
             filter_size=3,
             stride=1,
