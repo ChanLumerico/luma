@@ -12,7 +12,7 @@ from luma.interface.util import InitUtil, TrainProgress
 from luma.model_selection.split import BatchGenerator, TrainTestSplit
 
 
-__all__ = ("Layer", "Loss", "Initializer", "NeuralModel")
+__all__ = ("Layer", "Loss", "Initializer", "Scheduler", "NeuralModel")
 
 
 class Layer(ABC, ModelBase):
@@ -179,6 +179,10 @@ class Initializer(ABC):
 
     @abstractmethod
     def init_nd(self) -> TensorLike: ...
+
+
+class Scheduler(ABC):
+    NotImplemented
 
 
 class NeuralModel(ABC, NeuralBase):
