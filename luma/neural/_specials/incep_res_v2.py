@@ -48,14 +48,11 @@ class _IncepRes_V2_TypeA(LayerGraph):
         self.build()
         if optimizer is not None:
             self.set_optimizer(optimizer)
-    
+
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
         self.res_sum = LayerNode(
-            Sequential(
-                Identity(),
-                self.activation()
-            ),
+            Sequential(Identity(), self.activation()),
             merge_mode="sum",
             name="res_sum",
         )
@@ -102,7 +99,7 @@ class _IncepRes_V2_TypeA(LayerGraph):
             merge_mode="chcat",
             name="br_cat",
         )
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
@@ -117,7 +114,98 @@ class _IncepRes_V2_TypeA(LayerGraph):
         return batch_size, 384, 35, 35
 
 
-class _IncepRes_V2_TypeB(LayerGraph): ...
+class _IncepRes_V2_TypeB(LayerGraph):
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+        super(_IncepRes_V2_TypeB, self).__init__(
+            graph={
+                self.rt_: [self.res_sum, self.br_a, self.br_b],
+                self.br_a: [self.br_cat],
+                self.br_b: [self.br_cat],
+                self.br_cat: [self.res_sum],
+            },
+            root=self.rt_,
+            term=self.res_sum,
+        )
+
+        self.build()
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+        self.res_sum = LayerNode(
+            Sequential(Identity(), self.activation()),
+            merge_mode="sum",
+            name="res_sum",
+        )
+
+        self.br_a = LayerNode(
+            Sequential(
+                Convolution2D(1154, 192, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(192, self.momentum),
+                self.activation(),
+            ),
+            name="br_a",
+        )
+        self.br_b = LayerNode(
+            Sequential(
+                Convolution2D(1154, 128, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(128, self.momentum),
+                self.activation(),
+                Convolution2D(128, 160, (1, 7), 1, "same", **self.basic_args),
+                BatchNorm2D(160, self.momentum),
+                self.activation(),
+                Convolution2D(160, 192, (7, 1), 1, "same", **self.basic_args),
+                BatchNorm2D(192, self.momentum),
+                self.activation(),
+            ),
+            name="br_b",
+        )
+
+        self.br_cat = LayerNode(
+            Sequential(
+                Convolution2D(384, 1154, 1, 1, "same", **self.basic_args),
+                BatchNorm2D(1154, self.momentum),
+            ),
+            merge_mode="chcat",
+            name="br_cat",
+        )
+    
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, _, _ = in_shape
+        return batch_size, 1154, 17, 17
 
 
 class _IncepRes_V2_TypeC(LayerGraph): ...
