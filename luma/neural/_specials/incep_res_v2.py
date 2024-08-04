@@ -272,7 +272,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
                 Convolution2D(192, 234, (1, 3), 1, "same", **self.basic_args),
                 BatchNorm2D(224, self.momentum),
                 self.activation(),
-                Convolution1D(224, 256, (3, 1), 1, "same", **self.basic_args),
+                Convolution2D(224, 256, (3, 1), 1, "same", **self.basic_args),
                 BatchNorm2D(256, self.momentum),
                 self.activation(),
             ),
@@ -302,4 +302,31 @@ class _IncepRes_V2_TypeC(LayerGraph):
         return batch_size, 2048, 8, 8
 
 
-class _IncepRes_V2_Redux(LayerGraph): ...
+class _IncepRes_V2_Redux(LayerGraph):
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+    
+    def init_nodes(self) -> None:
+        ...
