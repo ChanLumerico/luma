@@ -1953,4 +1953,113 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
 
 
 class InceptionResNet_V2(_models.incep._InceptionRes_V2):
-    NotImplemented
+    """
+    Inception-ResNet v2 enhances v1 with a deeper architecture and 
+    improved residual blocks for better performance. It features refined 
+    convolution factorization, more extensive Batch Normalization, and 
+    advanced grid size reduction.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 299, 299]
+    ```
+    Overall:
+    ```py
+    IncepBlock.V4_Stem() ->  # Stem
+
+    5x IncepResBlock.V2_TypeA() ->  # Type A
+    IncepBlock.V4_ReduxA(384, (256, 256, 384, 384)) ->  # Redux Type A
+
+    10x IncepResBlock.V2_TypeB() ->  # Type B
+    IncepResBlock.V2_Redux() ->  # Redux Type B
+
+    5x IncepResBlock.V2_TypeC() ->  # Type C
+    GlobalAvgPooling2D() ->
+    Dropout(0.8) ->
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten() -> Dense(2272, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    34,112,608 weights, 43,562 biases -> 34,156,170 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `optimizer` : Optimizer
+        Type of optimizer for weight update
+    `loss` : Loss, default=CrossEntropy()
+        Type of loss function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `learning_rate` : float, default=0.01
+        Step size during optimization process
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `smoothing` : float, default=0.1
+        Label smoothing factor
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    """
+
+    def __init__(
+        self,
+        optimizer: Optimizer,
+        activation: Activation.FuncType = Activation.ReLU,
+        loss: Loss = loss.CrossEntropy(),
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        learning_rate: float = 0.01,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        dropout_rate: float = 0.4,
+        smoothing: float = 0.1,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            optimizer,
+            activation,
+            loss,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            learning_rate,
+            valid_size,
+            lambda_,
+            dropout_rate,
+            smoothing,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
