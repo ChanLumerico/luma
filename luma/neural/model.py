@@ -1840,10 +1840,10 @@ class Inception_V4(_models.incep._Inception_V4):
 
 class InceptionResNet_V1(_models.incep._InceptionRes_V1):
     """
-    Inception-ResNet v1 combines Inception modules with residual connections, 
-    improving computational efficiency and accuracy. This architecture uses 
-    convolution factorization, optimized grid size reduction, extensive 
-    Batch Normalization, and label smoothing, resulting in deeper and more 
+    Inception-ResNet v1 combines Inception modules with residual connections,
+    improving computational efficiency and accuracy. This architecture uses
+    convolution factorization, optimized grid size reduction, extensive
+    Batch Normalization, and label smoothing, resulting in deeper and more
     robust neural networks.
 
     Structure
@@ -1950,6 +1950,7 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
             random_state,
             deep_verbose,
         )
+
 
 class InceptionResNet_V2(_models.incep._InceptionRes_V2):
     NotImplemented
