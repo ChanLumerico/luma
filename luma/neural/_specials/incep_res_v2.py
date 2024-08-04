@@ -243,6 +243,10 @@ class _IncepRes_V2_TypeC(LayerGraph):
             root=self.rt_,
             term=self.res_sum,
         )
+
+        self.build()
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
     
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
