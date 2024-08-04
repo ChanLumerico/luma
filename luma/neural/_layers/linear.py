@@ -25,7 +25,7 @@ class _Flatten(Layer):
 
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, *shape = in_shape
-        return (batch_size, np.prod(shape))
+        return (batch_size, int(np.prod(shape)))
 
 
 class _Dense(Layer):
