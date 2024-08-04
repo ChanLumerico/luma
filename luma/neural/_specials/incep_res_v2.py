@@ -385,7 +385,7 @@ class _IncepRes_V2_Redux(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
-    
+
     @Tensor.force_dim(4)
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)

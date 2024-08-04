@@ -802,7 +802,7 @@ class IncepResBlock:
 
     class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux):
         """
-        Inception block for grid reduction used in
+        Inception block type B for grid reduction used in
         Inception-ResNet V1 network.
 
         Refer to the figures shown in the original paper[1].
@@ -817,10 +817,70 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeA(_specials.incep_res_v2._IncepRes_V2_TypeA): ...
+    class V2_TypeA(_specials.incep_res_v2._IncepRes_V2_TypeA):
+        """
+        Inception block type A used in Inception-ResNet V2
+        network.
 
-    class V2_TypeB(_specials.incep_res_v2._IncepRes_V2_TypeB): ...
+        Refer to the figures shown in the original paper[1].
 
-    class V2_TypeC(_specials.incep_res_v2._IncepRes_V2_TypeC): ...
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
 
-    class V2_Redux(_specials.incep_res_v2._IncepRes_V2_Redux): ...
+            ```py
+            Input: Tensor[-1, 384, 35, 35]
+            Output: Tensor[-1, 384, 35, 35]
+            ```
+        """
+
+    class V2_TypeB(_specials.incep_res_v2._IncepRes_V2_TypeB):
+        """
+        Inception block type B used in Inception-ResNet V2
+        network.
+
+        Refer to the figures shown in the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 1280, 17, 17]
+            Output: Tensor[-1, 1280, 17, 17]
+            ```
+        """
+
+    class V2_TypeC(_specials.incep_res_v2._IncepRes_V2_TypeC):
+        """
+        Inception block type C used in Inception-ResNet V2
+        network.
+
+        Refer to the figures shown in the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 2272, 8, 8]
+            Output: Tensor[-1, 2272, 8, 8]
+            ```
+        """
+
+    class V2_Redux(_specials.incep_res_v2._IncepRes_V2_Redux):
+        """
+        Inception block type B for grid reduction used in
+        Inception-ResNet V2 network.
+
+        Refer to the figures shown in the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 1289, 17, 17]
+            Output: Tensor[-1, 2272, 8, 8]
+            ```
+        """
