@@ -584,8 +584,6 @@ class IncepBlock:
         """
         Inception block for Inception V1 network, a.k.a. GoogLeNet.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
         """
 
@@ -593,17 +591,13 @@ class IncepBlock:
         """
         Inception block type-A for Inception V2 network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
         """
 
     class V2_TypeB(_specials.incep_v2._Incep_V2_TypeB):
         """
         Inception block type-B for Inception V2 network.
-
-        Parameters
-        ----------
+        
         Refer to the figures shown in the original paper[1].
         """
 
@@ -611,8 +605,6 @@ class IncepBlock:
         """
         Inception block type-C for Inception V2 network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
 
         """
@@ -621,8 +613,6 @@ class IncepBlock:
         """
         Inception block for grid reduction for Inception V2 network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
 
         """
@@ -631,8 +621,6 @@ class IncepBlock:
         """
         Inception block used in Inception V4 network stem part.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[2].
 
         Notes
@@ -649,8 +637,6 @@ class IncepBlock:
         """
         Inception block type A used in Inception V4 network
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[2].
 
         Notes
@@ -667,8 +653,6 @@ class IncepBlock:
         """
         Inception block type B used in Inception V4 network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[2].
 
         Notes
@@ -685,8 +669,6 @@ class IncepBlock:
         """
         Inception block type C used in Inception V4 network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[2].
 
         Notes
@@ -704,8 +686,6 @@ class IncepBlock:
         Inception block type A for grid reduction used in
         Inception V4 network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[2].
 
         Notes
@@ -723,8 +703,6 @@ class IncepBlock:
         Inception block type B for grid reduction used in
         Inception V4 network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[2].
 
         Notes
@@ -759,8 +737,6 @@ class IncepResBlock:
         Inception block used in Inception-ResNet V1 network
         stem part.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
 
         Notes
@@ -778,8 +754,6 @@ class IncepResBlock:
         Inception block type A used in Inception-ResNet V1
         network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
 
         Notes
@@ -797,8 +771,6 @@ class IncepResBlock:
         Inception block type B used in Inception-ResNet V1
         network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
 
         Notes
@@ -816,8 +788,6 @@ class IncepResBlock:
         Inception block type C used in Inception-ResNet V1
         network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
 
         Notes
@@ -835,8 +805,6 @@ class IncepResBlock:
         Inception block for grid reduction used in
         Inception-ResNet V1 network.
 
-        Parameters
-        ----------
         Refer to the figures shown in the original paper[1].
 
         Notes
