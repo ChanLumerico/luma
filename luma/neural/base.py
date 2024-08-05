@@ -104,6 +104,11 @@ class Layer(ABC, ModelBase):
             self.weights_ = init_type_(self.random_state).init_nd(*w_shape)
 
         self.biases_: TensorLike = np.zeros(b_shape)
+    
+    def update_lr(self, new_lr: float) -> None:
+        if self.optimizer is not None:
+            if hasattr(self.optimizer, "learning_rate"):
+                self.optimizer.learning_rate = new_lr
 
     @property
     def param_size(self) -> tuple[int, int]:
