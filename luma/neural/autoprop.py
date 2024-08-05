@@ -82,6 +82,9 @@ class LayerNode:
             optim: Optimizer = Clone(optimizer).get
             optim.set_params(**params)
             self.layer.optimizer = optim
+    
+    def update_lr(self, new_lr: float) -> None:
+        self.layer.update_lr(new_lr)
 
     def flush(self) -> None:
         self.n_forward, self.n_backward = 0, 0
@@ -266,6 +269,10 @@ class LayerGraph:
         self.check_is_built()
         for node in self.nodes:
             node.update()
+    
+    def update_lr(self, new_lr: float) -> None:
+        for node in self.nodes:
+            node.update_lr(new_lr)
 
     def check_is_built(self) -> None:
         if not self.built_:

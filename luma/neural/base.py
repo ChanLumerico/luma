@@ -106,6 +106,9 @@ class Layer(ABC, ModelBase):
         self.biases_: TensorLike = np.zeros(b_shape)
     
     def update_lr(self, new_lr: float) -> None:
+        if not hasattr(self, "optimizer"):
+            return
+        
         if self.optimizer is not None:
             if hasattr(self.optimizer, "learning_rate"):
                 self.optimizer.learning_rate = new_lr
@@ -187,6 +190,21 @@ class Initializer(ABC):
 
 
 class Scheduler(ABC):
+
+    epoch_based_ = 0
+    batch_based_ = 1
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.mode: int = -1
+
+        self.train_loss_arr: list[float] = []
+        self.valid_loss_arr: list[float] = []
+    
+    @abstractmethod
+    @property
+    def new_learning_rate(self) -> float: ...
+
     NotImplemented
 
 
@@ -364,6 +382,9 @@ class NeuralModel(ABC, NeuralBase):
         return valid_loss
     
     def set_lr_scheduler(self, scheduler: object, *args) -> ...:
+        NotImplemented
+    
+    def update_lr(self, epoch: int, train_loss: float, valid_loss: float) -> ...:
         NotImplemented
 
     @property

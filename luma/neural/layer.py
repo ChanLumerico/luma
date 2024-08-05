@@ -1047,6 +1047,7 @@ class Sequential(Layer):
             elif hasattr(layer, "optimizer"):
                 layer.optimizer = cloned_opt
     
+    @override
     def update_lr(self, new_lr: float) -> None:
         if hasattr(self.optimizer, "learning_rate"):
             self.optimizer.learning_rate = new_lr
