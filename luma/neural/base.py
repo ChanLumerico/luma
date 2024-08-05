@@ -323,7 +323,7 @@ class NeuralModel(ABC, NeuralBase):
     def score_nn(
         self, X: TensorLike, y: TensorLike, metric: Evaluator, argmax: bool = True
     ) -> float:
-        y_pred = self.predict(X, argmax=argmax)
+        y_pred = self.predict_nn(X, argmax=argmax)
         return metric.score(y_true=y, y_pred=y_pred)
 
     def train(self, X: TensorLike, y: TensorLike, epoch: int) -> list[float]:
