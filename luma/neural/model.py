@@ -1954,9 +1954,9 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
 
 class InceptionResNet_V2(_models.incep._InceptionRes_V2):
     """
-    Inception-ResNet v2 enhances v1 with a deeper architecture and 
-    improved residual blocks for better performance. It features refined 
-    convolution factorization, more extensive Batch Normalization, and 
+    Inception-ResNet v2 enhances v1 with a deeper architecture and
+    improved residual blocks for better performance. It features refined
+    convolution factorization, more extensive Batch Normalization, and
     advanced grid size reduction.
 
     Structure

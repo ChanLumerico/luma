@@ -97,18 +97,18 @@ class Layer(ABC, ModelBase):
 
     def init_params(self, w_shape: tuple, b_shape: tuple) -> None:
         init_type_: type | None = InitUtil(self.initializer).initializer_type
-        
+
         if init_type_ is None:
             self.weights_ = 0.01 * self.rs_.randn(*w_shape)
         else:
             self.weights_ = init_type_(self.random_state).init_nd(*w_shape)
 
         self.biases_: TensorLike = np.zeros(b_shape)
-    
+
     def update_lr(self, new_lr: float) -> None:
         if not hasattr(self, "optimizer"):
             return
-        
+
         if self.optimizer is not None:
             if hasattr(self.optimizer, "learning_rate"):
                 self.optimizer.learning_rate = new_lr
@@ -190,22 +190,49 @@ class Initializer(ABC):
 
 
 class Scheduler(ABC):
+    # Base class for LR schedulers
 
-    epoch_based_ = 0
-    batch_based_ = 1
+    class Epoch:
+        # Placeholder subclass for scheduler based on epochs
+        ...
+
+    class Batch: 
+        # Placeholder subclass for scheduler based on batches
+        ...
+    
+    """
+    class MyScheduler(Scheduler, Scheduler.Epoch):
+        # This scheduler is based on epochs
+        ...
+    """
 
     def __init__(self) -> None:
         super().__init__()
-        self.mode: int = -1
+        self.iter: int = 0
+        self.n_iter: int = 0
 
         self.train_loss_arr: list[float] = []
         self.valid_loss_arr: list[float] = []
-    
+
+    def broadcast(
+        self,
+        iter: int,
+        n_iter: int,
+        train_loss: int,
+        valid_loss: int,
+    ) -> None:
+        # A neural network calls this method to pass over current iteration and losses
+        self.iter = iter
+        self.n_iter = self.n_iter
+
+        self.train_loss_arr.append(train_loss)
+        self.valid_loss_arr.append(valid_loss)
+
     @abstractmethod
     @property
-    def new_learning_rate(self) -> float: ...
-
-    NotImplemented
+    def new_learning_rate(self) -> float: 
+        # An abstract property that returns the new LR based on the scheduler's algorithm.
+        ...
 
 
 class NeuralModel(ABC, NeuralBase):
@@ -380,10 +407,10 @@ class NeuralModel(ABC, NeuralBase):
             valid_loss.append(loss)
 
         return valid_loss
-    
+
     def set_lr_scheduler(self, scheduler: object, *args) -> ...:
         NotImplemented
-    
+
     def update_lr(self, epoch: int, train_loss: float, valid_loss: float) -> ...:
         NotImplemented
 
