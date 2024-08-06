@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Self
+from typing import Self, Literal, Optional, Any
 import numpy as np
 import time
 
@@ -8,7 +8,7 @@ from luma.core.super import Evaluator
 
 from luma.interface.exception import NotFittedError
 from luma.interface.typing import Matrix, Tensor, TensorLike
-from luma.interface.util import InitUtil, TrainProgress
+from luma.interface.util import InitUtil, TrainProgress, Clone
 from luma.model_selection.split import BatchGenerator, TrainTestSplit
 
 
@@ -189,23 +189,7 @@ class Initializer(ABC):
     def init_nd(self) -> TensorLike: ...
 
 
-class Scheduler(ABC):
-    # Base class for LR schedulers
-
-    class Epoch:
-        # Placeholder subclass for scheduler based on epochs
-        ...
-
-    class Batch: 
-        # Placeholder subclass for scheduler based on batches
-        ...
-    
-    """
-    class MyScheduler(Scheduler, Scheduler.Epoch):
-        # This scheduler is based on epochs
-        ...
-    """
-
+class Scheduler(ABC, ModelBase):
     def __init__(self) -> None:
         super().__init__()
         self.iter: int = 0
@@ -214,25 +198,25 @@ class Scheduler(ABC):
         self.train_loss_arr: list[float] = []
         self.valid_loss_arr: list[float] = []
 
+        self.type_: Optional[Literal["epoch", "batch"]] = None
+
     def broadcast(
         self,
         iter: int,
         n_iter: int,
         train_loss: int,
-        valid_loss: int,
+        valid_loss: int | None,
     ) -> None:
-        # A neural network calls this method to pass over current iteration and losses
         self.iter = iter
-        self.n_iter = self.n_iter
+        self.n_iter = n_iter
 
         self.train_loss_arr.append(train_loss)
-        self.valid_loss_arr.append(valid_loss)
+        if valid_loss is not None:
+            self.valid_loss_arr.append(valid_loss)
 
     @abstractmethod
     @property
-    def new_learning_rate(self) -> float: 
-        # An abstract property that returns the new LR based on the scheduler's algorithm.
-        ...
+    def new_learning_rate(self) -> float: ...
 
 
 class NeuralModel(ABC, NeuralBase):
@@ -307,7 +291,7 @@ class NeuralModel(ABC, NeuralBase):
         self.valid_loss_: list[float] = []
 
         self.model: object
-        self.lr_scheduler: object | None = None
+        self.lr_scheduler: Optional[Scheduler] = None
 
     @abstractmethod
     def build_model(self) -> None: ...
@@ -337,6 +321,8 @@ class NeuralModel(ABC, NeuralBase):
 
                 valid_loss = self.eval(X_val, y_val)
                 valid_loss_avg = np.average(valid_loss)
+
+                self.update_lr("epoch", epoch, train_loss_avg, valid_loss_avg)
 
                 self.train_loss_.append(train_loss_avg)
                 self.valid_loss_.append(valid_loss_avg)
@@ -387,6 +373,8 @@ class NeuralModel(ABC, NeuralBase):
             self.model.backward(d_out)
             self.model.update()
 
+            self.update_lr("batch", i, loss, None)
+
             t_end = time.time_ns()
             if self.deep_verbose:
                 print(
@@ -408,11 +396,30 @@ class NeuralModel(ABC, NeuralBase):
 
         return valid_loss
 
-    def set_lr_scheduler(self, scheduler: object, *args) -> ...:
-        NotImplemented
+    def set_lr_scheduler(self, scheduler: Scheduler, **params: Any) -> None:
+        cloned_sch: Scheduler = Clone(scheduler).get
+        cloned_sch.set_params(**params)
 
-    def update_lr(self, epoch: int, train_loss: float, valid_loss: float) -> ...:
-        NotImplemented
+        self.lr_scheduler = cloned_sch
+
+    def update_lr(
+        self,
+        mode: Literal["epoch", "batch"],
+        iter: int,
+        train_loss: float,
+        valid_loss: float,
+    ) -> None:
+        if mode != self.lr_scheduler.type_:
+            return
+
+        self.lr_scheduler.broadcast(
+            iter,
+            self.n_epochs if mode == "epoch" else self.batch_size,
+            train_loss,
+            valid_loss,
+        )
+        new_lr = self.lr_scheduler.new_learning_rate
+        self.model.update_lr(new_lr)
 
     @property
     def param_size(self) -> tuple[int, int]:

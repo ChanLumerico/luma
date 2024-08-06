@@ -60,9 +60,6 @@ class ModelBase(Luma):
     def __dealloc__(self) -> None:
         return super().__dealloc__()
 
-    def fit(self, **kwargs) -> Any:
-        kwargs
-
     def set_params(self, ignore_missing: bool = False, **kwargs) -> None:
         for key, val in kwargs.items():
             if hasattr(self, key):
