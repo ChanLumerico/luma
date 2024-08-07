@@ -71,7 +71,7 @@ from luma.ensemble.boost import AdaBoostClassifier, AdaBoostRegressor
 from luma.ensemble.boost import GradientBoostingClassifier, GradientBoostingRegressor
 from luma.ensemble.stack import StackingClassifier, StackingRegressor
 
-from luma.neural.base import Layer, Loss, Initializer, NeuralModel
+from luma.neural.base import Layer, Loss, Initializer, Scheduler, NeuralModel
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.layer import (
     Convolution1D,
@@ -115,6 +115,7 @@ from luma.neural.optimizer import (
 from luma.neural.loss import CrossEntropy, BinaryCrossEntropy, MSELoss
 from luma.neural.loss import HingeLoss, HuberLoss, KLDivergenceLoss, NLLLoss
 from luma.neural.init import KaimingInit, XavierInit
+from luma.neural.scheduler import StepLR
 from luma.neural.block import (
     ConvBlock1D,
     ConvBlock2D,
@@ -291,7 +292,7 @@ if __name__ == "__main__":
     AdamOptimizer, AdaGradOptimizer, AdaDeltaOptimizer,
     AdaMaxOptimizer, AdamWOptimizer, NAdamOptimizer
 
-    Layer, Loss, Initializer, NeuralModel
+    Layer, Loss, Initializer, Scheduler, NeuralModel
 
     Convolution1D, Convolution2D, Convolution3D,
     Pooling1D, Pooling2D, Pooling3D,
@@ -312,6 +313,8 @@ if __name__ == "__main__":
     HuberLoss, KLDivergenceLoss, NLLLoss
 
     KaimingInit, XavierInit
+
+    StepLR
 
     SimpleMLP, SimpleCNN,
     LeNet_1, LeNet_4, LeNet_5,

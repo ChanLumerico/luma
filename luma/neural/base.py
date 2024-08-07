@@ -4,7 +4,7 @@ import numpy as np
 import time
 
 from luma.core.base import ModelBase, NeuralBase
-from luma.core.super import Evaluator
+from luma.core.super import Evaluator, Optimizer
 
 from luma.interface.exception import NotFittedError
 from luma.interface.typing import Matrix, Tensor, TensorLike
@@ -190,14 +190,16 @@ class Initializer(ABC):
 
 
 class Scheduler(ABC, ModelBase):
-    def __init__(self) -> None:
+    def __init__(self, init_lr: float) -> None:
         super().__init__()
+        self.init_lr = init_lr
         self.iter: int = 0
         self.n_iter: int = 0
 
         self.train_loss_arr: list[float] = []
         self.valid_loss_arr: list[float] = []
 
+        self.lr_trace: list[float] = [self.init_lr]
         self.type_: Optional[Literal["epoch", "batch"]] = None
 
     def broadcast(
@@ -214,8 +216,8 @@ class Scheduler(ABC, ModelBase):
         if valid_loss is not None:
             self.valid_loss_arr.append(valid_loss)
 
-    @abstractmethod
     @property
+    @abstractmethod
     def new_learning_rate(self) -> float: ...
 
 
@@ -273,6 +275,8 @@ class NeuralModel(ABC, NeuralBase):
         early_stopping: bool,
         patience: int,
         deep_verbose: bool,
+        shuffle: bool,
+        random_state: bool | None
     ) -> None:
         self.batch_size = batch_size
         self.n_epochs = n_epochs
@@ -281,6 +285,8 @@ class NeuralModel(ABC, NeuralBase):
         self.early_stopping = early_stopping
         self.patience = patience
         self.deep_verbose = deep_verbose
+        self.shuffle = shuffle
+        self.random_state = random_state
 
     def init_model(self) -> None:
         self.feature_sizes_: list = []
@@ -395,12 +401,16 @@ class NeuralModel(ABC, NeuralBase):
             valid_loss.append(loss)
 
         return valid_loss
+    
+    def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
+        self.model.set_optimizer(optimizer, **params)
 
     def set_lr_scheduler(self, scheduler: Scheduler, **params: Any) -> None:
-        cloned_sch: Scheduler = Clone(scheduler).get
-        cloned_sch.set_params(**params)
-
-        self.lr_scheduler = cloned_sch
+        scheduler.set_params(**params)
+        self.lr_scheduler = scheduler
+    
+    def set_loss(self, loss: Loss) -> None:
+        self.loss = loss
 
     def update_lr(
         self,

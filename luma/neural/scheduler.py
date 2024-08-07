@@ -7,21 +7,14 @@ __all__ = ("StepLR",)
 
 
 class StepLR(Scheduler):
-    """
-    This scheduler is based on epochs and reduces the 
-    learning rate by a factor every specified number of epochs.
-
-    TODO: Refine this class.
-    """
-
     def __init__(
         self,
-        initial_lr: float,
-        step_size: int,
-        gamma: float,
+        init_lr: float,
+        step_size: int = 1,
+        gamma: float = 0.1,
     ) -> None:
-        super().__init__()
-        self.initial_lr = initial_lr
+        super().__init__(init_lr)
+        self.init_lr = init_lr
         self.step_size = step_size
         self.gamma = gamma
 
@@ -32,4 +25,6 @@ class StepLR(Scheduler):
         epoch_index = self.iter // self.n_iter
         factor = epoch_index // self.step_size
 
-        return self.initial_lr * (self.gamma**factor)
+        new_lr = self.init_lr * (self.gamma**factor)
+        self.lr_trace.append(new_lr)
+        return new_lr

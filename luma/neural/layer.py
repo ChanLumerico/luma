@@ -1052,7 +1052,7 @@ class Sequential(Layer):
         if hasattr(self.optimizer, "learning_rate"):
             self.optimizer.learning_rate = new_lr
 
-        for layer in self.layers:
+        for _, layer in self.layers:
             layer.update_lr(new_lr)
 
     def _check_no_optimizer(self) -> None:
