@@ -276,7 +276,7 @@ class NeuralModel(ABC, NeuralBase):
         patience: int,
         deep_verbose: bool,
         shuffle: bool,
-        random_state: bool | None
+        random_state: bool | None,
     ) -> None:
         self.batch_size = batch_size
         self.n_epochs = n_epochs
@@ -401,14 +401,14 @@ class NeuralModel(ABC, NeuralBase):
             valid_loss.append(loss)
 
         return valid_loss
-    
+
     def set_optimizer(self, optimizer: Optimizer, **params: Any) -> None:
         self.model.set_optimizer(optimizer, **params)
 
     def set_lr_scheduler(self, scheduler: Scheduler, **params: Any) -> None:
         scheduler.set_params(**params)
         self.lr_scheduler = scheduler
-    
+
     def set_loss(self, loss: Loss) -> None:
         self.loss = loss
 
@@ -419,7 +419,7 @@ class NeuralModel(ABC, NeuralBase):
         train_loss: float,
         valid_loss: float,
     ) -> None:
-        if mode != self.lr_scheduler.type_:
+        if self.lr_scheduler is None or mode != self.lr_scheduler.type_:
             return
 
         self.lr_scheduler.broadcast(
