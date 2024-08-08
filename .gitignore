@@ -3,10 +3,10 @@
 *.luma
 setup.sh
 token.key
-test.py
 build/
 dist/
 test/
+test.py
 luma_ml.egg-info/
 version_ico/
 __pycache__/

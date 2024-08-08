@@ -275,8 +275,6 @@ class NeuralModel(ABC, NeuralBase):
         early_stopping: bool,
         patience: int,
         deep_verbose: bool,
-        shuffle: bool,
-        random_state: bool | None,
     ) -> None:
         self.batch_size = batch_size
         self.n_epochs = n_epochs
@@ -285,8 +283,11 @@ class NeuralModel(ABC, NeuralBase):
         self.early_stopping = early_stopping
         self.patience = patience
         self.deep_verbose = deep_verbose
-        self.shuffle = shuffle
-        self.random_state = random_state
+
+        if not hasattr(self, "shuffle"):
+            self.shuffle = True
+        if not hasattr(self, "random_state"):
+            self.random_state = None
 
     def init_model(self) -> None:
         self.feature_sizes_: list = []
