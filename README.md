@@ -36,7 +36,7 @@
                 </tr>
                 <tr>
                     <td>luma.interface</td>
-                    <td>Protocols and custom data types for internal use within LUMA.</td>
+                    <td>Protocols and custom data types for internal use within Luma.</td>
                 </tr>
                 <tr>
                     <td>luma.metric</td>
@@ -52,7 +52,7 @@
                 </tr>
                 <tr>
                     <td>luma.neural</td>
-                    <td>Deep learning models and neural network utilities.</td>
+                    <td>Deep learning models and neural network utilities. A DL package for Luma.</td>
                 </tr>
                 <tr>
                     <td>luma.pipe</td>
@@ -93,11 +93,11 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>1.0.4</td>
+                    <td>1.0.5</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
-                    <td>~29.8K</td>
+                    <td>~30.0K</td>
                 </tr>
                 <tr>
                     <td>Requirement</td>
