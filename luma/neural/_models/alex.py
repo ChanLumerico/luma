@@ -1,13 +1,12 @@
 from typing import Self, override
 from dataclasses import asdict
 
-from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
 from luma.interface.util import InitUtil
 from luma.metric.classification import Accuracy
 
-from luma.neural import loss
-from luma.neural.base import Loss, NeuralModel
+from luma.neural.base import NeuralModel
 from luma.neural.block import ConvBlock2D, DenseBlock, ConvBlockArgs, DenseBlockArgs
 from luma.neural.layer import (
     Activation,
@@ -24,14 +23,11 @@ __all__ = ("_AlexNet", "_ZFNet")
 class _AlexNet(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         dropout_rate: float = 0.5,
@@ -42,8 +38,6 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
         deep_verbose: bool = False,
     ) -> None:
         self.activation = activation
-        self.optimizer = optimizer
-        self.loss = loss
         self.initializer = initializer
         self.out_features = out_features
         self.lambda_ = lambda_
@@ -55,16 +49,15 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
         super().__init__(
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             early_stopping,
             patience,
+            shuffle,
+            random_state,
             deep_verbose,
         )
         super().init_model()
         self.model = Sequential()
-        self.optimizer.set_params(learning_rate=self.learning_rate)
-        self.model.set_optimizer(optimizer=self.optimizer)
 
         self.feature_sizes_ = [
             [3, 96, 256, 384, 384, 256],
@@ -80,7 +73,6 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
                 "out_features": ("0<,+inf", int),
                 "batch_size": ("0<,+inf", int),
                 "n_epochs": ("0<,+inf", int),
-                "learning_rate": ("0<,+inf", None),
                 "valid_size": ("0<,<1", None),
                 "dropout_rate": ("0,1", None),
                 "lambda_": ("0,+inf", None),
@@ -237,14 +229,11 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
 class _ZFNet(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         dropout_rate: float = 0.5,
@@ -255,8 +244,6 @@ class _ZFNet(Estimator, Supervised, NeuralModel):
         deep_verbose: bool = False,
     ) -> None:
         self.activation = activation
-        self.optimizer = optimizer
-        self.loss = loss
         self.initializer = initializer
         self.out_features = out_features
         self.lambda_ = lambda_
@@ -268,16 +255,15 @@ class _ZFNet(Estimator, Supervised, NeuralModel):
         super().__init__(
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             early_stopping,
             patience,
+            shuffle,
+            random_state,
             deep_verbose,
         )
         super().init_model()
         self.model = Sequential()
-        self.optimizer.set_params(learning_rate=self.learning_rate)
-        self.model.set_optimizer(optimizer=self.optimizer)
 
         self.feature_sizes_ = [
             [3, 96, 256, 384, 384, 256],
@@ -293,7 +279,6 @@ class _ZFNet(Estimator, Supervised, NeuralModel):
                 "out_features": ("0<,+inf", int),
                 "batch_size": ("0<,+inf", int),
                 "n_epochs": ("0<,+inf", int),
-                "learning_rate": ("0<,+inf", None),
                 "valid_size": ("0<,<1", None),
                 "dropout_rate": ("0,1", None),
                 "lambda_": ("0,+inf", None),

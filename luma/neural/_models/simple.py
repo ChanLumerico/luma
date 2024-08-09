@@ -1,10 +1,10 @@
 from typing import Literal, Self, override
 
-from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
 from luma.interface.util import InitUtil
 
-from luma.neural.base import Loss, NeuralModel
+from luma.neural.base import NeuralModel
 from luma.neural.block import ConvBlock2D, DenseBlock
 from luma.neural.layer import Activation, Dense, Dropout, Flatten, Sequential
 
@@ -20,12 +20,9 @@ class _SimpleMLP(Estimator, Supervised, NeuralModel):
         hidden_layers: list[int] | int,
         *,
         activation: Activation.FuncType,
-        optimizer: Optimizer,
-        loss: Loss,
         initializer: InitUtil.InitStr = None,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.001,
         valid_size: float = 0.1,
         dropout_rate: float = 0.5,
         lambda_: float = 0.0,
@@ -40,8 +37,6 @@ class _SimpleMLP(Estimator, Supervised, NeuralModel):
         self.hidden_layers = hidden_layers
         self.initializer = initializer
         self.activation = activation
-        self.optimizer = optimizer
-        self.loss = loss
         self.dropout_rate = dropout_rate
         self.lambda_ = lambda_
         self.shuffle = shuffle
@@ -51,16 +46,15 @@ class _SimpleMLP(Estimator, Supervised, NeuralModel):
         super().__init__(
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             early_stopping,
             patience,
+            shuffle,
+            random_state,
             deep_verbose,
         )
         super().init_model()
         self.model = Sequential()
-        self.optimizer.set_params(learning_rate=self.learning_rate)
-        self.model.set_optimizer(optimizer=self.optimizer)
 
         if isinstance(self.hidden_layers, int):
             self.hidden_layers = [self.hidden_layers]
@@ -78,7 +72,6 @@ class _SimpleMLP(Estimator, Supervised, NeuralModel):
                 "out_features": ("0<,+inf", int),
                 "batch_size": ("0<,+inf", int),
                 "n_epochs": ("0<,+inf", int),
-                "learning_rate": ("0<,+inf", None),
                 "valid_size": ("0<,<1", None),
                 "dropout_rate": ("0,1", None),
                 "lambda_": ("0,+inf", None),
@@ -128,8 +121,6 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
         filter_size: int,
         *,
         activation: Activation.FuncType,
-        optimizer: Optimizer,
-        loss: Loss,
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
@@ -143,7 +134,6 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
         dropout_rate: float = 0.5,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.001,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         early_stopping: bool = False,
@@ -158,8 +148,6 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
         self.out_features = out_features
         self.filter_size = filter_size
         self.activation = activation
-        self.optimizer = optimizer
-        self.loss = loss
         self.initializer = initializer
         self.padding = padding
         self.stride = stride
@@ -179,16 +167,15 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
         super().__init__(
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             early_stopping,
             patience,
+            shuffle,
+            random_state,
             deep_verbose,
         )
         super().init_model()
         self.model = Sequential()
-        self.optimizer.set_params(learning_rate=self.learning_rate)
-        self.model.set_optimizer(optimizer=self.optimizer)
 
         if isinstance(self.in_channels_list, int):
             self.in_channels_list = [self.in_channels_list]
@@ -216,7 +203,6 @@ class _SimpleCNN(Estimator, Supervised, NeuralModel):
                 "dropout_rate": ("0,1", None),
                 "batch_size": ("0<,+inf", int),
                 "n_epochs": ("0<,+inf", int),
-                "learning_rate": ("0<,+inf", None),
                 "valid_size": ("0<,<1", None),
                 "dropout_rate": ("0,1", None),
                 "lambda_": ("0,+inf", None),
