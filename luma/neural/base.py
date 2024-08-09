@@ -270,24 +270,21 @@ class NeuralModel(ABC, NeuralBase):
         self,
         batch_size: int,
         n_epochs: int,
-        learning_rate: float,
         valid_size: float,
         early_stopping: bool,
         patience: int,
+        shuffle: bool,
+        random_state: int | None,
         deep_verbose: bool,
     ) -> None:
         self.batch_size = batch_size
         self.n_epochs = n_epochs
-        self.learning_rate = learning_rate
         self.valid_size = valid_size
         self.early_stopping = early_stopping
         self.patience = patience
+        self.shuffle = shuffle
+        self.random_state = random_state
         self.deep_verbose = deep_verbose
-
-        if not hasattr(self, "shuffle"):
-            self.shuffle = True
-        if not hasattr(self, "random_state"):
-            self.random_state = None
 
     def init_model(self) -> None:
         self.feature_sizes_: list = []
@@ -298,6 +295,7 @@ class NeuralModel(ABC, NeuralBase):
         self.valid_loss_: list[float] = []
 
         self.model: object
+        self.loss: Optional[Loss] = None
         self.lr_scheduler: Optional[Scheduler] = None
 
     @abstractmethod
@@ -305,6 +303,19 @@ class NeuralModel(ABC, NeuralBase):
 
     def _get_feature_shapes(self, sizes: list) -> list[tuple]:
         return [(i, j) for i, j in zip(sizes[:-1], sizes[1:])]
+
+    def check_necessaries_(self) -> None:
+        if self.model.optimizer is None:
+            raise RuntimeError(
+                f"'{str(self)}' does not have an optimzier!"
+                + f" Call 'set_optimizer()' to assign an optimizer.",
+            )
+        
+        if self.loss is None:
+            raise RuntimeError(
+                f"'{str(self)}' does not have a loss function!"
+                + f" Call 'set_loss()' to assign a loss function.",
+            )
 
     def fit_nn(self, X: TensorLike, y: TensorLike) -> Self:
         X_train, X_val, y_train, y_val = TrainTestSplit(
@@ -369,6 +380,8 @@ class NeuralModel(ABC, NeuralBase):
         train_batch = BatchGenerator(
             X, y, batch_size=self.batch_size, shuffle=self.shuffle
         )
+        self.check_necessaries_()
+
         for i, (X_batch, y_batch) in enumerate(train_batch, start=1):
             t_start = time.time_ns()
             out = self.model(X_batch, is_train=True)
@@ -394,6 +407,8 @@ class NeuralModel(ABC, NeuralBase):
 
     def eval(self, X: TensorLike, y: TensorLike) -> list[float]:
         valid_loss = []
+        self.check_necessaries_()
+
         for X_batch, y_batch in BatchGenerator(
             X, y, batch_size=self.batch_size, shuffle=self.shuffle
         ):

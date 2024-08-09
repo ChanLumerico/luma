@@ -1,12 +1,8 @@
 from typing import Literal
 
-from luma.core.super import Optimizer
 from luma.interface.util import InitUtil
 
-from luma.neural import loss
-from luma.neural.base import Loss
 from luma.neural.layer import Activation
-
 from luma.neural import _models
 
 
@@ -60,18 +56,12 @@ class SimpleMLP(_models.simple._SimpleMLP):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.001
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `initializer` : InitStr, default=None
         Type of weight initializer
     `activation` : FuncType
         Type of activation function
-    `optimizer` : Optimizer
-        An optimizer used in weight update process
-    `loss` : Loss
-        Type of loss function
     `dropout_rate` : float, default=0.5
         Dropout rate
     `lambda_` : float, default=0.0
@@ -100,12 +90,9 @@ class SimpleMLP(_models.simple._SimpleMLP):
         hidden_layers: list[int] | int,
         *,
         activation: Activation.FuncType,
-        optimizer: Optimizer,
-        loss: Loss,
         initializer: InitUtil.InitStr = None,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.001,
         valid_size: float = 0.1,
         dropout_rate: float = 0.5,
         lambda_: float = 0,
@@ -120,12 +107,9 @@ class SimpleMLP(_models.simple._SimpleMLP):
             out_features,
             hidden_layers,
             activation,
-            optimizer,
-            loss,
             initializer,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             dropout_rate,
             lambda_,
@@ -167,10 +151,6 @@ class SimpleCNN(_models.simple._SimpleCNN):
         Size of filters for convolution layers
     `activation` : FuncType
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer (None for dense layers)
     `padding` : {"same", "valid"}, default="same"
@@ -197,8 +177,6 @@ class SimpleCNN(_models.simple._SimpleCNN):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.001
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -259,8 +237,6 @@ class SimpleCNN(_models.simple._SimpleCNN):
         *,
         filter_size: int,
         activation: Activation.FuncType,
-        optimizer: Optimizer,
-        loss: Loss,
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
@@ -274,7 +250,6 @@ class SimpleCNN(_models.simple._SimpleCNN):
         dropout_rate: float = 0.5,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.001,
         valid_size: float = 0.1,
         lambda_: float = 0,
         early_stopping: bool = False,
@@ -290,8 +265,6 @@ class SimpleCNN(_models.simple._SimpleCNN):
             out_features,
             filter_size,
             activation,
-            optimizer,
-            loss,
             initializer,
             padding,
             stride,
@@ -305,7 +278,6 @@ class SimpleCNN(_models.simple._SimpleCNN):
             dropout_rate,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             early_stopping,
@@ -354,10 +326,6 @@ class LeNet_1(_models.lenet._LeNet_1):
     ----------
     `activation` : FuncType, default=Activation.Tanh
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=10
@@ -366,8 +334,6 @@ class LeNet_1(_models.lenet._LeNet_1):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.001
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -388,14 +354,11 @@ class LeNet_1(_models.lenet._LeNet_1):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         early_stopping: bool = False,
@@ -405,14 +368,11 @@ class LeNet_1(_models.lenet._LeNet_1):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             early_stopping,
@@ -456,10 +416,6 @@ class LeNet_4(_models.lenet._LeNet_4):
     ----------
     `activation` : FuncType, default=Activation.Tanh
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=10
@@ -468,8 +424,6 @@ class LeNet_4(_models.lenet._LeNet_4):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.001
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -489,14 +443,11 @@ class LeNet_4(_models.lenet._LeNet_4):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         dropout_rate: float = 0.5,
@@ -507,14 +458,11 @@ class LeNet_4(_models.lenet._LeNet_4):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -560,9 +508,6 @@ class LeNet_5(_models.lenet._LeNet_5):
     ----------
     `activation` : FuncType, default=Activation.Tanh
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
         Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -572,8 +517,6 @@ class LeNet_5(_models.lenet._LeNet_5):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.001
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -593,14 +536,11 @@ class LeNet_5(_models.lenet._LeNet_5):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.Tanh,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         dropout_rate: float = 0.5,
@@ -611,14 +551,11 @@ class LeNet_5(_models.lenet._LeNet_5):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -672,10 +609,6 @@ class AlexNet(_models.alex._AlexNet):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -684,8 +617,6 @@ class AlexNet(_models.alex._AlexNet):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -707,14 +638,11 @@ class AlexNet(_models.alex._AlexNet):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         dropout_rate: float = 0.5,
@@ -725,14 +653,11 @@ class AlexNet(_models.alex._AlexNet):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -787,10 +712,6 @@ class ZFNet(_models.alex._ZFNet):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -799,8 +720,6 @@ class ZFNet(_models.alex._ZFNet):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -821,14 +740,11 @@ class ZFNet(_models.alex._ZFNet):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         dropout_rate: float = 0.5,
@@ -839,14 +755,11 @@ class ZFNet(_models.alex._ZFNet):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -904,10 +817,6 @@ class VGGNet_11(_models.vgg._VGGNet_11):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -916,8 +825,6 @@ class VGGNet_11(_models.vgg._VGGNet_11):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -937,14 +844,11 @@ class VGGNet_11(_models.vgg._VGGNet_11):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         dropout_rate: float = 0.5,
@@ -955,14 +859,11 @@ class VGGNet_11(_models.vgg._VGGNet_11):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1023,10 +924,6 @@ class VGGNet_13(_models.vgg._VGGNet_13):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1035,8 +932,6 @@ class VGGNet_13(_models.vgg._VGGNet_13):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -1056,14 +951,11 @@ class VGGNet_13(_models.vgg._VGGNet_13):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         dropout_rate: float = 0.5,
@@ -1074,14 +966,11 @@ class VGGNet_13(_models.vgg._VGGNet_13):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1145,10 +1034,6 @@ class VGGNet_16(_models.vgg._VGGNet_16):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1157,8 +1042,6 @@ class VGGNet_16(_models.vgg._VGGNet_16):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -1178,14 +1061,11 @@ class VGGNet_16(_models.vgg._VGGNet_16):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         dropout_rate: float = 0.5,
@@ -1196,14 +1076,11 @@ class VGGNet_16(_models.vgg._VGGNet_16):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1270,10 +1147,6 @@ class VGGNet_19(_models.vgg._VGGNet_19):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1282,8 +1155,6 @@ class VGGNet_19(_models.vgg._VGGNet_19):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -1303,14 +1174,11 @@ class VGGNet_19(_models.vgg._VGGNet_19):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0,
         dropout_rate: float = 0.5,
@@ -1321,14 +1189,11 @@ class VGGNet_19(_models.vgg._VGGNet_19):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1395,10 +1260,6 @@ class Inception_V1(_models.incep._Inception_V1):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1407,8 +1268,6 @@ class Inception_V1(_models.incep._Inception_V1):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -1429,14 +1288,11 @@ class Inception_V1(_models.incep._Inception_V1):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         dropout_rate: float = 0.4,
@@ -1447,14 +1303,11 @@ class Inception_V1(_models.incep._Inception_V1):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1519,10 +1372,6 @@ class Inception_V2(_models.incep._Inception_V2):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1531,8 +1380,6 @@ class Inception_V2(_models.incep._Inception_V2):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -1553,14 +1400,11 @@ class Inception_V2(_models.incep._Inception_V2):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         dropout_rate: float = 0.4,
@@ -1571,14 +1415,11 @@ class Inception_V2(_models.incep._Inception_V2):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1644,10 +1485,6 @@ class Inception_V3(_models.incep._Inception_V3):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1656,8 +1493,6 @@ class Inception_V3(_models.incep._Inception_V3):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -1680,14 +1515,11 @@ class Inception_V3(_models.incep._Inception_V3):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         dropout_rate: float = 0.4,
@@ -1699,14 +1531,11 @@ class Inception_V3(_models.incep._Inception_V3):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1763,10 +1592,6 @@ class Inception_V4(_models.incep._Inception_V4):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1775,8 +1600,6 @@ class Inception_V4(_models.incep._Inception_V4):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -1799,14 +1622,11 @@ class Inception_V4(_models.incep._Inception_V4):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         dropout_rate: float = 0.4,
@@ -1818,14 +1638,11 @@ class Inception_V4(_models.incep._Inception_V4):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1882,10 +1699,6 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1894,8 +1707,6 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -1913,14 +1724,11 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         dropout_rate: float = 0.4,
@@ -1932,14 +1740,11 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
@@ -1995,10 +1800,6 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
     ----------
     `activation` : FuncType, default=Activation.ReLU
         Type of activation function
-    `optimizer` : Optimizer
-        Type of optimizer for weight update
-    `loss` : Loss, default=CrossEntropy()
-        Type of loss function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -2007,8 +1808,6 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
         Size of a single mini-batch
     `n_epochs` : int, default=100
         Number of epochs for training
-    `learning_rate` : float, default=0.01
-        Step size during optimization process
     `valid_size` : float, default=0.1
         Fractional size of validation set
     `lambda_` : float, default=0.0
@@ -2026,14 +1825,11 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
 
     def __init__(
         self,
-        optimizer: Optimizer,
         activation: Activation.FuncType = Activation.ReLU,
-        loss: Loss = loss.CrossEntropy(),
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
         n_epochs: int = 100,
-        learning_rate: float = 0.01,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         dropout_rate: float = 0.4,
@@ -2045,14 +1841,11 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
         deep_verbose: bool = False,
     ) -> None:
         super().__init__(
-            optimizer,
             activation,
-            loss,
             initializer,
             out_features,
             batch_size,
             n_epochs,
-            learning_rate,
             valid_size,
             lambda_,
             dropout_rate,
