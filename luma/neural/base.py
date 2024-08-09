@@ -310,7 +310,7 @@ class NeuralModel(ABC, NeuralBase):
                 f"'{str(self)}' does not have an optimzier!"
                 + f" Call 'set_optimizer()' to assign an optimizer.",
             )
-        
+
         if self.loss is None:
             raise RuntimeError(
                 f"'{str(self)}' does not have a loss function!"

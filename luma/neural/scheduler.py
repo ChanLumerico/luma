@@ -1,6 +1,9 @@
+from typing import Literal
+
 import numpy as np
 import math
 
+from luma.interface.exception import UnsupportedParameterError
 from luma.neural.base import Scheduler
 
 
@@ -8,6 +11,7 @@ __all__ = (
     "StepLR",
     "ExponentialLR",
     "CosineAnnealingLR",
+    "CycleLR",
 )
 
 # TODO: Please add docstrings in the future development.
@@ -78,5 +82,57 @@ class CosineAnnealingLR(Scheduler):
             * (1 + math.cos(math.pi * epoch_index / self.T_max))
             / 2
         )
+        self.lr_trace.append(new_lr)
+        return new_lr
+
+
+class CyclicLR(Scheduler):
+    def __init__(
+        self,
+        init_lr: float,
+        max_lr: float,
+        step_size_up: int,
+        step_size_down: int | None = None,
+        mode: Literal["tri", "tri2", "exp"] = "tri",
+        gamma: float = 1.0,
+    ) -> None:
+        super().__init__(init_lr)
+        self.init_lr = init_lr
+        self.max_lr = max_lr
+        self.step_size_up = step_size_up
+        self.step_size_down = (
+            step_size_down if step_size_down is not None else step_size_up
+        )
+        self.mode = mode
+        self.gamma = gamma
+
+        self.type_ = "batch"
+        self.cycle_len = self.step_size_up + self.step_size_down
+        self.cycle_count = 0
+
+    @property
+    def new_learning_rate(self) -> float:
+        cycle_prog = self.iter % self.cycle_len
+        if cycle_prog < self.step_size_up:
+            factor = cycle_prog / self.step_size_up
+        else:
+            factor = (
+                1 - (cycle_prog - self.step_size_up) / self.step_size_down
+            )
+
+        if self.mode == "tri":
+            new_lr = self.init_lr + (self.max_lr - self.init_lr) * factor
+        elif self.mode == "tri2":
+            new_lr = self.init_lr + (self.max_lr - self.init_lr) * factor * (
+                0.5**self.cycle_count
+            )
+        elif self.mode == "exp":
+            new_lr = (
+                self.init_lr
+                + (self.max_lr - self.init_lr) * (self.gamma**self.iter) * factor
+            )
+        else:
+            raise UnsupportedParameterError(self.mode)
+
         self.lr_trace.append(new_lr)
         return new_lr

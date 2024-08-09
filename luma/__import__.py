@@ -115,7 +115,7 @@ from luma.neural.optimizer import (
 from luma.neural.loss import CrossEntropy, BinaryCrossEntropy, MSELoss
 from luma.neural.loss import HingeLoss, HuberLoss, KLDivergenceLoss, NLLLoss
 from luma.neural.init import KaimingInit, XavierInit
-from luma.neural.scheduler import StepLR, ExponentialLR, CosineAnnealingLR
+from luma.neural.scheduler import (StepLR, ExponentialLR, CosineAnnealingLR, CyclicLR,)
 from luma.neural.block import (
     ConvBlock1D,
     ConvBlock2D,
@@ -314,7 +314,7 @@ if __name__ == "__main__":
 
     KaimingInit, XavierInit
 
-    StepLR, ExponentialLR, CosineAnnealingLR
+    StepLR, ExponentialLR, CosineAnnealingLR, CyclicLR
 
     SimpleMLP, SimpleCNN,
     LeNet_1, LeNet_4, LeNet_5,
