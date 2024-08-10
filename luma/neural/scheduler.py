@@ -129,3 +129,74 @@ class CyclicLR(Scheduler):
 
         self.lr_trace.append(new_lr)
         return new_lr
+
+
+class ReduceLROnPlateau(Scheduler):
+    def __init__(
+        self,
+        init_lr: float,
+        mode: Literal["min", "max"] = "min",
+        factor: float = 0.1,
+        patience: int = 10,
+        threshold: float = 1e-4,
+        threshold_mode: Literal["rel", "abs"] = "rel",
+        cooldown: int = 0,
+        min_lr: float = 0,
+    ) -> None:
+        super().__init__(init_lr)
+        self.mode = mode
+        self.factor = factor
+        self.patience = patience
+        self.threshold = threshold
+        self.threshold_mode = threshold_mode
+        self.cooldown = cooldown
+        self.min_lr = min_lr
+
+        self.type_ = "epoch"
+        self.best = None
+        self.num_bad_epochs = 0
+        self.cooldown_cnt = 0
+        self.mode_worse = np.inf if self.mode == "min" else -np.inf
+        self.best = self.mode_worse
+
+    @property
+    def new_learning_rate(self) -> float:
+        current = self.valid_loss_arr[-1] if self.valid_loss_arr else None
+
+        if current is None:
+            new_lr = self.lr_trace[-1]
+        else:
+            if self.is_better(current, self.best):
+                self.best = current
+                self.num_bad_epochs = 0
+            else:
+                self.num_bad_epochs += 1
+
+            if self.cooldown_cnt > 0:
+                self.cooldown_cnt -= 1
+                self.num_bad_epochs = 0
+
+            if self.num_bad_epochs > self.patience:
+                new_lr = max(self.lr_trace[-1] * self.factor, self.min_lr)
+                self.cooldown_cnt = self.cooldown
+                self.num_bad_epochs = 0
+            else:
+                new_lr = self.lr_trace[-1]
+
+        self.lr_trace.append(new_lr)
+        return new_lr
+
+    def is_better(self, current: float, best: float) -> bool:
+        if self.mode == "min" and self.threshold_mode == "rel":
+            rel_epsilon = 1.0 - self.threshold
+            return current < best * rel_epsilon
+
+        elif self.mode == "min" and self.threshold_mode == "abs":
+            return current < best - self.threshold
+
+        elif self.mode == "max" and self.threshold_mode == "rel":
+            rel_epsilon = self.threshold + 1.0
+            return current > best * rel_epsilon
+
+        else:
+            return current > best + self.threshold

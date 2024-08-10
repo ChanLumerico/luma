@@ -120,6 +120,7 @@ from luma.neural.scheduler import (
     ExponentialLR,
     CosineAnnealingLR,
     CyclicLR,
+    ReduceLROnPlateau,
 )
 from luma.neural.block import (
     ConvBlock1D,
@@ -319,7 +320,8 @@ if __name__ == "__main__":
 
     KaimingInit, XavierInit
 
-    StepLR, ExponentialLR, CosineAnnealingLR, CyclicLR
+    StepLR, ExponentialLR, CosineAnnealingLR, CyclicLR,
+    ReduceLROnPlateau
 
     SimpleMLP, SimpleCNN,
     LeNet_1, LeNet_4, LeNet_5,
