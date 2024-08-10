@@ -93,7 +93,7 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>1.0.5</td>
+                    <td>1.0.6</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
