@@ -204,18 +204,20 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
+    
+    input_shape: tuple = (-1, 3, 227, 227)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_AlexNet, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_AlexNet, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -410,18 +412,20 @@ class _ZFNet(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
+    
+    input_shape: tuple = (-1, 3, 227, 227)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_ZFNet, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_ZFNet, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,

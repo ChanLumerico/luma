@@ -167,18 +167,20 @@ class _VGGNet_11(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
+    
+    input_shape: tuple = (-1, 3, 224, 224)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_VGGNet_11, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_VGGNet_11, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -344,18 +346,20 @@ class _VGGNet_13(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
+    
+    input_shape: tuple = (-1, 3, 224, 224)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_VGGNet_13, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_VGGNet_13, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -534,17 +538,19 @@ class _VGGNet_16(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    @Tensor.force_dim(4)
+    input_shape: tuple = (-1, 3, 224, 224)
+
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_VGGNet_16, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_VGGNet_16, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -734,18 +740,20 @@ class _VGGNet_19(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
+    
+    input_shape: tuple = (-1, 3, 224, 224)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_VGGNet_19, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_VGGNet_19, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,

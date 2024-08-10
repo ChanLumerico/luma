@@ -112,18 +112,20 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
+    
+    input_shape: tuple = (-1, 1, 28, 28)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_LeNet_1, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_LeNet_1, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -244,18 +246,20 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
+    
+    input_shape: tuple = (-1, 1, 32, 32)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_LeNet_4, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_LeNet_4, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -387,17 +391,19 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    @Tensor.force_dim(4)
+    input_shape: tuple = (-1, 1, 32, 32)
+
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_LeNet_5, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_LeNet_5, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,

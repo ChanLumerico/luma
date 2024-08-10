@@ -179,18 +179,20 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
 
         self.model += Flatten()
         self.model += Dense(1024, self.out_features, **base_args)
+    
+    input_shape: tuple = (-1, 3, 224, 224)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_Inception_V1, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_Inception_V1, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -383,18 +385,20 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(2048, self.out_features, **base_args),
         )
+    
+    input_shape: tuple = (-1, 3, 299, 299)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         return super(_Inception_V2, self).fit_nn(X, y)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_Inception_V2, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -596,20 +600,22 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(2048, self.out_features, **base_args),
         )
+    
+    input_shape: tuple = (-1, 3, 299, 299)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         ls = LabelSmoothing(smoothing=self.smoothing)
         y_ls = ls.fit_transform(y)
         return super(_Inception_V3, self).fit_nn(X, y_ls)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_Inception_V3, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -720,20 +726,22 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(1536, self.out_features),
         )
+    
+    input_shape: tuple = (-1, 3, 299, 299)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         ls = LabelSmoothing(smoothing=self.smoothing)
         y_ls = ls.fit_transform(y)
         return super(_Inception_V4, self).fit_nn(X, y_ls)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_Inception_V4, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -843,20 +851,22 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(1792, self.out_features),
         )
+    
+    input_shape: tuple = (-1, 3, 299, 299)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         ls = LabelSmoothing(smoothing=self.smoothing)
         y_ls = ls.fit_transform(y)
         return super(_InceptionRes_V1, self).fit_nn(X, y_ls)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_InceptionRes_V1, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
@@ -969,20 +979,22 @@ class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(2272, self.out_features),
         )
+    
+    input_shape: tuple = (-1, 3, 299, 299)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
         ls = LabelSmoothing(smoothing=self.smoothing)
         y_ls = ls.fit_transform(y)
         return super(_InceptionRes_V2, self).fit_nn(X, y_ls)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
         return super(_InceptionRes_V2, self).predict_nn(X, argmax)
 
     @override
-    @Tensor.force_dim(4)
+    @Tensor.force_shape(input_shape)
     def score(
         self,
         X: Tensor,
