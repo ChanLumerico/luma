@@ -12,6 +12,7 @@ __all__ = (
     "ExponentialLR",
     "CosineAnnealingLR",
     "CycleLR",
+    "OneCycleLR",
     "ReduceLROnPlateau",
 )
 
@@ -126,6 +127,47 @@ class CyclicLR(Scheduler):
             )
         else:
             raise UnsupportedParameterError(self.mode)
+
+        self.lr_trace.append(new_lr)
+        return new_lr
+
+
+class OneCycleLR(Scheduler):
+    def __init__(
+        self,
+        init_lr: float,
+        max_lr: float,
+        total_steps: int,
+        pct_start: float = 0.3,
+        anneal_strategy: Literal["cos"] | str = "cos",
+        final_div_factor: float = 1e4,
+    ) -> None:
+        super().__init__(init_lr)
+        self.max_lr = max_lr
+        self.total_steps = total_steps
+        self.pct_start = pct_start
+        self.anneal_strategy = anneal_strategy
+        self.final_div_factor = final_div_factor
+
+        self.type_ = "batch"
+        self.up_step = int(self.total_steps * self.pct_start)
+        self.down_step = self.total_steps - self.up_step
+
+    @property
+    def new_learning_rate(self) -> float:
+        if self.iter <= self.up_step:
+            factor = self.iter / self.up_step
+            new_lr = self.init_lr + (self.max_lr - self.init_lr) * factor
+        else:
+            factor = (self.iter - self.up_step) / self.down_step
+            if self.anneal_strategy == "cos":
+                new_lr = self.max_lr * (1 + math.cos(math.pi * factor)) / 2
+            else:
+                new_lr = (
+                    self.max_lr
+                    - (self.max_lr - self.init_lr / self.final_div_factor)
+                    * factor
+                )
 
         self.lr_trace.append(new_lr)
         return new_lr
