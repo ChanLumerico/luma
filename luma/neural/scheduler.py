@@ -165,8 +165,7 @@ class OneCycleLR(Scheduler):
             else:
                 new_lr = (
                     self.max_lr
-                    - (self.max_lr - self.init_lr / self.final_div_factor)
-                    * factor
+                    - (self.max_lr - self.init_lr / self.final_div_factor) * factor
                 )
 
         self.lr_trace.append(new_lr)

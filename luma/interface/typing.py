@@ -1,5 +1,14 @@
 from functools import wraps
-from typing import Any, Callable, Generic, NoReturn, Self, Type, TypeVar
+from collections import defaultdict
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    NoReturn,
+    Self,
+    Type,
+    TypeVar,
+)
 import sys
 import numpy as np
 
@@ -162,12 +171,79 @@ class Tensor(TensorLike, Generic[D]):
                     if param_name in all_args:
                         tensor = all_args[param_name]
                         if not isinstance(tensor, (Tensor, np.ndarray)):
-                            raise TypeError(f"'{param_name}' must be of type Tensor.")
+                            raise TypeError(
+                                f"'{param_name}' must be an insatnce of Tensor.",
+                            )
                         if tensor.ndim != n_dim:
                             raise ValueError(
                                 f"'{param_name}' must be {n_dim}D-tensor",
                                 +f" got {tensor.ndim}D-tensor.",
                             )
+
+                return func(self, *args, **kwargs)
+
+            return wrapper
+
+        return decorator
+
+    @classmethod
+    def force_shape(cls, *shape_consts: tuple[int]) -> Callable:
+
+        def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+            @wraps(func)
+            def wrapper(self, *args: Any, **kwargs: Any) -> Any:
+                arg_names = func.__code__.co_varnames
+                all_args = {**dict(zip(arg_names, (self,) + args)), **kwargs}
+
+                mismatch_dict = defaultdict(lambda: np.empty((0, 3)))
+                for i, shape in enumerate(shape_consts):
+                    param_name = arg_names[i + 1]
+
+                    if param_name in all_args:
+                        tensor = all_args[param_name]
+                        if not isinstance(tensor, (Tensor, np.ndarray)):
+                            raise TypeError(
+                                f"'{param_name}' must be an instance of Tensor.",
+                            )
+
+                        if tensor.ndim != len(shape):
+                            raise ValueError(
+                                f"Dimensionalities of '{param_name}' and"
+                                + f" the constraint '{shape}' does not match!"
+                            )
+
+                        for axis, (s, ts) in enumerate(zip(shape, tensor.shape)):
+                            if s == -1:
+                                continue
+                            if s != ts:
+                                mismatch_dict[param_name] = np.vstack(
+                                    (mismatch_dict[param_name], [axis, s, ts])
+                                )
+                
+                def _tuplize(vec: Vector):
+                    return tuple(int(v) for v in vec)
+
+                if len(mismatch_dict):
+                    title = (
+                        f"{"Argument":^14} {"Axes":^14} {"Expected":^14} {"Shape":^14}"
+                    )
+                    msg = str()
+
+                    for name in mismatch_dict.keys():
+                        errmat = mismatch_dict[name]
+
+                        axes = str(_tuplize(errmat[:, 0]))
+                        expect = str(_tuplize(errmat[:, 1]))
+                        got = str(_tuplize(errmat[:, 2]))
+
+                        msg += f"{name:^14} {axes:<14} {expect:<14} {got:<14}\n"
+
+                    raise ValueError(
+                        f"Shape mismatch(es) detected as follows:"
+                        + f"\n{title}"
+                        + f"\n{"-" * (14 * 4 + 3)}"
+                        + f"\n{msg}",
+                    )
 
                 return func(self, *args, **kwargs)
 
