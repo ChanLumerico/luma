@@ -219,7 +219,7 @@ class Tensor(TensorLike, Generic[D]):
                                 mismatch_dict[param_name] = np.vstack(
                                     (mismatch_dict[param_name], [axis, s, ts])
                                 )
-                
+
                 def _tuplize(vec: Vector):
                     return tuple(int(v) for v in vec)
 

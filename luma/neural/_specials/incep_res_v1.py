@@ -60,7 +60,7 @@ class _IncepRes_V1_Stem(Sequential):
 
         if optimizer is not None:
             self.set_optimizer(optimizer)
-    
+
     @Tensor.force_shape((-1, 3, 299, 299))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
@@ -452,15 +452,15 @@ class _IncepRes_V1_Redux(LayerGraph):
         )
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
-    
+
     @Tensor.force_shape((-1, 896, 17, 17))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
-    
+
     @Tensor.force_shape((-1, 1792, 8, 8))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
-    
+
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
