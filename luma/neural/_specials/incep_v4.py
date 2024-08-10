@@ -121,11 +121,11 @@ class _Incep_V4_Stem(LayerGraph):
         self.br3_r = LayerNode(Pooling2D(2, 2, "max", "valid"), name="br3_r")
         self.br3_cat = LayerNode(Identity(), merge_mode="chcat", name="br3_cat")
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 3, 299, 299))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 384, 35, 35))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
@@ -224,11 +224,11 @@ class _Incep_V4_TypeA(LayerGraph):
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 384, 35, 35))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 384, 35, 35))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
@@ -336,11 +336,11 @@ class _Incep_V4_TypeB(LayerGraph):
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1024, 17, 17))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1024, 17, 17))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
@@ -474,11 +474,11 @@ class _Incep_V4_TypeC(LayerGraph):
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1536, 8, 8))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1536, 8, 8))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
@@ -566,11 +566,11 @@ class _Incep_V4_ReduxA(LayerGraph):
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 384, 35, 35))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1024, 17, 17))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
@@ -657,11 +657,11 @@ class _Incep_V4_ReduxB(LayerGraph):
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1024, 17, 17))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1536, 8, 8))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 

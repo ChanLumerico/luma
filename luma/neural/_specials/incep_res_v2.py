@@ -100,11 +100,11 @@ class _IncepRes_V2_TypeA(LayerGraph):
             name="br_cat",
         )
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 384, 35, 35))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 384, 35, 35))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
@@ -194,11 +194,11 @@ class _IncepRes_V2_TypeB(LayerGraph):
             name="br_cat",
         )
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1280, 17, 17))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1280, 17, 17))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
@@ -288,11 +288,11 @@ class _IncepRes_V2_TypeC(LayerGraph):
             name="br_cat",
         )
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 2272, 8, 8))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 2272, 8, 8))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
@@ -386,11 +386,11 @@ class _IncepRes_V2_Redux(LayerGraph):
 
         self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 1280, 17, 17))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
 
-    @Tensor.force_dim(4)
+    @Tensor.force_shape((-1, 2272, 8, 8))
     def backward(self, d_out: TensorLike) -> TensorLike:
         return super().backward(d_out)
 
