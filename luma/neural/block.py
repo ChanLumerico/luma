@@ -17,6 +17,7 @@ __all__ = (
     "DenseBlock",
     "IncepBlock",
     "IncepResBlock",
+    "ResNetBlock",
 )
 
 
@@ -884,3 +885,11 @@ class IncepResBlock:
             Output: Tensor[-1, 2272, 8, 8]
             ```
         """
+
+
+@ClassType.non_instantiable()
+class ResNetBlock:
+
+    class Basic(_specials.resnet._Basic): ...
+
+    class Bottleneck(_specials.resnet._Bottleneck): ...

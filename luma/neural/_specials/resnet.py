@@ -15,6 +15,7 @@ class _Basic(LayerGraph):
         in_channels: int,
         out_channels: int,
         stride: int = 1,
+        downsampling: LayerLike | None = None,
         activation: Activation.FuncType = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
@@ -26,6 +27,7 @@ class _Basic(LayerGraph):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.stride = stride
+        self.downsampling = downsampling
         self.activation = activation
         self.optimizer = optimizer
         self.initializer = initializer
@@ -42,8 +44,9 @@ class _Basic(LayerGraph):
         self.init_nodes()
         super(_Basic, self).__init__(
             graph={
-                self.rt_: [self.sum_, self.conv_],
+                self.rt_: [self.down_, self.conv_],
                 self.conv_: [self.sum_],
+                self.down_: [self.sum_],
             },
             root=self.rt_,
             term=self.sum_,
@@ -77,10 +80,33 @@ class _Basic(LayerGraph):
             ),
             name="conv_",
         )
+        self.down_ = LayerNode(
+            self.downsampling if self.downsampling else Identity(),
+            name="down_",
+        )
         self.sum_ = LayerNode(
             self.activation(),
             merge_mode="sum",
             name="sum_",
         )
 
-        ...
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, height, width = in_shape
+        if self.downsampling:
+            _, _, down_h, down_w = self.downsampling.out_shape(in_shape)
+            return batch_size, self.out_channels, down_h, down_w
+        
+        return batch_size, self.out_channels, height, width
+
+
+class _Bottleneck(LayerGraph):
+    NotImplemented
