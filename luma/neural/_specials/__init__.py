@@ -30,3 +30,5 @@ import luma.neural._specials.incep_v4 as incep_v4
 
 import luma.neural._specials.incep_res_v1 as incep_res_v1
 import luma.neural._specials.incep_res_v2 as incep_res_v2
+
+import luma.neural._specials.resnet as resnet
