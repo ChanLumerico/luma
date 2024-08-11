@@ -887,6 +887,9 @@ class IncepResBlock:
         """
 
 
+# TODO: Make `ResNetArgs`
+
+
 @ClassType.non_instantiable()
 class ResNetBlock:
     """
@@ -928,3 +931,4 @@ class ResNetBlock:
 
         See [1] also for additional information.
         """
+

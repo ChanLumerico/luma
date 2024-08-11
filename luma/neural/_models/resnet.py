@@ -17,6 +17,7 @@ from luma.neural.layer import (
     Dense,
     Flatten,
     Sequential,
+    LayerLike,
 )
 
 
@@ -89,32 +90,40 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
-        
+
         def _make_layer(
             self,
             out_channels: int,
             block: ResNetBlock,
             n_block: List[int],
             stride: int = 1,
-            **kwargs: Any,
         ) -> Sequential:
-            downsample: Optional[Sequential] = None
+            downsampling: Optional[Sequential] = None
             if stride != 1 or self._in_channels != out_channels * block.expansion:
-                downsample = Sequential(
+                downsampling = Sequential(
                     Convolution2D(
                         self._in_channels,
                         out_channels * block.expansion,
                         1,
                         stride,
-                        **kwargs,
+                        **base_args,
                     ),
                     BatchNorm2D(
                         out_channels * block.expansion,
                         self.momentum,
                     ),
                 )
-        
-            layers = []
+
+            layers: List[LayerLike] = []
+            layers.append(
+                ResNetBlock.Basic(
+                    self._in_channels,
+                    out_channels,
+                    stride,
+                    downsampling,
+                    ..., # TODO: Resume from here
+                )
+            )
 
         self.model.extend(
             Convolution2D(3, 64, 7, 2, 3, **base_args),
