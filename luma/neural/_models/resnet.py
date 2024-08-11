@@ -11,6 +11,7 @@ from luma.neural.block import ResNetBlock, BaseBlockArgs
 from luma.neural.layer import (
     Convolution2D,
     Pooling2D,
+    AdaptiveAvgPooling2D,
     BatchNorm2D,
     Activation,
     Dense,
@@ -104,7 +105,13 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         super().init_model()
         self.model = Sequential()
 
-        self.feature_sizes_ = []
+        self.feature_sizes_ = [
+            [3, 64],
+            [64, 64, 64, 64],
+            [128, 128, 128, 128],
+            [256, 256, 256, 256],
+            [512, 512, 512, 512],
+        ]
         self.feature_shapes_ = [
             self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
         ]
@@ -143,7 +150,6 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pooling2D(3, 2, "max", "same"),
         )
-
         self.layer_2, in_channels = _make_layer(
             64, 64, BasicBlock, 2, 2, base_args, asdict(res_args)
         )
@@ -164,9 +170,8 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             self.layer_5,
             deep_add=True,
         )
-
         self.model.extend(
-            # AdaptiveAvgPooling2D(),
+            AdaptiveAvgPooling2D((1, 1)),
             Flatten(),
             Dense(512 * BasicBlock.expansion, self.out_features, **base_args),
         )

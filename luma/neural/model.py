@@ -24,6 +24,7 @@ __all__ = (
     "Inception_V4",
     "InceptionResNet_V1",
     "InceptionResNet_V2",
+    "ResNet_18",
 )
 
 
@@ -1850,6 +1851,44 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
             lambda_,
             dropout_rate,
             smoothing,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class ResNet_18(_models.resnet._ResNet_18):
+    """
+    TODO: Finish this docstring
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super().__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
             early_stopping,
             patience,
             shuffle,

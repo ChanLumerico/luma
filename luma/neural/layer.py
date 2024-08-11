@@ -441,8 +441,8 @@ class AdaptiveAvgPooling1D(_layers.pool._AdaptiveAvgPool1D):
     """
     Adaptive average pooling layer for 1-dimensional data.
 
-    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size 
-    output by averaging over dynamically sized regions. It's useful for consistent 
+    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size
+    output by averaging over dynamically sized regions. It's useful for consistent
     output sizes in neural networks, regardless of input shape.
 
     Parameters
@@ -460,8 +460,8 @@ class AdaptiveAvgPooling2D(_layers.pool._AdaptiveAvgPool2D):
     """
     Adaptive average pooling layer for 2-dimensional data.
 
-    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size 
-    output by averaging over dynamically sized regions. It's useful for consistent 
+    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size
+    output by averaging over dynamically sized regions. It's useful for consistent
     output sizes in neural networks, regardless of input shape.
 
     Parameters
@@ -479,8 +479,8 @@ class AdaptiveAvgPooling3D(_layers.pool._AdaptiveAvgPool3D):
     """
     Adaptive average pooling layer for 3-dimensional data.
 
-    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size 
-    output by averaging over dynamically sized regions. It's useful for consistent 
+    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size
+    output by averaging over dynamically sized regions. It's useful for consistent
     output sizes in neural networks, regardless of input shape.
 
     Parameters
