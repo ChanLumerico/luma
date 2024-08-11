@@ -1,4 +1,5 @@
 from typing import Any, Self, override, List, Optional
+from dataclasses import asdict
 
 from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
 from luma.interface.typing import Matrix, Tensor, TensorLike, Vector
@@ -6,7 +7,7 @@ from luma.interface.util import InitUtil
 from luma.metric.classification import Accuracy
 
 from luma.neural.base import NeuralModel
-from luma.neural.block import ResNetBlock
+from luma.neural.block import ResNetBlock, BaseBlockArgs
 from luma.neural.layer import (
     Convolution2D,
     Pooling2D,
@@ -47,8 +48,6 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         self.momentum = momentum
         self.shuffle = shuffle
         self.random_state = random_state
-
-        self._in_channels = 64
         self._fitted = False
 
         super().__init__(
@@ -90,23 +89,32 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
+        res_args = BaseBlockArgs(
+            activation=self.activation,
+            do_batch_norm=True,
+            momentum=self.momentum,
+            **base_args,
+        )
 
         def _make_layer(
-            self,
+            in_channels: int,
             out_channels: int,
             block: ResNetBlock,
-            n_block: List[int],
+            n_blocks: int,
+            layer_num: int,
+            conv_base_args: dict,
+            res_base_args: dict,
             stride: int = 1,
-        ) -> Sequential:
+        ) -> tuple[Sequential, int]:
             downsampling: Optional[Sequential] = None
-            if stride != 1 or self._in_channels != out_channels * block.expansion:
+            if stride != 1 or in_channels != out_channels * block.expansion:
                 downsampling = Sequential(
                     Convolution2D(
-                        self._in_channels,
+                        in_channels,
                         out_channels * block.expansion,
                         1,
                         stride,
-                        **base_args,
+                        **conv_base_args,
                     ),
                     BatchNorm2D(
                         out_channels * block.expansion,
@@ -114,16 +122,24 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
                     ),
                 )
 
-            layers: List[LayerLike] = []
-            layers.append(
-                ResNetBlock.Basic(
-                    self._in_channels,
-                    out_channels,
-                    stride,
-                    downsampling,
-                    ..., # TODO: Resume from here
-                )
+            first_block = block(
+                in_channels,
+                out_channels,
+                stride,
+                downsampling,
+                **res_base_args,
             )
+            layers: list = [(f"ResNetConv{layer_num}_1", first_block)]
+
+            in_channels = out_channels * block.expansion
+            for i in range(1, n_blocks):
+                new_block = (
+                    f"ResNetConv{layer_num}_{i + 1}",
+                    block(in_channels, out_channels, **res_base_args),
+                )
+                layers.append(new_block)
+
+            return Sequential(*layers), in_channels
 
         self.model.extend(
             Convolution2D(3, 64, 7, 2, 3, **base_args),

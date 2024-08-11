@@ -549,7 +549,7 @@ class DenseBlock(Sequential):
 
 
 @dataclass
-class IncepBlockArgs:
+class BaseBlockArgs:
     activation: Activation.FuncType
     optimizer: Optimizer | None = None
     initializer: InitUtil.InitStr = None
@@ -887,9 +887,6 @@ class IncepResBlock:
         """
 
 
-# TODO: Make `ResNetArgs`
-
-
 @ClassType.non_instantiable()
 class ResNetBlock:
     """
@@ -931,4 +928,3 @@ class ResNetBlock:
 
         See [1] also for additional information.
         """
-
