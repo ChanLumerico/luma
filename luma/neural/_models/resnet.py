@@ -46,6 +46,8 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         self.momentum = momentum
         self.shuffle = shuffle
         self.random_state = random_state
+
+        self._in_channels = 64
         self._fitted = False
 
         super().__init__(
@@ -80,20 +82,20 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         )
         self.check_param_ranges()
         self.build_model()
-    
+
     def _make_layer(
-    in_channels: int,
-    out_channels: int,
-    block: ResNetBlock,
-    n_block: List[int],
-    stride: int = 1,
-    **kwargs: Any,
+        self,
+        out_channels: int,
+        block: ResNetBlock,
+        n_block: List[int],
+        stride: int = 1,
+        **kwargs: Any,
     ) -> Sequential:
         downsample: Optional[Sequential] = None
-        if stride != 1 or in_channels != out_channels * block.expansion:
+        if stride != 1 or self._in_channels != out_channels * block.expansion:
             downsample = Sequential(
                 Convolution2D(
-                    in_channels,
+                    self._in_channels,
                     out_channels * block.expansion,
                     1,
                     stride,
@@ -101,8 +103,11 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
                 ),
                 BatchNorm2D(
                     out_channels * block.expansion,
-                )
+                    self.momentum,
+                ),
             )
+        
+        layers = []
 
     def build_model(self) -> None:
         base_args = {
