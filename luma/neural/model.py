@@ -26,6 +26,7 @@ __all__ = (
     "InceptionResNet_V2",
     "ResNet_18",
     "ResNet_34",
+    "ResNet_50",
 )
 
 
@@ -2056,3 +2057,6 @@ class ResNet_34(_models.resnet._ResNet_34):
             random_state,
             deep_verbose,
         )
+
+
+class ResNet_50(_models.resnet._ResNet_50): ...
