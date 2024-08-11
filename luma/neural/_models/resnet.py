@@ -22,6 +22,52 @@ from luma.neural.layer import (
 )
 
 
+def _make_layer(
+        in_channels: int,
+        out_channels: int,
+        block: ResNetBlock,
+        n_blocks: int,
+        layer_num: int,
+        conv_base_args: dict,
+        res_base_args: dict,
+        stride: int = 1,
+        ) -> tuple[Sequential, int]:
+    downsampling: Optional[Sequential] = None
+    if stride != 1 or in_channels != out_channels * block.expansion:
+        downsampling = Sequential(
+            Convolution2D(
+                in_channels,
+                out_channels * block.expansion,
+                1,
+                stride,
+                **conv_base_args,
+            ),
+            BatchNorm2D(
+                out_channels * block.expansion,
+                self.momentum,
+                ),
+            )
+
+    first_block = block(
+        in_channels,
+        out_channels,
+        stride,
+        downsampling,
+        **res_base_args,
+        )
+    layers: list = [(f"ResNetConv{layer_num}_1", first_block)]
+
+    in_channels = out_channels * block.expansion
+    for i in range(1, n_blocks):
+        new_block = (
+            f"ResNetConv{layer_num}_{i + 1}",
+            block(in_channels, out_channels, **res_base_args),
+            )
+        layers.append(new_block)
+
+    return Sequential(*layers), in_channels
+
+
 class _ResNet_18(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
@@ -95,51 +141,6 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             momentum=self.momentum,
             **base_args,
         )
-
-        def _make_layer(
-            in_channels: int,
-            out_channels: int,
-            block: ResNetBlock,
-            n_blocks: int,
-            layer_num: int,
-            conv_base_args: dict,
-            res_base_args: dict,
-            stride: int = 1,
-        ) -> tuple[Sequential, int]:
-            downsampling: Optional[Sequential] = None
-            if stride != 1 or in_channels != out_channels * block.expansion:
-                downsampling = Sequential(
-                    Convolution2D(
-                        in_channels,
-                        out_channels * block.expansion,
-                        1,
-                        stride,
-                        **conv_base_args,
-                    ),
-                    BatchNorm2D(
-                        out_channels * block.expansion,
-                        self.momentum,
-                    ),
-                )
-
-            first_block = block(
-                in_channels,
-                out_channels,
-                stride,
-                downsampling,
-                **res_base_args,
-            )
-            layers: list = [(f"ResNetConv{layer_num}_1", first_block)]
-
-            in_channels = out_channels * block.expansion
-            for i in range(1, n_blocks):
-                new_block = (
-                    f"ResNetConv{layer_num}_{i + 1}",
-                    block(in_channels, out_channels, **res_base_args),
-                )
-                layers.append(new_block)
-
-            return Sequential(*layers), in_channels
 
         self.model.extend(
             Convolution2D(3, 64, 7, 2, 3, **base_args),
