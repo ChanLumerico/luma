@@ -11,14 +11,11 @@ from luma.neural.block import ResNetBlock, BaseBlockArgs
 from luma.neural.layer import (
     Convolution2D,
     Pooling2D,
-    GlobalAvgPooling2D,
     BatchNorm2D,
     Activation,
-    Dropout,
     Dense,
     Flatten,
     Sequential,
-    LayerLike,
 )
 
 BasicBlock = ResNetBlock.Basic
@@ -78,7 +75,6 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         n_epochs: int = 100,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
-        dropout_rate: float = 0.8,
         momentum: float = 0.9,
         early_stopping: bool = False,
         patience: int = 10,
@@ -90,7 +86,6 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         self.initializer = initializer
         self.out_features = out_features
         self.lambda_ = lambda_
-        self.dropout_rate = dropout_rate
         self.momentum = momentum
         self.shuffle = shuffle
         self.random_state = random_state

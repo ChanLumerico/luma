@@ -104,16 +104,7 @@ class _Basic(LayerGraph):
 
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, _, height, width = in_shape
-        if self.downsampling:
-            _, _, height, width = self.downsampling.out_shape(in_shape)
-
-        return (
-            batch_size,
-            self.out_channels * _Basic.expansion,
-            height,
-            width,
-        )
+        return self.conv_.out_shape(in_shape)
 
 
 class _Bottleneck(LayerGraph):
@@ -216,13 +207,4 @@ class _Bottleneck(LayerGraph):
 
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
-        batch_size, _, height, width = in_shape
-        if self.downsampling:
-            _, _, height, width = self.downsampling.out_shape(in_shape)
-
-        return (
-            batch_size,
-            self.out_channels * _Bottleneck.expansion,
-            height,
-            width,
-        )
+        return self.conv_.out_shape(in_shape)
