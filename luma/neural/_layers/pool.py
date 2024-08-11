@@ -13,6 +13,9 @@ __all__ = (
     "_GlobalAvgPool1D",
     "_GlobalAvgPool2D",
     "_GlobalAvgPool3D",
+    "_AdaptiveAvgPool1D",
+    "_AdaptiveAvgPool2D",
+    "_AdaptiveAvgPool3D",
     "_LpPool1D",
     "_LpPool2D",
     "_LpPool3D",
@@ -500,6 +503,176 @@ class _GlobalAvgPool3D(Layer):
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, channels, _, _, _ = in_shape
         return (batch_size, channels, 1, 1, 1)
+
+
+class _AdaptiveAvgPool1D(Layer):
+    def __init__(self, out_size: int | Tuple[int]) -> None:
+        super().__init__()
+        self.out_size = out_size
+
+    @Tensor.force_dim(3)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        batch_size, channels, width = X.shape
+        target_width = self.out_size
+
+        out = np.zeros((batch_size, channels, target_width))
+
+        for i in range(target_width):
+            start = int(np.floor(i * width / target_width))
+            end = int(np.ceil((i + 1) * width / target_width))
+
+            out[:, :, i] = np.mean(X[:, :, start:end], axis=2)
+
+        return out
+
+    @Tensor.force_dim(3)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, width = X.shape
+        target_width = self.out_size
+
+        dX = np.zeros_like(X)
+        for i in range(target_width):
+            start = int(np.floor(i * width / target_width))
+            end = int(np.ceil((i + 1) * width / target_width))
+
+            dX[:, :, start:end] += d_out[:, :, i][:, :, None] / (end - start)
+
+        self.dX = dX
+        return self.dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, _ = in_shape
+        return (batch_size, channels, self.out_size)
+
+
+class _AdaptiveAvgPool2D(Layer):
+    def __init__(self, out_size: Tuple[int, int]) -> None:
+        super().__init__()
+        self.out_size = out_size
+
+    @Tensor.force_dim(4)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        batch_size, channels, height, width = X.shape
+        target_height, target_width = self.out_size
+
+        out = np.zeros((batch_size, channels, target_height, target_width))
+
+        for i in range(target_height):
+            for j in range(target_width):
+                h_start = int(np.floor(i * height / target_height))
+                h_end = int(np.ceil((i + 1) * height / target_height))
+                w_start = int(np.floor(j * width / target_width))
+                w_end = int(np.ceil((j + 1) * width / target_width))
+
+                out[:, :, i, j] = np.mean(
+                    X[:, :, h_start:h_end, w_start:w_end], axis=(2, 3)
+                )
+
+        return out
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, height, width = X.shape
+        target_height, target_width = self.out_size
+
+        dX = np.zeros_like(X)
+        for i in range(target_height):
+            for j in range(target_width):
+                h_start = int(np.floor(i * height / target_height))
+                h_end = int(np.ceil((i + 1) * height / target_height))
+                w_start = int(np.floor(j * width / target_width))
+                w_end = int(np.ceil((j + 1) * width / target_width))
+
+                dX[:, :, h_start:h_end, w_start:w_end] += d_out[:, :, i, j][
+                    :, :, None, None
+                ] / ((h_end - h_start) * (w_end - w_start))
+
+        self.dX = dX
+        return self.dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, _, _ = in_shape
+        return (batch_size, channels, *self.out_size)
+
+
+class _AdaptiveAvgPool3D(Layer):
+    def __init__(self, out_size: Tuple[int, int, int]) -> None:
+        super().__init__()
+        self.out_size = out_size
+
+    @Tensor.force_dim(5)
+    def forward(self, X: Tensor, is_train: bool = False) -> Tensor:
+        _ = is_train
+        self.input_ = X
+        batch_size, channels, depth, height, width = X.shape
+        target_depth, target_height, target_width = self.out_size
+
+        out = np.zeros(
+            (
+                batch_size,
+                channels,
+                target_depth,
+                target_height,
+                target_width,
+            )
+        )
+        for d in range(target_depth):
+            d_start = int(np.floor(d * depth / target_depth))
+            d_end = int(np.ceil((d + 1) * depth / target_depth))
+
+            for i in range(target_height):
+                h_start = int(np.floor(i * height / target_height))
+                h_end = int(np.ceil((i + 1) * height / target_height))
+
+                for j in range(target_width):
+                    w_start = int(np.floor(j * width / target_width))
+                    w_end = int(np.ceil((j + 1) * width / target_width))
+
+                    out[:, :, d, i, j] = np.mean(
+                        X[:, :, d_start:d_end, h_start:h_end, w_start:w_end],
+                        axis=(2, 3, 4),
+                    )
+
+        return out
+
+    @Tensor.force_dim(5)
+    def backward(self, d_out: Tensor) -> Tensor:
+        X = self.input_
+        _, _, depth, height, width = X.shape
+        target_depth, target_height, target_width = self.out_size
+
+        dX = np.zeros_like(X)
+
+        for d in range(target_depth):
+            d_start = int(np.floor(d * depth / target_depth))
+            d_end = int(np.ceil((d + 1) * depth / target_depth))
+
+            for i in range(target_height):
+                h_start = int(np.floor(i * height / target_height))
+                h_end = int(np.ceil((i + 1) * height / target_height))
+
+                for j in range(target_width):
+                    w_start = int(np.floor(j * width / target_width))
+                    w_end = int(np.ceil((j + 1) * width / target_width))
+
+                    dX[:, :, d_start:d_end, h_start:h_end, w_start:w_end] += d_out[
+                        :, :, d, i, j
+                    ][:, :, None, None, None] / (
+                        (d_end - d_start) * (h_end - h_start) * (w_end - w_start)
+                    )
+
+        self.dX = dX
+        return self.dX
+
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, channels, _, _, _ = in_shape
+        return (batch_size, channels, *self.out_size)
 
 
 class _LpPool1D(Layer):

@@ -83,6 +83,9 @@ from luma.neural.layer import (
     GlobalAvgPooling1D,
     GlobalAvgPooling2D,
     GlobalAvgPooling3D,
+    AdaptiveAvgPooling1D,
+    AdaptiveAvgPooling2D,
+    AdaptiveAvgPooling3D,
     LpPooling1D,
     LpPooling2D,
     LpPooling3D,
@@ -304,6 +307,7 @@ if __name__ == "__main__":
     Convolution1D, Convolution2D, Convolution3D,
     Pooling1D, Pooling2D, Pooling3D,
     GlobalAvgPooling1D, GlobalAvgPooling2D, GlobalAvgPooling3D,
+    AdaptiveAvgPooling1D, AdaptiveAvgPooling2D, AdaptiveAvgPooling3D,
     LpPooling1D, LpPooling2D, LpPooling3D
     Dropout, Dropout1D, Dropout2D, Dropout3D,
     BatchNorm1D, BatchNorm2D, BatchNorm3D,

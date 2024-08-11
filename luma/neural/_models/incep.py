@@ -9,7 +9,7 @@ from luma.preprocessing.encoder import LabelSmoothing
 
 from luma.neural.base import NeuralModel
 from luma.neural.block import (
-    IncepBlockArgs,
+    BaseBlockArgs,
     IncepBlock,
     IncepResBlock,
 )
@@ -105,7 +105,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
-        incep_args = IncepBlockArgs(
+        incep_args = BaseBlockArgs(
             activation=self.activation,
             do_batch_norm=False,
             **base_args,
@@ -179,7 +179,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
 
         self.model += Flatten()
         self.model += Dense(1024, self.out_features, **base_args)
-    
+
     input_shape: tuple = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
@@ -273,7 +273,7 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
-        incep_args = IncepBlockArgs(
+        incep_args = BaseBlockArgs(
             activation=self.activation,
             do_batch_norm=False,
             **base_args,
@@ -385,7 +385,7 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(2048, self.out_features, **base_args),
         )
-    
+
     input_shape: tuple = (-1, 3, 299, 299)
 
     @Tensor.force_shape(input_shape)
@@ -482,7 +482,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
-        incep_args = IncepBlockArgs(
+        incep_args = BaseBlockArgs(
             activation=self.activation,
             do_batch_norm=True,
             **base_args,
@@ -600,7 +600,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(2048, self.out_features, **base_args),
         )
-    
+
     input_shape: tuple = (-1, 3, 299, 299)
 
     @Tensor.force_shape(input_shape)
@@ -688,7 +688,7 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
         self.build_model()
 
     def build_model(self) -> None:
-        incep_args = IncepBlockArgs(
+        incep_args = BaseBlockArgs(
             activation=self.activation,
             initializer=self.initializer,
             lambda_=self.lambda_,
@@ -726,7 +726,7 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(1536, self.out_features),
         )
-    
+
     input_shape: tuple = (-1, 3, 299, 299)
 
     @Tensor.force_shape(input_shape)
@@ -814,7 +814,7 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
         self.build_model()
 
     def build_model(self) -> None:
-        incep_args = IncepBlockArgs(
+        incep_args = BaseBlockArgs(
             activation=self.activation,
             initializer=self.initializer,
             lambda_=self.lambda_,
@@ -851,7 +851,7 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(1792, self.out_features),
         )
-    
+
     input_shape: tuple = (-1, 3, 299, 299)
 
     @Tensor.force_shape(input_shape)
@@ -939,7 +939,7 @@ class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
         self.build_model()
 
     def build_model(self) -> None:
-        incep_args = IncepBlockArgs(
+        incep_args = BaseBlockArgs(
             activation=self.activation,
             initializer=self.initializer,
             lambda_=self.lambda_,
@@ -979,7 +979,7 @@ class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
             Dropout(self.dropout_rate, self.random_state),
             Dense(2272, self.out_features),
         )
-    
+
     input_shape: tuple = (-1, 3, 299, 299)
 
     @Tensor.force_shape(input_shape)

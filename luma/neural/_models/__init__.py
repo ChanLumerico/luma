@@ -29,3 +29,4 @@ import luma.neural._models.lenet as lenet
 import luma.neural._models.alex as alex
 import luma.neural._models.vgg as vgg
 import luma.neural._models.incep as incep
+import luma.neural._models.resnet as resnet
