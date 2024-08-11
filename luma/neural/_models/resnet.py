@@ -83,38 +83,38 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         self.check_param_ranges()
         self.build_model()
 
-    def _make_layer(
-        self,
-        out_channels: int,
-        block: ResNetBlock,
-        n_block: List[int],
-        stride: int = 1,
-        **kwargs: Any,
-    ) -> Sequential:
-        downsample: Optional[Sequential] = None
-        if stride != 1 or self._in_channels != out_channels * block.expansion:
-            downsample = Sequential(
-                Convolution2D(
-                    self._in_channels,
-                    out_channels * block.expansion,
-                    1,
-                    stride,
-                    **kwargs,
-                ),
-                BatchNorm2D(
-                    out_channels * block.expansion,
-                    self.momentum,
-                ),
-            )
-        
-        layers = []
-
     def build_model(self) -> None:
         base_args = {
             "initializer": self.initializer,
             "lambda_": self.lambda_,
             "random_state": self.random_state,
         }
+        
+        def _make_layer(
+            self,
+            out_channels: int,
+            block: ResNetBlock,
+            n_block: List[int],
+            stride: int = 1,
+            **kwargs: Any,
+        ) -> Sequential:
+            downsample: Optional[Sequential] = None
+            if stride != 1 or self._in_channels != out_channels * block.expansion:
+                downsample = Sequential(
+                    Convolution2D(
+                        self._in_channels,
+                        out_channels * block.expansion,
+                        1,
+                        stride,
+                        **kwargs,
+                    ),
+                    BatchNorm2D(
+                        out_channels * block.expansion,
+                        self.momentum,
+                    ),
+                )
+        
+            layers = []
 
         self.model.extend(
             Convolution2D(3, 64, 7, 2, 3, **base_args),
