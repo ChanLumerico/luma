@@ -20,30 +20,6 @@ from luma.neural.layer import (
 )
 
 
-def _make_layer(
-    in_channels: int,
-    out_channels: int,
-    block: ResNetBlock,
-    n_block: List[int],
-    stride: int = 1,
-    **kwargs: Any,
-) -> Sequential:
-    downsample: Optional[Sequential] = None
-    if stride != 1 or in_channels != out_channels * block.expansion:
-        downsample = Sequential(
-            Convolution2D(
-                in_channels,
-                out_channels * block.expansion,
-                1,
-                stride,
-                **kwargs,
-            ),
-            BatchNorm2D(
-                out_channels * block.expansion,
-            )
-        )
-
-
 class _ResNet_18(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
@@ -104,6 +80,29 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         )
         self.check_param_ranges()
         self.build_model()
+    
+    def _make_layer(
+    in_channels: int,
+    out_channels: int,
+    block: ResNetBlock,
+    n_block: List[int],
+    stride: int = 1,
+    **kwargs: Any,
+    ) -> Sequential:
+        downsample: Optional[Sequential] = None
+        if stride != 1 or in_channels != out_channels * block.expansion:
+            downsample = Sequential(
+                Convolution2D(
+                    in_channels,
+                    out_channels * block.expansion,
+                    1,
+                    stride,
+                    **kwargs,
+                ),
+                BatchNorm2D(
+                    out_channels * block.expansion,
+                )
+            )
 
     def build_model(self) -> None:
         base_args = {
