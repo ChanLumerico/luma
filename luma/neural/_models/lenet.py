@@ -112,7 +112,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
-    
+
     input_shape: tuple = (-1, 1, 28, 28)
 
     @Tensor.force_shape(input_shape)
@@ -246,7 +246,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
-    
+
     input_shape: tuple = (-1, 1, 32, 32)
 
     @Tensor.force_shape(input_shape)

@@ -167,7 +167,7 @@ class _VGGNet_11(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
-    
+
     input_shape: tuple = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
@@ -346,7 +346,7 @@ class _VGGNet_13(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
-    
+
     input_shape: tuple = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
@@ -740,7 +740,7 @@ class _VGGNet_19(Estimator, Supervised, NeuralModel):
             lambda_=self.lambda_,
             random_state=self.random_state,
         )
-    
+
     input_shape: tuple = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)

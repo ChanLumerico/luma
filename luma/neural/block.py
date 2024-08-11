@@ -895,29 +895,29 @@ class ResNetBlock:
     References
     ----------
     `ResNet-(18, 34, 50, 101, 152)` :
-        [1] He, Kaiming, et al. “Deep Residual Learning for Image 
-        Recognition.” Proceedings of the IEEE Conference on Computer 
+        [1] He, Kaiming, et al. “Deep Residual Learning for Image
+        Recognition.” Proceedings of the IEEE Conference on Computer
         Vision and Pattern Recognition (CVPR), 2016, pp. 770-778.
 
     """
 
-    class Basic(_specials.resnet._Basic): 
+    class Basic(_specials.resnet._Basic):
         """
         Basic convolution block used in `ResNet-18` and `ResNet-34`.
-        
+
         Parameters
         ----------
         `downsampling` : LayerLike, optional
             An additional layer to the input signal which reduces
             its grid size to perform a downsampling
-        
+
         See [1] also for additional information.
         """
 
-    class Bottleneck(_specials.resnet._Bottleneck): 
+    class Bottleneck(_specials.resnet._Bottleneck):
         """
         Bottleneck block used in `ResNet-(50, 101, 152)`.
-        
+
         Parameters
         ----------
         `downsampling` : LayerLike, optional
@@ -925,6 +925,6 @@ class ResNetBlock:
             its grid size to perform a downsampling
         `expansion` : int, default=4
             Expanding factor for the number of output channels.
-        
+
         See [1] also for additional information.
         """
