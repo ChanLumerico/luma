@@ -438,16 +438,58 @@ class GlobalAvgPooling3D(_layers.pool._GlobalAvgPool3D):
 
 
 class AdaptiveAvgPooling1D(_layers.pool._AdaptiveAvgPool1D):
+    """
+    Adaptive average pooling layer for 1-dimensional data.
+
+    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size 
+    output by averaging over dynamically sized regions. It's useful for consistent 
+    output sizes in neural networks, regardless of input shape.
+
+    Parameters
+    ----------
+    `out_size` : int or tuple of int
+        An output shape to be fixed
+
+    """
+
     def __init__(self, out_size: int | Tuple[int]) -> None:
         super().__init__(out_size)
 
 
 class AdaptiveAvgPooling2D(_layers.pool._AdaptiveAvgPool2D):
+    """
+    Adaptive average pooling layer for 2-dimensional data.
+
+    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size 
+    output by averaging over dynamically sized regions. It's useful for consistent 
+    output sizes in neural networks, regardless of input shape.
+
+    Parameters
+    ----------
+    `out_size` : int or tuple of int
+        An output shape to be fixed
+
+    """
+
     def __init__(self, out_size: Tuple[int]) -> None:
         super().__init__(out_size)
 
 
 class AdaptiveAvgPooling3D(_layers.pool._AdaptiveAvgPool3D):
+    """
+    Adaptive average pooling layer for 3-dimensional data.
+
+    Adaptive Average Pooling adjusts input dimensions to produce a fixed-size 
+    output by averaging over dynamically sized regions. It's useful for consistent 
+    output sizes in neural networks, regardless of input shape.
+
+    Parameters
+    ----------
+    `out_size` : int or tuple of int
+        An output shape to be fixed
+
+    """
+
     def __init__(self, out_size: Tuple[int]) -> None:
         super().__init__(out_size)
 
