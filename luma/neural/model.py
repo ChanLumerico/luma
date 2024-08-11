@@ -26,6 +26,7 @@ __all__ = (
     "InceptionResNet_V2",
     "ResNet_18",
     "ResNet_34",
+    "ResNet_50",
 )
 
 
@@ -2042,6 +2043,105 @@ class ResNet_34(_models.resnet._ResNet_34):
         deep_verbose: bool = False,
     ) -> None:
         super(ResNet_34, self).__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class ResNet_50(_models.resnet._ResNet_50):
+    """
+    ResNet-50 is a 50-layer deep neural network that uses residual blocks
+    to improve training by learning residuals, helping prevent vanishing
+    gradients and enabling better performance in image recognition tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Residual Blocks:
+    ```py
+    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+
+    3x ResNetBlock.Bottleneck(64, 64) ->  # conv2
+    4x ResNetBlock.Bottleneck(128, 128, stride=2) ->  # conv3
+    6x ResNetBlock.Bottleneck(256, 256, stride=2) ->  # conv4
+    3x ResNetBlock.Bottleneck(512, 512, stride=2) ->  # conv5
+
+    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(512 * 4, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    25,556,032 weights, 27,560 biases -> 25,583,592 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. He, Kaiming, et al. “Deep Residual Learning for Image Recognition.”
+    Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition
+    (CVPR), 2016, pp. 770-778.
+
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super(ResNet_50, self).__init__(
             activation,
             initializer,
             out_features,
