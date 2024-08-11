@@ -51,7 +51,9 @@
                     <td>Tools for model selection and hyperparameter tuning.</td>
                 </tr>
                 <tr>
-                    <td>luma.neural</td>
+                    <td>
+                        <a href="https://github.com/ChanLumerico/luma/blob/main/luma/neural/README.md">luma.neural</a>
+                    </td>
                     <td>Deep learning models and neural network utilities. A DL package for Luma.</td>
                 </tr>
                 <tr>
