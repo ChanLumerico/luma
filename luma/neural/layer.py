@@ -18,6 +18,9 @@ __all__ = (
     "GlobalAvgPooling1D",
     "GlobalAvgPooling2D",
     "GlobalAvgPooling3D",
+    "AdaptiveAvgPooling1D",
+    "AdaptiveAvgPooling2D",
+    "AdaptiveAvgPooling3D",
     "LpPooling1D",
     "LpPooling2D",
     "LpPooling3D",
@@ -432,6 +435,21 @@ class GlobalAvgPooling3D(_layers.pool._GlobalAvgPool3D):
 
     def __init__(self) -> None:
         super().__init__()
+
+
+class AdaptiveAvgPooling1D(_layers.pool._AdaptiveAvgPool1D):
+    def __init__(self, out_size: int | Tuple[int]) -> None:
+        super().__init__(out_size)
+
+
+class AdaptiveAvgPooling2D(_layers.pool._AdaptiveAvgPool2D):
+    def __init__(self, out_size: Tuple[int]) -> None:
+        super().__init__(out_size)
+
+
+class AdaptiveAvgPooling3D(_layers.pool._AdaptiveAvgPool3D):
+    def __init__(self, out_size: Tuple[int]) -> None:
+        super().__init__(out_size)
 
 
 class LpPooling1D(_layers.pool._LpPool1D):
