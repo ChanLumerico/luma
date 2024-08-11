@@ -25,6 +25,7 @@ __all__ = (
     "InceptionResNet_V1",
     "InceptionResNet_V2",
     "ResNet_18",
+    "ResNet_34",
 )
 
 
@@ -103,7 +104,7 @@ class SimpleMLP(_models.simple._SimpleMLP):
         random_state: int | None = None,
         deep_verbose: bool = False
     ) -> None:
-        super().__init__(
+        super(SimpleMLP, self).__init__(
             in_features,
             out_features,
             hidden_layers,
@@ -259,7 +260,7 @@ class SimpleCNN(_models.simple._SimpleCNN):
         random_state: int | None = None,
         deep_verbose: bool = False
     ) -> None:
-        super().__init__(
+        super(SimpleCNN, self).__init__(
             in_channels_list,
             in_features_list,
             out_channels,
@@ -368,7 +369,7 @@ class LeNet_1(_models.lenet._LeNet_1):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(LeNet_1, self).__init__(
             activation,
             initializer,
             out_features,
@@ -458,7 +459,7 @@ class LeNet_4(_models.lenet._LeNet_4):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(LeNet_4, self).__init__(
             activation,
             initializer,
             out_features,
@@ -551,7 +552,7 @@ class LeNet_5(_models.lenet._LeNet_5):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(LeNet_5, self).__init__(
             activation,
             initializer,
             out_features,
@@ -653,7 +654,7 @@ class AlexNet(_models.alex._AlexNet):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(AlexNet, self).__init__(
             activation,
             initializer,
             out_features,
@@ -755,7 +756,7 @@ class ZFNet(_models.alex._ZFNet):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(ZFNet, self).__init__(
             activation,
             initializer,
             out_features,
@@ -859,7 +860,7 @@ class VGGNet_11(_models.vgg._VGGNet_11):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(VGGNet_11, self).__init__(
             activation,
             initializer,
             out_features,
@@ -966,7 +967,7 @@ class VGGNet_13(_models.vgg._VGGNet_13):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(VGGNet_13, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1076,7 +1077,7 @@ class VGGNet_16(_models.vgg._VGGNet_16):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(VGGNet_16, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1189,7 +1190,7 @@ class VGGNet_19(_models.vgg._VGGNet_19):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(VGGNet_19, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1303,7 +1304,7 @@ class Inception_V1(_models.incep._Inception_V1):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(Inception_V1, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1415,7 +1416,7 @@ class Inception_V2(_models.incep._Inception_V2):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(Inception_V2, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1531,7 +1532,7 @@ class Inception_V3(_models.incep._Inception_V3):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(Inception_V3, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1638,7 +1639,7 @@ class Inception_V4(_models.incep._Inception_V4):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(Inception_V4, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1740,7 +1741,7 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(InceptionResNet_V1, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1841,7 +1842,7 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(InceptionResNet_V2, self).__init__(
             activation,
             initializer,
             out_features,
@@ -1861,7 +1862,7 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
 
 class ResNet_18(_models.resnet._ResNet_18):
     """
-    ResNet18 is a 18-layer deep neural network that uses residual blocks 
+    ResNet-18 is a 18-layer deep neural network that uses residual blocks 
     to improve training by learning residuals, helping prevent vanishing 
     gradients and enabling better performance in image recognition tasks.
     
@@ -1941,7 +1942,106 @@ class ResNet_18(_models.resnet._ResNet_18):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super().__init__(
+        super(ResNet_18, self).__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class ResNet_34(_models.resnet._ResNet_34):
+    """
+    ResNet-34 is a 34-layer deep neural network that uses residual blocks 
+    to improve training by learning residuals, helping prevent vanishing 
+    gradients and enabling better performance in image recognition tasks.
+    
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Residual Blocks:
+    ```py
+    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    
+    3x ResNetBlock.Basic(64, 64) ->  # conv2
+    4x ResNetBlock.Basic(128, 128, stride=2) ->  # conv3
+    6x ResNetBlock.Basic(256, 256, stride=2) ->  # conv4
+    3x ResNetBlock.Basic(512, 512, stride=2) ->  # conv5
+    
+    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(512, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    21,796,672 weights, 9,512 biases -> 21,806,184 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. He, Kaiming, et al. “Deep Residual Learning for Image Recognition.” 
+    Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition 
+    (CVPR), 2016, pp. 770-778.
+
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super(ResNet_34, self).__init__(
             activation,
             initializer,
             out_features,
