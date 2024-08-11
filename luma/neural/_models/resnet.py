@@ -1,5 +1,5 @@
 from typing import Any, Self, override, List, Optional
-from dataclasses import asdict
+from dataclasses import asdict, dataclass
 
 from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
 from luma.interface.typing import Matrix, Tensor, TensorLike, Vector
@@ -30,7 +30,7 @@ def _make_layer(
     n_blocks: int,
     layer_num: int,
     conv_base_args: dict,
-    res_base_args: dict,
+    res_base_args: dataclass,
     stride: int = 1,
 ) -> tuple[Sequential, int]:
     downsampling: Optional[Sequential] = None
@@ -51,7 +51,7 @@ def _make_layer(
         out_channels,
         stride,
         downsampling,
-        **res_base_args,
+        **asdict(res_base_args),
     )
     layers: list = [(f"ResNetConv{layer_num}_1", first_block)]
 
@@ -59,7 +59,7 @@ def _make_layer(
     for i in range(1, n_blocks):
         new_block = (
             f"ResNetConv{layer_num}_{i + 1}",
-            block(in_channels, out_channels, **res_base_args),
+            block(in_channels, out_channels, **asdict(res_base_args)),
         )
         layers.append(new_block)
 
@@ -151,7 +151,7 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             Pooling2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
-            64, 64, BasicBlock, 2, 2, base_args, asdict(res_args)
+            64, 64, BasicBlock, 2, 2, base_args, res_args
         )
         self.layer_3, in_channels = _make_layer(
             in_channels, 128, BasicBlock, 2, 3, base_args, res_args, stride=2
