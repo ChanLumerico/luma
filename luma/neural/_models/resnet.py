@@ -21,17 +21,20 @@ from luma.neural.layer import (
     LayerLike,
 )
 
+BasicBlock = ResNetBlock.Basic
+Bottleneck = ResNetBlock.Bottleneck
+
 
 def _make_layer(
-        in_channels: int,
-        out_channels: int,
-        block: ResNetBlock,
-        n_blocks: int,
-        layer_num: int,
-        conv_base_args: dict,
-        res_base_args: dict,
-        stride: int = 1,
-        ) -> tuple[Sequential, int]:
+    in_channels: int,
+    out_channels: int,
+    block: ResNetBlock,
+    n_blocks: int,
+    layer_num: int,
+    conv_base_args: dict,
+    res_base_args: dict,
+    stride: int = 1,
+) -> tuple[Sequential, int]:
     downsampling: Optional[Sequential] = None
     if stride != 1 or in_channels != out_channels * block.expansion:
         downsampling = Sequential(
@@ -42,11 +45,8 @@ def _make_layer(
                 stride,
                 **conv_base_args,
             ),
-            BatchNorm2D(
-                out_channels * block.expansion,
-                self.momentum,
-                ),
-            )
+            BatchNorm2D(out_channels * block.expansion),
+        )
 
     first_block = block(
         in_channels,
@@ -54,7 +54,7 @@ def _make_layer(
         stride,
         downsampling,
         **res_base_args,
-        )
+    )
     layers: list = [(f"ResNetConv{layer_num}_1", first_block)]
 
     in_channels = out_channels * block.expansion
@@ -62,7 +62,7 @@ def _make_layer(
         new_block = (
             f"ResNetConv{layer_num}_{i + 1}",
             block(in_channels, out_channels, **res_base_args),
-            )
+        )
         layers.append(new_block)
 
     return Sequential(*layers), in_channels
@@ -149,12 +149,51 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             Pooling2D(3, 2, "max", "same"),
         )
 
+        self.layer_2, in_channels = _make_layer(
+            64, 64, BasicBlock, 2, 2, base_args, asdict(res_args)
+        )
+        self.layer_3, in_channels = _make_layer(
+            in_channels, 128, BasicBlock, 2, 3, base_args, res_args, stride=2
+        )
+        self.layer_4, in_channels = _make_layer(
+            in_channels, 256, BasicBlock, 2, 4, base_args, res_args, stride=2
+        )
+        self.layer_5, in_channels = _make_layer(
+            in_channels, 512, BasicBlock, 2, 5, base_args, res_args, stride=2
+        )
+
+        self.model.extend(
+            self.layer_2,
+            self.layer_3,
+            self.layer_4,
+            self.layer_5,
+            deep_add=True,
+        )
+
+        self.model.extend(
+            # AdaptiveAvgPooling2D(),
+            Flatten(),
+            Dense(512 * BasicBlock.expansion, self.out_features, **base_args),
+        )
+
     input_shape: tuple = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
-    def fit(self, *args) -> Self:
-        NotImplemented
+    def fit(self, X: Tensor, y: Matrix) -> Self:
+        return super(_ResNet_18, self).fit_nn(X, y)
 
+    @override
     @Tensor.force_shape(input_shape)
-    def predict(self, *args) -> Any:
-        NotImplemented
+    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
+        return super(_ResNet_18, self).predict_nn(X, argmax)
+
+    @override
+    @Tensor.force_shape(input_shape)
+    def score(
+        self,
+        X: Tensor,
+        y: Matrix,
+        metric: Evaluator = Accuracy,
+        argmax: bool = True,
+    ) -> float:
+        return super(_ResNet_18, self).score_nn(X, y, metric, argmax)

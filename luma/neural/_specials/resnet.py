@@ -75,7 +75,6 @@ class _Basic(LayerGraph):
                     self.out_channels,
                     self.out_channels * _Basic.expansion,
                     3,
-                    self.stride,
                     **self.basic_args
                 ),
                 BatchNorm2D(
@@ -171,11 +170,7 @@ class _Bottleneck(LayerGraph):
         self.conv_ = LayerNode(
             Sequential(
                 Convolution2D(
-                    self.in_channels,
-                    self.out_channels,
-                    1,
-                    self.stride,
-                    **self.basic_args
+                    self.in_channels, self.out_channels, 1, **self.basic_args
                 ),
                 BatchNorm2D(self.out_channels, self.momentum),
                 self.activation(),
@@ -192,7 +187,6 @@ class _Bottleneck(LayerGraph):
                     self.out_channels,
                     self.out_channels * _Bottleneck.expansion,
                     1,
-                    self.stride,
                     **self.basic_args
                 ),
                 BatchNorm2D(
