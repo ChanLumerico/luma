@@ -1862,10 +1862,10 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
 
 class ResNet_18(_models.resnet._ResNet_18):
     """
-    ResNet-18 is a 18-layer deep neural network that uses residual blocks 
-    to improve training by learning residuals, helping prevent vanishing 
+    ResNet-18 is a 18-layer deep neural network that uses residual blocks
+    to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
-    
+
     Structure
     ---------
     Input:
@@ -1875,12 +1875,12 @@ class ResNet_18(_models.resnet._ResNet_18):
     Residual Blocks:
     ```py
     Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
-    
+
     2x ResNetBlock.Basic(64, 64) ->  # conv2
     2x ResNetBlock.Basic(128, 128, stride=2) ->  # conv3
     2x ResNetBlock.Basic(256, 256, stride=2) ->  # conv4
     2x ResNetBlock.Basic(512, 512, stride=2) ->  # conv5
-    
+
     AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
@@ -1920,8 +1920,8 @@ class ResNet_18(_models.resnet._ResNet_18):
 
     References
     ----------
-    1. He, Kaiming, et al. “Deep Residual Learning for Image Recognition.” 
-    Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition 
+    1. He, Kaiming, et al. “Deep Residual Learning for Image Recognition.”
+    Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition
     (CVPR), 2016, pp. 770-778.
 
     """
@@ -1961,10 +1961,10 @@ class ResNet_18(_models.resnet._ResNet_18):
 
 class ResNet_34(_models.resnet._ResNet_34):
     """
-    ResNet-34 is a 34-layer deep neural network that uses residual blocks 
-    to improve training by learning residuals, helping prevent vanishing 
+    ResNet-34 is a 34-layer deep neural network that uses residual blocks
+    to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
-    
+
     Structure
     ---------
     Input:
@@ -1974,12 +1974,12 @@ class ResNet_34(_models.resnet._ResNet_34):
     Residual Blocks:
     ```py
     Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
-    
+
     3x ResNetBlock.Basic(64, 64) ->  # conv2
     4x ResNetBlock.Basic(128, 128, stride=2) ->  # conv3
     6x ResNetBlock.Basic(256, 256, stride=2) ->  # conv4
     3x ResNetBlock.Basic(512, 512, stride=2) ->  # conv5
-    
+
     AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
@@ -2019,8 +2019,8 @@ class ResNet_34(_models.resnet._ResNet_34):
 
     References
     ----------
-    1. He, Kaiming, et al. “Deep Residual Learning for Image Recognition.” 
-    Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition 
+    1. He, Kaiming, et al. “Deep Residual Learning for Image Recognition.”
+    Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition
     (CVPR), 2016, pp. 770-778.
 
     """
