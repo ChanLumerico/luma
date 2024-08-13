@@ -12,9 +12,9 @@ Deep learning models and neural network utilities of Luma
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Convolution1D | $(N,C_{in},W)$ | $(N,C_{out},W)$ |
-| Convolution2D | $(N,C_{in},H,W)$ | $(N,C_{out},H,W)$ |
-| Convolution3D | $(N,C_{in},D,H,W)$ | $(N,C_{out},D,H,W)$ |
+| `Convolution1D` | $(N,C_{in},W)$ | $(N,C_{out},W)$ |
+| `Convolution2D` | $(N,C_{in},H,W)$ | $(N,C_{out},H,W)$ |
+| `Convolution3D` | $(N,C_{in},D,H,W)$ | $(N,C_{out},D,H,W)$ |
 
 ### Pooling
 
