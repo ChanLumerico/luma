@@ -20,7 +20,7 @@ Deep learning models and neural network utilities of Luma
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Pooling1D | $(N,C,W_{in})$ | $(N,C,W_{in})$ |
+| Pooling1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
 | Pooling2D | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
 | Pooling3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
 | GlobalAvgPooling1D | $(N,C,W)$ | $(N,C,1)$ |
@@ -178,3 +178,126 @@ Information Processing Systems, 2012.
 ### MobileNet Series
 
 *Waiting for future updates…*
+
+---
+
+## How to Use `NeuralModel`
+
+*luma.neural.base.NeuralModel 🔗*
+
+The class `NeuralModel` is an abstract base class(ABC) for neural network models, supporting customized neural networks and dynamic model construction.
+
+### 1️⃣ Create a new model class
+
+Create a class for your custom neural model, inheriting `NeuralModel`.
+
+```python
+class MyModel(NeuralModel): ...
+```
+
+### 2️⃣ Build a constructor method
+
+Add a constructor method `__init__` with all the necessary arguments for NeuralModel included. You can add additional arguments if needed. All the necessary arguments will be auto-completed.
+
+```python
+class MyModel(NeuralModel):
+    def __init__(
+        self,
+        batch_size: int,
+        n_epochs: int,
+        valid_size: float,
+        early_stopping: bool,
+        patience: int,
+        shuffle: bool,
+        random_state: int | None,
+        deep_verbose: bool,
+    ) -> None:
+        ...
+```
+
+### 3️⃣ Initialize `self.model` attribute as a new instance of `Sequential`
+
+Your new custom neural model’s components(i.e. layers, blocks) are stacked up at the inherited `self.model`. 
+
+```python
+def __init__(self, ...) -> None:
+    ...
+    self.model = Sequential(
+        # Insert Layers if needed
+    )
+```
+
+### 4️⃣ Call `init_model()` to initialize the model attribute
+
+You must call the inherited method `init_model()` inside `__init__` in order to initialize `self.model`.
+
+```python
+def __init__(self, ...) -> None:
+    ...
+    self.model = Sequential(...)
+    self.init_model()  # Necessary
+```
+
+### 5️⃣ Call `build_model()` to construct the neural network model
+
+You must call the inherited abstract method `build_model()` inside `__init__`  in order to construct the neural network.
+
+```python
+def __init__(self, ...) -> None:
+    ...
+    self.model = Sequential(...)
+    self.init_model()
+    self.build_model()  # Necessary
+```
+
+### 6️⃣ Implement `build_model()`
+
+Use Sequential’s methods(i.e. `add()`, `extend()`) to build your custom neural network. 
+
+```python
+def build_method(self) -> None:
+    self.model.add(
+        Convolution2D(3, 64, 3),
+    )
+    self.model.extend(
+        Convolution(64, 64, 3),
+        BatchNorm2D(64),
+        Activation.ReLU(),
+    )
+    ...  # Additional Layers
+```
+
+### 7️⃣ Set optimizer, loss function, and LR scheduler
+
+An optimizer and a loss function must be assigned to the model. Learning Rate(LR) scheduler is not necessary.
+
+```python
+model = MyModel(...)
+
+# Necessary
+model.set_optimizer(AdamOptimizer(...))
+model.set_loss(CrossEntropy())
+
+# Optional
+model.set_lr_scheduler(ReduceLROnPlateau(...))
+```
+
+### 8️⃣ Fit the model
+
+Use `NeuralModel`’s method `fit_nn()` to train the model with a train dataset.
+
+```python
+model.fit_nn(X_train, y_train)
+```
+
+### 9️⃣ Make predictions
+
+Use `NeuralModel`’s method `predict_nn()` to predict an unseen dataset.
+
+```python
+y_pred = model.predict_nn(X_test, argmax=True)
+```
+
+### See Also
+
+For more detailed information, please refer to the source code of `NeuralModel`.
