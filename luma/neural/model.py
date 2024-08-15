@@ -29,6 +29,7 @@ __all__ = (
     "ResNet_50",
     "ResNet_101",
     "ResNet_152",
+    "ResNet_200",
 )
 
 
@@ -2359,3 +2360,7 @@ class ResNet_152(_models.resnet._ResNet_152):
             random_state,
             deep_verbose,
         )
+
+
+class ResNet_200():
+    NotImplemented

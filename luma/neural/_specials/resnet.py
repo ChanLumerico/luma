@@ -208,3 +208,7 @@ class _Bottleneck(LayerGraph):
     @override
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         return self.conv_.out_shape(in_shape)
+
+
+class _PreActBottleneck(LayerGraph):
+    NotImplemented
