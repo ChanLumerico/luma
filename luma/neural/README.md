@@ -94,6 +94,7 @@ Deep learning models and neural network utilities of Luma
 | IncepResBlock.V2_Redux | 24 | $(N,1280,17,17)$ | $(N,2272,8,8)$ |
 | ResNetBlock.Basic | 7~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | ResNetBlock.Bottleneck | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| ResNetBlock.PreActBottleneck | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 
 ---
 
@@ -159,7 +160,18 @@ Information Processing Systems, 2012.
 | InceptionResNet_V1 | 410 | $(N,3,299,299)$ | 21,611,648 | 33,720 | 21,645,368 | ✅ |
 | InceptionResNet_V2 | 431 | $(N,3,299,299)$ | 34,112,608 | 43,562 | 34,156,170 | ✅ |
 
+*XceptionNet*
+
+> Chollet, François. “Xception: Deep Learning with Depthwise Separable Convolutions.” Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2017, pp. 1251-1258.
+> 
+
+| Class | # of Layers | Input Shape | Weights | Biases | Implemented |
+| --- | --- | --- | --- | --- | --- |
+| XceptionNet |  |  |  |  | 🚧 |
+
 ### ResNet Series
+
+*ResNet-18, 34, 50, 101, 152*
 
 > He, Kaiming, et al. “Deep Residual Learning for Image Recognition.“ Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2016, pp. 770-778.
 > 
@@ -169,15 +181,23 @@ Information Processing Systems, 2012.
 | ResNet_18 | 77 | $(N,3,224,224)$ | 11,688,512 | 5,800 | 11,694,312 | ✅ |
 | ResNet_34 | 149 | $(N,3,224,224)$ | 21,796,672 | 9,512 | 21,806,184 | ✅ |
 | ResNet_50 | 181 | $(N,3,224,224)$ | 25,556,032 | 27,560 | 25,583,592 | ✅ |
-| ResNet_101 | 367 | $(N,3,224,234)$ | 44,548,160 | 53,762 | 44,601,832 | ✅ |
-| ResNet_152 | 554 | $(N,3,224,224)$ | 60,191,808 | 76,712 | 60,268,520 | ✅ |
-| ResNet_200 |  |  |  |  |  | ❌ |
-| ResNet_269 |  |  |  |  |  | ❌ |
-| ResNet_1001 |  |  |  |  |  | ❌ |
+| ResNet_101 | 367 | $(N,3,224,224)$ | 44,548,160 | 53,762 | 44,601,832 | ✅ |
+| ResNet_152 | 554 | $(N,3,244,244)$ | 60,191,808 | 76,712 | 60,268,520 | ✅ |
+
+*ResNet-200, 269, 1001*
+
+> He, Kaiming, et al. “Identity Mappings in Deep Residual Networks.” European Conference on Computer Vision (ECCV), 2016, pp. 630-645.
+> 
+
+| Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
+| --- | --- | --- | --- | --- | --- | --- |
+| ResNet_200 | 793 | $(N,3,244,244)$ | 64,668,864 | 89,000 | 64,757,864 | ✅ |
+| ResNet_269 | 1,069 | $(N,3,244,244)$ | 102,068,416 | 127,400 | 102,195,816 | ✅ |
+| ResNet_1001 | 1,657 | $(N,3,224,224)$ | 159,884,992 | 208,040 | 160,093,032 | ✅ |
 
 ### MobileNet Series
 
-*Waiting for future updates...🔮*
+*Waiting for future updates…🔮*
 
 ---
 
@@ -252,7 +272,7 @@ def __init__(self, ...) -> None:
 
 ### 6️⃣ Implement `build_model()`
 
-Use Sequential’s methods(i.e. `add()`, `extend()`) to build your custom neural network. 
+Use `Sequential`’s methods(i.e. `add()`, `extend()`) to build your custom neural network. 
 
 ```python
 def build_method(self) -> None:
