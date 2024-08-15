@@ -1185,7 +1185,7 @@ class Sequential(Layer):
             )
 
         return self
-    
+
     def __len__(self) -> int:
         return len(self.layers)
 

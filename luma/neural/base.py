@@ -193,16 +193,16 @@ class Scheduler(ABC, ModelBase):
     """
     Abstract base class for various Learning Rate(LR) schedulers.
 
-    Learning rate scheduler adjusts the learning rate during 
-    training to improve model convergence, prevent overshooting, 
-    and escape local minima. It dynamically changes the rate 
+    Learning rate scheduler adjusts the learning rate during
+    training to improve model convergence, prevent overshooting,
+    and escape local minima. It dynamically changes the rate
     based on performance, often reducing it when progress stalls.
 
     Parameters
     ----------
     `init_lr` : float
         Initial learning rate
-    
+
     Properties
     ----------
     To get an updated learning rate:
@@ -499,7 +499,7 @@ class NeuralModel(ABC, NeuralBase):
                 f"{str(layer.param_size):<20}",
             )
             in_shape = layer.out_shape(in_shape)
-        
+
         print("=" * 83)
         print(f"Total Layers/Blocks: {len(self.model)}")
         print(
