@@ -154,6 +154,7 @@ from luma.neural.model import (
     ResNet_18,
     ResNet_34,
     ResNet_50,
+    ResNet_101,
 )
 from luma.neural.autoprop import LayerNode, LayerGraph
 
@@ -337,7 +338,7 @@ if __name__ == "__main__":
     VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19,
     Inception_V1, Inception_V2, Inception_V3, Inception_V4,
     InceptionResNet_V1, InceptionResNet_V2,
-    ResNet_18, ResNet_34, ResNet_50
+    ResNet_18, ResNet_34, ResNet_50, ResNet_101
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity
