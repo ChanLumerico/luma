@@ -243,7 +243,7 @@ class _PreActBottleneck(LayerGraph):
         }
 
         self.init_nodes()
-        super(_Bottleneck, self).__init__(
+        super(_PreActBottleneck, self).__init__(
             graph={
                 self.rt_: [self.down_, self.conv_],
                 self.conv_: [self.sum_],

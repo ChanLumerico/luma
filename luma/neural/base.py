@@ -190,6 +190,28 @@ class Initializer(ABC):
 
 
 class Scheduler(ABC, ModelBase):
+    """
+    Abstract base class for various Learning Rate(LR) schedulers.
+
+    Learning rate scheduler adjusts the learning rate during 
+    training to improve model convergence, prevent overshooting, 
+    and escape local minima. It dynamically changes the rate 
+    based on performance, often reducing it when progress stalls.
+
+    Parameters
+    ----------
+    `init_lr` : float
+        Initial learning rate
+    
+    Properties
+    ----------
+    To get an updated learning rate:
+    ```py
+    @property
+    def new_learning_rate(self) -> float
+    ```
+    """
+
     def __init__(self, init_lr: float) -> None:
         super().__init__()
         self.init_lr = init_lr
@@ -451,7 +473,7 @@ class NeuralModel(ABC, NeuralBase):
     def param_size(self) -> tuple[int, int]:
         return self.model.param_size
 
-    def summarize(self, in_shape: tuple[int]) -> None:
+    def summarize(self, in_shape: tuple[int], n_lines: int | None = 20) -> None:
         title = f"Summary of '{str(self)}'"
         print(f"{title:^83}")
         print("-" * 83)
@@ -461,11 +483,15 @@ class NeuralModel(ABC, NeuralBase):
             )
         )
         print("=" * 83)
+        if n_lines is None:
+            n_lines = len(self.model)
 
-        n_layers = 0
         w_size, b_size = self.param_size
-        for name, layer in self.model:
-            n_layers += 1
+        for i, (name, layer) in enumerate(self.model):
+            if i == n_lines:
+                trunc_str = f"... {len(self.model) - i} more layers/blocks"
+                print(f"\n{trunc_str:^83}")
+                break
             print(
                 f"{name:<20}",
                 f"{str(layer):<20}",
@@ -473,8 +499,9 @@ class NeuralModel(ABC, NeuralBase):
                 f"{str(layer.param_size):<20}",
             )
             in_shape = layer.out_shape(in_shape)
+        
         print("=" * 83)
-        print(f"Total Layers/Blocks: {n_layers}")
+        print(f"Total Layers/Blocks: {len(self.model)}")
         print(
             f"Total Parameters: ({w_size:,} weights, {b_size:,} biases)",
             f"-> {w_size + b_size:,} params",

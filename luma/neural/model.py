@@ -2395,7 +2395,7 @@ class ResNet_200(_models.resnet._ResNet_200):
     ```
     Parameter Size:
     ```txt
-    60,191,808 weights, 76,712 biases -> 60,268,520 params
+    64,668,864 weights, 89,000 biases -> 64,757,864 params
     ```
     Parameters
     ----------
