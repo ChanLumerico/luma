@@ -120,7 +120,7 @@
                 <tr>
                     <td>Inspired By</td>
                     <td>
-                        <img src="https://skillicons.dev/icons?i=pytorch,sklearn">
+                        <img src="https://skillicons.dev/icons?i=pytorch,tensorflow,sklearn">
                     </td>
                 </tr>
             </table>
