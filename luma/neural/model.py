@@ -2362,5 +2362,5 @@ class ResNet_152(_models.resnet._ResNet_152):
         )
 
 
-class ResNet_200():
+class ResNet_200(_models.resnet._ResNet_200):
     NotImplemented

@@ -899,6 +899,11 @@ class ResNetBlock:
         Recognition.” Proceedings of the IEEE Conference on Computer
         Vision and Pattern Recognition (CVPR), 2016, pp. 770-778.
 
+    `ResNet-(200, 269, 1001)` :
+        [2] He, Kaiming, et al. “Identity Mappings in Deep Residual
+        Networks.” European Conference on Computer Vision (ECCV),
+        2016, pp. 630-645.
+
     """
 
     class Basic(_specials.resnet._Basic):
@@ -923,8 +928,20 @@ class ResNetBlock:
         `downsampling` : LayerLike, optional
             An additional layer to the input signal which reduces
             its grid size to perform a downsampling
-        `expansion` : int, default=4
-            Expanding factor for the number of output channels.
 
         See [1] also for additional information.
+        """
+
+    class PreActBottleneck(_specials.resnet._PreActBottleneck):
+        """
+        Bottleneck block with pre-activation used in
+        `ResNet-(200, 269, 1001)`.
+
+        Parameters
+        ----------
+        `downsampling` : LayerLike, optional
+            An additional layer to the input signal which reduces
+            its grid size to perform a downsampling
+
+        See [2] also for additional information.
         """

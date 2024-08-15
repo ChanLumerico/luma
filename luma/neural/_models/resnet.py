@@ -729,3 +729,7 @@ class _ResNet_152(Estimator, Supervised, NeuralModel):
         argmax: bool = True,
     ) -> float:
         return super(_ResNet_152, self).score_nn(X, y, metric, argmax)
+
+
+class _ResNet_200(Estimator, Supervised, NeuralModel):
+    NotImplemented
