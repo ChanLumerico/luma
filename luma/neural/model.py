@@ -29,10 +29,13 @@ __all__ = (
     "ResNet_50",
     "ResNet_101",
     "ResNet_152",
+    "ResNet_200",
+    "ResNet_269",
+    "ResNet_1001",
 )
 
-
-NUM_MODELS: int = len(__all__)
+MODELS: tuple[str] = __all__
+NUM_MODELS: int = len(MODELS)
 
 
 class SimpleMLP(_models.simple._SimpleMLP):
@@ -2345,6 +2348,306 @@ class ResNet_152(_models.resnet._ResNet_152):
         deep_verbose: bool = False,
     ) -> None:
         super(ResNet_152, self).__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class ResNet_200(_models.resnet._ResNet_200):
+    """
+    ResNet-200 is a 200-layer deep neural network that uses residual blocks
+    to improve training by learning residuals, helping prevent vanishing
+    gradients and enabling better performance in image recognition tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Residual Blocks:
+    ```py
+    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+
+    3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
+    24x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
+    36x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
+    3x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
+
+    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(512 * 4, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    64,668,864 weights, 89,000 biases -> 64,757,864 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. He, Kaiming, et al. “Identity Mappings in Deep Residual Networks.”
+    European Conference on Computer Vision (ECCV), 2016, pp. 630-645.
+
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super(ResNet_200, self).__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class ResNet_269(_models.resnet._ResNet_269):
+    """
+    ResNet-269 is a 269-layer deep neural network that uses residual blocks
+    to improve training by learning residuals, helping prevent vanishing
+    gradients and enabling better performance in image recognition tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Residual Blocks:
+    ```py
+    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+
+    3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
+    30x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
+    48x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
+    8x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
+
+    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(512 * 4, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    102,068,416 weights, 127,400 biases -> 102,195,816 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    1. He, Kaiming, et al. “Identity Mappings in Deep Residual Networks.”
+    European Conference on Computer Vision (ECCV), 2016, pp. 630-645.
+
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super(ResNet_269, self).__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class ResNet_1001(_models.resnet._ResNet_1001):
+    """
+    ResNet-1001 is a 1001-layer deep neural network that uses residual
+    blocks to improve training by learning residuals, helping prevent
+    vanishing gradients and enabling better performance in image
+    recognition tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Residual Blocks:
+    ```py
+    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+
+    3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
+    33x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
+    99x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
+    3x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
+
+    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(512 * 4, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    159,884,992 weights, 208,040 biases -> 160,093,032 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    Warnings
+    --------
+    * This model has highly intensive depth of convolutional layers.
+    Please consider your computational power, memory, etc.
+
+    References
+    ----------
+    1. He, Kaiming, et al. “Identity Mappings in Deep Residual Networks.”
+    European Conference on Computer Vision (ECCV), 2016, pp. 630-645.
+
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super(ResNet_1001, self).__init__(
             activation,
             initializer,
             out_features,

@@ -1186,5 +1186,8 @@ class Sequential(Layer):
 
         return self
 
+    def __len__(self) -> int:
+        return len(self.layers)
+
     def __getitem__(self, index: int) -> Tuple[str, Layer]:
         return self.layers[index]
