@@ -301,3 +301,11 @@ y_pred = model.predict_nn(X_test, argmax=True)
 ### See Also
 
 For more detailed information, please refer to the source code of `NeuralModel`.
+
+### Recommendations
+
+Since Luma's neural package supports MLX acceleration, platforms with Apple Silicon are recommended.
+
+Apple's Metal Performance Shader(MPS) will be automatically detected if available, and MLX acceleation will be applied.
+
+Otherwise, the default CPU operations are applied.
