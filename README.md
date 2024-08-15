@@ -115,6 +115,12 @@
                         <a href="https://lumerico284.notion.site/LUMA-a467e4a9e885498f87b49c952d0abecd?pvs=74">LUMA Notion Document</a>
                     </td>
                 </tr>
+                <tr>
+                    <td>Inspired By</td>
+                    <td>
+                        <img src="https://skillicons.dev/icons?i=pytorch,sklearn">
+                    </td>
+                </tr>
             </table>
         </div>
     </body>
