@@ -112,7 +112,9 @@
                 <tr>
                     <td>Documentation</td>
                     <td>
-                        <a href="https://lumerico284.notion.site/LUMA-a467e4a9e885498f87b49c952d0abecd?pvs=74">LUMA Notion Document</a>
+                        <a href="https://lumerico284.notion.site/LUMA-a467e4a9e885498f87b49c952d0abecd?pvs=74">
+                            <img src="https://skillicons.dev/icons?i=notion">
+                        </a>
                     </td>
                 </tr>
                 <tr>
