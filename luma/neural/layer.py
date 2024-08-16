@@ -9,21 +9,21 @@ from luma.neural import _layers
 
 
 __all__ = (
-    "Convolution1D",
-    "Convolution2D",
-    "Convolution3D",
-    "Pooling1D",
-    "Pooling2D",
-    "Pooling3D",
-    "GlobalAvgPooling1D",
-    "GlobalAvgPooling2D",
-    "GlobalAvgPooling3D",
-    "AdaptiveAvgPooling1D",
-    "AdaptiveAvgPooling2D",
-    "AdaptiveAvgPooling3D",
-    "LpPooling1D",
-    "LpPooling2D",
-    "LpPooling3D",
+    "Conv1D",
+    "Conv2D",
+    "Conv3D",
+    "Pool1D",
+    "Pool2D",
+    "Pool3D",
+    "GlobalAvgPool1D",
+    "GlobalAvgPool2D",
+    "GlobalAvgPool3D",
+    "AdaptiveAvgPool1D",
+    "AdaptiveAvgPool2D",
+    "AdaptiveAvgPool3D",
+    "LpPool1D",
+    "LpPool2D",
+    "LpPool3D",
     "Dense",
     "Dropout",
     "Dropout1D",
@@ -41,7 +41,7 @@ __all__ = (
 )
 
 
-class Convolution1D(_layers.conv._Conv1D):
+class Conv1D(_layers.conv._Conv1D):
     """
     Convolutional layer for 1-dimensional data.
 
@@ -106,7 +106,7 @@ class Convolution1D(_layers.conv._Conv1D):
         )
 
 
-class Convolution2D(_layers.conv._Conv2D):
+class Conv2D(_layers.conv._Conv2D):
     """
     Convolutional layer for 2-dimensional data.
 
@@ -171,7 +171,7 @@ class Convolution2D(_layers.conv._Conv2D):
         )
 
 
-class Convolution3D(_layers.conv._Conv3D):
+class Conv3D(_layers.conv._Conv3D):
     """
     Convolutional layer for 3-dimensional data.
 
@@ -236,7 +236,7 @@ class Convolution3D(_layers.conv._Conv3D):
         )
 
 
-class Pooling1D(_layers.pool._Pool1D):
+class Pool1D(_layers.pool._Pool1D):
     """
     Pooling layer for 1-dimensional data.
 
@@ -278,7 +278,7 @@ class Pooling1D(_layers.pool._Pool1D):
         super().__init__(filter_size, stride, mode, padding)
 
 
-class Pooling2D(_layers.pool._Pool2D):
+class Pool2D(_layers.pool._Pool2D):
     """
     Pooling layer for 2-dimensional data.
 
@@ -320,7 +320,7 @@ class Pooling2D(_layers.pool._Pool2D):
         super().__init__(filter_size, stride, mode, padding)
 
 
-class Pooling3D(_layers.pool._Pool3D):
+class Pool3D(_layers.pool._Pool3D):
     """
     Pooling layer for 3-dimensional data.
 
@@ -362,7 +362,7 @@ class Pooling3D(_layers.pool._Pool3D):
         super().__init__(filter_size, stride, mode, padding)
 
 
-class GlobalAvgPooling1D(_layers.pool._GlobalAvgPool1D):
+class GlobalAvgPool1D(_layers.pool._GlobalAvgPool1D):
     """
     Global average pooling layer for 1-dimensional data.
 
@@ -387,7 +387,7 @@ class GlobalAvgPooling1D(_layers.pool._GlobalAvgPool1D):
         super().__init__()
 
 
-class GlobalAvgPooling2D(_layers.pool._GlobalAvgPool2D):
+class GlobalAvgPool2D(_layers.pool._GlobalAvgPool2D):
     """
     Global average pooling layer for 2-dimensional data.
 
@@ -412,7 +412,7 @@ class GlobalAvgPooling2D(_layers.pool._GlobalAvgPool2D):
         super().__init__()
 
 
-class GlobalAvgPooling3D(_layers.pool._GlobalAvgPool3D):
+class GlobalAvgPool3D(_layers.pool._GlobalAvgPool3D):
     """
     Global average pooling layer for 3-dimensional data.
 
@@ -437,7 +437,7 @@ class GlobalAvgPooling3D(_layers.pool._GlobalAvgPool3D):
         super().__init__()
 
 
-class AdaptiveAvgPooling1D(_layers.pool._AdaptiveAvgPool1D):
+class AdaptiveAvgPool1D(_layers.pool._AdaptiveAvgPool1D):
     """
     Adaptive average pooling layer for 1-dimensional data.
 
@@ -456,7 +456,7 @@ class AdaptiveAvgPooling1D(_layers.pool._AdaptiveAvgPool1D):
         super().__init__(out_size)
 
 
-class AdaptiveAvgPooling2D(_layers.pool._AdaptiveAvgPool2D):
+class AdaptiveAvgPool2D(_layers.pool._AdaptiveAvgPool2D):
     """
     Adaptive average pooling layer for 2-dimensional data.
 
@@ -475,7 +475,7 @@ class AdaptiveAvgPooling2D(_layers.pool._AdaptiveAvgPool2D):
         super().__init__(out_size)
 
 
-class AdaptiveAvgPooling3D(_layers.pool._AdaptiveAvgPool3D):
+class AdaptiveAvgPool3D(_layers.pool._AdaptiveAvgPool3D):
     """
     Adaptive average pooling layer for 3-dimensional data.
 
@@ -494,7 +494,7 @@ class AdaptiveAvgPooling3D(_layers.pool._AdaptiveAvgPool3D):
         super().__init__(out_size)
 
 
-class LpPooling1D(_layers.pool._LpPool1D):
+class LpPool1D(_layers.pool._LpPool1D):
     """
     Lp pooling layer for 1-dimensional data.
 
@@ -534,7 +534,7 @@ class LpPooling1D(_layers.pool._LpPool1D):
         super().__init__(filter_size, stride, p, padding)
 
 
-class LpPooling2D(_layers.pool._LpPool2D):
+class LpPool2D(_layers.pool._LpPool2D):
     """
     Lp pooling layer for 2-dimensional data.
 
@@ -574,7 +574,7 @@ class LpPooling2D(_layers.pool._LpPool2D):
         super().__init__(filter_size, stride, p, padding)
 
 
-class LpPooling3D(_layers.pool._LpPool3D):
+class LpPool3D(_layers.pool._LpPool3D):
     """
     Lp pooling layer for 3-dimensional data.
 

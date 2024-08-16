@@ -133,7 +133,7 @@ class ConvBlock1D(Sequential):
         self.check_param_ranges()
 
         super(ConvBlock1D, self).__init__(
-            Convolution1D(
+            Conv1D(
                 in_channels,
                 out_channels,
                 filter_size,
@@ -154,7 +154,7 @@ class ConvBlock1D(Sequential):
         )
         if do_pooling:
             super(ConvBlock1D, self).__add__(
-                Pooling1D(
+                Pool1D(
                     pool_filter_size,
                     pool_stride,
                     pool_mode,
@@ -259,7 +259,7 @@ class ConvBlock2D(Sequential):
         self.check_param_ranges()
 
         super(ConvBlock2D, self).__init__(
-            Convolution2D(
+            Conv2D(
                 in_channels,
                 out_channels,
                 filter_size,
@@ -280,7 +280,7 @@ class ConvBlock2D(Sequential):
         )
         if do_pooling:
             super(ConvBlock2D, self).__add__(
-                Pooling2D(
+                Pool2D(
                     pool_filter_size,
                     pool_stride,
                     pool_mode,
@@ -385,7 +385,7 @@ class ConvBlock3D(Sequential):
         self.check_param_ranges()
 
         super(ConvBlock3D, self).__init__(
-            Convolution3D(
+            Conv3D(
                 in_channels,
                 out_channels,
                 filter_size,
@@ -406,7 +406,7 @@ class ConvBlock3D(Sequential):
         )
         if do_pooling:
             super(ConvBlock3D, self).__add__(
-                Pooling3D(
+                Pool3D(
                     pool_filter_size,
                     pool_stride,
                     pool_mode,

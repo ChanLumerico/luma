@@ -14,9 +14,9 @@ from luma.neural.block import (
     IncepResBlock,
 )
 from luma.neural.layer import (
-    Convolution2D,
-    Pooling2D,
-    GlobalAvgPooling2D,
+    Conv2D,
+    Pool2D,
+    GlobalAvgPool2D,
     BatchNorm2D,
     Activation,
     Dropout,
@@ -112,17 +112,17 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
 
         self.model.extend(
-            Convolution2D(64, 64, 1, 1, "valid", **base_args),
+            Conv2D(64, 64, 1, 1, "valid", **base_args),
             self.activation(),
-            Convolution2D(64, 192, 3, 1, "valid", **base_args),
+            Conv2D(64, 192, 3, 1, "valid", **base_args),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
 
         self.model.extend(
@@ -134,7 +134,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
                 "Inception_3b",
                 IncepBlock.V1(256, 128, 128, 192, 32, 96, 64, **asdict(incep_args)),
             ),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
             deep_add=False,
         )
 
@@ -159,7 +159,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
                 "Inception_4e",
                 IncepBlock.V1(528, 256, 160, 320, 32, 128, 128, **asdict(incep_args)),
             ),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
             deep_add=False,
         )
 
@@ -172,7 +172,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
                 "Inception_5b",
                 IncepBlock.V1(832, 384, 192, 384, 48, 128, 128, **asdict(incep_args)),
             ),
-            GlobalAvgPooling2D(),
+            GlobalAvgPool2D(),
             Dropout(self.dropout_rate, self.random_state),
             deep_add=False,
         )
@@ -280,21 +280,21 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 32, 3, 2, "valid", **base_args),
+            Conv2D(3, 32, 3, 2, "valid", **base_args),
             self.activation(),
-            Convolution2D(32, 32, 3, 1, "valid", **base_args),
+            Conv2D(32, 32, 3, 1, "valid", **base_args),
             self.activation(),
-            Convolution2D(32, 64, 3, 1, "same", **base_args),
+            Conv2D(32, 64, 3, 1, "same", **base_args),
             self.activation(),
-            Pooling2D(3, 2, "max", "valid"),
+            Pool2D(3, 2, "max", "valid"),
         )
 
         self.model.extend(
-            Convolution2D(64, 80, 3, 1, "valid", **base_args),
+            Conv2D(64, 80, 3, 1, "valid", **base_args),
             self.activation(),
-            Convolution2D(80, 192, 3, 2, "valid", **base_args),
+            Conv2D(80, 192, 3, 2, "valid", **base_args),
             self.activation(),
-            Convolution2D(192, 288, 3, 1, "same", **base_args),
+            Conv2D(192, 288, 3, 1, "same", **base_args),
             self.activation(),
         )
 
@@ -379,7 +379,7 @@ class _Inception_V2(Estimator, Supervised, NeuralModel):
             deep_add=False,
         )
 
-        self.model.add(GlobalAvgPooling2D())
+        self.model.add(GlobalAvgPool2D())
         self.model.add(Flatten())
         self.model.extend(
             Dropout(self.dropout_rate, self.random_state),
@@ -489,26 +489,26 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 32, 3, 2, "valid", **base_args),
+            Conv2D(3, 32, 3, 2, "valid", **base_args),
             BatchNorm2D(32),
             self.activation(),
-            Convolution2D(32, 32, 3, 1, "valid", **base_args),
+            Conv2D(32, 32, 3, 1, "valid", **base_args),
             BatchNorm2D(32),
             self.activation(),
-            Convolution2D(32, 64, 3, 1, "same", **base_args),
+            Conv2D(32, 64, 3, 1, "same", **base_args),
             BatchNorm2D(64),
             self.activation(),
-            Pooling2D(3, 2, "max", "valid"),
+            Pool2D(3, 2, "max", "valid"),
         )
 
         self.model.extend(
-            Convolution2D(64, 80, 3, 1, "valid", **base_args),
+            Conv2D(64, 80, 3, 1, "valid", **base_args),
             BatchNorm2D(80),
             self.activation(),
-            Convolution2D(80, 192, 3, 2, "valid", **base_args),
+            Conv2D(80, 192, 3, 2, "valid", **base_args),
             BatchNorm2D(192),
             self.activation(),
-            Convolution2D(192, 288, 3, 1, "same", **base_args),
+            Conv2D(192, 288, 3, 1, "same", **base_args),
             BatchNorm2D(288),
             self.activation(),
         )
@@ -594,7 +594,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
             deep_add=False,
         )
 
-        self.model.add(GlobalAvgPooling2D())
+        self.model.add(GlobalAvgPool2D())
         self.model.add(Flatten())
         self.model.extend(
             Dropout(self.dropout_rate, self.random_state),
@@ -721,7 +721,7 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
             )
 
         self.model.extend(
-            GlobalAvgPooling2D(),
+            GlobalAvgPool2D(),
             Flatten(),
             Dropout(self.dropout_rate, self.random_state),
             Dense(1536, self.out_features),
@@ -846,7 +846,7 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
             )
 
         self.model.extend(
-            GlobalAvgPooling2D(),
+            GlobalAvgPool2D(),
             Flatten(),
             Dropout(self.dropout_rate, self.random_state),
             Dense(1792, self.out_features),
@@ -974,7 +974,7 @@ class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
             )
 
         self.model.extend(
-            GlobalAvgPooling2D(),
+            GlobalAvgPool2D(),
             Flatten(),
             Dropout(self.dropout_rate, self.random_state),
             Dense(2272, self.out_features),

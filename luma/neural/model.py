@@ -798,17 +798,17 @@ class VGGNet_11(_models.vgg._VGGNet_11):
     ```
     Convolutional Blocks:
     ```py
-    ConvBlock2D(3, 64) -> Pooling2D(2, 2, "max") ->  # Conv_1
-    ConvBlock2D(64, 128) -> Pooling2D(2, 2, "max") ->  # Conv_2
+    ConvBlock2D(3, 64) -> Pool2D(2, 2, "max") ->  # Conv_1
+    ConvBlock2D(64, 128) -> Pool2D(2, 2, "max") ->  # Conv_2
 
     ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_3
-    ConvBlock2D(256, 256) -> Pooling2D(2, 2, "max") ->  # Conv_4
+    ConvBlock2D(256, 256) -> Pool2D(2, 2, "max") ->  # Conv_4
 
     ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_5
-    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_6
+    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_6
 
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_7
-    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_8
+    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_8
     ```
     Fully Connected Layers:
     ```py
@@ -903,19 +903,19 @@ class VGGNet_13(_models.vgg._VGGNet_13):
     Convolutional Blocks:
     ```py
     ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
-    ConvBlock2D(64, 64) -> Pooling2D(2, 2, "max") ->  # Conv_2
+    ConvBlock2D(64, 64) -> Pool2D(2, 2, "max") ->  # Conv_2
 
     ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
-    ConvBlock2D(128, 128) -> Pooling2D(2, 2, "max") ->  # Conv_4
+    ConvBlock2D(128, 128) -> Pool2D(2, 2, "max") ->  # Conv_4
 
     ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
-    ConvBlock2D(256, 256) -> Pooling2D(2, 2, "max") ->  # Conv_6
+    ConvBlock2D(256, 256) -> Pool2D(2, 2, "max") ->  # Conv_6
 
     ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_7
-    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_8
+    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_8
 
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_9
-    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_10
+    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_10
     ```
     Fully Connected Layers:
     ```py
@@ -1010,22 +1010,22 @@ class VGGNet_16(_models.vgg._VGGNet_16):
     Convolutional Blocks:
     ```py
     ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
-    ConvBlock2D(64, 64) -> Pooling2D(2, 2, "max") ->  # Conv_2
+    ConvBlock2D(64, 64) -> Pool2D(2, 2, "max") ->  # Conv_2
 
     ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
-    ConvBlock2D(128, 128) -> Pooling2D(2, 2, "max") ->  # Conv_4
+    ConvBlock2D(128, 128) -> Pool2D(2, 2, "max") ->  # Conv_4
 
     ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
     ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_6
-    ConvBlock2D(256, 256) -> Pooling2D(2, 2, "max") ->  # Conv_7
+    ConvBlock2D(256, 256) -> Pool2D(2, 2, "max") ->  # Conv_7
 
     ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_8
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_9
-    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_10
+    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_10
 
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_11
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_12
-    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_13
+    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_13
     ```
     Fully Connected Layers:
     ```py
@@ -1120,25 +1120,25 @@ class VGGNet_19(_models.vgg._VGGNet_19):
     Convolutional Blocks:
     ```py
     ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
-    ConvBlock2D(64, 64) -> Pooling2D(2, 2, "max") ->  # Conv_2
+    ConvBlock2D(64, 64) -> Pool2D(2, 2, "max") ->  # Conv_2
 
     ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
-    ConvBlock2D(128, 128) -> Pooling2D(2, 2, "max") ->  # Conv_4
+    ConvBlock2D(128, 128) -> Pool2D(2, 2, "max") ->  # Conv_4
 
     ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
     ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_6
     ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_7
-    ConvBlock2D(256, 256) -> Pooling2D(2, 2, "max") ->  # Conv_8
+    ConvBlock2D(256, 256) -> Pool2D(2, 2, "max") ->  # Conv_8
 
     ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_9
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_10
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_11
-    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_12
+    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_12
 
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_13
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_14
     ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_15
-    ConvBlock2D(512, 512) -> Pooling2D(2, 2, "max") ->  # Conv_16
+    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_16
     ```
     Fully Connected Layers:
     ```py
@@ -1242,18 +1242,18 @@ class Inception_V1(_models.incep._Inception_V1):
     ```py
     IncepBlock.V1(192) ->  # Inception_3a
     IncepBlock.V1(256) ->  # Inception_3b
-    Pooling2D(3, 2, mode="max") ->
+    Pool2D(3, 2, mode="max") ->
 
     IncepBlock.V1(480) ->  # Inception_4a
     IncepBlock.V1(512) ->  # Inception_4b
     IncepBlock.V1(512) ->  # Inception_4c
     IncepBlock.V1(512) ->  # Inception_4d
     IncepBlock.V1(528) ->  # Inception_4e
-    Pooling2D(3, 2, mode="max") ->
+    Pool2D(3, 2, mode="max") ->
 
     IncepBlock.V1(832) ->  # Inception_5a
     IncepBlock.V1(832) ->  # Inception_5b
-    GlobalAvgPooling2D() ->
+    GlobalAvgPool2D() ->
     ```
     Fully Connected Layers:
     ```py
@@ -1350,7 +1350,7 @@ class Inception_V2(_models.incep._Inception_V2):
     ConvBlock2D(3, 32, filter_size=3, stride=2) ->
     ConvBlock2D(32, 32, filter_size=3, stride=1) ->
     ConvBlock2D(32, 64, filter_size=3, stride=1) ->
-    Pooling2D(3, 2, mode="max") ->
+    Pool2D(3, 2, mode="max") ->
 
     ConvBlock2D(64, 80, filter_size=3, stride=1) ->
     ConvBlock2D(80, 192, filter_size=3, stride=2) ->
@@ -1365,7 +1365,7 @@ class Inception_V2(_models.incep._Inception_V2):
     IncepBlock.V2_Redux(768) ->  # Inception_Rx2
 
     2x IncepBlock.V2_TypeC([1280, 2048]) ->  # Inception_5
-    GlobalAvgPooling2D() ->
+    GlobalAvgPool2D() ->
     ```
     Fully Connected Layers:
     ```py
@@ -1463,7 +1463,7 @@ class Inception_V3(_models.incep._Inception_V3):
     ConvBlock2D(3, 32, filter_size=3, stride=2) ->
     ConvBlock2D(32, 32, filter_size=3, stride=1) ->
     ConvBlock2D(32, 64, filter_size=3, stride=1) ->
-    Pooling2D(3, 2, mode="max") ->
+    Pool2D(3, 2, mode="max") ->
 
     ConvBlock2D(64, 80, filter_size=3, stride=1) ->
     ConvBlock2D(80, 192, filter_size=3, stride=2) ->
@@ -1478,7 +1478,7 @@ class Inception_V3(_models.incep._Inception_V3):
     IncepBlock.V2_Redux(768) ->  # Inception_Rx2
 
     2x IncepBlock.V2_TypeC([1280, 2048]) ->  # Inception_5
-    GlobalAvgPooling2D() ->
+    GlobalAvgPool2D() ->
     ```
     Fully Connected Layers:
     ```py
@@ -1584,7 +1584,7 @@ class Inception_V4(_models.incep._Inception_V4):
     IncepBlock.V4_ReduxB() ->  # Redux Type B
 
     3x IncepBlock.V4_TypeC() ->  # Type C
-    GlobalAvgPooling2D() ->
+    GlobalAvgPool2D() ->
     Dropout(0.8) ->
     ```
     Fully Connected Layers:
@@ -1691,7 +1691,7 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
     IncepResBlock.V1_Redux() ->  # Redux Type B
 
     5x IncepResBlock.V1_TypeC() ->  # Type C
-    GlobalAvgPooling2D() ->
+    GlobalAvgPool2D() ->
     Dropout(0.8) ->
     ```
     Fully Connected Layers:
@@ -1792,7 +1792,7 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
     IncepResBlock.V2_Redux() ->  # Redux Type B
 
     5x IncepResBlock.V2_TypeC() ->  # Type C
-    GlobalAvgPooling2D() ->
+    GlobalAvgPool2D() ->
     Dropout(0.8) ->
     ```
     Fully Connected Layers:
@@ -1883,14 +1883,14 @@ class ResNet_18(_models.resnet._ResNet_18):
     ```
     Residual Blocks:
     ```py
-    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
 
     2x ResNetBlock.Basic(64, 64) ->  # conv2
     2x ResNetBlock.Basic(128, 128, stride=2) ->  # conv3
     2x ResNetBlock.Basic(256, 256, stride=2) ->  # conv4
     2x ResNetBlock.Basic(512, 512, stride=2) ->  # conv5
 
-    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
     ```py
@@ -1982,14 +1982,14 @@ class ResNet_34(_models.resnet._ResNet_34):
     ```
     Residual Blocks:
     ```py
-    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
 
     3x ResNetBlock.Basic(64, 64) ->  # conv2
     4x ResNetBlock.Basic(128, 128, stride=2) ->  # conv3
     6x ResNetBlock.Basic(256, 256, stride=2) ->  # conv4
     3x ResNetBlock.Basic(512, 512, stride=2) ->  # conv5
 
-    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
     ```py
@@ -2081,14 +2081,14 @@ class ResNet_50(_models.resnet._ResNet_50):
     ```
     Residual Blocks:
     ```py
-    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
 
     3x ResNetBlock.Bottleneck(64, 64) ->  # conv2
     4x ResNetBlock.Bottleneck(128, 128, stride=2) ->  # conv3
     6x ResNetBlock.Bottleneck(256, 256, stride=2) ->  # conv4
     3x ResNetBlock.Bottleneck(512, 512, stride=2) ->  # conv5
 
-    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
     ```py
@@ -2180,14 +2180,14 @@ class ResNet_101(_models.resnet._ResNet_101):
     ```
     Residual Blocks:
     ```py
-    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
 
     3x ResNetBlock.Bottleneck(64, 64) ->  # conv2
     4x ResNetBlock.Bottleneck(128, 128, stride=2) ->  # conv3
     23x ResNetBlock.Bottleneck(256, 256, stride=2) ->  # conv4
     3x ResNetBlock.Bottleneck(512, 512, stride=2) ->  # conv5
 
-    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
     ```py
@@ -2279,14 +2279,14 @@ class ResNet_152(_models.resnet._ResNet_152):
     ```
     Residual Blocks:
     ```py
-    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
 
     3x ResNetBlock.Bottleneck(64, 64) ->  # conv2
     8x ResNetBlock.Bottleneck(128, 128, stride=2) ->  # conv3
     36x ResNetBlock.Bottleneck(256, 256, stride=2) ->  # conv4
     3x ResNetBlock.Bottleneck(512, 512, stride=2) ->  # conv5
 
-    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
     ```py
@@ -2378,14 +2378,14 @@ class ResNet_200(_models.resnet._ResNet_200):
     ```
     Residual Blocks:
     ```py
-    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
 
     3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
     24x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
     36x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
     3x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
 
-    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
     ```py
@@ -2476,14 +2476,14 @@ class ResNet_269(_models.resnet._ResNet_269):
     ```
     Residual Blocks:
     ```py
-    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
 
     3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
     30x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
     48x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
     8x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
 
-    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
     ```py
@@ -2575,14 +2575,14 @@ class ResNet_1001(_models.resnet._ResNet_1001):
     ```
     Residual Blocks:
     ```py
-    Convolution2D(3, 64, filter_size=7, stride=2) ->  # conv1
+    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
 
     3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
     33x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
     99x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
     3x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
 
-    AdaptiveAvgPooling2D((1, 1)) ->  # avg pool
+    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
     ```
     Fully Connected Layers:
     ```py

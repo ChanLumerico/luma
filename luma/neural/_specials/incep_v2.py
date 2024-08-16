@@ -52,35 +52,35 @@ class _Incep_V2_TypeA(Sequential):
         self.check_param_ranges()
 
         self.branch_1x1 = Sequential(
-            Convolution2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
             BatchNorm2D(out_1x1, momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_3x3 = Sequential(
-            Convolution2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
             BatchNorm2D(red_3x3, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_3x3, out_3x3, 3, 1, "same", **basic_args),
+            Conv2D(red_3x3, out_3x3, 3, 1, "same", **basic_args),
             BatchNorm2D(out_3x3, momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_3x3_db = Sequential(
-            Convolution2D(in_channels, red_3x3_db, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, red_3x3_db, 1, 1, "valid", **basic_args),
             BatchNorm2D(red_3x3_db, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_3x3_db, out_3x3_db[0], 3, 1, "same", **basic_args),
+            Conv2D(red_3x3_db, out_3x3_db[0], 3, 1, "same", **basic_args),
             BatchNorm2D(out_3x3_db[0], momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(out_3x3_db[0], out_3x3_db[1], 3, 1, "same", **basic_args),
+            Conv2D(out_3x3_db[0], out_3x3_db[1], 3, 1, "same", **basic_args),
             BatchNorm2D(out_3x3_db[1], momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_pool = Sequential(
-            Pooling2D(3, 1, "avg", "same"),
-            Convolution2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
+            Pool2D(3, 1, "avg", "same"),
+            Conv2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
             BatchNorm2D(out_pool, momentum) if do_batch_norm else None,
             activation(),
         )
@@ -188,50 +188,46 @@ class _Incep_V2_TypeB(Sequential):
         self.check_param_ranges()
 
         self.branch_1x1 = Sequential(
-            Convolution2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
             BatchNorm2D(out_1x1, momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_7x7 = Sequential(
-            Convolution2D(in_channels, red_7x7, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, red_7x7, 1, 1, "valid", **basic_args),
             BatchNorm2D(red_7x7, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_7x7, red_7x7, (1, 7), 1, (0, 3), **basic_args),
+            Conv2D(red_7x7, red_7x7, (1, 7), 1, (0, 3), **basic_args),
             BatchNorm2D(red_7x7, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_7x7, out_7x7, (7, 1), 1, (3, 0), **basic_args),
+            Conv2D(red_7x7, out_7x7, (7, 1), 1, (3, 0), **basic_args),
             BatchNorm2D(out_7x7, momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_7x7_db = Sequential(
-            Convolution2D(in_channels, red_7x7_db, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, red_7x7_db, 1, 1, "valid", **basic_args),
             BatchNorm2D(red_7x7_db, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_7x7_db, red_7x7_db, (1, 7), 1, (0, 3), **basic_args),
+            Conv2D(red_7x7_db, red_7x7_db, (1, 7), 1, (0, 3), **basic_args),
             BatchNorm2D(red_7x7_db, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_7x7_db, out_7x7_db[0], (7, 1), 1, (3, 0), **basic_args),
+            Conv2D(red_7x7_db, out_7x7_db[0], (7, 1), 1, (3, 0), **basic_args),
             BatchNorm2D(out_7x7_db[0], momentum) if do_batch_norm else None,
             activation(),
         )
         self.branch_7x7_db.extend(
-            Convolution2D(
-                out_7x7_db[0], out_7x7_db[0], (1, 7), 1, (0, 3), **basic_args
-            ),
+            Conv2D(out_7x7_db[0], out_7x7_db[0], (1, 7), 1, (0, 3), **basic_args),
             BatchNorm2D(out_7x7_db[0], momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(
-                out_7x7_db[0], out_7x7_db[1], (7, 1), 1, (3, 0), **basic_args
-            ),
+            Conv2D(out_7x7_db[0], out_7x7_db[1], (7, 1), 1, (3, 0), **basic_args),
             BatchNorm2D(out_7x7_db[1], momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_pool = Sequential(
-            Pooling2D(3, 1, "max", "same"),
-            Convolution2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
+            Pool2D(3, 1, "max", "same"),
+            Conv2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
             BatchNorm2D(out_pool, momentum) if do_batch_norm else None,
             activation(),
         )
@@ -340,53 +336,49 @@ class _Incep_V2_TypeC(Sequential):
         self.check_param_ranges()
 
         self.branch_1x1 = Sequential(
-            Convolution2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, out_1x1, 1, 1, "valid", **basic_args),
             BatchNorm2D(out_1x1, momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_1x3_3x1 = Sequential(
-            Convolution2D(in_channels, red_1x3_3x1, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, red_1x3_3x1, 1, 1, "valid", **basic_args),
             BatchNorm2D(red_1x3_3x1, momentum) if do_batch_norm else None,
             activation(),
         )
         self.branch_1x3_3x1_left = Sequential(
-            Convolution2D(red_1x3_3x1, out_1x3_3x1[0], (1, 3), 1, (0, 1), **basic_args),
+            Conv2D(red_1x3_3x1, out_1x3_3x1[0], (1, 3), 1, (0, 1), **basic_args),
             BatchNorm2D(out_1x3_3x1[0], momentum) if do_batch_norm else None,
             activation(),
         )
         self.branch_1x3_3x1_right = Sequential(
-            Convolution2D(red_1x3_3x1, out_1x3_3x1[1], (3, 1), 1, (1, 0), **basic_args),
+            Conv2D(red_1x3_3x1, out_1x3_3x1[1], (3, 1), 1, (1, 0), **basic_args),
             BatchNorm2D(out_1x3_3x1[1], momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_3x3 = Sequential(
-            Convolution2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
             BatchNorm2D(red_3x3, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_3x3, out_3x3, 3, 1, "same", **basic_args),
+            Conv2D(red_3x3, out_3x3, 3, 1, "same", **basic_args),
             BatchNorm2D(out_3x3, momentum) if do_batch_norm else None,
             activation(),
         )
         self.branch_3x3_left = Sequential(
-            Convolution2D(
-                out_3x3, out_1x3_3x1_after[0], (1, 3), 1, (0, 1), **basic_args
-            ),
+            Conv2D(out_3x3, out_1x3_3x1_after[0], (1, 3), 1, (0, 1), **basic_args),
             BatchNorm2D(out_1x3_3x1_after[0], momentum) if do_batch_norm else None,
             activation(),
         )
         self.branch_3x3_right = Sequential(
-            Convolution2D(
-                out_3x3, out_1x3_3x1_after[1], (3, 1), 1, (1, 0), **basic_args
-            ),
+            Conv2D(out_3x3, out_1x3_3x1_after[1], (3, 1), 1, (1, 0), **basic_args),
             BatchNorm2D(out_1x3_3x1_after[1], momentum) if do_batch_norm else None,
             activation(),
         )
 
         self.branch_pool = Sequential(
-            Pooling2D(3, 1, "max", "same"),
-            Convolution2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
+            Pool2D(3, 1, "max", "same"),
+            Conv2D(in_channels, out_pool, 1, 1, "valid", **basic_args),
             BatchNorm2D(out_pool, momentum) if do_batch_norm else None,
             activation(),
         )
@@ -543,26 +535,26 @@ class _Incep_V2_Redux(Sequential):
         self.check_param_ranges()
 
         self.branch_3x3 = Sequential(
-            Convolution2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, red_3x3, 1, 1, "valid", **basic_args),
             BatchNorm2D(red_3x3, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_3x3, out_3x3, 3, 2, "valid", **basic_args),
+            Conv2D(red_3x3, out_3x3, 3, 2, "valid", **basic_args),
             BatchNorm2D(out_3x3, momentum) if do_batch_norm else None,
             activation(),
         )
         self.branch_3x3_db = Sequential(
-            Convolution2D(in_channels, red_3x3_db, 1, 1, "valid", **basic_args),
+            Conv2D(in_channels, red_3x3_db, 1, 1, "valid", **basic_args),
             BatchNorm2D(red_3x3_db, momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(red_3x3_db, out_3x3_db[0], 3, 1, "same", **basic_args),
+            Conv2D(red_3x3_db, out_3x3_db[0], 3, 1, "same", **basic_args),
             BatchNorm2D(out_3x3_db[0], momentum) if do_batch_norm else None,
             activation(),
-            Convolution2D(out_3x3_db[0], out_3x3_db[1], 3, 2, "valid", **basic_args),
+            Conv2D(out_3x3_db[0], out_3x3_db[1], 3, 2, "valid", **basic_args),
             BatchNorm2D(out_3x3_db[1], momentum) if do_batch_norm else None,
             activation(),
         )
         self.branch_pool = Sequential(
-            Pooling2D(3, 2, "max", "valid"),
+            Pool2D(3, 2, "max", "valid"),
         )
 
         super(_Incep_V2_Redux, self).__init__()
