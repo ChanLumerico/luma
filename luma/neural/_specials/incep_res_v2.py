@@ -59,7 +59,7 @@ class _IncepRes_V2_TypeA(LayerGraph):
 
         self.br_a = LayerNode(
             Sequential(
-                Convolution2D(384, 32, 1, 1, "same", **self.basic_args),
+                Conv2D(384, 32, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(32, self.momentum),
                 self.activation(),
             ),
@@ -67,10 +67,10 @@ class _IncepRes_V2_TypeA(LayerGraph):
         )
         self.br_b = LayerNode(
             Sequential(
-                Convolution2D(384, 32, 1, 1, "same", **self.basic_args),
+                Conv2D(384, 32, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(32, self.momentum),
                 self.activation(),
-                Convolution2D(32, 32, 3, 1, "same", **self.basic_args),
+                Conv2D(32, 32, 3, 1, "same", **self.basic_args),
                 BatchNorm2D(32, self.momentum),
                 self.activation(),
             ),
@@ -78,13 +78,13 @@ class _IncepRes_V2_TypeA(LayerGraph):
         )
         self.br_c = LayerNode(
             Sequential(
-                Convolution2D(384, 32, 1, 1, "same", **self.basic_args),
+                Conv2D(384, 32, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(32, self.momentum),
                 self.activation(),
-                Convolution2D(32, 48, 3, 1, "same", **self.basic_args),
+                Conv2D(32, 48, 3, 1, "same", **self.basic_args),
                 BatchNorm2D(48, self.momentum),
                 self.activation(),
-                Convolution2D(48, 64, 3, 1, "same", **self.basic_args),
+                Conv2D(48, 64, 3, 1, "same", **self.basic_args),
                 BatchNorm2D(48, self.momentum),
                 self.activation(),
             ),
@@ -93,7 +93,7 @@ class _IncepRes_V2_TypeA(LayerGraph):
 
         self.br_cat = LayerNode(
             Sequential(
-                Convolution2D(128, 384, 1, 1, "same", **self.basic_args),
+                Conv2D(128, 384, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(384, self.momentum),
             ),
             merge_mode="chcat",
@@ -164,7 +164,7 @@ class _IncepRes_V2_TypeB(LayerGraph):
 
         self.br_a = LayerNode(
             Sequential(
-                Convolution2D(1280, 192, 1, 1, "same", **self.basic_args),
+                Conv2D(1280, 192, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(192, self.momentum),
                 self.activation(),
             ),
@@ -172,13 +172,13 @@ class _IncepRes_V2_TypeB(LayerGraph):
         )
         self.br_b = LayerNode(
             Sequential(
-                Convolution2D(1280, 128, 1, 1, "same", **self.basic_args),
+                Conv2D(1280, 128, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(128, self.momentum),
                 self.activation(),
-                Convolution2D(128, 160, (1, 7), 1, "same", **self.basic_args),
+                Conv2D(128, 160, (1, 7), 1, "same", **self.basic_args),
                 BatchNorm2D(160, self.momentum),
                 self.activation(),
-                Convolution2D(160, 192, (7, 1), 1, "same", **self.basic_args),
+                Conv2D(160, 192, (7, 1), 1, "same", **self.basic_args),
                 BatchNorm2D(192, self.momentum),
                 self.activation(),
             ),
@@ -187,7 +187,7 @@ class _IncepRes_V2_TypeB(LayerGraph):
 
         self.br_cat = LayerNode(
             Sequential(
-                Convolution2D(384, 1280, 1, 1, "same", **self.basic_args),
+                Conv2D(384, 1280, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(1280, self.momentum),
             ),
             merge_mode="chcat",
@@ -258,7 +258,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
 
         self.br_a = LayerNode(
             Sequential(
-                Convolution2D(2272, 192, 1, 1, "same", **self.basic_args),
+                Conv2D(2272, 192, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(192, self.momentum),
                 self.activation(),
             ),
@@ -266,13 +266,13 @@ class _IncepRes_V2_TypeC(LayerGraph):
         )
         self.br_b = LayerNode(
             Sequential(
-                Convolution2D(2272, 192, 1, 1, "same", **self.basic_args),
+                Conv2D(2272, 192, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(192, self.momentum),
                 self.activation(),
-                Convolution2D(192, 234, (1, 3), 1, "same", **self.basic_args),
+                Conv2D(192, 234, (1, 3), 1, "same", **self.basic_args),
                 BatchNorm2D(224, self.momentum),
                 self.activation(),
-                Convolution2D(224, 256, (3, 1), 1, "same", **self.basic_args),
+                Conv2D(224, 256, (3, 1), 1, "same", **self.basic_args),
                 BatchNorm2D(256, self.momentum),
                 self.activation(),
             ),
@@ -281,7 +281,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
 
         self.br_cat = LayerNode(
             Sequential(
-                Convolution2D(448, 2272, 1, 1, "same", **self.basic_args),
+                Conv2D(448, 2272, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(2272, self.momentum),
             ),
             merge_mode="chcat",
@@ -346,13 +346,13 @@ class _IncepRes_V2_Redux(LayerGraph):
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
 
-        self.br_a = LayerNode(Pooling2D(3, 2, "max", "valid"), name="br_a")
+        self.br_a = LayerNode(Pool2D(3, 2, "max", "valid"), name="br_a")
         self.br_b = LayerNode(
             Sequential(
-                Convolution2D(1280, 256, 1, 1, "same", **self.basic_args),
+                Conv2D(1280, 256, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(256, self.momentum),
                 self.activation(),
-                Convolution2D(256, 384, 3, 2, "valid", **self.basic_args),
+                Conv2D(256, 384, 3, 2, "valid", **self.basic_args),
                 BatchNorm2D(384, self.momentum),
                 self.activation(),
             ),
@@ -360,10 +360,10 @@ class _IncepRes_V2_Redux(LayerGraph):
         )
         self.br_c = LayerNode(
             Sequential(
-                Convolution2D(1280, 256, 1, 1, "same", **self.basic_args),
+                Conv2D(1280, 256, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(256, self.momentum),
                 self.activation(),
-                Convolution2D(256, 288, 3, 2, "valid", **self.basic_args),
+                Conv2D(256, 288, 3, 2, "valid", **self.basic_args),
                 BatchNorm2D(288, self.momentum),
                 self.activation(),
             ),
@@ -371,13 +371,13 @@ class _IncepRes_V2_Redux(LayerGraph):
         )
         self.br_d = LayerNode(
             Sequential(
-                Convolution2D(1280, 256, 1, 1, "same", **self.basic_args),
+                Conv2D(1280, 256, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(256, self.momentum),
                 self.activation(),
-                Convolution2D(256, 288, 3, 1, "same", **self.basic_args),
+                Conv2D(256, 288, 3, 1, "same", **self.basic_args),
                 BatchNorm2D(288, self.momentum),
                 self.activation(),
-                Convolution2D(288, 320, 3, 2, "valid", **self.basic_args),
+                Conv2D(288, 320, 3, 2, "valid", **self.basic_args),
                 BatchNorm2D(320, self.momentum),
                 self.activation(),
             ),

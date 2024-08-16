@@ -9,9 +9,9 @@ from luma.metric.classification import Accuracy
 from luma.neural.base import NeuralModel
 from luma.neural.block import ResNetBlock, BaseBlockArgs
 from luma.neural.layer import (
-    Convolution2D,
-    Pooling2D,
-    AdaptiveAvgPooling2D,
+    Conv2D,
+    Pool2D,
+    AdaptiveAvgPool2D,
     BatchNorm2D,
     Activation,
     Dense,
@@ -37,7 +37,7 @@ def _make_layer(
     downsampling: Optional[Sequential] = None
     if stride != 1 or in_channels != out_channels * block.expansion:
         downsampling = Sequential(
-            Convolution2D(
+            Conv2D(
                 in_channels,
                 out_channels * block.expansion,
                 1,
@@ -146,10 +146,10 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             BatchNorm2D(64, self.momentum),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
             64, 64, BasicBlock, 2, 2, base_args, res_args
@@ -172,7 +172,7 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             deep_add=True,
         )
         self.model.extend(
-            AdaptiveAvgPooling2D((1, 1)),
+            AdaptiveAvgPool2D((1, 1)),
             Flatten(),
             Dense(512 * BasicBlock.expansion, self.out_features, **base_args),
         )
@@ -279,10 +279,10 @@ class _ResNet_34(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             BatchNorm2D(64, self.momentum),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
             64, 64, BasicBlock, 3, 2, base_args, res_args
@@ -305,7 +305,7 @@ class _ResNet_34(Estimator, Supervised, NeuralModel):
             deep_add=True,
         )
         self.model.extend(
-            AdaptiveAvgPooling2D((1, 1)),
+            AdaptiveAvgPool2D((1, 1)),
             Flatten(),
             Dense(512 * BasicBlock.expansion, self.out_features, **base_args),
         )
@@ -412,10 +412,10 @@ class _ResNet_50(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             BatchNorm2D(64, self.momentum),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
             64, 64, Bottleneck, 3, 2, base_args, res_args
@@ -438,7 +438,7 @@ class _ResNet_50(Estimator, Supervised, NeuralModel):
             deep_add=True,
         )
         self.model.extend(
-            AdaptiveAvgPooling2D((1, 1)),
+            AdaptiveAvgPool2D((1, 1)),
             Flatten(),
             Dense(512 * Bottleneck.expansion, self.out_features, **base_args),
         )
@@ -545,10 +545,10 @@ class _ResNet_101(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             BatchNorm2D(64, self.momentum),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
             64, 64, Bottleneck, 3, 2, base_args, res_args
@@ -571,7 +571,7 @@ class _ResNet_101(Estimator, Supervised, NeuralModel):
             deep_add=True,
         )
         self.model.extend(
-            AdaptiveAvgPooling2D((1, 1)),
+            AdaptiveAvgPool2D((1, 1)),
             Flatten(),
             Dense(512 * Bottleneck.expansion, self.out_features, **base_args),
         )
@@ -678,10 +678,10 @@ class _ResNet_152(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             BatchNorm2D(64, self.momentum),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
             64, 64, Bottleneck, 3, 2, base_args, res_args
@@ -704,7 +704,7 @@ class _ResNet_152(Estimator, Supervised, NeuralModel):
             deep_add=True,
         )
         self.model.extend(
-            AdaptiveAvgPooling2D((1, 1)),
+            AdaptiveAvgPool2D((1, 1)),
             Flatten(),
             Dense(512 * Bottleneck.expansion, self.out_features, **base_args),
         )
@@ -811,10 +811,10 @@ class _ResNet_200(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             BatchNorm2D(64, self.momentum),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
             64, 64, PreActBottle, 3, 2, base_args, res_args
@@ -837,7 +837,7 @@ class _ResNet_200(Estimator, Supervised, NeuralModel):
             deep_add=True,
         )
         self.model.extend(
-            AdaptiveAvgPooling2D((1, 1)),
+            AdaptiveAvgPool2D((1, 1)),
             Flatten(),
             Dense(
                 512 * PreActBottle.expansion,
@@ -948,10 +948,10 @@ class _ResNet_269(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             BatchNorm2D(64, self.momentum),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
             64, 64, PreActBottle, 3, 2, base_args, res_args
@@ -974,7 +974,7 @@ class _ResNet_269(Estimator, Supervised, NeuralModel):
             deep_add=True,
         )
         self.model.extend(
-            AdaptiveAvgPooling2D((1, 1)),
+            AdaptiveAvgPool2D((1, 1)),
             Flatten(),
             Dense(
                 512 * PreActBottle.expansion,
@@ -1085,10 +1085,10 @@ class _ResNet_1001(Estimator, Supervised, NeuralModel):
         )
 
         self.model.extend(
-            Convolution2D(3, 64, 7, 2, 3, **base_args),
+            Conv2D(3, 64, 7, 2, 3, **base_args),
             BatchNorm2D(64, self.momentum),
             self.activation(),
-            Pooling2D(3, 2, "max", "same"),
+            Pool2D(3, 2, "max", "same"),
         )
         self.layer_2, in_channels = _make_layer(
             64, 64, PreActBottle, 3, 2, base_args, res_args
@@ -1111,7 +1111,7 @@ class _ResNet_1001(Estimator, Supervised, NeuralModel):
             deep_add=True,
         )
         self.model.extend(
-            AdaptiveAvgPooling2D((1, 1)),
+            AdaptiveAvgPool2D((1, 1)),
             Flatten(),
             Dense(
                 512 * PreActBottle.expansion,

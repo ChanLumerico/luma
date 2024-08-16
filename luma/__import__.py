@@ -74,21 +74,21 @@ from luma.ensemble.stack import StackingClassifier, StackingRegressor
 from luma.neural.base import Layer, Loss, Initializer, Scheduler, NeuralModel
 from luma.neural.single import PerceptronClassifier, PerceptronRegressor
 from luma.neural.layer import (
-    Convolution1D,
-    Convolution2D,
-    Convolution3D,
-    Pooling1D,
-    Pooling2D,
-    Pooling3D,
-    GlobalAvgPooling1D,
-    GlobalAvgPooling2D,
-    GlobalAvgPooling3D,
-    AdaptiveAvgPooling1D,
-    AdaptiveAvgPooling2D,
-    AdaptiveAvgPooling3D,
-    LpPooling1D,
-    LpPooling2D,
-    LpPooling3D,
+    Conv1D,
+    Conv2D,
+    Conv3D,
+    Pool1D,
+    Pool2D,
+    Pool3D,
+    GlobalAvgPool1D,
+    GlobalAvgPool2D,
+    GlobalAvgPool3D,
+    AdaptiveAvgPool1D,
+    AdaptiveAvgPool2D,
+    AdaptiveAvgPool3D,
+    LpPool1D,
+    LpPool2D,
+    LpPool3D,
     Dense,
     Dropout,
     Dropout1D,
@@ -311,11 +311,11 @@ if __name__ == "__main__":
 
     Layer, Loss, Initializer, Scheduler, NeuralModel
 
-    Convolution1D, Convolution2D, Convolution3D,
-    Pooling1D, Pooling2D, Pooling3D,
-    GlobalAvgPooling1D, GlobalAvgPooling2D, GlobalAvgPooling3D,
-    AdaptiveAvgPooling1D, AdaptiveAvgPooling2D, AdaptiveAvgPooling3D,
-    LpPooling1D, LpPooling2D, LpPooling3D
+    Conv1D, Conv2D, Conv3D,
+    Pool1D, Pool2D, Pool3D,
+    GlobalAvgPool1D, GlobalAvgPool2D, GlobalAvgPool3D,
+    AdaptiveAvgPool1D, AdaptiveAvgPool2D, AdaptiveAvgPool3D,
+    LpPool1D, LpPool2D, LpPool3D
     Dropout, Dropout1D, Dropout2D, Dropout3D,
     BatchNorm1D, BatchNorm2D, BatchNorm3D,
     LocalResponseNorm, LayerNorm,

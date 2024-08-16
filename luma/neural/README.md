@@ -12,26 +12,26 @@ Deep learning models and neural network utilities of Luma
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Convolution1D | $(N,C_{in},W)$ | $(N,C_{out},W)$ |
-| Convolution2D | $(N,C_{in},H,W)$ | $(N,C_{out},H,W)$ |
-| Convolution3D | $(N,C_{in},D,H,W)$ | $(N,C_{out},D,H,W)$ |
+| Conv1D | $(N,C_{in},W)$ | $(N,C_{out},W)$ |
+| Conv2D | $(N,C_{in},H,W)$ | $(N,C_{out},H,W)$ |
+| Conv3D | $(N,C_{in},D,H,W)$ | $(N,C_{out},D,H,W)$ |
 
 ### Pooling
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Pooling1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
-| Pooling2D | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
-| Pooling3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
-| GlobalAvgPooling1D | $(N,C,W)$ | $(N,C,1)$ |
-| GlobalAvgPooling2D | $(N,C,H,W)$ | $(N,C,1,1)$ |
-| GlovalAvgPooling3D | $(N,C,D,H,W)$ | $(N,C,1,1,1)$ |
-| AdaptiveAvgPooling1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
-| AdaptiveAvgPooling2D | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
-| AdaptiveAvgPooling3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
-| LpPooling1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
-| LpPooling2D | $(N,C,H_{in}, W_{in})$ | $(N,C,H_{out},W_{out})$ |
-| LpPooling3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
+| Pool1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
+| Pool2D | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
+| Pool3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
+| GlobalAvgPool1D | $(N,C,W)$ | $(N,C,1)$ |
+| GlobalAvgPool2D | $(N,C,H,W)$ | $(N,C,1,1)$ |
+| GlovalAvgPool3D | $(N,C,D,H,W)$ | $(N,C,1,1,1)$ |
+| AdaptiveAvgPool1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
+| AdaptiveAvgPool2D | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
+| AdaptiveAvgPool3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
+| LpPool1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
+| LpPool2D | $(N,C,H_{in}, W_{in})$ | $(N,C,H_{out},W_{out})$ |
+| LpPool3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
 
 ### Dropout
 
@@ -277,10 +277,10 @@ Use `Sequential`’s methods(i.e. `add()`, `extend()`) to build your custom neur
 ```python
 def build_method(self) -> None:
     self.model.add(
-        Convolution2D(3, 64, 3),
+        Conv2D(3, 64, 3),
     )
     self.model.extend(
-        Convolution(64, 64, 3),
+        Conv2D(64, 64, 3),
         BatchNorm2D(64),
         Activation.ReLU(),
     )

@@ -62,7 +62,7 @@ class _Basic(LayerGraph):
         self.rt_ = LayerNode(Identity(), name="rt_")
         self.conv_ = LayerNode(
             Sequential(
-                Convolution2D(
+                Conv2D(
                     self.in_channels,
                     self.out_channels,
                     3,
@@ -71,7 +71,7 @@ class _Basic(LayerGraph):
                 ),
                 BatchNorm2D(self.out_channels, self.momentum),
                 self.activation(),
-                Convolution2D(
+                Conv2D(
                     self.out_channels,
                     self.out_channels * _Basic.expansion,
                     3,
@@ -160,12 +160,10 @@ class _Bottleneck(LayerGraph):
         self.rt_ = LayerNode(Identity(), name="rt_")
         self.conv_ = LayerNode(
             Sequential(
-                Convolution2D(
-                    self.in_channels, self.out_channels, 1, **self.basic_args
-                ),
+                Conv2D(self.in_channels, self.out_channels, 1, **self.basic_args),
                 BatchNorm2D(self.out_channels, self.momentum),
                 self.activation(),
-                Convolution2D(
+                Conv2D(
                     self.out_channels,
                     self.out_channels,
                     3,
@@ -174,7 +172,7 @@ class _Bottleneck(LayerGraph):
                 ),
                 BatchNorm2D(self.out_channels, self.momentum),
                 self.activation(),
-                Convolution2D(
+                Conv2D(
                     self.out_channels,
                     self.out_channels * _Bottleneck.expansion,
                     1,
@@ -265,7 +263,7 @@ class _PreActBottleneck(LayerGraph):
             Sequential(
                 BatchNorm2D(self.in_channels, self.momentum),
                 self.activation(),
-                Convolution2D(
+                Conv2D(
                     self.in_channels,
                     self.out_channels,
                     1,
@@ -273,7 +271,7 @@ class _PreActBottleneck(LayerGraph):
                 ),
                 BatchNorm2D(self.out_channels, self.momentum),
                 self.activation(),
-                Convolution2D(
+                Conv2D(
                     self.out_channels,
                     self.out_channels,
                     3,
@@ -282,7 +280,7 @@ class _PreActBottleneck(LayerGraph):
                 ),
                 BatchNorm2D(self.out_channels),
                 self.activation(),
-                Convolution2D(
+                Conv2D(
                     self.out_channels,
                     self.out_channels * _PreActBottleneck.expansion,
                     1,
