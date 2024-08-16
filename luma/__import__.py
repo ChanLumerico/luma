@@ -77,6 +77,9 @@ from luma.neural.layer import (
     Conv1D,
     Conv2D,
     Conv3D,
+    DepthConv1D,
+    DepthConv2D,
+    DepthConv3D,
     Pool1D,
     Pool2D,
     Pool3D,
@@ -133,6 +136,7 @@ from luma.neural.block import (
     DenseBlock,
     IncepBlock,
     IncepResBlock,
+    ResNetBlock,
 )
 from luma.neural.model import SimpleMLP, SimpleCNN
 from luma.neural.model import (
@@ -312,6 +316,7 @@ if __name__ == "__main__":
     Layer, Loss, Initializer, Scheduler, NeuralModel
 
     Conv1D, Conv2D, Conv3D,
+    DepthConv1D, DepthConv2D, DepthConv3D,
     Pool1D, Pool2D, Pool3D,
     GlobalAvgPool1D, GlobalAvgPool2D, GlobalAvgPool3D,
     AdaptiveAvgPool1D, AdaptiveAvgPool2D, AdaptiveAvgPool3D,
@@ -322,8 +327,8 @@ if __name__ == "__main__":
     Dense, Flatten, Activation, Identity,
     Sequential
 
-    ConvBlock1D, ConvBlock2D, ConvBlock3D, DenseBlock,
-    IncepBlock, IncepResBlock
+    ConvBlock1D, ConvBlock2D, ConvBlock3D,
+    DenseBlock, IncepBlock, IncepResBlock, ResNetBlock
 
     LayerNode, LayerGraph
 
