@@ -12,6 +12,9 @@ __all__ = (
     "Conv1D",
     "Conv2D",
     "Conv3D",
+    "DepthConv1D",
+    "DepthConv2D",
+    "DepthConv3D",
     "Pool1D",
     "Pool2D",
     "Pool3D",
@@ -234,6 +237,18 @@ class Conv3D(_layers.conv._Conv3D):
             lambda_,
             random_state,
         )
+
+
+class DepthConv1D(_layers.conv._DepthConv1D):
+    NotImplemented
+
+
+class DepthConv2D(_layers.conv._DepthConv2D):
+    NotImplemented
+
+
+class DepthConv3D(_layers.conv._DepthConv3D):
+    NotImplemented
 
 
 class Pool1D(_layers.pool._Pool1D):
