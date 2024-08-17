@@ -14,9 +14,9 @@ __all__ = (
     "ConvBlock1D",
     "ConvBlock2D",
     "ConvBlock3D",
-    "DepthSepConv1D",
-    "DepthSepConv2D",
-    "DepthSepConv3D",
+    "SeperableConv1D",
+    "SeperableConv2D",
+    "SeperableConv3D",
     "DenseBlock",
     "IncepBlock",
     "IncepResBlock",
@@ -393,7 +393,7 @@ class ConvBlock3D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class DepthSepConv1D(Sequential):
+class SeperableConv1D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     1-dimensional data.
@@ -448,7 +448,7 @@ class DepthSepConv1D(Sequential):
         padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
         stride: int = 1,
         lambda_: float = 0.0,
-        do_batch_norm: bool = True,
+        do_batch_norm: bool = False,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -470,7 +470,7 @@ class DepthSepConv1D(Sequential):
         )
         self.check_param_ranges()
 
-        super(DepthSepConv1D, self).__init__(
+        super(SeperableConv1D, self).__init__(
             DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -484,7 +484,7 @@ class DepthSepConv1D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class DepthSepConv2D(Sequential):
+class SeperableConv2D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     2-dimensional data.
@@ -539,7 +539,7 @@ class DepthSepConv2D(Sequential):
         padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
         stride: int = 1,
         lambda_: float = 0.0,
-        do_batch_norm: bool = True,
+        do_batch_norm: bool = False,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -561,7 +561,7 @@ class DepthSepConv2D(Sequential):
         )
         self.check_param_ranges()
 
-        super(DepthSepConv2D, self).__init__(
+        super(SeperableConv2D, self).__init__(
             DepthConv2D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm2D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -575,7 +575,7 @@ class DepthSepConv2D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class DepthSepConv3D(Sequential):
+class SeperableConv3D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     3-dimensional data.
@@ -630,7 +630,7 @@ class DepthSepConv3D(Sequential):
         padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
         stride: int = 1,
         lambda_: float = 0.0,
-        do_batch_norm: bool = True,
+        do_batch_norm: bool = False,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -652,7 +652,7 @@ class DepthSepConv3D(Sequential):
         )
         self.check_param_ranges()
 
-        super(DepthSepConv3D, self).__init__(
+        super(SeperableConv3D, self).__init__(
             DepthConv3D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm3D(in_channels, momentum) if do_batch_norm else None,
         )
