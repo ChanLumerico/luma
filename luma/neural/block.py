@@ -147,21 +147,12 @@ class ConvBlock1D(Sequential):
         )
         if do_batch_norm:
             super(ConvBlock1D, self).__add__(
-                BatchNorm1D(
-                    out_channels,
-                    momentum,
-                )
+                BatchNorm1D(out_channels, momentum),
             )
-        super(ConvBlock1D, self).__add__(
-            activation(),
-        )
+        super(ConvBlock1D, self).__add__(activation())
         if do_pooling:
             super(ConvBlock1D, self).__add__(
-                Pool1D(
-                    pool_filter_size,
-                    pool_stride,
-                    pool_mode,
-                )
+                Pool1D(pool_filter_size, pool_stride, pool_mode)
             )
 
         if optimizer is not None:
@@ -273,21 +264,12 @@ class ConvBlock2D(Sequential):
         )
         if do_batch_norm:
             super(ConvBlock2D, self).__add__(
-                BatchNorm2D(
-                    out_channels,
-                    momentum,
-                )
+                BatchNorm2D(out_channels, momentum),
             )
-        super(ConvBlock2D, self).__add__(
-            activation(),
-        )
+        super(ConvBlock2D, self).__add__(activation())
         if do_pooling:
             super(ConvBlock2D, self).__add__(
-                Pool2D(
-                    pool_filter_size,
-                    pool_stride,
-                    pool_mode,
-                )
+                Pool2D(pool_filter_size, pool_stride, pool_mode)
             )
 
         if optimizer is not None:
@@ -399,21 +381,12 @@ class ConvBlock3D(Sequential):
         )
         if do_batch_norm:
             super(ConvBlock3D, self).__add__(
-                BatchNorm3D(
-                    out_channels,
-                    momentum,
-                )
+                BatchNorm3D(out_channels, momentum),
             )
-        super(ConvBlock3D, self).__add__(
-            activation(),
-        )
+        super(ConvBlock3D, self).__add__(activation())
         if do_pooling:
             super(ConvBlock3D, self).__add__(
-                Pool3D(
-                    pool_filter_size,
-                    pool_stride,
-                    pool_mode,
-                )
+                Pool3D(pool_filter_size, pool_stride, pool_mode)
             )
 
         if optimizer is not None:
