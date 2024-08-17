@@ -548,10 +548,10 @@ class DepthSepConv2D(Sequential):
 
     Notes
     -----
-    - The input `X` must have the form of 3D-array(`Tensor`).
+    - The input `X` must have the form of 4D-array(`Tensor`).
 
         ```py
-        X.shape = (batch_size, channels, width)
+        X.shape = (batch_size, channels, height, width)
         ```
     """
 
@@ -639,10 +639,10 @@ class DepthSepConv3D(Sequential):
 
     Notes
     -----
-    - The input `X` must have the form of 3D-array(`Tensor`).
+    - The input `X` must have the form of 5D-array(`Tensor`).
 
         ```py
-        X.shape = (batch_size, channels, width)
+        X.shape = (batch_size, channels, depth, height, width)
         ```
     """
 
