@@ -14,9 +14,9 @@ __all__ = (
     "ConvBlock1D",
     "ConvBlock2D",
     "ConvBlock3D",
-    "SeperableConv1D",
-    "SeperableConv2D",
-    "SeperableConv3D",
+    "SeparableConv1D",
+    "SeparableConv2D",
+    "SeparableConv3D",
     "DenseBlock",
     "IncepBlock",
     "IncepResBlock",
@@ -393,7 +393,7 @@ class ConvBlock3D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class SeperableConv1D(Sequential):
+class SeparableConv1D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     1-dimensional data.
@@ -470,7 +470,7 @@ class SeperableConv1D(Sequential):
         )
         self.check_param_ranges()
 
-        super(SeperableConv1D, self).__init__(
+        super(SeparableConv1D, self).__init__(
             DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -484,7 +484,7 @@ class SeperableConv1D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class SeperableConv2D(Sequential):
+class SeparableConv2D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     2-dimensional data.
@@ -561,7 +561,7 @@ class SeperableConv2D(Sequential):
         )
         self.check_param_ranges()
 
-        super(SeperableConv2D, self).__init__(
+        super(SeparableConv2D, self).__init__(
             DepthConv2D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm2D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -575,7 +575,7 @@ class SeperableConv2D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class SeperableConv3D(Sequential):
+class SeparableConv3D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     3-dimensional data.
@@ -652,7 +652,7 @@ class SeperableConv3D(Sequential):
         )
         self.check_param_ranges()
 
-        super(SeperableConv3D, self).__init__(
+        super(SeparableConv3D, self).__init__(
             DepthConv3D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm3D(in_channels, momentum) if do_batch_norm else None,
         )
