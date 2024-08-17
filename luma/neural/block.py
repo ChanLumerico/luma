@@ -14,6 +14,9 @@ __all__ = (
     "ConvBlock1D",
     "ConvBlock2D",
     "ConvBlock3D",
+    "DepthSepConv1D",
+    "DepthSepConv2D",
+    "DepthSepConv3D",
     "DenseBlock",
     "IncepBlock",
     "IncepResBlock",
@@ -415,6 +418,18 @@ class ConvBlock3D(Sequential):
 
         if optimizer is not None:
             self.set_optimizer(optimizer)
+
+
+class DepthSepConv1D(Sequential):
+    NotImplemented
+
+
+class DepthSepConv2D(Sequential):
+    NotImplemented
+
+
+class DepthSepConv3D(Sequential):
+    NotImplemented
 
 
 @dataclass
