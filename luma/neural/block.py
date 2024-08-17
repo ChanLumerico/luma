@@ -421,7 +421,42 @@ class ConvBlock3D(Sequential):
 
 
 class DepthSepConv1D(Sequential):
-    NotImplemented
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        filter_size: Tuple[int] | int,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
+        stride: int = 1,
+        lambda_: float = 0.0,
+        random_state: int | None = None,
+    ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
+        super(DepthSepConv1D, self).__init__(
+            DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
+            Conv1D(in_channels, out_channels, 1, 1, "valid", **basic_args),
+        )
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
 
 class DepthSepConv2D(Sequential):
