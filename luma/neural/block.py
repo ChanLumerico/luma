@@ -14,7 +14,7 @@ __all__ = (
     "ConvBlock1D",
     "ConvBlock2D",
     "ConvBlock3D",
-    "DepthSeperableConv1D",
+    "DepthSepConv1D",
     "DepthSepConv2D",
     "DepthSepConv3D",
     "DenseBlock",
@@ -420,9 +420,15 @@ class ConvBlock3D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class DepthSeperableConv1D(Sequential):
+class DepthSepConv1D(Sequential):
     """
-    Depth-wise Seperable Convolutional(DSC) block for 1-dimensional data.
+    Depthwise Seperable Convolutional(DSC) block for 
+    1-dimensional data.
+
+    Depthwise separable convolution(DSC) splits convolution into 
+    depthwise (per-channel) and pointwise (1x1) steps, reducing 
+    computation and parameters while preserving performance, 
+    often used in efficient models like MobileNet.
 
     Parameters
     ----------
@@ -491,7 +497,7 @@ class DepthSeperableConv1D(Sequential):
         )
         self.check_param_ranges()
 
-        super(DepthSeperableConv1D, self).__init__(
+        super(DepthSepConv1D, self).__init__(
             DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
         )
