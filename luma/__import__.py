@@ -133,9 +133,9 @@ from luma.neural.block import (
     ConvBlock1D,
     ConvBlock2D,
     ConvBlock3D,
-    SeparableConv1D,
-    SeparableConv2D,
-    SeparableConv3D,
+    DepthSepConv1D,
+    DepthSepConv2D,
+    DepthSepConv3D,
     DenseBlock,
     IncepBlock,
     IncepResBlock,
@@ -331,7 +331,7 @@ if __name__ == "__main__":
     Sequential
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D,
-    SeparableConv1D, SeparableConv2D, SeparableConv3D,
+    DepthSepConv1D, DepthSepConv2D, DepthSepConv3D,
     DenseBlock, IncepBlock, IncepResBlock, ResNetBlock
 
     LayerNode, LayerGraph
