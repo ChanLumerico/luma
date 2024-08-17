@@ -12,6 +12,9 @@ __all__ = (
     "Conv1D",
     "Conv2D",
     "Conv3D",
+    "DepthConv1D",
+    "DepthConv2D",
+    "DepthConv3D",
     "Pool1D",
     "Pool2D",
     "Pool3D",
@@ -226,6 +229,183 @@ class Conv3D(_layers.conv._Conv3D):
         super().__init__(
             in_channels,
             out_channels,
+            filter_size,
+            stride,
+            padding,
+            initializer,
+            optimizer,
+            lambda_,
+            random_state,
+        )
+
+
+class DepthConv1D(_layers.conv._DepthConv1D):
+    """
+    Depth-wise Convolutional layer for 1-dimensional data.
+
+    Depthwise convolution applies a filter to each input channel separately,
+    reducing computation. It's key in creating efficient neural networks,
+    like in depthwise separable convolutions.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `filter_size`: tuple of int or int
+        Size of each filter
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `padding` : tuple of int or int or {"valid", "same"}, default="same"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `optimizer` : Optimizer, optional, default=None
+        Optimizer for weight update
+    `lambda_` : float, default=0.0
+        L2-regularization strength
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
+
+    Notes
+    -----
+    - The input `X` must have the form of 3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        filter_size: Tuple[int] | int,
+        stride: int = 1,
+        padding: Tuple[int] | int | Literal["valid", "same"] = "same",
+        initializer: InitUtil.InitStr = None,
+        optimizer: Optimizer | None = None,
+        lambda_: float = 0,
+        random_state: int | None = None,
+    ) -> None:
+        super().__init__(
+            in_channels,
+            filter_size,
+            stride,
+            padding,
+            initializer,
+            optimizer,
+            lambda_,
+            random_state,
+        )
+
+
+class DepthConv2D(_layers.conv._DepthConv2D):
+    """
+    Depth-wise Convolutional layer for 2-dimensional data.
+
+    Depthwise convolution applies a filter to each input channel separately,
+    reducing computation. It's key in creating efficient neural networks,
+    like in depthwise separable convolutions.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `filter_size`: tuple of int or int
+        Size of each filter
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `padding` : tuple of int or int or {"valid", "same"}, default="same"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `optimizer` : Optimizer, optional, default=None
+        Optimizer for weight update
+    `lambda_` : float, default=0.0
+        L2-regularization strength
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
+
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        filter_size: Tuple[int, int] | int,
+        stride: int = 1,
+        padding: Tuple[int, int] | int | Literal["valid", "same"] = "same",
+        initializer: InitUtil.InitStr = None,
+        optimizer: Optimizer = None,
+        lambda_: float = 0,
+        random_state: int = None,
+    ) -> None:
+        super().__init__(
+            in_channels,
+            filter_size,
+            stride,
+            padding,
+            initializer,
+            optimizer,
+            lambda_,
+            random_state,
+        )
+
+
+class DepthConv3D(_layers.conv._DepthConv3D):
+    """
+    Depth-wise Convolutional layer for 3-dimensional data.
+
+    Depthwise convolution applies a filter to each input channel separately,
+    reducing computation. It's key in creating efficient neural networks,
+    like in depthwise separable convolutions.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `filter_size`: tuple of int or int
+        Size of each filter
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `padding` : tuple of int or int or {"valid", "same"}, default="same"
+        Padding strategies ("valid" for no padding, "same" for zero-padding)
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `optimizer` : Optimizer, optional, default=None
+        Optimizer for weight update
+    `lambda_` : float, default=0.0
+        L2-regularization strength
+    `random_state` : int, optional, default=None
+        Seed for various random sampling processes
+
+    Notes
+    -----
+    - The input `X` must have the form of 5D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, depth, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        filter_size: Tuple[int, int, int] | int,
+        stride: int = 1,
+        padding: Tuple[int, int, int] | int | Literal["valid", "same"] = "same",
+        initializer: InitUtil.InitStr = None,
+        optimizer: Optimizer = None,
+        lambda_: float = 0,
+        random_state: int = None,
+    ) -> None:
+        super().__init__(
+            in_channels,
             filter_size,
             stride,
             padding,

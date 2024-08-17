@@ -14,6 +14,9 @@ __all__ = (
     "ConvBlock1D",
     "ConvBlock2D",
     "ConvBlock3D",
+    "DepthSepConv1D",
+    "DepthSepConv2D",
+    "DepthSepConv3D",
     "DenseBlock",
     "IncepBlock",
     "IncepResBlock",
@@ -144,21 +147,12 @@ class ConvBlock1D(Sequential):
         )
         if do_batch_norm:
             super(ConvBlock1D, self).__add__(
-                BatchNorm1D(
-                    out_channels,
-                    momentum,
-                )
+                BatchNorm1D(out_channels, momentum),
             )
-        super(ConvBlock1D, self).__add__(
-            activation(),
-        )
+        super(ConvBlock1D, self).__add__(activation())
         if do_pooling:
             super(ConvBlock1D, self).__add__(
-                Pool1D(
-                    pool_filter_size,
-                    pool_stride,
-                    pool_mode,
-                )
+                Pool1D(pool_filter_size, pool_stride, pool_mode)
             )
 
         if optimizer is not None:
@@ -270,21 +264,12 @@ class ConvBlock2D(Sequential):
         )
         if do_batch_norm:
             super(ConvBlock2D, self).__add__(
-                BatchNorm2D(
-                    out_channels,
-                    momentum,
-                )
+                BatchNorm2D(out_channels, momentum),
             )
-        super(ConvBlock2D, self).__add__(
-            activation(),
-        )
+        super(ConvBlock2D, self).__add__(activation())
         if do_pooling:
             super(ConvBlock2D, self).__add__(
-                Pool2D(
-                    pool_filter_size,
-                    pool_stride,
-                    pool_mode,
-                )
+                Pool2D(pool_filter_size, pool_stride, pool_mode)
             )
 
         if optimizer is not None:
@@ -396,22 +381,286 @@ class ConvBlock3D(Sequential):
         )
         if do_batch_norm:
             super(ConvBlock3D, self).__add__(
-                BatchNorm3D(
-                    out_channels,
-                    momentum,
-                )
+                BatchNorm3D(out_channels, momentum),
             )
-        super(ConvBlock3D, self).__add__(
-            activation(),
-        )
+        super(ConvBlock3D, self).__add__(activation())
         if do_pooling:
             super(ConvBlock3D, self).__add__(
-                Pool3D(
-                    pool_filter_size,
-                    pool_stride,
-                    pool_mode,
-                )
+                Pool3D(pool_filter_size, pool_stride, pool_mode)
             )
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
+
+class DepthSepConv1D(Sequential):
+    """
+    Depthwise Seperable Convolutional(DSC) block for
+    1-dimensional data.
+
+    Depthwise separable convolution(DSC) splits convolution into
+    depthwise (per-channel) and pointwise (1x1) steps, reducing
+    computation and parameters while preserving performance,
+    often used in efficient models like MobileNet.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels
+    `filter_size`: tuple of int or int
+        Size of each filter
+    `activation` : FuncType
+        Type of activation function
+    `padding` : tuple of int or int or {"same", "valid"}, default="same"
+        Padding method
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight updating
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of 3D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        filter_size: Tuple[int] | int,
+        activation: Activation.FuncType,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
+        stride: int = 1,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+        super(DepthSepConv1D, self).__init__(
+            DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
+            BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
+        )
+        self.extend(
+            Conv1D(in_channels, out_channels, 1, 1, "valid", **basic_args),
+            BatchNorm1D(out_channels, momentum) if do_batch_norm else None,
+            activation(),
+        )
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
+
+class DepthSepConv2D(Sequential):
+    """
+    Depthwise Seperable Convolutional(DSC) block for
+    2-dimensional data.
+
+    Depthwise separable convolution(DSC) splits convolution into
+    depthwise (per-channel) and pointwise (1x1) steps, reducing
+    computation and parameters while preserving performance,
+    often used in efficient models like MobileNet.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels
+    `filter_size`: tuple of int or int
+        Size of each filter
+    `activation` : FuncType
+        Type of activation function
+    `padding` : tuple of int or int or {"same", "valid"}, default="same"
+        Padding method
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight updating
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of 4D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        filter_size: Tuple[int] | int,
+        activation: Activation.FuncType,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
+        stride: int = 1,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+        super(DepthSepConv2D, self).__init__(
+            DepthConv2D(in_channels, filter_size, stride, padding, **basic_args),
+            BatchNorm2D(in_channels, momentum) if do_batch_norm else None,
+        )
+        self.extend(
+            Conv2D(in_channels, out_channels, 1, 1, "valid", **basic_args),
+            BatchNorm2D(out_channels, momentum) if do_batch_norm else None,
+            activation(),
+        )
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
+
+class DepthSepConv3D(Sequential):
+    """
+    Depthwise Seperable Convolutional(DSC) block for
+    3-dimensional data.
+
+    Depthwise separable convolution(DSC) splits convolution into
+    depthwise (per-channel) and pointwise (1x1) steps, reducing
+    computation and parameters while preserving performance,
+    often used in efficient models like MobileNet.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `out_channels` : int
+        Number of output channels
+    `filter_size`: tuple of int or int
+        Size of each filter
+    `activation` : FuncType
+        Type of activation function
+    `padding` : tuple of int or int or {"same", "valid"}, default="same"
+        Padding method
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight updating
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `stride` : int, default=1
+        Step size for filters during convolution
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `do_batch_norm` : bool, default=True
+        Whether to perform batch normalization
+    `momentum` : float, default=0.9
+        Momentum for batch normalization
+
+    Notes
+    -----
+    - The input `X` must have the form of 5D-array(`Tensor`).
+
+        ```py
+        X.shape = (batch_size, channels, depth, height, width)
+        ```
+    """
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        filter_size: Tuple[int] | int,
+        activation: Activation.FuncType,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
+        stride: int = 1,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "filter_size": ("0<,+inf", int),
+                "stride": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+        super(DepthSepConv3D, self).__init__(
+            DepthConv3D(in_channels, filter_size, stride, padding, **basic_args),
+            BatchNorm3D(in_channels, momentum) if do_batch_norm else None,
+        )
+        self.extend(
+            Conv3D(in_channels, out_channels, 1, 1, "valid", **basic_args),
+            BatchNorm3D(out_channels, momentum) if do_batch_norm else None,
+            activation(),
+        )
 
         if optimizer is not None:
             self.set_optimizer(optimizer)
