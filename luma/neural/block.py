@@ -14,7 +14,7 @@ __all__ = (
     "ConvBlock1D",
     "ConvBlock2D",
     "ConvBlock3D",
-    "DepthSepConv1D",
+    "DepthSeperableConv1D",
     "DepthSepConv2D",
     "DepthSepConv3D",
     "DenseBlock",
@@ -420,7 +420,7 @@ class ConvBlock3D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class DepthSepConv1D(Sequential):
+class DepthSeperableConv1D(Sequential):
     """
     Depth-wise Seperable Convolutional(DSC) block for 1-dimensional data.
 
@@ -491,11 +491,13 @@ class DepthSepConv1D(Sequential):
         )
         self.check_param_ranges()
 
-        super(DepthSepConv1D, self).__init__(
+        super(DepthSeperableConv1D, self).__init__(
             DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
-            BatchNorm2D(in_channels, momentum) if do_batch_norm else None,
+            BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
+        )
+        self.extend(
             Conv1D(in_channels, out_channels, 1, 1, "valid", **basic_args),
-            BatchNorm2D(out_channels, momentum) if do_batch_norm else None,
+            BatchNorm1D(out_channels, momentum) if do_batch_norm else None,
             activation(),
         )
 
