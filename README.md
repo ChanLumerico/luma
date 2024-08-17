@@ -8,7 +8,7 @@
         <p class="subtitle">A Comprehensive Python Module for Machine Learning and Data Science</p>
         <img alt="pypi-version" src="https://img.shields.io/pypi/v/luma-ml?logo=python&logoColor=white&color=blue">
         <img alt="pypi-downloads" src="https://img.shields.io/pypi/dm/luma-ml">
-        <img src="https://img.shields.io/badge/total downloads-8.11k-red">
+        <img src="https://img.shields.io/badge/total downloads-9.27k-red">
         <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/ChanLumerico/luma?color=yellow">
         <img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg">
         <div class="module">
@@ -95,11 +95,11 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>1.0.8</td>
+                    <td>1.0.9</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
-                    <td>~28.1K</td>
+                    <td>~29.0K</td>
                 </tr>
                 <tr>
                     <td>Requirement</td>
