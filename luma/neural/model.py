@@ -32,6 +32,7 @@ __all__ = (
     "ResNet_200",
     "ResNet_269",
     "ResNet_1001",
+    "XceptionNet",
 )
 
 MODELS: tuple[str] = __all__
@@ -2648,6 +2649,108 @@ class ResNet_1001(_models.resnet._ResNet_1001):
         deep_verbose: bool = False,
     ) -> None:
         super(ResNet_1001, self).__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class XceptionNet(_models.incep._Xception):
+    """
+    XceptionNet enhances the Inception architecture by replacing standard
+    convolutions with depthwise separable convolutions, making it more
+    efficient and effective at feature extraction. This design reduces
+    the number of parameters and computations while maintaining or
+    improving model accuracy on complex tasks.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 299, 299]
+    ```
+    Separable Convolutions:
+    ```py
+    XceptionBlock.EntryFlow() ->  # entry flow
+    8x XceptionBlock.MiddleFlow() ->  # middle flow
+    XceptionBlock.ExitFlow() ->  # exit flow
+
+    SeparableConv2D(1024, 1536, 3) -> Activation.ReLU() ->
+    SeparableConv2D(1536, 2048, 3) -> Activation.ReLU() ->
+
+    GlobalAvgPool2D() ->  # avg pool
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(2048, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    22,113,984 weights, 50,288 biases -> 22,164,272 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    [1] Chollet, François. “Xception: Deep Learning with Depthwise
+    Separable Convolutions.” Proceedings of the IEEE Conference on
+    Computer Vision and Pattern Recognition (CVPR), 2017, pp.
+    1251-1258.
+
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super(XceptionNet, self).__init__(
             activation,
             initializer,
             out_features,

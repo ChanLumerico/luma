@@ -21,6 +21,7 @@ __all__ = (
     "IncepBlock",
     "IncepResBlock",
     "ResNetBlock",
+    "XceptionBlock",
 )
 
 
@@ -411,8 +412,6 @@ class SeparableConv1D(Sequential):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
-        Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
     `optimizer` : Optimizer, optional, default=None
@@ -442,11 +441,10 @@ class SeparableConv1D(Sequential):
         in_channels: int,
         out_channels: int,
         filter_size: Tuple[int] | int,
-        activation: Activation.FuncType,
+        stride: int = 1,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
-        stride: int = 1,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
         lambda_: float = 0.0,
         do_batch_norm: bool = False,
         momentum: float = 0.9,
@@ -477,7 +475,6 @@ class SeparableConv1D(Sequential):
         self.extend(
             Conv1D(in_channels, out_channels, 1, 1, "valid", **basic_args),
             BatchNorm1D(out_channels, momentum) if do_batch_norm else None,
-            activation(),
         )
 
         if optimizer is not None:
@@ -502,8 +499,6 @@ class SeparableConv2D(Sequential):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
-        Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
     `optimizer` : Optimizer, optional, default=None
@@ -533,11 +528,10 @@ class SeparableConv2D(Sequential):
         in_channels: int,
         out_channels: int,
         filter_size: Tuple[int] | int,
-        activation: Activation.FuncType,
+        stride: int = 1,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
-        stride: int = 1,
         lambda_: float = 0.0,
         do_batch_norm: bool = False,
         momentum: float = 0.9,
@@ -568,7 +562,6 @@ class SeparableConv2D(Sequential):
         self.extend(
             Conv2D(in_channels, out_channels, 1, 1, "valid", **basic_args),
             BatchNorm2D(out_channels, momentum) if do_batch_norm else None,
-            activation(),
         )
 
         if optimizer is not None:
@@ -593,8 +586,6 @@ class SeparableConv3D(Sequential):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
-        Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
     `optimizer` : Optimizer, optional, default=None
@@ -624,11 +615,10 @@ class SeparableConv3D(Sequential):
         in_channels: int,
         out_channels: int,
         filter_size: Tuple[int] | int,
-        activation: Activation.FuncType,
+        stride: int = 1,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
-        stride: int = 1,
         lambda_: float = 0.0,
         do_batch_norm: bool = False,
         momentum: float = 0.9,
@@ -659,7 +649,6 @@ class SeparableConv3D(Sequential):
         self.extend(
             Conv3D(in_channels, out_channels, 1, 1, "valid", **basic_args),
             BatchNorm3D(out_channels, momentum) if do_batch_norm else None,
-            activation(),
         )
 
         if optimizer is not None:
@@ -1193,4 +1182,65 @@ class ResNetBlock:
             its grid size to perform a downsampling
 
         See [2] also for additional information.
+        """
+
+
+@ClassType.non_instantiable()
+class XceptionBlock:
+    """
+    Container class for building components of XceptionNet.
+
+    References
+    ----------
+    `XceptionNet` :
+        [1] Chollet, François. “Xception: Deep Learning with Depthwise
+        Separable Convolutions.” Proceedings of the IEEE Conference on
+        Computer Vision and Pattern Recognition (CVPR), 2017,
+        pp. 1251-1258.
+
+    """
+
+    class EntryFlow(_specials.xception._EntryFlow):
+        """
+        An entry flow of Xception network mentioned in Fig. 5
+        of the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 3, 299, 299]
+            Output: Tensor[-1, 728, 19, 19]
+            ```
+        """
+
+    class MiddleFlow(_specials.xception._MiddleFlow):
+        """
+        A middle flow of Xception network mentioned in Fig. 5
+        of the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 728, 19, 19]
+            Output: Tensor[-1, 728, 19, 19]
+            ```
+        """
+
+    class ExitFlow(_specials.xception._ExitFlow):
+        """
+        An exit flow of Xception network mentioned in Fig. 5
+        of the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 728, 19, 19]
+            Output: Tensor[-1, 1024, 9, 9]
+            ```
         """

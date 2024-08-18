@@ -1,4 +1,4 @@
-from typing import Any, Self, override, Optional
+from typing import Any, Self, override, Optional, ClassVar
 from dataclasses import asdict, dataclass
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -177,7 +177,7 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             Dense(512 * BasicBlock.expansion, self.out_features, **base_args),
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -310,7 +310,7 @@ class _ResNet_34(Estimator, Supervised, NeuralModel):
             Dense(512 * BasicBlock.expansion, self.out_features, **base_args),
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -443,7 +443,7 @@ class _ResNet_50(Estimator, Supervised, NeuralModel):
             Dense(512 * Bottleneck.expansion, self.out_features, **base_args),
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -576,7 +576,7 @@ class _ResNet_101(Estimator, Supervised, NeuralModel):
             Dense(512 * Bottleneck.expansion, self.out_features, **base_args),
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -709,7 +709,7 @@ class _ResNet_152(Estimator, Supervised, NeuralModel):
             Dense(512 * Bottleneck.expansion, self.out_features, **base_args),
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -846,7 +846,7 @@ class _ResNet_200(Estimator, Supervised, NeuralModel):
             ),
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -983,7 +983,7 @@ class _ResNet_269(Estimator, Supervised, NeuralModel):
             ),
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -1120,7 +1120,7 @@ class _ResNet_1001(Estimator, Supervised, NeuralModel):
             ),
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:

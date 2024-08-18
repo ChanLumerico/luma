@@ -1,4 +1,4 @@
-from typing import Self, override
+from typing import Self, override, ClassVar
 from dataclasses import asdict
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -205,7 +205,7 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 3, 227, 227)
+    input_shape: ClassVar[tuple] = (-1, 3, 227, 227)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -413,7 +413,7 @@ class _ZFNet(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 3, 227, 227)
+    input_shape: ClassVar[tuple] = (-1, 3, 227, 227)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
