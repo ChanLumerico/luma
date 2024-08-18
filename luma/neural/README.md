@@ -12,9 +12,12 @@ Deep learning models and neural network utilities of Luma
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Conv1D | $(N,C_{in},W)$ | $(N,C_{out},W)$ |
-| Conv2D | $(N,C_{in},H,W)$ | $(N,C_{out},H,W)$ |
-| Conv3D | $(N,C_{in},D,H,W)$ | $(N,C_{out},D,H,W)$ |
+| Conv1D | $(N,C_{in},W)$ | $(N,C_{out},W_{pad})$ |
+| Conv2D | $(N,C_{in},H,W)$ | $(N,C_{out},H_{pad},W_{pad})$ |
+| Conv3D | $(N,C_{in},D,H,W)$ | $(N,C_{out},D_{pad},H_{pad},W_{pad})$ |
+| DepthConv1D | $(N,C,W)$ | $(N,C,W_{pad})$ |
+| DepthConv2D | $(N,C,H,W)$ | $(N,C,H_{pad},W_{pad})$ |
+| DepthConv3D | $(N,C,D,H,W)$ | $(N,C,D_{pad},H_{pad},W_{pad})$ |
 
 ### Pooling
 
@@ -68,9 +71,12 @@ Deep learning models and neural network utilities of Luma
 
 | Class | # of Layers | Input Shape | Output Shape |
 | --- | --- | --- | --- |
-| ConvBlock1D | 2~3 | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
-| ConvBlock2D | 2~3 | $(N,C,H_{in}, W_{in})$ | $(N,C,H_{out}, W_{out})$ |
-| ConvBlock3D | 2~3 | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
+| ConvBlock1D | 2~3 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
+| ConvBlock2D | 2~3 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
+| ConvBlock3D | 2~3 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
+| DepthSepConv1D | 3~5 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
+| DepthSepConv2D | 3~5 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
+| DepthSepConv3D | 3~5 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
 | DenseBlock | 2~3 | $(N,L_{in})$ | $(N,L_{out})$ |
 | IncepBlock.V1 | 19 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | IncepBlock.V2_TypeA | 22 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
