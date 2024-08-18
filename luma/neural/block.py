@@ -444,7 +444,7 @@ class SeparableConv1D(Sequential):
         stride: int = 1,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
+        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
         lambda_: float = 0.0,
         do_batch_norm: bool = False,
         momentum: float = 0.9,

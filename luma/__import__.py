@@ -166,6 +166,7 @@ from luma.neural.model import (
     ResNet_152,
     ResNet_200,
     ResNet_1001,
+    XceptionNet,
 )
 from luma.neural.autoprop import LayerNode, LayerGraph
 
@@ -354,6 +355,7 @@ if __name__ == "__main__":
     InceptionResNet_V1, InceptionResNet_V2,
     ResNet_18, ResNet_34, ResNet_50, ResNet_101, ResNet_152,
     ResNet_200, ResNet_1001,
+    XceptionNet
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

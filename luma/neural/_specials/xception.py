@@ -5,7 +5,6 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural.block import SeparableConv2D
 from luma.neural.autoprop import LayerNode, LayerGraph
 
 
@@ -74,10 +73,12 @@ class _EntryFlow(LayerGraph):
         )
         self.dsc_1 = LayerNode(
             Sequential(
-                SeparableConv2D(64, 128, 3, **self.basic_args),
+                DepthConv2D(64, 3, **self.basic_args),
+                Conv2D(64, 128, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(128, self.momentum),
                 self.activation(),
-                SeparableConv2D(128, 128, 3, **self.basic_args),
+                DepthConv2D(128, 3, **self.basic_args),
+                Conv2D(128, 128, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(128, self.momentum),
                 Pool2D(3, 2, "max"),
             ),
@@ -95,10 +96,12 @@ class _EntryFlow(LayerGraph):
         self.dsc_2 = LayerNode(
             Sequential(
                 self.activation(),
-                SeparableConv2D(128, 256, 3, **self.basic_args),
+                DepthConv2D(128, 3, **self.basic_args),
+                Conv2D(128, 256, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(256, self.momentum),
                 self.activation(),
-                SeparableConv2D(256, 256, 3, **self.basic_args),
+                DepthConv2D(256, 3, **self.basic_args),
+                Conv2D(256, 256, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(256, self.momentum),
                 Pool2D(3, 2, "max"),
             ),
@@ -116,10 +119,12 @@ class _EntryFlow(LayerGraph):
         self.dsc_3 = LayerNode(
             Sequential(
                 self.activation(),
-                SeparableConv2D(256, 728, 3, **self.basic_args),
+                DepthConv2D(256, 3, **self.basic_args),
+                Conv2D(256, 728, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(728, self.momentum),
                 self.activation(),
-                SeparableConv2D(728, 728, 3, **self.basic_args),
+                DepthConv2D(728, 3, **self.basic_args),
+                Conv2D(728, 728, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(728, self.momentum),
                 Pool2D(3, 2, "max"),
             ),
@@ -182,13 +187,16 @@ class _MiddleFlow(LayerGraph):
         self.dsc_ = LayerNode(
             Sequential(
                 self.activation(),
-                SeparableConv2D(728, 728, 3, **self.basic_args),
+                DepthConv2D(728, 3, **self.basic_args),
+                Conv2D(728, 728, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(728, self.momentum),
                 self.activation(),
-                SeparableConv2D(728, 728, 3, **self.basic_args),
+                DepthConv2D(728, 3, **self.basic_args),
+                Conv2D(728, 728, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(728, self.momentum),
                 self.activation(),
-                SeparableConv2D(728, 728, 3, **self.basic_args),
+                DepthConv2D(728, 3, **self.basic_args),
+                Conv2D(728, 728, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(728, self.momentum),
             ),
             name="dsc_",
@@ -250,10 +258,12 @@ class _ExitFlow(LayerGraph):
         self.dsc_ = LayerNode(
             Sequential(
                 self.activation(),
-                SeparableConv2D(728, 728, 3, **self.basic_args),
+                DepthConv2D(728, 3, **self.basic_args),
+                Conv2D(728, 728, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(728, self.momentum),
                 self.activation(),
-                SeparableConv2D(728, 1024, 3, **self.basic_args),
+                DepthConv2D(728, 3, **self.basic_args),
+                Conv2D(728, 1024, 1, 1, "valid", **self.basic_args),
                 BatchNorm2D(1024, self.momentum),
                 Pool2D(3, 2, "max"),
             ),

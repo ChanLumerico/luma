@@ -1018,6 +1018,7 @@ class _Xception(Estimator, Supervised, NeuralModel):
         n_epochs: int = 100,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
+        momentum: float = 0.9,
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
@@ -1028,6 +1029,7 @@ class _Xception(Estimator, Supervised, NeuralModel):
         self.initializer = initializer
         self.out_features = out_features
         self.lambda_ = lambda_
+        self.momentum = momentum
         self.shuffle = shuffle
         self.random_state = random_state
         self._fitted = False
@@ -1079,10 +1081,13 @@ class _Xception(Estimator, Supervised, NeuralModel):
         self.model.extend(
             ("ExitFlow", XceptionBlock.ExitFlow(**base_args)),
             SeparableConv2D(1024, 1536, 3, **base_args),
+            BatchNorm2D(1536, self.momentum),
             self.activation(),
             SeparableConv2D(1536, 2048, 3, **base_args),
+            BatchNorm2D(2048, self.momentum),
             self.activation(),
             GlobalAvgPool2D(),
+            deep_add=False,
         )
 
         self.model += Flatten()
