@@ -101,6 +101,9 @@ Deep learning models and neural network utilities of Luma
 | ResNetBlock.Basic | 7~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | ResNetBlock.Bottleneck | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | ResNetBlock.PreActBottleneck | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| XceptionBlock.Entry | 42 | $(N,3,299,299)$ | $(N,728,19,19)$ |
+| XceptionBlock.Middle | 14 | $(N,728,19,19)$ | $(N,728,19,19)$ |
+| XceptionBlock.Exit | 11 | $(N,728,19,19)$ | $(N,1024,9,9)$ |
 
 ---
 
@@ -171,9 +174,9 @@ Information Processing Systems, 2012.
 > Chollet, François. “Xception: Deep Learning with Depthwise Separable Convolutions.” Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2017, pp. 1251-1258.
 > 
 
-| Class | # of Layers | Input Shape | Weights | Biases | Implemented |
-| --- | --- | --- | --- | --- | --- |
-| XceptionNet |  |  |  |  | 🚧 |
+| Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
+| --- | --- | --- | --- | --- | --- | --- |
+| XceptionNet | 174 | $(N,3,299,299)$ | 22,113,984 | 50,288 | 22,164,272 | ✅ |
 
 ### ResNet Series
 
@@ -223,7 +226,7 @@ class MyModel(NeuralModel): ...
 
 ### 2️⃣ Build a constructor method
 
-Add a constructor method `__init__` with all the necessary arguments for NeuralModel included. You can add additional arguments if needed. All the necessary arguments will be auto-completed.
+Add a constructor method `__init__` with all the necessary arguments for `NeuralModel` included. You can add additional arguments if needed. All the necessary arguments will be auto-completed.
 
 ```python
 class MyModel(NeuralModel):
@@ -295,7 +298,7 @@ def build_method(self) -> None:
 
 ### 7️⃣ Set optimizer, loss function, and LR scheduler
 
-An optimizer and a loss function must be assigned to the model. Learning Rate(LR) scheduler is not necessary.
+An optimizer and a loss function must be assigned to the model. Learning Rate(LR) scheduler is optional.
 
 ```python
 model = MyModel(...)
@@ -328,10 +331,10 @@ y_pred = model.predict_nn(X_test, argmax=True)
 
 For more detailed information, please refer to the source code of `NeuralModel`.
 
-### Recommendations
+## Recommendations
 
-Since Luma's neural package supports MLX acceleration, platforms with Apple Silicon are recommended.
+Since Luma's neural package supports `MLX` acceleration, platforms with **Apple Silicon** are recommended.
 
-Apple's Metal Performance Shader(MPS) will be automatically detected if available, and MLX acceleation will be applied.
+Apple's Metal Performance Shader(MPS) will be automatically detected if available, and `MLX` acceleration will be applied.
 
 Otherwise, the default CPU operations are applied.
