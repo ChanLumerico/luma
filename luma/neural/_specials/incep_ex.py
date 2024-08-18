@@ -57,7 +57,7 @@ class _EntryFlow(LayerGraph):
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(
             Sequential(
-                Conv2D(3, 32, 3, 2.0**self.basic_args),
+                Conv2D(3, 32, 3, 2, **self.basic_args),
                 BatchNorm2D(32, self.momentum),
                 self.activation(),
                 Conv2D(32, 64, 3, **self.basic_args),
@@ -128,7 +128,7 @@ class _EntryFlow(LayerGraph):
             name="dsc_3",
         )
         self.sum_3 = LayerNode(Identity(), merge_mode="sum", name="sum_3")
-    
+
     @Tensor.force_shape((-1, 3, 299, 299))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
         return super().forward(X, is_train)
@@ -141,3 +141,127 @@ class _EntryFlow(LayerGraph):
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         batch_size, _, _, _ = in_shape
         return batch_size, 728, 19, 19
+
+
+class _MiddleFlow(LayerGraph):
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+        super(_MiddleFlow, self).__init__(
+            graph={
+                self.rt_: [self.sum_, self.dsc_],
+                self.dsc_: [self.sum_],
+            },
+        )
+
+        self.build()
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+        self.dsc_ = LayerNode(
+            Sequential(
+                self.activation(),
+                SeparableConv2D(728, 728, 3, **self.basic_args),
+                BatchNorm2D(728, self.momentum),
+                self.activation(),
+                SeparableConv2D(728, 728, 3, **self.basic_args),
+                BatchNorm2D(728, self.momentum),
+                self.activation(),
+                SeparableConv2D(728, 728, 3, **self.basic_args),
+                BatchNorm2D(728, self.momentum),
+            ),
+            name="dsc_",
+        )
+        self.sum_ = LayerNode(Identity(), merge_mode="sum", name="sum_")
+
+    @Tensor.force_shape((-1, 728, 19, 19))
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_shape((-1, 728, 19, 19))
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, _, _ = in_shape
+        return batch_size, 728, 19, 19
+
+
+class _ExitFlow(LayerGraph):
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        optimizer: Optimizer | None = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        do_batch_norm: bool = True,
+        momentum: float = 0.9,
+        random_state: int | None = None,
+    ) -> None:
+        self.activation = activation
+        self.optimizer = optimizer
+        self.initializer = initializer
+        self.lambda_ = lambda_
+        self.do_batch_norm = do_batch_norm
+        self.momentum = momentum
+
+        self.basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.init_nodes()
+
+    def init_nodes(self) -> None:
+        self.rt_ = LayerNode(Identity(), name="rt_")
+        self.dsc_ = LayerNode(
+            Sequential(
+                self.activation(),
+                SeparableConv2D(728, 728, 3, **self.basic_args),
+                BatchNorm2D(728, self.momentum),
+                self.activation(),
+                SeparableConv2D(728, 1024, 3, **self.basic_args),
+                BatchNorm2D(1024, self.momentum),
+                Pool2D(3, 2, "max"),
+            ),
+            name="dsc_",
+        )
+        self.sum_ = LayerNode(Identity(), merge_mode="sum", name="sum_")
+
+    @Tensor.force_shape((-1, 728, 19, 19))
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_shape((-1, 1024, 9, 9))
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, _, _ = in_shape
+        return batch_size, 1024, 9, 9
