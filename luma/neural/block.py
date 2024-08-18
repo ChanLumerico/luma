@@ -14,9 +14,9 @@ __all__ = (
     "ConvBlock1D",
     "ConvBlock2D",
     "ConvBlock3D",
-    "DepthSepConv1D",
-    "DepthSepConv2D",
-    "DepthSepConv3D",
+    "SeparableConv1D",
+    "SeparableConv2D",
+    "SeparableConv3D",
     "DenseBlock",
     "IncepBlock",
     "IncepResBlock",
@@ -393,7 +393,7 @@ class ConvBlock3D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class DepthSepConv1D(Sequential):
+class SeparableConv1D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     1-dimensional data.
@@ -423,7 +423,7 @@ class DepthSepConv1D(Sequential):
         Step size for filters during convolution
     `lambda_` : float, default=0.0
         L2 regularization strength
-    `do_batch_norm` : bool, default=True
+    `do_batch_norm` : bool, default=False
         Whether to perform batch normalization
     `momentum` : float, default=0.9
         Momentum for batch normalization
@@ -470,7 +470,7 @@ class DepthSepConv1D(Sequential):
         )
         self.check_param_ranges()
 
-        super(DepthSepConv1D, self).__init__(
+        super(SeparableConv1D, self).__init__(
             DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -484,7 +484,7 @@ class DepthSepConv1D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class DepthSepConv2D(Sequential):
+class SeparableConv2D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     2-dimensional data.
@@ -514,7 +514,7 @@ class DepthSepConv2D(Sequential):
         Step size for filters during convolution
     `lambda_` : float, default=0.0
         L2 regularization strength
-    `do_batch_norm` : bool, default=True
+    `do_batch_norm` : bool, default=False
         Whether to perform batch normalization
     `momentum` : float, default=0.9
         Momentum for batch normalization
@@ -561,7 +561,7 @@ class DepthSepConv2D(Sequential):
         )
         self.check_param_ranges()
 
-        super(DepthSepConv2D, self).__init__(
+        super(SeparableConv2D, self).__init__(
             DepthConv2D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm2D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -575,7 +575,7 @@ class DepthSepConv2D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class DepthSepConv3D(Sequential):
+class SeparableConv3D(Sequential):
     """
     Depthwise Seperable Convolutional(DSC) block for
     3-dimensional data.
@@ -605,7 +605,7 @@ class DepthSepConv3D(Sequential):
         Step size for filters during convolution
     `lambda_` : float, default=0.0
         L2 regularization strength
-    `do_batch_norm` : bool, default=True
+    `do_batch_norm` : bool, default=False
         Whether to perform batch normalization
     `momentum` : float, default=0.9
         Momentum for batch normalization
@@ -652,7 +652,7 @@ class DepthSepConv3D(Sequential):
         )
         self.check_param_ranges()
 
-        super(DepthSepConv3D, self).__init__(
+        super(SeparableConv3D, self).__init__(
             DepthConv3D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm3D(in_channels, momentum) if do_batch_norm else None,
         )
