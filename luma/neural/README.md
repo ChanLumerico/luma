@@ -74,9 +74,9 @@ Deep learning models and neural network utilities of Luma
 | ConvBlock1D | 2~3 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
 | ConvBlock2D | 2~3 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
 | ConvBlock3D | 2~3 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
-| DepthSepConv1D | 3~5 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
-| DepthSepConv2D | 3~5 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
-| DepthSepConv3D | 3~5 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
+| SeparableConv1D | 3~5 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
+| SeparableConv2D | 3~5 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
+| SeparableConv3D | 3~5 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
 | DenseBlock | 2~3 | $(N,L_{in})$ | $(N,L_{out})$ |
 | IncepBlock.V1 | 19 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | IncepBlock.V2_TypeA | 22 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
