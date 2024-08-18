@@ -95,11 +95,11 @@
             <table>
                 <tr>
                     <td>Latest Version</td>
-                    <td>1.0.9</td>
+                    <td>1.0.10</td>
                 </tr>
                 <tr>
                     <td>Lines of Code</td>
-                    <td>~29.0K</td>
+                    <td>~29.5K</td>
                 </tr>
                 <tr>
                     <td>Requirement</td>
@@ -120,7 +120,7 @@
                 <tr>
                     <td>Inspired By</td>
                     <td>
-                        <img src="https://skillicons.dev/icons?i=pytorch,tensorflow,sklearn">
+                        <img src="https://skillicons.dev/icons?i=sklearn,pytorch,tensorflow">
                     </td>
                 </tr>
             </table>
