@@ -1,4 +1,4 @@
-from typing import Self, override
+from typing import Self, override, ClassVar
 from dataclasses import asdict
 
 from luma.core.super import Estimator, Evaluator, Supervised
@@ -168,7 +168,7 @@ class _VGGNet_11(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -347,7 +347,7 @@ class _VGGNet_13(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -538,7 +538,7 @@ class _VGGNet_16(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -741,7 +741,7 @@ class _VGGNet_19(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 3, 224, 224)
+    input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:

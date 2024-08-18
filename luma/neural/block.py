@@ -1193,14 +1193,14 @@ class XceptionBlock:
     References
     ----------
     `XceptionNet` :
-        [1] Chollet, François. “Xception: Deep Learning with Depthwise 
-        Separable Convolutions.” Proceedings of the IEEE Conference on 
-        Computer Vision and Pattern Recognition (CVPR), 2017, 
+        [1] Chollet, François. “Xception: Deep Learning with Depthwise
+        Separable Convolutions.” Proceedings of the IEEE Conference on
+        Computer Vision and Pattern Recognition (CVPR), 2017,
         pp. 1251-1258.
-    
+
     """
 
-    class EntryFlow(_specials.incep_ex._EntryFlow): 
+    class EntryFlow(_specials.incep_ex._EntryFlow):
         """
         An entry flow of Xception network mentioned in Fig. 5
         of the original paper[1].

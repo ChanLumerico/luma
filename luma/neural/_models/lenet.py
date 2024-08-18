@@ -1,4 +1,4 @@
-from typing import Self, override
+from typing import Self, override, ClassVar
 
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
@@ -113,7 +113,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 1, 28, 28)
+    input_shape: ClassVar[tuple] = (-1, 1, 28, 28)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -247,7 +247,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 1, 32, 32)
+    input_shape: ClassVar[tuple] = (-1, 1, 32, 32)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:
@@ -391,7 +391,7 @@ class _LeNet_5(Estimator, Supervised, NeuralModel):
             random_state=self.random_state,
         )
 
-    input_shape: tuple = (-1, 1, 32, 32)
+    input_shape: ClassVar[tuple] = (-1, 1, 32, 32)
 
     @Tensor.force_shape(input_shape)
     def fit(self, X: Tensor, y: Matrix) -> Self:

@@ -16,7 +16,6 @@ class _EntryFlow(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
-        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -24,7 +23,6 @@ class _EntryFlow(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
-        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.basic_args = {
@@ -150,7 +148,6 @@ class _MiddleFlow(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
-        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -158,7 +155,6 @@ class _MiddleFlow(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
-        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.basic_args = {
@@ -220,7 +216,6 @@ class _ExitFlow(LayerGraph):
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
-        do_batch_norm: bool = True,
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
@@ -228,7 +223,6 @@ class _ExitFlow(LayerGraph):
         self.optimizer = optimizer
         self.initializer = initializer
         self.lambda_ = lambda_
-        self.do_batch_norm = do_batch_norm
         self.momentum = momentum
 
         self.basic_args = {
