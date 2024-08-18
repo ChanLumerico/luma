@@ -21,6 +21,7 @@ __all__ = (
     "IncepBlock",
     "IncepResBlock",
     "ResNetBlock",
+    "XceptionBlock",
 )
 
 
@@ -1182,3 +1183,13 @@ class ResNetBlock:
 
         See [2] also for additional information.
         """
+
+
+@ClassType.non_instantiable()
+class XceptionBlock:
+
+    class EntryFlow: ...
+
+    class MiddleFlow: ...
+
+    class ExitFlow: ...

@@ -173,6 +173,8 @@ class _MiddleFlow(LayerGraph):
                 self.rt_: [self.sum_, self.dsc_],
                 self.dsc_: [self.sum_],
             },
+            root=self.rt_,
+            term=self.sum_,
         )
 
         self.build()
@@ -236,6 +238,18 @@ class _ExitFlow(LayerGraph):
         }
 
         self.init_nodes()
+        super(_ExitFlow, self).__init__(
+            graph={
+                self.rt_: [self.sum_, self.dsc_],
+                self.dsc_: [self.sum_],
+            },
+            root=self.rt_,
+            term=self.sum_,
+        )
+
+        self.build()
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
 
     def init_nodes(self) -> None:
         self.rt_ = LayerNode(Identity(), name="rt_")
