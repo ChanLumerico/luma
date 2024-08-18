@@ -140,6 +140,7 @@ from luma.neural.block import (
     IncepBlock,
     IncepResBlock,
     ResNetBlock,
+    XceptionBlock,
 )
 from luma.neural.model import SimpleMLP, SimpleCNN
 from luma.neural.model import (
@@ -332,7 +333,8 @@ if __name__ == "__main__":
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D,
     SeparableConv1D, SeparableConv2D, SeparableConv3D,
-    DenseBlock, IncepBlock, IncepResBlock, ResNetBlock
+    DenseBlock, IncepBlock, IncepResBlock, ResNetBlock,
+    XceptionBlock
 
     LayerNode, LayerGraph
 

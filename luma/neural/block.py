@@ -1200,7 +1200,7 @@ class XceptionBlock:
     
     """
 
-    class EntryFlow: 
+    class EntryFlow(_specials.incep_ex._EntryFlow): 
         """
         An entry flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1215,6 +1215,32 @@ class XceptionBlock:
             ```
         """
 
-    class MiddleFlow: ...
+    class MiddleFlow(_specials.incep_ex._MiddleFlow):
+        """
+        A middle flow of Xception network mentioned in Fig. 5
+        of the original paper[1].
 
-    class ExitFlow: ...
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 728, 19, 19]
+            Output: Tensor[-1, 728, 19, 19]
+            ```
+        """
+
+    class ExitFlow(_specials.incep_ex._ExitFlow):
+        """
+        An exit flow of Xception network mentioned in Fig. 5
+        of the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 728, 19, 19]
+            Output: Tensor[-1, 1024, 9, 9]
+            ```
+        """
