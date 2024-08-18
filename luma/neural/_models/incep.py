@@ -1072,14 +1072,14 @@ class _Xception(Estimator, Supervised, NeuralModel):
             "random_state": self.random_state,
         }
 
-        self.model.add(("EntryFlow", XceptionBlock.EntryFlow(**base_args)))
+        self.model.add(("EntryFlow", XceptionBlock.Entry(**base_args)))
         for i in range(1, 9):
             self.model.add(
-                (f"MiddleFlow_{i}", XceptionBlock.MiddleFlow(**base_args)),
+                (f"MiddleFlow_{i}", XceptionBlock.Middle(**base_args)),
             )
 
         self.model.extend(
-            ("ExitFlow", XceptionBlock.ExitFlow(**base_args)),
+            ("ExitFlow", XceptionBlock.Exit(**base_args)),
             SeparableConv2D(1024, 1536, 3, **base_args),
             BatchNorm2D(1536, self.momentum),
             self.activation(),

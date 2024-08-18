@@ -8,7 +8,7 @@ from luma.neural.layer import *
 from luma.neural.autoprop import LayerNode, LayerGraph
 
 
-class _EntryFlow(LayerGraph):
+class _Entry(LayerGraph):
     def __init__(
         self,
         activation: Activation.FuncType = Activation.ReLU,
@@ -31,7 +31,7 @@ class _EntryFlow(LayerGraph):
         }
 
         self.init_nodes()
-        super(_EntryFlow, self).__init__(
+        super(_Entry, self).__init__(
             graph={
                 self.rt_: [self.res_1, self.dsc_1],
                 self.res_1: [self.sum_1],
@@ -146,7 +146,7 @@ class _EntryFlow(LayerGraph):
         return batch_size, 728, 19, 19
 
 
-class _MiddleFlow(LayerGraph):
+class _Middle(LayerGraph):
     def __init__(
         self,
         activation: Activation.FuncType = Activation.ReLU,
@@ -169,7 +169,7 @@ class _MiddleFlow(LayerGraph):
         }
 
         self.init_nodes()
-        super(_MiddleFlow, self).__init__(
+        super(_Middle, self).__init__(
             graph={
                 self.rt_: [self.sum_, self.dsc_],
                 self.dsc_: [self.sum_],
@@ -217,7 +217,7 @@ class _MiddleFlow(LayerGraph):
         return batch_size, 728, 19, 19
 
 
-class _ExitFlow(LayerGraph):
+class _Exit(LayerGraph):
     def __init__(
         self,
         activation: Activation.FuncType = Activation.ReLU,
@@ -240,7 +240,7 @@ class _ExitFlow(LayerGraph):
         }
 
         self.init_nodes()
-        super(_ExitFlow, self).__init__(
+        super(_Exit, self).__init__(
             graph={
                 self.rt_: [self.sum_, self.dsc_],
                 self.dsc_: [self.sum_],

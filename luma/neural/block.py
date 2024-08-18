@@ -442,9 +442,9 @@ class SeparableConv1D(Sequential):
         out_channels: int,
         filter_size: Tuple[int] | int,
         stride: int = 1,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
         lambda_: float = 0.0,
         do_batch_norm: bool = False,
         momentum: float = 0.9,
@@ -529,9 +529,9 @@ class SeparableConv2D(Sequential):
         out_channels: int,
         filter_size: Tuple[int] | int,
         stride: int = 1,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
         lambda_: float = 0.0,
         do_batch_norm: bool = False,
         momentum: float = 0.9,
@@ -616,9 +616,9 @@ class SeparableConv3D(Sequential):
         out_channels: int,
         filter_size: Tuple[int] | int,
         stride: int = 1,
+        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "valid",
         lambda_: float = 0.0,
         do_batch_norm: bool = False,
         momentum: float = 0.9,
@@ -1200,7 +1200,7 @@ class XceptionBlock:
 
     """
 
-    class EntryFlow(_specials.xception._EntryFlow):
+    class Entry(_specials.xception._Entry):
         """
         An entry flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1215,7 +1215,7 @@ class XceptionBlock:
             ```
         """
 
-    class MiddleFlow(_specials.xception._MiddleFlow):
+    class Middle(_specials.xception._Middle):
         """
         A middle flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1230,7 +1230,7 @@ class XceptionBlock:
             ```
         """
 
-    class ExitFlow(_specials.xception._ExitFlow):
+    class Exit(_specials.xception._Exit):
         """
         An exit flow of Xception network mentioned in Fig. 5
         of the original paper[1].
