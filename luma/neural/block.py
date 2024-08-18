@@ -1200,7 +1200,7 @@ class XceptionBlock:
 
     """
 
-    class EntryFlow(_specials.incep_ex._EntryFlow):
+    class EntryFlow(_specials.xception._EntryFlow):
         """
         An entry flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1215,7 +1215,7 @@ class XceptionBlock:
             ```
         """
 
-    class MiddleFlow(_specials.incep_ex._MiddleFlow):
+    class MiddleFlow(_specials.xception._MiddleFlow):
         """
         A middle flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1230,7 +1230,7 @@ class XceptionBlock:
             ```
         """
 
-    class ExitFlow(_specials.incep_ex._ExitFlow):
+    class ExitFlow(_specials.xception._ExitFlow):
         """
         An exit flow of Xception network mentioned in Fig. 5
         of the original paper[1].

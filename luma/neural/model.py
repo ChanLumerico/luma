@@ -32,6 +32,7 @@ __all__ = (
     "ResNet_200",
     "ResNet_269",
     "ResNet_1001",
+    "XceptionNet",
 )
 
 MODELS: tuple[str] = __all__
@@ -2662,3 +2663,6 @@ class ResNet_1001(_models.resnet._ResNet_1001):
             random_state,
             deep_verbose,
         )
+
+
+class XceptionNet(_models.incep._Xception): ...
