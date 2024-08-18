@@ -1187,8 +1187,33 @@ class ResNetBlock:
 
 @ClassType.non_instantiable()
 class XceptionBlock:
+    """
+    Container class for building components of XceptionNet.
 
-    class EntryFlow: ...
+    References
+    ----------
+    `XceptionNet` :
+        [1] Chollet, François. “Xception: Deep Learning with Depthwise 
+        Separable Convolutions.” Proceedings of the IEEE Conference on 
+        Computer Vision and Pattern Recognition (CVPR), 2017, 
+        pp. 1251-1258.
+    
+    """
+
+    class EntryFlow: 
+        """
+        An entry flow of Xception network mentioned in Fig. 5
+        of the original paper[1].
+
+        Notes
+        -----
+        - This block has fixed shape of input and ouput tensors.
+
+            ```py
+            Input: Tensor[-1, 3, 299, 299]
+            Output: Tensor[-1, 728, 19, 19]
+            ```
+        """
 
     class MiddleFlow: ...
 
