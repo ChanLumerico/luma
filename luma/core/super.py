@@ -192,6 +192,24 @@ class Transformer(ModelBase, metaclass=ABCMeta):
             ```
         """
 
+    class Image:
+        """
+        An inner class of `Transformer` dedicated to the image transformations.
+        Usually used for neural networks related to computer vision.
+
+        * `fit_transform` method returns the transformed image set
+
+            ```py
+            def fit_transform(self, X: TensorLike) -> TensorLike
+            ```
+        """
+
+        def fit(self, *args, **kwargs) -> Any:
+            pass
+
+        def transform(self, *args, **kwargs) -> Any:
+            pass
+
     @abstractmethod
     def fit(self, *args) -> Self: ...
 
