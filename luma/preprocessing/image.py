@@ -26,6 +26,15 @@ class ImageTransformer(Transformer, Transformer.Image):
 
         return X
 
+    def __len__(self) -> int:
+        return len(self.trans_arr)
+    
+    def __getitem__(self, index: int) -> Transformer:
+        return self.trans_arr[index]
+    
+    def __reversed__(self) -> list[Transformer]:
+        return self.trans_arr[::-1]
+
 
 class Resize(Transformer, Transformer.Image):
     NotImplemented
