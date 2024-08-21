@@ -1,9 +1,10 @@
 import numpy as np
 from scipy.ndimage import zoom
-from typing import Any, List, Literal
+from typing import Any, List, Literal, Self
 
 from luma.interface.typing import Tensor
 from luma.interface.exception import UnsupportedParameterError
+from luma.extension import not_used
 from luma.core.super import Transformer
 
 
@@ -39,6 +40,14 @@ class ImageTransformer(Transformer, Transformer.Image):
             X = trans.fit_transform(X)
 
         return X
+    
+    @not_used
+    def fit(self, *args) -> Self:
+        return super().fit(*args)
+    
+    @not_used
+    def transform(self, *args) -> Any:
+        return super().transform(*args)
 
     def __len__(self) -> int:
         return len(self.trans_arr)
@@ -97,6 +106,14 @@ class Resize(Transformer, Transformer.Image):
                 X_resized[i, j] = zoom(X[i, j], zoom_factor, order=1)
 
         return X_resized
+    
+    @not_used
+    def fit(self, *args) -> Self:
+        return super().fit(*args)
+    
+    @not_used
+    def transform(self, *args) -> Any:
+        return super().transform(*args)
 
 
 class CenterCrop(Transformer, Transformer.Image):

@@ -204,12 +204,6 @@ class Transformer(ModelBase, metaclass=ABCMeta):
             ```
         """
 
-        def fit(self, *args, **kwargs) -> Any:
-            pass
-
-        def transform(self, *args, **kwargs) -> Any:
-            pass
-
     @abstractmethod
     def fit(self, *args) -> Self: ...
 
