@@ -1,6 +1,5 @@
 
 <img src="https://github.com/ChanLumerico/luma/raw/main/others/luma.png" alt="logo" width="75" height="75">
-
 # Luma
 
 A Comprehensive Python Module for Machine Learning and Data Science
@@ -76,7 +75,7 @@ import luma
 
 ### Acceleration
 
-Luma supports `MLX` based `NumPy` acceleration on Apple Silicon. By importing Luma’s neural package, it will automatically detect Apple’s Metal Performance Shader(MPS) availability and directly apply MLX acceleration for all execution flows and operations using `luma.neural`.
+Luma supports `MLX` based `NumPy` acceleration on **Apple Silicon**. By importing Luma’s neural package, it will automatically detect Apple’s Metal Performance Shader(MPS) availability and directly apply MLX acceleration for all execution flows and operations using `luma.neural`.
 
 ```python
 import luma.neural
