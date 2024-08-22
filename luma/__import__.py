@@ -198,6 +198,16 @@ from luma.preprocessing.encoder import (
 )
 from luma.preprocessing.imputer import SimpleImputer, KNNImputer, HotDeckImputer
 from luma.preprocessing.outlier import LocalOutlierFactor
+from luma.preprocessing.image import (
+    ImageTransformer,
+    Resize,
+    CenterCrop,
+    Normalize,
+    RandomCrop,
+    RandomFlip,
+    RandomRotate,
+    RandomShift,
+)
 
 from luma.reduction.linear import PCA, KernelPCA, LDA, KDA, CCA
 from luma.reduction.linear import TruncatedSVD, FactorAnalysis
@@ -387,6 +397,10 @@ if __name__ == "__main__":
     SimpleImputer, KNNImputer, HotDeckImputer
 
     LocalOutlierFactor
+
+    ImageTransformer,
+    Resize, CenterCrop, Normalize, RandomCrop, RandomFlip,
+    RandomRotate, RandomShift,
 
     # ----------------- [ luma.reduction ] ---------------------
     PCA, KernelPCA, LDA, KDA, CCA, TruncatedSVD, FactorAnalysis
