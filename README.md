@@ -1,5 +1,6 @@
 
 <img src="https://github.com/ChanLumerico/luma/raw/main/others/luma.png" alt="logo" width="75" height="75">
+
 # Luma
 
 A Comprehensive Python Module for Machine Learning and Data Science
