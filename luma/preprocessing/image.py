@@ -36,7 +36,7 @@ class ImageTransformer(Transformer, Transformer.Image):
     def fit_transform(self, X: Tensor) -> Any:
         for trans in self.trans_arr:
             if self.shuffle:
-                X = self.rng_.shuffle(X)
+                self.rng_.shuffle(X)
             X = trans.fit_transform(X)
 
         return X
