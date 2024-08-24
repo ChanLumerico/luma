@@ -1,7 +1,6 @@
 from typing import Any, Self, override, ClassVar
-from dataclasses import asdict
 
-from luma.core.super import Estimator, Evaluator, Optimizer, Supervised
+from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
 from luma.interface.util import InitUtil
 from luma.metric.classification import Accuracy

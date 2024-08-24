@@ -23,6 +23,7 @@ from luma.neural.block import (
     incep_v4,
     incep_res_v1,
     incep_res_v2,
+    mobile,
     resnet,
     standard,
     xception,
@@ -865,3 +866,6 @@ class XceptionBlock:
             Output: Tensor[-1, 1024, 9, 9]
             ```
         """
+
+
+class InvertedResBlock(mobile._InvertedRes): ...

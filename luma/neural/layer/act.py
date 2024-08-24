@@ -1,7 +1,7 @@
 from typing import Tuple, Type
 import numpy as np
 
-from luma.interface.typing import ClassType, Tensor
+from luma.interface.typing import ClassType, Tensor, TensorLike
 from luma.neural.base import Layer
 
 
@@ -43,6 +43,23 @@ class _Activation:
         def backward(self, d_out: Tensor) -> Tensor:
             self.dX = d_out.copy()
             self.dX[self.input_ <= 0] = 0
+            return self.dX
+
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return _Activation._out_shape(in_shape)
+
+    class ReLU6(Layer):
+        def __init__(self) -> None:
+            super().__init__()
+
+        def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+            _ = is_train
+            self.input_ = X
+            return np.minimum(np.maximum(0, X), 6)
+
+        def backward(self, d_out: TensorLike) -> TensorLike:
+            self.dX = d_out.copy()
+            self.dX[(self.input_ <= 0) | (self.input_ > 6)] = 0
             return self.dX
 
         def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
