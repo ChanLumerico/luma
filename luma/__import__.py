@@ -129,7 +129,7 @@ from luma.neural.scheduler import (
     OneCycleLR,
     ReduceLROnPlateau,
 )
-from luma.neural.block_ import (
+from luma.neural.block import (
     ConvBlock1D,
     ConvBlock2D,
     ConvBlock3D,
@@ -142,8 +142,9 @@ from luma.neural.block_ import (
     ResNetBlock,
     XceptionBlock,
 )
-from luma.neural.model import SimpleMLP, SimpleCNN
 from luma.neural.model import (
+    SimpleMLP,
+    SimpleCNN,
     LeNet_1,
     LeNet_4,
     LeNet_5,
