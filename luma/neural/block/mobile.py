@@ -57,7 +57,7 @@ class _InvertedRes(LayerGraph):
         if self.expand != 1:
             self[self.rt_].clear()
             self[self.rt_].append(self.pw_)
-            self.graph[self.pw] = [self.dw_pw_lin]
+            self.graph[self.pw_] = [self.dw_pw_lin]
 
         if self.do_shortcut:
             self[self.rt_].append(self.tm_)

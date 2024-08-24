@@ -16,7 +16,6 @@ from luma.core.super import Optimizer
 from luma.interface.typing import ClassType
 from luma.interface.util import InitUtil
 
-from luma.neural.layer import *
 from luma.neural.block import (
     incep_v1,
     incep_v2,
@@ -42,13 +41,14 @@ __all__ = (
     "IncepResBlock",
     "ResNetBlock",
     "XceptionBlock",
+    "MobileNetBlock",
 )
 
 
 @dataclass
 class ConvBlockArgs:
     filter_size: Tuple[int, ...] | int
-    activation: Activation.FuncType
+    activation: callable
     optimizer: Optimizer | None = None
     initializer: InitUtil.InitStr = None
     padding: Tuple[int, ...] | int | Literal["same", "valid"] = "same"
@@ -359,7 +359,7 @@ class SeparableConv3D(standard._SeparableConv3D):
 
 @dataclass
 class DenseBlockArgs:
-    activation: Activation.FuncType
+    activation: callable
     optimizer: Optimizer | None = None
     initializer: InitUtil.InitStr = None
     lambda_: float = 0.0
@@ -410,7 +410,7 @@ class DenseBlock(standard._DenseBlock):
 
 @dataclass
 class BaseBlockArgs:
-    activation: Activation.FuncType
+    activation: callable
     optimizer: Optimizer | None = None
     initializer: InitUtil.InitStr = None
     lambda_: float = 0.0
@@ -868,4 +868,7 @@ class XceptionBlock:
         """
 
 
-class InvertedResBlock(mobile._InvertedRes): ...
+@ClassType.non_instantiable()
+class MobileNetBlock:
+    
+    class InvertedRes(mobile._InvertedRes): ...
