@@ -8,6 +8,7 @@ from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
 from luma.neural.block import (
+    conv,
     incep_v1,
     incep_v2,
     incep_v4,
@@ -51,7 +52,7 @@ class ConvBlockArgs:
     random_state: int | None = None
 
 
-class ConvBlock1D(Sequential):
+class ConvBlock1D(conv._ConvBlock1D):
     """
     Convolutional block for 1-dimensional data.
 
@@ -124,51 +125,9 @@ class ConvBlock1D(Sequential):
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
     ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
+        ...
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-        super(ConvBlock1D, self).__init__(
-            Conv1D(
-                in_channels,
-                out_channels,
-                filter_size,
-                stride,
-                padding,
-                **basic_args,
-            )
-        )
-        if do_batch_norm:
-            super(ConvBlock1D, self).__add__(
-                BatchNorm1D(out_channels, momentum),
-            )
-        super(ConvBlock1D, self).__add__(activation())
-        if do_pooling:
-            super(ConvBlock1D, self).__add__(
-                Pool1D(pool_filter_size, pool_stride, pool_mode)
-            )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class ConvBlock2D(Sequential):
+class ConvBlock2D(conv._ConvBlock2D):
     """
     Convolutional block for 2-dimensional data.
 
@@ -241,51 +200,9 @@ class ConvBlock2D(Sequential):
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
     ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
+        ...
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-        super(ConvBlock2D, self).__init__(
-            Conv2D(
-                in_channels,
-                out_channels,
-                filter_size,
-                stride,
-                padding,
-                **basic_args,
-            )
-        )
-        if do_batch_norm:
-            super(ConvBlock2D, self).__add__(
-                BatchNorm2D(out_channels, momentum),
-            )
-        super(ConvBlock2D, self).__add__(activation())
-        if do_pooling:
-            super(ConvBlock2D, self).__add__(
-                Pool2D(pool_filter_size, pool_stride, pool_mode)
-            )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class ConvBlock3D(Sequential):
+class ConvBlock3D(conv._ConvBlock3D):
     """
     Convolutional block for 3-dimensional data.
 
@@ -358,51 +275,9 @@ class ConvBlock3D(Sequential):
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
     ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
+        ...
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-        super(ConvBlock3D, self).__init__(
-            Conv3D(
-                in_channels,
-                out_channels,
-                filter_size,
-                stride,
-                padding,
-                **basic_args,
-            )
-        )
-        if do_batch_norm:
-            super(ConvBlock3D, self).__add__(
-                BatchNorm3D(out_channels, momentum),
-            )
-        super(ConvBlock3D, self).__add__(activation())
-        if do_pooling:
-            super(ConvBlock3D, self).__add__(
-                Pool3D(pool_filter_size, pool_stride, pool_mode)
-            )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class SeparableConv1D(Sequential):
+class SeparableConv1D(conv._SeparableConv1D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     1-dimensional data.
@@ -458,38 +333,9 @@ class SeparableConv1D(Sequential):
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
+        ...
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
-        super(SeparableConv1D, self).__init__(
-            DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
-            BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
-        )
-        self.extend(
-            Conv1D(in_channels, out_channels, 1, 1, "valid", **basic_args),
-            BatchNorm1D(out_channels, momentum) if do_batch_norm else None,
-        )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class SeparableConv2D(Sequential):
+class SeparableConv2D(conv._SeparableConv2D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     2-dimensional data.
@@ -545,38 +391,9 @@ class SeparableConv2D(Sequential):
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
+        ...
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
-        super(SeparableConv2D, self).__init__(
-            DepthConv2D(in_channels, filter_size, stride, padding, **basic_args),
-            BatchNorm2D(in_channels, momentum) if do_batch_norm else None,
-        )
-        self.extend(
-            Conv2D(in_channels, out_channels, 1, 1, "valid", **basic_args),
-            BatchNorm2D(out_channels, momentum) if do_batch_norm else None,
-        )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class SeparableConv3D(Sequential):
+class SeparableConv3D(conv._SeparableConv3D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     3-dimensional data.
@@ -632,36 +449,7 @@ class SeparableConv3D(Sequential):
         momentum: float = 0.9,
         random_state: int | None = None,
     ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
-
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
-        super(SeparableConv3D, self).__init__(
-            DepthConv3D(in_channels, filter_size, stride, padding, **basic_args),
-            BatchNorm3D(in_channels, momentum) if do_batch_norm else None,
-        )
-        self.extend(
-            Conv3D(in_channels, out_channels, 1, 1, "valid", **basic_args),
-            BatchNorm3D(out_channels, momentum) if do_batch_norm else None,
-        )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
+        ...
 
 @dataclass
 class DenseBlockArgs:
