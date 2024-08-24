@@ -1,3 +1,15 @@
+"""
+`neural.layer`
+--------------
+Neural layers are fundamental components in computational systems, each 
+responsible for a specific stage of data processing. Layers consist of 
+interconnected nodes or units that apply mathematical transformations to 
+input data. By stacking multiple layers, systems can learn and model 
+complex patterns. Each layer builds on the previous one, enabling the 
+system to gradually extract and refine features from the data.
+
+"""
+
 from typing import Any, List, Literal, Self, Tuple, override
 
 from luma.core.super import Optimizer
