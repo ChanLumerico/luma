@@ -7,6 +7,7 @@ from luma.neural.model import (
     alex,
     incep,
     lenet,
+    mobile,
     resnet,
     simple,
     vgg,
@@ -40,6 +41,9 @@ __all__ = (
     "ResNet_269",
     "ResNet_1001",
     "XceptionNet",
+    "MobileNet_V1",
+    "MobileNet_V2",
+    "MobileNet_V3",
 )
 
 MODELS: tuple[str] = __all__
@@ -2772,3 +2776,12 @@ class XceptionNet(incep._Xception):
             random_state,
             deep_verbose,
         )
+
+
+class MobileNet_V1(mobile._Mobile_V1): ...
+
+
+class MobileNet_V2(mobile._Mobile_V2): ...
+
+
+class MobileNet_V3(mobile._Mobile_V3): ...
