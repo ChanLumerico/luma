@@ -12,56 +12,56 @@ Deep learning models and neural network utilities of Luma
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Conv1D | $(N,C_{in},W)$ | $(N,C_{out},W_{pad})$ |
-| Conv2D | $(N,C_{in},H,W)$ | $(N,C_{out},H_{pad},W_{pad})$ |
-| Conv3D | $(N,C_{in},D,H,W)$ | $(N,C_{out},D_{pad},H_{pad},W_{pad})$ |
-| DepthConv1D | $(N,C,W)$ | $(N,C,W_{pad})$ |
-| DepthConv2D | $(N,C,H,W)$ | $(N,C,H_{pad},W_{pad})$ |
-| DepthConv3D | $(N,C,D,H,W)$ | $(N,C,D_{pad},H_{pad},W_{pad})$ |
+| `Conv1D` | $(N,C_{in},W)$ | $(N,C_{out},W_{pad})$ |
+| `Conv2D` | $(N,C_{in},H,W)$ | $(N,C_{out},H_{pad},W_{pad})$ |
+| `Conv3D` | $(N,C_{in},D,H,W)$ | $(N,C_{out},D_{pad},H_{pad},W_{pad})$ |
+| `DepthConv1D` | $(N,C,W)$ | $(N,C,W_{pad})$ |
+| `DepthConv2D` | $(N,C,H,W)$ | $(N,C,H_{pad},W_{pad})$ |
+| `DepthConv3D` | $(N,C,D,H,W)$ | $(N,C,D_{pad},H_{pad},W_{pad})$ |
 
 ### Pooling
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Pool1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
-| Pool2D | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
-| Pool3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
-| GlobalAvgPool1D | $(N,C,W)$ | $(N,C,1)$ |
-| GlobalAvgPool2D | $(N,C,H,W)$ | $(N,C,1,1)$ |
-| GlovalAvgPool3D | $(N,C,D,H,W)$ | $(N,C,1,1,1)$ |
-| AdaptiveAvgPool1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
-| AdaptiveAvgPool2D | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
-| AdaptiveAvgPool3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
-| LpPool1D | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
-| LpPool2D | $(N,C,H_{in}, W_{in})$ | $(N,C,H_{out},W_{out})$ |
-| LpPool3D | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
+| `Pool1D` | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
+| `Pool2D` | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
+| `Pool3D` | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
+| `GlobalAvgPool1D` | $(N,C,W)$ | $(N,C,1)$ |
+| `GlobalAvgPool2D` | $(N,C,H,W)$ | $(N,C,1,1)$ |
+| `GlovalAvgPool3D` | $(N,C,D,H,W)$ | $(N,C,1,1,1)$ |
+| `AdaptiveAvgPool1D` | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
+| `AdaptiveAvgPool2D` | $(N,C,H_{in},W_{in})$ | $(N,C,H_{out},W_{out})$ |
+| `AdaptiveAvgPool3D` | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
+| `LpPool1D` | $(N,C,W_{in})$ | $(N,C,W_{out})$ |
+| `LpPool2D` | $(N,C,H_{in}, W_{in})$ | $(N,C,H_{out},W_{out})$ |
+| `LpPool3D` | $(N,C,D_{in},H_{in},W_{in})$ | $(N,C,D_{out},H_{out},W_{out})$ |
 
 ### Dropout
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Dropout | $(*)$ | $(*)$ |
-| Dropout1D | $(N,C,W)$ | $(N,C,W)$ |
-| Dropout2D | $(N,C,H,W)$ | $(N,C,H,W)$ |
-| Dropout3D | $(N,C,D,H,W)$ | $(N,C,D,H,W)$ |
+| `Dropout` | $(*)$ | $(*)$ |
+| `Dropout1D` | $(N,C,W)$ | $(N,C,W)$ |
+| `Dropout2D` | $(N,C,H,W)$ | $(N,C,H,W)$ |
+| `Dropout3D` | $(N,C,D,H,W)$ | $(N,C,D,H,W)$ |
 
 ### Linear
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| Flatten | $(N, *)$ | $(N, -1)$ |
-| Dense | $(N,L_{in})$ | $(N,L_{out})$ |
-| Identity | $(*)$ | $(*)$ |
+| `Flatten` | $(N, *)$ | $(N, -1)$ |
+| `Dense` | $(N,L_{in})$ | $(N,L_{out})$ |
+| `Identity` | $(*)$ | $(*)$ |
 
 ### Normalization
 
 | Class | Input Shape | Output Shape |
 | --- | --- | --- |
-| BatchNorm1D | $(N,C,W)$ | $(N,C,W)$ |
-| BatchNorm2D | $(N,C,H,W)$ | $(N,C,H,W)$ |
-| BatchNorm3D | $(N,C,D,H,W)$ | $(N,C,D,H,W)$ |
-| LocalResponseNorm | $(N,C,*)$ | $(N,C,*)$ |
-| LayerNorm | $(N,*)$ | $(N,*)$ |
+| `BatchNorm1D` | $(N,C,W)$ | $(N,C,W)$ |
+| `BatchNorm2D` | $(N,C,H,W)$ | $(N,C,H,W)$ |
+| `BatchNorm3D` | $(N,C,D,H,W)$ | $(N,C,D,H,W)$ |
+| `LocalResponseNorm` | $(N,C,*)$ | $(N,C,*)$ |
+| `LayerNorm` | $(N,*)$ | $(N,*)$ |
 
 ---
 
@@ -71,39 +71,39 @@ Deep learning models and neural network utilities of Luma
 
 | Class | # of Layers | Input Shape | Output Shape |
 | --- | --- | --- | --- |
-| ConvBlock1D | 2~3 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
-| ConvBlock2D | 2~3 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
-| ConvBlock3D | 2~3 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
-| SeparableConv1D | 3~5 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
-| SeparableConv2D | 3~5 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
-| SeparableConv3D | 3~5 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
-| DenseBlock | 2~3 | $(N,L_{in})$ | $(N,L_{out})$ |
-| IncepBlock.V1 | 19 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| IncepBlock.V2_TypeA | 22 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| IncepBlock.V2_TypeB | 31 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| IncepBlock.V2_TypeC | 28 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| IncepBlock.V2_Redux | 16 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| IncepBlock.V4_Stem | 38 | $(N,3,299,299)$ | $(N,384,35,35)$ |
-| IncepBlock.V4_TypeA | 24 | $(N,384,35,35)$ | $(N,384,35,35)$ |
-| IncepBlock.V4_TypeB | 33 | $(N,1024,17,17)$ | $(N,1024,17,17)$ |
-| IncepBlock.V4_TypeC | 33 | $(N,1536,8,8)$ | $(N,1536,8,8)$ |
-| IncepBlock.V4_ReduxA | 15 | $(N,384,35,35)$ | $(N,1024,17,17)$ |
-| IncepBlock.V4_ReduxB | 21 | $(N,1024,17,17)$ | $(N,1536,8,8)$ |
-| IncepResBlock.V1_Stem | 17 | $(N,3,299,299)$ | $(N,256,35,35)$ |
-| IncepResBlock.V1_TypeA | 22 | $(N,256,35,35)$ | $(N,256,35,35)$ |
-| IncepResBlock.V1_TypeB | 16 | $(N,896,17,17)$ | $(N,896,17,17)$ |
-| IncepResBlock.V1_TypeC | 16 | $(N,1792,8,8)$ | $(N,1792,8,8)$ |
-| IncepResBlock.V1_Redux | 24 | $(N,896,17,17)$ | $(N,1792,8,8)$ |
-| IncepResBlock.V2_TypeA | 22 | $(N,384,35,35)$ | $(N,384,35,35)$ |
-| IncepResBlock.V2_TypeB | 16 | $(N,1280,17,17)$ | $(N,1280,17,17)$ |
-| IncepResBlock.V2_TypeC | 16 | $(N,2272,8,8)$ | $(N,2272,8,8)$ |
-| IncepResBlock.V2_Redux | 24 | $(N,1280,17,17)$ | $(N,2272,8,8)$ |
-| ResNetBlock.Basic | 7~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| ResNetBlock.Bottleneck | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| ResNetBlock.PreActBottleneck | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| XceptionBlock.Entry | 42 | $(N,3,299,299)$ | $(N,728,19,19)$ |
-| XceptionBlock.Middle | 14 | $(N,728,19,19)$ | $(N,728,19,19)$ |
-| XceptionBlock.Exit | 11 | $(N,728,19,19)$ | $(N,1024,9,9)$ |
+| `ConvBlock1D` | 2~3 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
+| `ConvBlock2D` | 2~3 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
+| `ConvBlock3D` | 2~3 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
+| `SeparableConv1D` | 3~5 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
+| `SeparableConv2D` | 3~5 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
+| `SeparableConv3D` | 3~5 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
+| `DenseBlock` | 2~3 | $(N,L_{in})$ | $(N,L_{out})$ |
+| `IncepBlock.V1` | 19 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `IncepBlock.V2_TypeA` | 22 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `IncepBlock.V2_TypeB` | 31 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `IncepBlock.V2_TypeC` | 28 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `IncepBlock.V2_Redux` | 16 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `IncepBlock.V4_Stem` | 38 | $(N,3,299,299)$ | $(N,384,35,35)$ |
+| `IncepBlock.V4_TypeA` | 24 | $(N,384,35,35)$ | $(N,384,35,35)$ |
+| `IncepBlock.V4_TypeB` | 33 | $(N,1024,17,17)$ | $(N,1024,17,17)$ |
+| `IncepBlock.V4_TypeC` | 33 | $(N,1536,8,8)$ | $(N,1536,8,8)$ |
+| `IncepBlock.V4_ReduxA` | 15 | $(N,384,35,35)$ | $(N,1024,17,17)$ |
+| `IncepBlock.V4_ReduxB` | 21 | $(N,1024,17,17)$ | $(N,1536,8,8)$ |
+| `IncepResBlock.V1_Stem` | 17 | $(N,3,299,299)$ | $(N,256,35,35)$ |
+| `IncepResBlock.V1_TypeA` | 22 | $(N,256,35,35)$ | $(N,256,35,35)$ |
+| `IncepResBlock.V1_TypeB` | 16 | $(N,896,17,17)$ | $(N,896,17,17)$ |
+| `IncepResBlock.V1_TypeC` | 16 | $(N,1792,8,8)$ | $(N,1792,8,8)$ |
+| `IncepResBlock.V1_Redux` | 24 | $(N,896,17,17)$ | $(N,1792,8,8)$ |
+| `IncepResBlock.V2_TypeA` | 22 | $(N,384,35,35)$ | $(N,384,35,35)$ |
+| `IncepResBlock.V2_TypeB` | 16 | $(N,1280,17,17)$ | $(N,1280,17,17)$ |
+| `IncepResBlock.V2_TypeC` | 16 | $(N,2272,8,8)$ | $(N,2272,8,8)$ |
+| `IncepResBlock.V2_Redux` | 24 | $(N,1280,17,17)$ | $(N,2272,8,8)$ |
+| `ResNetBlock.Basic` | 7~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `ResNetBlock.Bottleneck` | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `ResNetBlock.PreActBottleneck` | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `XceptionBlock.Entry` | 42 | $(N,3,299,299)$ | $(N,728,19,19)$ |
+| `XceptionBlock.Middle` | 14 | $(N,728,19,19)$ | $(N,728,19,19)$ |
+| `XceptionBlock.Exit` | 11 | $(N,728,19,19)$ | $(N,1024,9,9)$ |
 
 ---
 
@@ -118,9 +118,9 @@ Deep learning models and neural network utilities of Luma
 
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
-| LeNet_1 | 6 | $(N,1,28,28)$ | 2,180 | 22 | 2,202 | ✅ |
-| LeNet_4 | 8 | $(N,1,32,32)$ | 50,902 | 150 | 51,052 | ✅ |
-| LeNet_5 | 10 | $(N,1,32,32)$ | 61,474 | 236 | 61,170 | ✅ |
+| `LeNet_1` | 6 | $(N,1,28,28)$ | 2,180 | 22 | 2,202 | ✅ |
+| `LeNet_4` | 8 | $(N,1,32,32)$ | 50,902 | 150 | 51,052 | ✅ |
+| `LeNet_5` | 10 | $(N,1,32,32)$ | 61,474 | 236 | 61,170 | ✅ |
 
 ### AlexNet Series
 
@@ -130,8 +130,8 @@ Information Processing Systems, 2012.
 
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
-| AlexNet | 21 | $(N,3,227,227)$ | 62,367,776 | 10,568 | 62,378,344 | ✅ |
-| ZFNet | 21 | $(N,3,227,227)$ | 58,292,000 | 9,578 | 58,301,578 | ✅ |
+| `AlexNet` | 21 | $(N,3,227,227)$ | 62,367,776 | 10,568 | 62,378,344 | ✅ |
+| `ZFNet` | 21 | $(N,3,227,227)$ | 58,292,000 | 9,578 | 58,301,578 | ✅ |
 
 ### VGGNet Series
 
@@ -140,10 +140,10 @@ Information Processing Systems, 2012.
 
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
-| VGGNet_11 | 27 | $(N,3,224,224)$ | 132,851,392 | 11,944 | 132,863,336 | ✅ |
-| VGGNet_13 | 31 | $(N,3,224,224)$ | 133,035,712 | 12,136 | 133,047,848 | ✅ |
-| VGGNet_16 | 37 | $(N,3,224,224)$ | 138,344,128 | 13,416 | 138,357,544 | ✅ |
-| VGGNet_19 | 43 | $(N,3,224,224)$ | 143,652,544 | 14,696 | 143,667,240 | ✅ |
+| `VGGNet_11` | 27 | $(N,3,224,224)$ | 132,851,392 | 11,944 | 132,863,336 | ✅ |
+| `VGGNet_13` | 31 | $(N,3,224,224)$ | 133,035,712 | 12,136 | 133,047,848 | ✅ |
+| `VGGNet_16` | 37 | $(N,3,224,224)$ | 138,344,128 | 13,416 | 138,357,544 | ✅ |
+| `VGGNet_19` | 43 | $(N,3,224,224)$ | 143,652,544 | 14,696 | 143,667,240 | ✅ |
 
 ### InceptionNet Series
 
@@ -154,9 +154,9 @@ Information Processing Systems, 2012.
 
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
-| InceptionNet_V1 | 182 | $(N,3,224,224)$ | 6,990,272 | 8,280 | 6,998,552 | ✅ |
-| InceptionNet_V2 | 242 | $(N,3,299,299)$ | 24,974,688 | 20,136 | 24,994,824 | ✅ |
-| InceptionNet_V3 | 331 | $(N,3,299,299)$ | 25,012,960 | 20,136 | 25,033,096 | ✅ |
+| `InceptionNet_V1` | 182 | $(N,3,224,224)$ | 6,990,272 | 8,280 | 6,998,552 | ✅ |
+| `InceptionNet_V2` | 242 | $(N,3,299,299)$ | 24,974,688 | 20,136 | 24,994,824 | ✅ |
+| `InceptionNet_V3` | 331 | $(N,3,299,299)$ | 25,012,960 | 20,136 | 25,033,096 | ✅ |
 
 *InceptionNet-v4, InceptionResNet-v1, v2*
 
@@ -165,9 +165,9 @@ Information Processing Systems, 2012.
 
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
-| InceptionNet_V4 | 504 | $(N,3,299,299)$ | 42,641,952 | 32,584 | 42,674,536 | ✅ |
-| InceptionResNet_V1 | 410 | $(N,3,299,299)$ | 21,611,648 | 33,720 | 21,645,368 | ✅ |
-| InceptionResNet_V2 | 431 | $(N,3,299,299)$ | 34,112,608 | 43,562 | 34,156,170 | ✅ |
+| `InceptionNet_V4` | 504 | $(N,3,299,299)$ | 42,641,952 | 32,584 | 42,674,536 | ✅ |
+| `InceptionResNet_V1` | 410 | $(N,3,299,299)$ | 21,611,648 | 33,720 | 21,645,368 | ✅ |
+| `InceptionResNet_V2` | 431 | $(N,3,299,299)$ | 34,112,608 | 43,562 | 34,156,170 | ✅ |
 
 *XceptionNet*
 
@@ -176,7 +176,7 @@ Information Processing Systems, 2012.
 
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
-| XceptionNet | 174 | $(N,3,299,299)$ | 22,113,984 | 50,288 | 22,164,272 | ✅ |
+| `XceptionNet` | 174 | $(N,3,299,299)$ | 22,113,984 | 50,288 | 22,164,272 | ✅ |
 
 ### ResNet Series
 
@@ -187,11 +187,11 @@ Information Processing Systems, 2012.
 
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
-| ResNet_18 | 77 | $(N,3,224,224)$ | 11,688,512 | 5,800 | 11,694,312 | ✅ |
-| ResNet_34 | 149 | $(N,3,224,224)$ | 21,796,672 | 9,512 | 21,806,184 | ✅ |
-| ResNet_50 | 181 | $(N,3,224,224)$ | 25,556,032 | 27,560 | 25,583,592 | ✅ |
-| ResNet_101 | 367 | $(N,3,224,224)$ | 44,548,160 | 53,762 | 44,601,832 | ✅ |
-| ResNet_152 | 554 | $(N,3,244,244)$ | 60,191,808 | 76,712 | 60,268,520 | ✅ |
+| `ResNet_18` | 77 | $(N,3,224,224)$ | 11,688,512 | 5,800 | 11,694,312 | ✅ |
+| `ResNet_34` | 149 | $(N,3,224,224)$ | 21,796,672 | 9,512 | 21,806,184 | ✅ |
+| `ResNet_50` | 181 | $(N,3,224,224)$ | 25,556,032 | 27,560 | 25,583,592 | ✅ |
+| `ResNet_101` | 367 | $(N,3,224,224)$ | 44,548,160 | 53,762 | 44,601,832 | ✅ |
+| `ResNet_152` | 554 | $(N,3,244,244)$ | 60,191,808 | 76,712 | 60,268,520 | ✅ |
 
 *ResNet-200, 269, 1001*
 
@@ -200,11 +200,22 @@ Information Processing Systems, 2012.
 
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
-| ResNet_200 | 793 | $(N,3,244,244)$ | 64,668,864 | 89,000 | 64,757,864 | ✅ |
-| ResNet_269 | 1,069 | $(N,3,244,244)$ | 102,068,416 | 127,400 | 102,195,816 | ✅ |
-| ResNet_1001 | 1,657 | $(N,3,224,224)$ | 159,884,992 | 208,040 | 160,093,032 | ✅ |
+| `ResNet_200` | 793 | $(N,3,244,244)$ | 64,668,864 | 89,000 | 64,757,864 | ✅ |
+| `ResNet_269` | 1,069 | $(N,3,244,244)$ | 102,068,416 | 127,400 | 102,195,816 | ✅ |
+| `ResNet_1001` | 1,657 | $(N,3,224,224)$ | 159,884,992 | 208,040 | 160,093,032 | ✅ |
 
 ### MobileNet Series
+
+*MobileNet-v1*
+
+> Howard, Andrew G., et al. “MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications.” arXiv, 17 Apr. 2017, [arxiv.org/abs/1704.04861](http://arxiv.org/abs/1704.04861).
+> 
+
+| Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
+| --- | --- | --- | --- | --- | --- | --- |
+| `MobileNet_V1` | 31 | $(N,3,224,224)$ | 4,230,976 | 11,944 | 4,242,920 | ✅ |
+| `MobileNet_V2` |  |  |  |  |  | 🚧 |
+| `MobileNet_V3` |  |  |  |  |  | ❌ |
 
 *Waiting for future updates…🔮*
 
