@@ -2780,32 +2780,34 @@ class XceptionNet(incep._Xception):
 
 class MobileNet_V1(mobile._Mobile_V1):
     """
-    XceptionNet enhances the Inception architecture by replacing standard
-    convolutions with depthwise separable convolutions, making it more
-    efficient and effective at feature extraction. This design reduces
-    the number of parameters and computations while maintaining or
-    improving model accuracy on complex tasks.
-
+    MobileNet-V1 uses depthwise separable convolutions to significantly 
+    reduce the number of parameters and computational cost, making it 
+    highly efficient for mobile and embedded devices. It balances 
+    accuracy and efficiency through adjustable width and resolution 
+    multipliers.
+    
     Structure
     ---------
     Input:
     ```py
-    Tensor[..., 3, 299, 299]
+    Tensor[..., 3, 224, 224]
     ```
     Separable Convolutions:
     ```py
-    XceptionBlock.EntryFlow() ->  # entry flow
-    8x XceptionBlock.MiddleFlow() ->  # middle flow
-    XceptionBlock.ExitFlow() ->  # exit flow
-
-    SeparableConv2D(1024, 1536, 3) -> Activation.ReLU() ->
-    SeparableConv2D(1536, 2048, 3) -> Activation.ReLU() ->
-
+    Conv2D(3, 32) ->
+    SeparableConv2D(32, 64) ->
+    SeparableConv2D(64, 128) -> SeparableConv2D(128, 128) ->
+    SeparableConv2D(128, 256) -> SeparableConv2D(256, 256) ->
+    SeparableConv2D(256, 512) ->
+    
+    5x SeparableConv2D(512, 512) ->
+    SeparableConv2D(512, 1024) -> SeparableConv2D(1024, 1024) ->
+    
     GlobalAvgPool2D() ->  # avg pool
     ```
     Fully Connected Layers:
     ```py
-    Flatten -> Dense(2048, 1000)
+    Flatten -> Dense(1024, 1000)
     ```
     Output:
     ```py
@@ -2813,7 +2815,7 @@ class MobileNet_V1(mobile._Mobile_V1):
     ```
     Parameter Size:
     ```txt
-    
+    4,230,976 weights, 11,944 biases -> 4,242,920 params
     ```
     Parameters
     ----------
@@ -2840,7 +2842,9 @@ class MobileNet_V1(mobile._Mobile_V1):
 
     References
     ----------
-    [1]
+    [1] Howard, Andrew G., et al. “MobileNets: Efficient Convolutional 
+    Neural Networks for Mobile Vision Applications.” arXiv preprint 
+    arXiv:1704.04861 (2017).
 
     """
 
