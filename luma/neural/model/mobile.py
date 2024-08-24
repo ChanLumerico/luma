@@ -25,6 +25,7 @@ class _Mobile_V1(Estimator, Supervised, NeuralModel):
         valid_size: float = 0.1,
         lambda_: float = 0.0,
         momentum: float = 0.9,
+        width_param: float = 1.0,
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
@@ -36,6 +37,7 @@ class _Mobile_V1(Estimator, Supervised, NeuralModel):
         self.out_features = out_features
         self.lambda_ = lambda_
         self.momentum = momentum
+        self.width_param = width_param
         self.shuffle = shuffle
         self.random_state = random_state
         self._fitted = False
@@ -71,6 +73,7 @@ class _Mobile_V1(Estimator, Supervised, NeuralModel):
                 "valid_size": ("0<,<1", None),
                 "lambda_": ("0,+inf", None),
                 "patience": ("0<,+inf", int),
+                "width_param": ("0<,1", None),
             }
         )
         self.check_param_ranges()
@@ -87,45 +90,46 @@ class _Mobile_V1(Estimator, Supervised, NeuralModel):
             "do_batch_norm": True,
             "momentum": self.momentum,
         }
+        wp = self.width_param
 
-        self.model += Conv2D(3, 32, 3, 2, **base_args)
-        self.model += BatchNorm2D(32, self.momentum)
+        self.model += Conv2D(3, int(32 * wp), 3, 2, **base_args)
+        self.model += BatchNorm2D(int(32 * wp), self.momentum)
         self.model += self.activation()
 
         self.model.extend(
-            SeparableConv2D(32, 64, 3, **sep_args),
+            SeparableConv2D(int(32 * wp), int(64 * wp), 3, **sep_args),
             self.activation(),
-            SeparableConv2D(64, 128, 3, 2, **sep_args),
+            SeparableConv2D(int(64 * wp), int(128 * wp), 3, 2, **sep_args),
             self.activation(),
-            SeparableConv2D(128, 128, 3, **sep_args),
+            SeparableConv2D(int(128 * wp), int(128 * wp), 3, **sep_args),
             self.activation(),
-            SeparableConv2D(128, 256, 3, 2, **sep_args),
+            SeparableConv2D(int(128 * wp), int(256 * wp), 3, 2, **sep_args),
             self.activation(),
-            SeparableConv2D(256, 256, 3, **sep_args),
+            SeparableConv2D(int(256 * wp), int(256 * wp), 3, **sep_args),
             self.activation(),
-            SeparableConv2D(256, 512, 3, 2, **sep_args),
+            SeparableConv2D(int(256 * wp), int(512 * wp), 3, 2, **sep_args),
             self.activation(),
             deep_add=False,
         )
 
         for _ in range(5):
             self.model.extend(
-                SeparableConv2D(512, 512, 3, **sep_args),
+                SeparableConv2D(int(512 * wp), int(512 * wp), 3, **sep_args),
                 self.activation(),
                 deep_add=False,
             )
 
         self.model.extend(
-            SeparableConv2D(512, 1024, 3, 2, **sep_args),
+            SeparableConv2D(int(512 * wp), int(1024 * wp), 3, 2, **sep_args),
             self.activation(),
-            SeparableConv2D(1024, 1024, 3, 2, "same", **sep_args),
+            SeparableConv2D(int(1024 * wp), int(1024 * wp), 3, 2, 1, **sep_args),
             self.activation(),
             deep_add=False,
         )
 
         self.model += GlobalAvgPool2D()
         self.model += Flatten()
-        self.model += Dense(1024, self.out_features, **base_args)
+        self.model += Dense(int(1024 * wp), self.out_features, **base_args)
 
     input_shape: ClassVar[tuple] = (-1, 3, 224, 224)
 

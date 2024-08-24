@@ -2792,12 +2792,12 @@ class XceptionNet(incep._Xception):
 
 class MobileNet_V1(mobile._Mobile_V1):
     """
-    MobileNet-V1 uses depthwise separable convolutions to significantly 
-    reduce the number of parameters and computational cost, making it 
-    highly efficient for mobile and embedded devices. It balances 
-    accuracy and efficiency through adjustable width and resolution 
+    MobileNet-V1 uses depthwise separable convolutions to significantly
+    reduce the number of parameters and computational cost, making it
+    highly efficient for mobile and embedded devices. It balances
+    accuracy and efficiency through adjustable width and resolution
     multipliers.
-    
+
     Structure
     ---------
     Input:
@@ -2811,10 +2811,10 @@ class MobileNet_V1(mobile._Mobile_V1):
     SeparableConv2D(64, 128) -> SeparableConv2D(128, 128) ->
     SeparableConv2D(128, 256) -> SeparableConv2D(256, 256) ->
     SeparableConv2D(256, 512) ->
-    
+
     5x SeparableConv2D(512, 512) ->
     SeparableConv2D(512, 1024) -> SeparableConv2D(1024, 1024) ->
-    
+
     GlobalAvgPool2D() ->  # avg pool
     ```
     Fully Connected Layers:
@@ -2845,6 +2845,8 @@ class MobileNet_V1(mobile._Mobile_V1):
         Fractional size of validation set
     `lambda_` : float, default=0.0
         L2 regularization strength
+    `width_param` : float, default=1.0
+        Width parameter(alpha) of the network
     `early_stopping` : bool, default=False
         Whether to early-stop the training when the valid score stagnates
     `patience` : int, default=10
@@ -2854,8 +2856,8 @@ class MobileNet_V1(mobile._Mobile_V1):
 
     References
     ----------
-    [1] Howard, Andrew G., et al. “MobileNets: Efficient Convolutional 
-    Neural Networks for Mobile Vision Applications.” arXiv preprint 
+    [1] Howard, Andrew G., et al. “MobileNets: Efficient Convolutional
+    Neural Networks for Mobile Vision Applications.” arXiv preprint
     arXiv:1704.04861 (2017).
 
     """
@@ -2870,6 +2872,7 @@ class MobileNet_V1(mobile._Mobile_V1):
         valid_size: float = 0.1,
         lambda_: float = 0,
         momentum: float = 0.9,
+        width_param: float = 1.0,
         early_stopping: bool = False,
         patience: int = 10,
         shuffle: bool = True,
@@ -2885,6 +2888,7 @@ class MobileNet_V1(mobile._Mobile_V1):
             valid_size,
             lambda_,
             momentum,
+            width_param,
             early_stopping,
             patience,
             shuffle,
