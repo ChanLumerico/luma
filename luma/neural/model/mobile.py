@@ -54,10 +54,10 @@ class _Mobile_V1(Estimator, Supervised, NeuralModel):
         self.model = Sequential()
 
         self.feature_sizes_ = [
-            *[3, 32],
-            *[32, 64, 128, 128, 256, 256],
-            *[512 for _ in range(5)],
-            *[1024, 1024],
+            [3, 32],
+            [32, 64, 128, 128, 256, 256],
+            [512] * 5,
+            [1024, 1024],
         ]
         self.feature_shapes_ = [
             self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
