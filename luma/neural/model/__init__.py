@@ -1,3 +1,15 @@
+"""
+`neural.model`
+--------------
+Neural models are computational systems designed to learn patterns and make 
+predictions based on data. They consist of multiple neural layers organized 
+in a structured way, allowing the model to process information, extract 
+features, and generate outputs. These models can handle a wide range of tasks, 
+from image recognition to natural language processing, by learning from data 
+and improving performance over time through training.
+
+"""
+
 from typing import Literal
 
 from luma.interface.util import InitUtil
@@ -7,6 +19,7 @@ from luma.neural.model import (
     alex,
     incep,
     lenet,
+    mobile,
     resnet,
     simple,
     vgg,
@@ -40,6 +53,9 @@ __all__ = (
     "ResNet_269",
     "ResNet_1001",
     "XceptionNet",
+    "MobileNet_V1",
+    "MobileNet_V2",
+    "MobileNet_V3",
 )
 
 MODELS: tuple[str] = __all__
@@ -2772,3 +2788,112 @@ class XceptionNet(incep._Xception):
             random_state,
             deep_verbose,
         )
+
+
+class MobileNet_V1(mobile._Mobile_V1):
+    """
+    MobileNet-V1 uses depthwise separable convolutions to significantly 
+    reduce the number of parameters and computational cost, making it 
+    highly efficient for mobile and embedded devices. It balances 
+    accuracy and efficiency through adjustable width and resolution 
+    multipliers.
+    
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Separable Convolutions:
+    ```py
+    Conv2D(3, 32) ->
+    SeparableConv2D(32, 64) ->
+    SeparableConv2D(64, 128) -> SeparableConv2D(128, 128) ->
+    SeparableConv2D(128, 256) -> SeparableConv2D(256, 256) ->
+    SeparableConv2D(256, 512) ->
+    
+    5x SeparableConv2D(512, 512) ->
+    SeparableConv2D(512, 1024) -> SeparableConv2D(1024, 1024) ->
+    
+    GlobalAvgPool2D() ->  # avg pool
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(1024, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    4,230,976 weights, 11,944 biases -> 4,242,920 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    [1] Howard, Andrew G., et al. “MobileNets: Efficient Convolutional 
+    Neural Networks for Mobile Vision Applications.” arXiv preprint 
+    arXiv:1704.04861 (2017).
+
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super(MobileNet_V1, self).__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+
+
+class MobileNet_V2(mobile._Mobile_V2): ...
+
+
+class MobileNet_V3(mobile._Mobile_V3): ...
