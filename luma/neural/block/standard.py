@@ -1,7 +1,9 @@
-from typing import Literal, Tuple
+from typing import Literal, Tuple, override
+import numpy as np
 
 from luma.core.super import Optimizer
 from luma.interface.util import InitUtil
+from luma.interface.typing import TensorLike
 
 from luma.neural.layer import *
 
@@ -46,7 +48,7 @@ class _ConvBlock1D(Sequential):
         )
         self.check_param_ranges()
 
-        super(ConvBlock1D, self).__init__(
+        super(_ConvBlock1D, self).__init__(
             Conv1D(
                 in_channels,
                 out_channels,
@@ -57,12 +59,12 @@ class _ConvBlock1D(Sequential):
             )
         )
         if do_batch_norm:
-            super(ConvBlock1D, self).__add__(
+            super(_ConvBlock1D, self).__add__(
                 BatchNorm1D(out_channels, momentum),
             )
-        super(ConvBlock1D, self).__add__(activation())
+        super(_ConvBlock1D, self).__add__(activation())
         if do_pooling:
-            super(ConvBlock1D, self).__add__(
+            super(_ConvBlock1D, self).__add__(
                 Pool1D(pool_filter_size, pool_stride, pool_mode)
             )
 
@@ -110,7 +112,7 @@ class _ConvBlock2D(Sequential):
         )
         self.check_param_ranges()
 
-        super(ConvBlock2D, self).__init__(
+        super(_ConvBlock2D, self).__init__(
             Conv2D(
                 in_channels,
                 out_channels,
@@ -121,12 +123,12 @@ class _ConvBlock2D(Sequential):
             )
         )
         if do_batch_norm:
-            super(ConvBlock2D, self).__add__(
+            super(_ConvBlock2D, self).__add__(
                 BatchNorm2D(out_channels, momentum),
             )
-        super(ConvBlock2D, self).__add__(activation())
+        super(_ConvBlock2D, self).__add__(activation())
         if do_pooling:
-            super(ConvBlock2D, self).__add__(
+            super(_ConvBlock2D, self).__add__(
                 Pool2D(pool_filter_size, pool_stride, pool_mode)
             )
 
@@ -174,7 +176,7 @@ class _ConvBlock3D(Sequential):
         )
         self.check_param_ranges()
 
-        super(ConvBlock3D, self).__init__(
+        super(_ConvBlock3D, self).__init__(
             Conv3D(
                 in_channels,
                 out_channels,
@@ -185,12 +187,12 @@ class _ConvBlock3D(Sequential):
             )
         )
         if do_batch_norm:
-            super(ConvBlock3D, self).__add__(
+            super(_ConvBlock3D, self).__add__(
                 BatchNorm3D(out_channels, momentum),
             )
-        super(ConvBlock3D, self).__add__(activation())
+        super(_ConvBlock3D, self).__add__(activation())
         if do_pooling:
-            super(ConvBlock3D, self).__add__(
+            super(_ConvBlock3D, self).__add__(
                 Pool3D(pool_filter_size, pool_stride, pool_mode)
             )
 
@@ -231,7 +233,7 @@ class _SeparableConv1D(Sequential):
         )
         self.check_param_ranges()
 
-        super(SeparableConv1D, self).__init__(
+        super(_SeparableConv1D, self).__init__(
             DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -277,7 +279,7 @@ class _SeparableConv2D(Sequential):
         )
         self.check_param_ranges()
 
-        super(SeparableConv2D, self).__init__(
+        super(_SeparableConv2D, self).__init__(
             DepthConv2D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm2D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -323,7 +325,7 @@ class _SeparableConv3D(Sequential):
         )
         self.check_param_ranges()
 
-        super(SeparableConv3D, self).__init__(
+        super(_SeparableConv3D, self).__init__(
             DepthConv3D(in_channels, filter_size, stride, padding, **basic_args),
             BatchNorm3D(in_channels, momentum) if do_batch_norm else None,
         )
@@ -334,3 +336,85 @@ class _SeparableConv3D(Sequential):
 
         if optimizer is not None:
             self.set_optimizer(optimizer)
+
+
+class _DenseBlock(Sequential):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        activation: Activation.FuncType,
+        optimizer: Optimizer = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        do_batch_norm: float = True,
+        momentum: float = 0.9,
+        do_dropout: bool = True,
+        dropout_rate: float = 0.5,
+        random_state: int | None = None,
+    ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_features": ("0<,+inf", int),
+                "out_features": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "dropout_rate": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+        super(_DenseBlock, self).__init__(
+            Dense(
+                in_features,
+                out_features,
+                **basic_args,
+            )
+        )
+        if do_batch_norm:
+            super(_DenseBlock, self).__add__(
+                BatchNorm1D(
+                    1,
+                    momentum,
+                )
+            )
+        super(_DenseBlock, self).__add__(
+            activation(),
+        )
+        if do_dropout:
+            super(_DenseBlock, self).__add__(
+                Dropout(
+                    dropout_rate,
+                    random_state,
+                ),
+            )
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
+    @override
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        self.input_ = X
+        out = X
+        for _, layer in self.layers:
+            if isinstance(layer, BatchNorm1D):
+                out = layer(out[:, np.newaxis, :], is_train=is_train).squeeze()
+                continue
+            out = layer(out, is_train=is_train)
+
+        self.out_shape = out.shape
+        return out
+
+    @override
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        for _, layer in reversed(self.layers):
+            if isinstance(layer, BatchNorm1D):
+                d_out = layer.backward(d_out[:, np.newaxis, :]).squeeze()
+                continue
+            d_out = layer.backward(d_out)
+        return d_out

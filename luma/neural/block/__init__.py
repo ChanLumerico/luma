@@ -8,13 +8,13 @@ from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
 from luma.neural.block import (
-    conv,
     incep_v1,
     incep_v2,
     incep_v4,
     incep_res_v1,
     incep_res_v2,
     resnet,
+    standard,
     xception,
 )
 
@@ -52,7 +52,7 @@ class ConvBlockArgs:
     random_state: int | None = None
 
 
-class ConvBlock1D(conv._ConvBlock1D):
+class ConvBlock1D(standard._ConvBlock1D):
     """
     Convolutional block for 1-dimensional data.
 
@@ -124,10 +124,10 @@ class ConvBlock1D(conv._ConvBlock1D):
         pool_stride: int = 2,
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
-class ConvBlock2D(conv._ConvBlock2D):
+
+class ConvBlock2D(standard._ConvBlock2D):
     """
     Convolutional block for 2-dimensional data.
 
@@ -199,10 +199,10 @@ class ConvBlock2D(conv._ConvBlock2D):
         pool_stride: int = 2,
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
-class ConvBlock3D(conv._ConvBlock3D):
+
+class ConvBlock3D(standard._ConvBlock3D):
     """
     Convolutional block for 3-dimensional data.
 
@@ -274,10 +274,10 @@ class ConvBlock3D(conv._ConvBlock3D):
         pool_stride: int = 2,
         pool_mode: Literal["max", "avg"] = "max",
         random_state: int | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
-class SeparableConv1D(conv._SeparableConv1D):
+
+class SeparableConv1D(standard._SeparableConv1D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     1-dimensional data.
@@ -332,10 +332,10 @@ class SeparableConv1D(conv._SeparableConv1D):
         do_batch_norm: bool = False,
         momentum: float = 0.9,
         random_state: int | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
-class SeparableConv2D(conv._SeparableConv2D):
+
+class SeparableConv2D(standard._SeparableConv2D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     2-dimensional data.
@@ -390,10 +390,10 @@ class SeparableConv2D(conv._SeparableConv2D):
         do_batch_norm: bool = False,
         momentum: float = 0.9,
         random_state: int | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
-class SeparableConv3D(conv._SeparableConv3D):
+
+class SeparableConv3D(standard._SeparableConv3D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     3-dimensional data.
@@ -448,8 +448,8 @@ class SeparableConv3D(conv._SeparableConv3D):
         do_batch_norm: bool = False,
         momentum: float = 0.9,
         random_state: int | None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
+
 
 @dataclass
 class DenseBlockArgs:
