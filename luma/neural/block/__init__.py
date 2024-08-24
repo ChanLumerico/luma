@@ -1,13 +1,21 @@
 from dataclasses import dataclass
-from typing import Literal, Tuple, override
-import numpy as np
+from typing import Literal, Tuple
 
 from luma.core.super import Optimizer
-from luma.interface.typing import TensorLike, ClassType
+from luma.interface.typing import ClassType
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural import _specials
+from luma.neural.block import (
+    incep_v1,
+    incep_v2,
+    incep_v4,
+    incep_res_v1,
+    incep_res_v2,
+    resnet,
+    standard,
+    xception,
+)
 
 
 __all__ = (
@@ -43,7 +51,7 @@ class ConvBlockArgs:
     random_state: int | None = None
 
 
-class ConvBlock1D(Sequential):
+class ConvBlock1D(standard._ConvBlock1D):
     """
     Convolutional block for 1-dimensional data.
 
@@ -97,70 +105,8 @@ class ConvBlock1D(Sequential):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int] | int,
-        activation: Activation.FuncType,
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
-        stride: int = 1,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = True,
-        momentum: float = 0.9,
-        do_pooling: bool = True,
-        pool_filter_size: int = 2,
-        pool_stride: int = 2,
-        pool_mode: Literal["max", "avg"] = "max",
-        random_state: int | None = None,
-    ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-        super(ConvBlock1D, self).__init__(
-            Conv1D(
-                in_channels,
-                out_channels,
-                filter_size,
-                stride,
-                padding,
-                **basic_args,
-            )
-        )
-        if do_batch_norm:
-            super(ConvBlock1D, self).__add__(
-                BatchNorm1D(out_channels, momentum),
-            )
-        super(ConvBlock1D, self).__add__(activation())
-        if do_pooling:
-            super(ConvBlock1D, self).__add__(
-                Pool1D(pool_filter_size, pool_stride, pool_mode)
-            )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class ConvBlock2D(Sequential):
+class ConvBlock2D(standard._ConvBlock2D):
     """
     Convolutional block for 2-dimensional data.
 
@@ -214,70 +160,8 @@ class ConvBlock2D(Sequential):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int, int] | int,
-        activation: Activation.FuncType,
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        padding: Tuple[int, int] | int | Literal["same", "valid"] = "same",
-        stride: int = 1,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = True,
-        momentum: float = 0.9,
-        do_pooling: bool = True,
-        pool_filter_size: int = 2,
-        pool_stride: int = 2,
-        pool_mode: Literal["max", "avg"] = "max",
-        random_state: int | None = None,
-    ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-        super(ConvBlock2D, self).__init__(
-            Conv2D(
-                in_channels,
-                out_channels,
-                filter_size,
-                stride,
-                padding,
-                **basic_args,
-            )
-        )
-        if do_batch_norm:
-            super(ConvBlock2D, self).__add__(
-                BatchNorm2D(out_channels, momentum),
-            )
-        super(ConvBlock2D, self).__add__(activation())
-        if do_pooling:
-            super(ConvBlock2D, self).__add__(
-                Pool2D(pool_filter_size, pool_stride, pool_mode)
-            )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class ConvBlock3D(Sequential):
+class ConvBlock3D(standard._ConvBlock3D):
     """
     Convolutional block for 3-dimensional data.
 
@@ -331,70 +215,8 @@ class ConvBlock3D(Sequential):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int, int, int] | int,
-        activation: Activation.FuncType,
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        padding: Tuple[int, int, int] | int | Literal["same", "valid"] = "same",
-        stride: int = 1,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = True,
-        momentum: float = 0.9,
-        do_pooling: bool = True,
-        pool_filter_size: int = 2,
-        pool_stride: int = 2,
-        pool_mode: Literal["max", "avg"] = "max",
-        random_state: int | None = None,
-    ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-                "pool_filter_size": ("0<,+inf", int),
-                "pool_stride": ("0<,+inf", int),
-            }
-        )
-        self.check_param_ranges()
-
-        super(ConvBlock3D, self).__init__(
-            Conv3D(
-                in_channels,
-                out_channels,
-                filter_size,
-                stride,
-                padding,
-                **basic_args,
-            )
-        )
-        if do_batch_norm:
-            super(ConvBlock3D, self).__add__(
-                BatchNorm3D(out_channels, momentum),
-            )
-        super(ConvBlock3D, self).__add__(activation())
-        if do_pooling:
-            super(ConvBlock3D, self).__add__(
-                Pool3D(pool_filter_size, pool_stride, pool_mode)
-            )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class SeparableConv1D(Sequential):
+class SeparableConv1D(standard._SeparableConv1D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     1-dimensional data.
@@ -436,52 +258,8 @@ class SeparableConv1D(Sequential):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int] | int,
-        stride: int = 1,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = False,
-        momentum: float = 0.9,
-        random_state: int | None = None,
-    ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
-        super(SeparableConv1D, self).__init__(
-            DepthConv1D(in_channels, filter_size, stride, padding, **basic_args),
-            BatchNorm1D(in_channels, momentum) if do_batch_norm else None,
-        )
-        self.extend(
-            Conv1D(in_channels, out_channels, 1, 1, "valid", **basic_args),
-            BatchNorm1D(out_channels, momentum) if do_batch_norm else None,
-        )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class SeparableConv2D(Sequential):
+class SeparableConv2D(standard._SeparableConv2D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     2-dimensional data.
@@ -523,52 +301,8 @@ class SeparableConv2D(Sequential):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int] | int,
-        stride: int = 1,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = False,
-        momentum: float = 0.9,
-        random_state: int | None = None,
-    ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
 
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
-        super(SeparableConv2D, self).__init__(
-            DepthConv2D(in_channels, filter_size, stride, padding, **basic_args),
-            BatchNorm2D(in_channels, momentum) if do_batch_norm else None,
-        )
-        self.extend(
-            Conv2D(in_channels, out_channels, 1, 1, "valid", **basic_args),
-            BatchNorm2D(out_channels, momentum) if do_batch_norm else None,
-        )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-
-class SeparableConv3D(Sequential):
+class SeparableConv3D(standard._SeparableConv3D):
     """
     Depthwise Seperable Convolutional(DSC) block for
     3-dimensional data.
@@ -610,50 +344,6 @@ class SeparableConv3D(Sequential):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int] | int,
-        stride: int = 1,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = False,
-        momentum: float = 0.9,
-        random_state: int | None = None,
-    ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
-
-        self.set_param_ranges(
-            {
-                "in_channels": ("0<,+inf", int),
-                "out_channels": ("0<,+inf", int),
-                "filter_size": ("0<,+inf", int),
-                "stride": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "momentum": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
-        super(SeparableConv3D, self).__init__(
-            DepthConv3D(in_channels, filter_size, stride, padding, **basic_args),
-            BatchNorm3D(in_channels, momentum) if do_batch_norm else None,
-        )
-        self.extend(
-            Conv3D(in_channels, out_channels, 1, 1, "valid", **basic_args),
-            BatchNorm3D(out_channels, momentum) if do_batch_norm else None,
-        )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
 
 @dataclass
 class DenseBlockArgs:
@@ -668,7 +358,7 @@ class DenseBlockArgs:
     random_state: int | None = None
 
 
-class DenseBlock(Sequential):
+class DenseBlock(standard._DenseBlock):
     """
     A typical dense block in a neural network configuration often
     includes a series of fully connected (dense) layers. Each layer
@@ -705,86 +395,6 @@ class DenseBlock(Sequential):
 
     """
 
-    def __init__(
-        self,
-        in_features: int,
-        out_features: int,
-        activation: Activation.FuncType,
-        optimizer: Optimizer = None,
-        initializer: InitUtil.InitStr = None,
-        lambda_: float = 0.0,
-        do_batch_norm: float = True,
-        momentum: float = 0.9,
-        do_dropout: bool = True,
-        dropout_rate: float = 0.5,
-        random_state: int | None = None,
-    ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
-
-        self.set_param_ranges(
-            {
-                "in_features": ("0<,+inf", int),
-                "out_features": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "dropout_rate": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
-        super(DenseBlock, self).__init__(
-            Dense(
-                in_features,
-                out_features,
-                **basic_args,
-            )
-        )
-        if do_batch_norm:
-            super(DenseBlock, self).__add__(
-                BatchNorm1D(
-                    1,
-                    momentum,
-                )
-            )
-        super(DenseBlock, self).__add__(
-            activation(),
-        )
-        if do_dropout:
-            super(DenseBlock, self).__add__(
-                Dropout(
-                    dropout_rate,
-                    random_state,
-                ),
-            )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-    @override
-    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
-        self.input_ = X
-        out = X
-        for _, layer in self.layers:
-            if isinstance(layer, BatchNorm1D):
-                out = layer(out[:, np.newaxis, :], is_train=is_train).squeeze()
-                continue
-            out = layer(out, is_train=is_train)
-
-        self.out_shape = out.shape
-        return out
-
-    @override
-    def backward(self, d_out: TensorLike) -> TensorLike:
-        for _, layer in reversed(self.layers):
-            if isinstance(layer, BatchNorm1D):
-                d_out = layer.backward(d_out[:, np.newaxis, :]).squeeze()
-                continue
-            d_out = layer.backward(d_out)
-        return d_out
-
 
 @dataclass
 class BaseBlockArgs:
@@ -819,28 +429,28 @@ class IncepBlock:
 
     """
 
-    class V1(_specials.incep_v1._Incep_V1_Default):
+    class V1(incep_v1._Incep_V1_Default):
         """
         Inception block for Inception V1 network, a.k.a. GoogLeNet.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeA(_specials.incep_v2._Incep_V2_TypeA):
+    class V2_TypeA(incep_v2._Incep_V2_TypeA):
         """
         Inception block type-A for Inception V2 network.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeB(_specials.incep_v2._Incep_V2_TypeB):
+    class V2_TypeB(incep_v2._Incep_V2_TypeB):
         """
         Inception block type-B for Inception V2 network.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeC(_specials.incep_v2._Incep_V2_TypeC):
+    class V2_TypeC(incep_v2._Incep_V2_TypeC):
         """
         Inception block type-C for Inception V2 network.
 
@@ -848,7 +458,7 @@ class IncepBlock:
 
         """
 
-    class V2_Redux(_specials.incep_v2._Incep_V2_Redux):
+    class V2_Redux(incep_v2._Incep_V2_Redux):
         """
         Inception block for grid reduction for Inception V2 network.
 
@@ -856,7 +466,7 @@ class IncepBlock:
 
         """
 
-    class V4_Stem(_specials.incep_v4._Incep_V4_Stem):
+    class V4_Stem(incep_v4._Incep_V4_Stem):
         """
         Inception block used in Inception V4 network stem part.
 
@@ -872,7 +482,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeA(_specials.incep_v4._Incep_V4_TypeA):
+    class V4_TypeA(incep_v4._Incep_V4_TypeA):
         """
         Inception block type A used in Inception V4 network
 
@@ -888,7 +498,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeB(_specials.incep_v4._Incep_V4_TypeB):
+    class V4_TypeB(incep_v4._Incep_V4_TypeB):
         """
         Inception block type B used in Inception V4 network.
 
@@ -904,7 +514,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeC(_specials.incep_v4._Incep_V4_TypeC):
+    class V4_TypeC(incep_v4._Incep_V4_TypeC):
         """
         Inception block type C used in Inception V4 network.
 
@@ -920,7 +530,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_ReduxA(_specials.incep_v4._Incep_V4_ReduxA):
+    class V4_ReduxA(incep_v4._Incep_V4_ReduxA):
         """
         Inception block type A for grid reduction used in
         Inception V4 network.
@@ -937,7 +547,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_ReduxB(_specials.incep_v4._Incep_V4_ReduxB):
+    class V4_ReduxB(incep_v4._Incep_V4_ReduxB):
         """
         Inception block type B for grid reduction used in
         Inception V4 network.
@@ -971,7 +581,7 @@ class IncepResBlock:
 
     """
 
-    class V1_Stem(_specials.incep_res_v1._IncepRes_V1_Stem):
+    class V1_Stem(incep_res_v1._IncepRes_V1_Stem):
         """
         Inception block used in Inception-ResNet V1 network
         stem part.
@@ -988,7 +598,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeA(_specials.incep_res_v1._IncepRes_V1_TypeA):
+    class V1_TypeA(incep_res_v1._IncepRes_V1_TypeA):
         """
         Inception block type A used in Inception-ResNet V1
         network.
@@ -1005,7 +615,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeB(_specials.incep_res_v1._IncepRes_V1_TypeB):
+    class V1_TypeB(incep_res_v1._IncepRes_V1_TypeB):
         """
         Inception block type B used in Inception-ResNet V1
         network.
@@ -1022,7 +632,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeC(_specials.incep_res_v1._IncepRes_V1_TypeC):
+    class V1_TypeC(incep_res_v1._IncepRes_V1_TypeC):
         """
         Inception block type C used in Inception-ResNet V1
         network.
@@ -1039,7 +649,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux):
+    class V1_Redux(incep_res_v1._IncepRes_V1_Redux):
         """
         Inception block type B for grid reduction used in
         Inception-ResNet V1 network.
@@ -1056,7 +666,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeA(_specials.incep_res_v2._IncepRes_V2_TypeA):
+    class V2_TypeA(incep_res_v2._IncepRes_V2_TypeA):
         """
         Inception block type A used in Inception-ResNet V2
         network.
@@ -1073,7 +683,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeB(_specials.incep_res_v2._IncepRes_V2_TypeB):
+    class V2_TypeB(incep_res_v2._IncepRes_V2_TypeB):
         """
         Inception block type B used in Inception-ResNet V2
         network.
@@ -1090,7 +700,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeC(_specials.incep_res_v2._IncepRes_V2_TypeC):
+    class V2_TypeC(incep_res_v2._IncepRes_V2_TypeC):
         """
         Inception block type C used in Inception-ResNet V2
         network.
@@ -1107,7 +717,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_Redux(_specials.incep_res_v2._IncepRes_V2_Redux):
+    class V2_Redux(incep_res_v2._IncepRes_V2_Redux):
         """
         Inception block type B for grid reduction used in
         Inception-ResNet V2 network.
@@ -1144,7 +754,7 @@ class ResNetBlock:
 
     """
 
-    class Basic(_specials.resnet._Basic):
+    class Basic(resnet._Basic):
         """
         Basic convolution block used in `ResNet-18` and `ResNet-34`.
 
@@ -1157,7 +767,7 @@ class ResNetBlock:
         See [1] also for additional information.
         """
 
-    class Bottleneck(_specials.resnet._Bottleneck):
+    class Bottleneck(resnet._Bottleneck):
         """
         Bottleneck block used in `ResNet-(50, 101, 152)`.
 
@@ -1170,7 +780,7 @@ class ResNetBlock:
         See [1] also for additional information.
         """
 
-    class PreActBottleneck(_specials.resnet._PreActBottleneck):
+    class PreActBottleneck(resnet._PreActBottleneck):
         """
         Bottleneck block with pre-activation used in
         `ResNet-(200, 269, 1001)`.
@@ -1200,7 +810,7 @@ class XceptionBlock:
 
     """
 
-    class Entry(_specials.xception._Entry):
+    class Entry(xception._Entry):
         """
         An entry flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1215,7 +825,7 @@ class XceptionBlock:
             ```
         """
 
-    class Middle(_specials.xception._Middle):
+    class Middle(xception._Middle):
         """
         A middle flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1230,7 +840,7 @@ class XceptionBlock:
             ```
         """
 
-    class Exit(_specials.xception._Exit):
+    class Exit(xception._Exit):
         """
         An exit flow of Xception network mentioned in Fig. 5
         of the original paper[1].

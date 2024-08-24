@@ -5,7 +5,7 @@ from luma.interface.typing import TensorLike
 from luma.interface.util import InitUtil, Clone
 from luma.neural.base import Layer
 
-from luma.neural import _layers
+from luma.neural.layer import act, conv, drop, linear, norm, pool
 
 
 __all__ = (
@@ -44,7 +44,10 @@ __all__ = (
 )
 
 
-class Conv1D(_layers.conv._Conv1D):
+type LayerLike = Layer | Sequential
+
+
+class Conv1D(conv._Conv1D):
     """
     Convolutional layer for 1-dimensional data.
 
@@ -109,7 +112,7 @@ class Conv1D(_layers.conv._Conv1D):
         )
 
 
-class Conv2D(_layers.conv._Conv2D):
+class Conv2D(conv._Conv2D):
     """
     Convolutional layer for 2-dimensional data.
 
@@ -174,7 +177,7 @@ class Conv2D(_layers.conv._Conv2D):
         )
 
 
-class Conv3D(_layers.conv._Conv3D):
+class Conv3D(conv._Conv3D):
     """
     Convolutional layer for 3-dimensional data.
 
@@ -239,7 +242,7 @@ class Conv3D(_layers.conv._Conv3D):
         )
 
 
-class DepthConv1D(_layers.conv._DepthConv1D):
+class DepthConv1D(conv._DepthConv1D):
     """
     Depth-wise Convolutional layer for 1-dimensional data.
 
@@ -298,7 +301,7 @@ class DepthConv1D(_layers.conv._DepthConv1D):
         )
 
 
-class DepthConv2D(_layers.conv._DepthConv2D):
+class DepthConv2D(conv._DepthConv2D):
     """
     Depth-wise Convolutional layer for 2-dimensional data.
 
@@ -357,7 +360,7 @@ class DepthConv2D(_layers.conv._DepthConv2D):
         )
 
 
-class DepthConv3D(_layers.conv._DepthConv3D):
+class DepthConv3D(conv._DepthConv3D):
     """
     Depth-wise Convolutional layer for 3-dimensional data.
 
@@ -416,7 +419,7 @@ class DepthConv3D(_layers.conv._DepthConv3D):
         )
 
 
-class Pool1D(_layers.pool._Pool1D):
+class Pool1D(pool._Pool1D):
     """
     Pooling layer for 1-dimensional data.
 
@@ -458,7 +461,7 @@ class Pool1D(_layers.pool._Pool1D):
         super().__init__(filter_size, stride, mode, padding)
 
 
-class Pool2D(_layers.pool._Pool2D):
+class Pool2D(pool._Pool2D):
     """
     Pooling layer for 2-dimensional data.
 
@@ -500,7 +503,7 @@ class Pool2D(_layers.pool._Pool2D):
         super().__init__(filter_size, stride, mode, padding)
 
 
-class Pool3D(_layers.pool._Pool3D):
+class Pool3D(pool._Pool3D):
     """
     Pooling layer for 3-dimensional data.
 
@@ -542,7 +545,7 @@ class Pool3D(_layers.pool._Pool3D):
         super().__init__(filter_size, stride, mode, padding)
 
 
-class GlobalAvgPool1D(_layers.pool._GlobalAvgPool1D):
+class GlobalAvgPool1D(pool._GlobalAvgPool1D):
     """
     Global average pooling layer for 1-dimensional data.
 
@@ -567,7 +570,7 @@ class GlobalAvgPool1D(_layers.pool._GlobalAvgPool1D):
         super().__init__()
 
 
-class GlobalAvgPool2D(_layers.pool._GlobalAvgPool2D):
+class GlobalAvgPool2D(pool._GlobalAvgPool2D):
     """
     Global average pooling layer for 2-dimensional data.
 
@@ -592,7 +595,7 @@ class GlobalAvgPool2D(_layers.pool._GlobalAvgPool2D):
         super().__init__()
 
 
-class GlobalAvgPool3D(_layers.pool._GlobalAvgPool3D):
+class GlobalAvgPool3D(pool._GlobalAvgPool3D):
     """
     Global average pooling layer for 3-dimensional data.
 
@@ -617,7 +620,7 @@ class GlobalAvgPool3D(_layers.pool._GlobalAvgPool3D):
         super().__init__()
 
 
-class AdaptiveAvgPool1D(_layers.pool._AdaptiveAvgPool1D):
+class AdaptiveAvgPool1D(pool._AdaptiveAvgPool1D):
     """
     Adaptive average pooling layer for 1-dimensional data.
 
@@ -636,7 +639,7 @@ class AdaptiveAvgPool1D(_layers.pool._AdaptiveAvgPool1D):
         super().__init__(out_size)
 
 
-class AdaptiveAvgPool2D(_layers.pool._AdaptiveAvgPool2D):
+class AdaptiveAvgPool2D(pool._AdaptiveAvgPool2D):
     """
     Adaptive average pooling layer for 2-dimensional data.
 
@@ -655,7 +658,7 @@ class AdaptiveAvgPool2D(_layers.pool._AdaptiveAvgPool2D):
         super().__init__(out_size)
 
 
-class AdaptiveAvgPool3D(_layers.pool._AdaptiveAvgPool3D):
+class AdaptiveAvgPool3D(pool._AdaptiveAvgPool3D):
     """
     Adaptive average pooling layer for 3-dimensional data.
 
@@ -674,7 +677,7 @@ class AdaptiveAvgPool3D(_layers.pool._AdaptiveAvgPool3D):
         super().__init__(out_size)
 
 
-class LpPool1D(_layers.pool._LpPool1D):
+class LpPool1D(pool._LpPool1D):
     """
     Lp pooling layer for 1-dimensional data.
 
@@ -714,7 +717,7 @@ class LpPool1D(_layers.pool._LpPool1D):
         super().__init__(filter_size, stride, p, padding)
 
 
-class LpPool2D(_layers.pool._LpPool2D):
+class LpPool2D(pool._LpPool2D):
     """
     Lp pooling layer for 2-dimensional data.
 
@@ -754,7 +757,7 @@ class LpPool2D(_layers.pool._LpPool2D):
         super().__init__(filter_size, stride, p, padding)
 
 
-class LpPool3D(_layers.pool._LpPool3D):
+class LpPool3D(pool._LpPool3D):
     """
     Lp pooling layer for 3-dimensional data.
 
@@ -794,7 +797,7 @@ class LpPool3D(_layers.pool._LpPool3D):
         super().__init__(filter_size, stride, p, padding)
 
 
-class Dense(_layers.linear._Dense):
+class Dense(linear._Dense):
     """
     A dense layer, also known as a fully connected layer, connects each
     neuron in one layer to every neuron in the next layer. It performs a
@@ -847,7 +850,7 @@ class Dense(_layers.linear._Dense):
         )
 
 
-class Dropout(_layers.drop._Dropout):
+class Dropout(drop._Dropout):
     """
     Dropout is a regularization technique used during training to prevent
     overfitting by randomly setting a fraction of input units to zero during
@@ -872,7 +875,7 @@ class Dropout(_layers.drop._Dropout):
         super().__init__(dropout_rate, random_state)
 
 
-class Dropout1D(_layers.drop._Dropout1D):
+class Dropout1D(drop._Dropout1D):
     """
     Dropout layer for 1-dimensional data.
 
@@ -903,7 +906,7 @@ class Dropout1D(_layers.drop._Dropout1D):
         super().__init__(dropout_rate, random_state)
 
 
-class Dropout2D(_layers.drop._Dropout2D):
+class Dropout2D(drop._Dropout2D):
     """
     Dropout layer for 2-dimensional data.
 
@@ -934,7 +937,7 @@ class Dropout2D(_layers.drop._Dropout2D):
         super().__init__(dropout_rate, random_state)
 
 
-class Dropout3D(_layers.drop._Dropout3D):
+class Dropout3D(drop._Dropout3D):
     """
     Dropout layer for 3-dimensional data.
 
@@ -965,7 +968,7 @@ class Dropout3D(_layers.drop._Dropout3D):
         super().__init__(dropout_rate, random_state)
 
 
-class Flatten(_layers.linear._Flatten):
+class Flatten(linear._Flatten):
     """
     A flatten layer reshapes the input tensor into a 2D array(`Matrix`),
     collapsing all dimensions except the batch dimension.
@@ -980,7 +983,7 @@ class Flatten(_layers.linear._Flatten):
         super().__init__()
 
 
-class Activation(_layers.act._Activation):
+class Activation(act._Activation):
     """
     An Activation Layer in a neural network applies a specific activation
     function to the input it receives, transforming the input to activate
@@ -1004,7 +1007,7 @@ class Activation(_layers.act._Activation):
     """
 
 
-class BatchNorm1D(_layers.norm._BatchNorm1D):
+class BatchNorm1D(norm._BatchNorm1D):
     """
     Batch normalization layer for 1-dimensional data.
 
@@ -1035,7 +1038,7 @@ class BatchNorm1D(_layers.norm._BatchNorm1D):
         super().__init__(in_features, momentum, epsilon)
 
 
-class BatchNorm2D(_layers.norm._BatchNorm2D):
+class BatchNorm2D(norm._BatchNorm2D):
     """
     Batch normalization layer for 2-dimensional data.
 
@@ -1066,7 +1069,7 @@ class BatchNorm2D(_layers.norm._BatchNorm2D):
         super().__init__(in_features, momentum, epsilon)
 
 
-class BatchNorm3D(_layers.norm._BatchNorm3D):
+class BatchNorm3D(norm._BatchNorm3D):
     """
     Batch normalization layer for 3-dimensional data.
 
@@ -1097,7 +1100,7 @@ class BatchNorm3D(_layers.norm._BatchNorm3D):
         super().__init__(in_features, momentum, epsilon)
 
 
-class LocalResponseNorm(_layers.norm._LocalResponseNorm):
+class LocalResponseNorm(norm._LocalResponseNorm):
     """
     Local Response Normalization (LRN) is a technique used in neural networks
     to promote competition among neighboring feature maps. By normalizing the
@@ -1140,7 +1143,7 @@ class LocalResponseNorm(_layers.norm._LocalResponseNorm):
         )
 
 
-class LayerNorm(_layers.norm._LayerNorm):
+class LayerNorm(norm._LayerNorm):
     """
     Layer normalization is a technique used in neural networks to normalize the
     inputs across the features for each data sample in a batch independently.
@@ -1188,9 +1191,6 @@ class Identity(Layer):
 
     def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
         return in_shape
-
-
-type LayerLike = Sequential | Layer
 
 
 class Sequential(Layer):

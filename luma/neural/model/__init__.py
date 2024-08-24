@@ -3,7 +3,14 @@ from typing import Literal
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import Activation
-from luma.neural import _models
+from luma.neural.model import (
+    alex,
+    incep,
+    lenet,
+    resnet,
+    simple,
+    vgg,
+)
 
 
 __all__ = (
@@ -39,7 +46,7 @@ MODELS: tuple[str] = __all__
 NUM_MODELS: int = len(MODELS)
 
 
-class SimpleMLP(_models.simple._SimpleMLP):
+class SimpleMLP(simple._SimpleMLP):
     """
     An MLP (Multilayer Perceptron) is a type of artificial neural network
     composed of at least three layers: an input layer, one or more hidden
@@ -133,7 +140,7 @@ class SimpleMLP(_models.simple._SimpleMLP):
         )
 
 
-class SimpleCNN(_models.simple._SimpleCNN):
+class SimpleCNN(simple._SimpleCNN):
     """
     A Convolutional Neural Network (CNN) is a type of deep neural network
     primarily used in image recognition and processing that is particularly
@@ -300,7 +307,7 @@ class SimpleCNN(_models.simple._SimpleCNN):
         )
 
 
-class LeNet_1(_models.lenet._LeNet_1):
+class LeNet_1(lenet._LeNet_1):
     """
     LeNet-1 is an early convolutional neural network (CNN) proposed by
     Yann LeCun in 1988, primarily designed for handwritten character
@@ -395,7 +402,7 @@ class LeNet_1(_models.lenet._LeNet_1):
         )
 
 
-class LeNet_4(_models.lenet._LeNet_4):
+class LeNet_4(lenet._LeNet_4):
     """
     LeNet-4 is a specific convolutional neural network structure designed
     for more advanced image recognition tasks than its predecessors.
@@ -486,7 +493,7 @@ class LeNet_4(_models.lenet._LeNet_4):
         )
 
 
-class LeNet_5(_models.lenet._LeNet_5):
+class LeNet_5(lenet._LeNet_5):
     """
     LeNet-5 is a specific convolutional neural network structure designed
     for more advanced image recognition tasks than its predecessors.
@@ -579,7 +586,7 @@ class LeNet_5(_models.lenet._LeNet_5):
         )
 
 
-class AlexNet(_models.alex._AlexNet):
+class AlexNet(alex._AlexNet):
     """
     AlexNet is a deep convolutional neural network that is designed for
     challenging image recognition tasks and was the winning entry in ILSVRC 2012.
@@ -681,7 +688,7 @@ class AlexNet(_models.alex._AlexNet):
         )
 
 
-class ZFNet(_models.alex._ZFNet):
+class ZFNet(alex._ZFNet):
     """
     ZFNet is a refinement of the AlexNet architecture that was specifically
     designed to improve model understanding and performance on image recognition
@@ -783,7 +790,7 @@ class ZFNet(_models.alex._ZFNet):
         )
 
 
-class VGGNet_11(_models.vgg._VGGNet_11):
+class VGGNet_11(vgg._VGGNet_11):
     """
     VGG11 is a simplified variant of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -887,7 +894,7 @@ class VGGNet_11(_models.vgg._VGGNet_11):
         )
 
 
-class VGGNet_13(_models.vgg._VGGNet_13):
+class VGGNet_13(vgg._VGGNet_13):
     """
     VGG13 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -994,7 +1001,7 @@ class VGGNet_13(_models.vgg._VGGNet_13):
         )
 
 
-class VGGNet_16(_models.vgg._VGGNet_16):
+class VGGNet_16(vgg._VGGNet_16):
     """
     VGG16 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -1104,7 +1111,7 @@ class VGGNet_16(_models.vgg._VGGNet_16):
         )
 
 
-class VGGNet_19(_models.vgg._VGGNet_19):
+class VGGNet_19(vgg._VGGNet_19):
     """
     VGG19 is ont of the variants of the VGG network architecture that was designed
     to enhance image recognition performance through deeper networks with smaller
@@ -1217,7 +1224,7 @@ class VGGNet_19(_models.vgg._VGGNet_19):
         )
 
 
-class Inception_V1(_models.incep._Inception_V1):
+class Inception_V1(incep._Inception_V1):
     """
     Inception v1, also known as GoogLeNet, is a deep convolutional neural network
     architecture designed for image classification. It introduces an "Inception
@@ -1331,7 +1338,7 @@ class Inception_V1(_models.incep._Inception_V1):
         )
 
 
-class Inception_V2(_models.incep._Inception_V2):
+class Inception_V2(incep._Inception_V2):
     """
     Inception v2, an improvement of the original Inception architecture,
     enhances computational efficiency and accuracy in deep learning models.
@@ -1443,7 +1450,7 @@ class Inception_V2(_models.incep._Inception_V2):
         )
 
 
-class Inception_V3(_models.incep._Inception_V3):
+class Inception_V3(incep._Inception_V3):
     """
     Inception v3, an enhancement of Inception v2, further improves
     computational efficiency and accuracy in deep learning models.
@@ -1560,7 +1567,7 @@ class Inception_V3(_models.incep._Inception_V3):
         )
 
 
-class Inception_V4(_models.incep._Inception_V4):
+class Inception_V4(incep._Inception_V4):
     """
     Inception v4, an enhancement of Inception v3, improves computational
     efficiency and accuracy. It includes sophisticated convolution
@@ -1667,7 +1674,7 @@ class Inception_V4(_models.incep._Inception_V4):
         )
 
 
-class InceptionResNet_V1(_models.incep._InceptionRes_V1):
+class InceptionResNet_V1(incep._InceptionRes_V1):
     """
     Inception-ResNet v1 combines Inception modules with residual connections,
     improving computational efficiency and accuracy. This architecture uses
@@ -1769,7 +1776,7 @@ class InceptionResNet_V1(_models.incep._InceptionRes_V1):
         )
 
 
-class InceptionResNet_V2(_models.incep._InceptionRes_V2):
+class InceptionResNet_V2(incep._InceptionRes_V2):
     """
     Inception-ResNet v2 enhances v1 with a deeper architecture and
     improved residual blocks for better performance. It features refined
@@ -1870,7 +1877,7 @@ class InceptionResNet_V2(_models.incep._InceptionRes_V2):
         )
 
 
-class ResNet_18(_models.resnet._ResNet_18):
+class ResNet_18(resnet._ResNet_18):
     """
     ResNet-18 is a 18-layer deep neural network that uses residual blocks
     to improve training by learning residuals, helping prevent vanishing
@@ -1969,7 +1976,7 @@ class ResNet_18(_models.resnet._ResNet_18):
         )
 
 
-class ResNet_34(_models.resnet._ResNet_34):
+class ResNet_34(resnet._ResNet_34):
     """
     ResNet-34 is a 34-layer deep neural network that uses residual blocks
     to improve training by learning residuals, helping prevent vanishing
@@ -2068,7 +2075,7 @@ class ResNet_34(_models.resnet._ResNet_34):
         )
 
 
-class ResNet_50(_models.resnet._ResNet_50):
+class ResNet_50(resnet._ResNet_50):
     """
     ResNet-50 is a 50-layer deep neural network that uses residual blocks
     to improve training by learning residuals, helping prevent vanishing
@@ -2167,7 +2174,7 @@ class ResNet_50(_models.resnet._ResNet_50):
         )
 
 
-class ResNet_101(_models.resnet._ResNet_101):
+class ResNet_101(resnet._ResNet_101):
     """
     ResNet-101 is a 101-layer deep neural network that uses residual blocks
     to improve training by learning residuals, helping prevent vanishing
@@ -2266,7 +2273,7 @@ class ResNet_101(_models.resnet._ResNet_101):
         )
 
 
-class ResNet_152(_models.resnet._ResNet_152):
+class ResNet_152(resnet._ResNet_152):
     """
     ResNet-152 is a 152-layer deep neural network that uses residual blocks
     to improve training by learning residuals, helping prevent vanishing
@@ -2365,7 +2372,7 @@ class ResNet_152(_models.resnet._ResNet_152):
         )
 
 
-class ResNet_200(_models.resnet._ResNet_200):
+class ResNet_200(resnet._ResNet_200):
     """
     ResNet-200 is a 200-layer deep neural network that uses residual blocks
     to improve training by learning residuals, helping prevent vanishing
@@ -2463,7 +2470,7 @@ class ResNet_200(_models.resnet._ResNet_200):
         )
 
 
-class ResNet_269(_models.resnet._ResNet_269):
+class ResNet_269(resnet._ResNet_269):
     """
     ResNet-269 is a 269-layer deep neural network that uses residual blocks
     to improve training by learning residuals, helping prevent vanishing
@@ -2561,7 +2568,7 @@ class ResNet_269(_models.resnet._ResNet_269):
         )
 
 
-class ResNet_1001(_models.resnet._ResNet_1001):
+class ResNet_1001(resnet._ResNet_1001):
     """
     ResNet-1001 is a 1001-layer deep neural network that uses residual
     blocks to improve training by learning residuals, helping prevent
@@ -2665,7 +2672,7 @@ class ResNet_1001(_models.resnet._ResNet_1001):
         )
 
 
-class XceptionNet(_models.incep._Xception):
+class XceptionNet(incep._Xception):
     """
     XceptionNet enhances the Inception architecture by replacing standard
     convolutions with depthwise separable convolutions, making it more
