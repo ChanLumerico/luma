@@ -106,26 +106,6 @@ class ConvBlock1D(standard._ConvBlock1D):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int] | int,
-        activation: Activation.FuncType,
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
-        stride: int = 1,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = True,
-        momentum: float = 0.9,
-        do_pooling: bool = True,
-        pool_filter_size: int = 2,
-        pool_stride: int = 2,
-        pool_mode: Literal["max", "avg"] = "max",
-        random_state: int | None = None,
-    ) -> None: ...
-
 
 class ConvBlock2D(standard._ConvBlock2D):
     """
@@ -180,26 +160,6 @@ class ConvBlock2D(standard._ConvBlock2D):
         X.shape = (batch_size, channels, height, width)
         ```
     """
-
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int, int] | int,
-        activation: Activation.FuncType,
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        padding: Tuple[int, int] | int | Literal["same", "valid"] = "same",
-        stride: int = 1,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = True,
-        momentum: float = 0.9,
-        do_pooling: bool = True,
-        pool_filter_size: int = 2,
-        pool_stride: int = 2,
-        pool_mode: Literal["max", "avg"] = "max",
-        random_state: int | None = None,
-    ) -> None: ...
 
 
 class ConvBlock3D(standard._ConvBlock3D):
@@ -256,26 +216,6 @@ class ConvBlock3D(standard._ConvBlock3D):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int, int, int] | int,
-        activation: Activation.FuncType,
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        padding: Tuple[int, int, int] | int | Literal["same", "valid"] = "same",
-        stride: int = 1,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = True,
-        momentum: float = 0.9,
-        do_pooling: bool = True,
-        pool_filter_size: int = 2,
-        pool_stride: int = 2,
-        pool_mode: Literal["max", "avg"] = "max",
-        random_state: int | None = None,
-    ) -> None: ...
-
 
 class SeparableConv1D(standard._SeparableConv1D):
     """
@@ -318,21 +258,6 @@ class SeparableConv1D(standard._SeparableConv1D):
         X.shape = (batch_size, channels, width)
         ```
     """
-
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int] | int,
-        stride: int = 1,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = False,
-        momentum: float = 0.9,
-        random_state: int | None = None,
-    ) -> None: ...
 
 
 class SeparableConv2D(standard._SeparableConv2D):
@@ -377,21 +302,6 @@ class SeparableConv2D(standard._SeparableConv2D):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int] | int,
-        stride: int = 1,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = False,
-        momentum: float = 0.9,
-        random_state: int | None = None,
-    ) -> None: ...
-
 
 class SeparableConv3D(standard._SeparableConv3D):
     """
@@ -435,21 +345,6 @@ class SeparableConv3D(standard._SeparableConv3D):
         ```
     """
 
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        filter_size: Tuple[int] | int,
-        stride: int = 1,
-        padding: Tuple[int] | int | Literal["same", "valid"] = "same",
-        optimizer: Optimizer | None = None,
-        initializer: InitUtil.InitStr = None,
-        lambda_: float = 0.0,
-        do_batch_norm: bool = False,
-        momentum: float = 0.9,
-        random_state: int | None = None,
-    ) -> None: ...
-
 
 @dataclass
 class DenseBlockArgs:
@@ -464,7 +359,7 @@ class DenseBlockArgs:
     random_state: int | None = None
 
 
-class DenseBlock(Sequential):
+class DenseBlock(standard._DenseBlock):
     """
     A typical dense block in a neural network configuration often
     includes a series of fully connected (dense) layers. Each layer
@@ -500,86 +395,6 @@ class DenseBlock(Sequential):
         Dropout rate
 
     """
-
-    def __init__(
-        self,
-        in_features: int,
-        out_features: int,
-        activation: Activation.FuncType,
-        optimizer: Optimizer = None,
-        initializer: InitUtil.InitStr = None,
-        lambda_: float = 0.0,
-        do_batch_norm: float = True,
-        momentum: float = 0.9,
-        do_dropout: bool = True,
-        dropout_rate: float = 0.5,
-        random_state: int | None = None,
-    ) -> None:
-        basic_args = {
-            "initializer": initializer,
-            "lambda_": lambda_,
-            "random_state": random_state,
-        }
-
-        self.set_param_ranges(
-            {
-                "in_features": ("0<,+inf", int),
-                "out_features": ("0<,+inf", int),
-                "lambda_": ("0,+inf", None),
-                "dropout_rate": ("0,1", None),
-            }
-        )
-        self.check_param_ranges()
-
-        super(DenseBlock, self).__init__(
-            Dense(
-                in_features,
-                out_features,
-                **basic_args,
-            )
-        )
-        if do_batch_norm:
-            super(DenseBlock, self).__add__(
-                BatchNorm1D(
-                    1,
-                    momentum,
-                )
-            )
-        super(DenseBlock, self).__add__(
-            activation(),
-        )
-        if do_dropout:
-            super(DenseBlock, self).__add__(
-                Dropout(
-                    dropout_rate,
-                    random_state,
-                ),
-            )
-
-        if optimizer is not None:
-            self.set_optimizer(optimizer)
-
-    @override
-    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
-        self.input_ = X
-        out = X
-        for _, layer in self.layers:
-            if isinstance(layer, BatchNorm1D):
-                out = layer(out[:, np.newaxis, :], is_train=is_train).squeeze()
-                continue
-            out = layer(out, is_train=is_train)
-
-        self.out_shape = out.shape
-        return out
-
-    @override
-    def backward(self, d_out: TensorLike) -> TensorLike:
-        for _, layer in reversed(self.layers):
-            if isinstance(layer, BatchNorm1D):
-                d_out = layer.backward(d_out[:, np.newaxis, :]).squeeze()
-                continue
-            d_out = layer.backward(d_out)
-        return d_out
 
 
 @dataclass
