@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from typing import Literal, Tuple, override
-import numpy as np
+from typing import Literal, Tuple
 
 from luma.core.super import Optimizer
-from luma.interface.typing import TensorLike, ClassType
+from luma.interface.typing import ClassType
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
