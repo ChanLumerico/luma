@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Literal, Tuple
 
 from luma.core.super import Optimizer
@@ -7,78 +6,7 @@ from luma.interface.util import InitUtil
 from luma.neural.layer import *
 
 
-@dataclass
-class ConvBlockArgs:
-    filter_size: Tuple[int, ...] | int
-    activation: Activation.FuncType
-    optimizer: Optimizer | None = None
-    initializer: InitUtil.InitStr = None
-    padding: Tuple[int, ...] | int | Literal["same", "valid"] = "same"
-    stride: int = 1
-    lambda_: float = 0.0
-    do_batch_norm: bool = True
-    momentum: float = 0.9
-    do_pooling: bool = True
-    pool_filter_size: int = 2
-    pool_stride: int = 2
-    pool_mode: Literal["max", "avg"] = "max"
-    random_state: int | None = None
-
-
-class ConvBlock1D(Sequential):
-    """
-    Convolutional block for 1-dimensional data.
-
-    A convolutional block in a neural network typically consists of a
-    convolutional layer followed by a nonlinear activation function,
-    and a pooling layer to reduce spatial dimensions.
-    This structure extracts and transforms features from input data,
-    applying filters to capture spatial hierarchies and patterns.
-    The pooling layer then reduces the feature dimensionality, helping to
-    decrease computational cost and overfitting.
-
-    Parameters
-    ----------
-    `in_channels` : int
-        Number of input channels
-    `out_channels` : int
-        Number of output channels
-    `filter_size`: tuple of int or int
-        Size of each filter
-    `activation` : FuncType
-        Type of activation function
-    `padding` : tuple of int or int or {"same", "valid"}, default="same"
-        Padding method
-    `optimizer` : Optimizer, optional, default=None
-        Type of optimizer for weight updating
-    `initializer` : InitStr, default=None
-        Type of weight initializer
-    `stride` : int, default=1
-        Step size for filters during convolution
-    `lambda_` : float, default=0.0
-        L2 regularization strength
-    `do_batch_norm` : bool, default=True
-        Whether to perform batch normalization
-    `momentum` : float, default=0.9
-        Momentum for batch normalization
-    `do_pooling` : bool, default=True
-        Whether to perform pooling
-    `pool_filter_size` : int, default=2
-        Filter size for pooling
-    `pool_stride` : int, default=2
-        Step size for pooling process
-    `pool_mode` : {"max", "avg"}, default="max"
-        Pooling strategy
-
-    Notes
-    -----
-    - The input `X` must have the form of 3D-array(`Tensor`).
-
-        ```py
-        X.shape = (batch_size, channels, width)
-        ```
-    """
-
+class _ConvBlock1D(Sequential):
     def __init__(
         self,
         in_channels: int,
@@ -142,60 +70,7 @@ class ConvBlock1D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class ConvBlock2D(Sequential):
-    """
-    Convolutional block for 2-dimensional data.
-
-    A convolutional block in a neural network typically consists of a
-    convolutional layer followed by a nonlinear activation function,
-    and a pooling layer to reduce spatial dimensions.
-    This structure extracts and transforms features from input data,
-    applying filters to capture spatial hierarchies and patterns.
-    The pooling layer then reduces the feature dimensionality, helping to
-    decrease computational cost and overfitting.
-
-    Parameters
-    ----------
-    `in_channels` : int
-        Number of input channels
-    `out_channels` : int
-        Number of output channels
-    `filter_size`: tuple of int or int
-        Size of each filter
-    `activation` : FuncType
-        Type of activation function
-    `padding` : tuple of int or int or {"same", "valid"}, default="same"
-        Padding method
-    `optimizer` : Optimizer, optional, default=None
-        Type of optimizer for weight updating
-    `initializer` : InitStr, default=None
-        Type of weight initializer
-    `stride` : int, default=1
-        Step size for filters during convolution
-    `lambda_` : float, default=0.0
-        L2 regularization strength
-    `do_batch_norm` : bool, default=True
-        Whether to perform batch normalization
-    `momentum` : float, default=0.9
-        Momentum for batch normalization
-    `do_pooling` : bool, default=True
-        Whether to perform pooling
-    `pool_filter_size` : int, default=2
-        Filter size for pooling
-    `pool_stride` : int, default=2
-        Step size for pooling process
-    `pool_mode` : {"max", "avg"}, default="max"
-        Pooling strategy
-
-    Notes
-    -----
-    - The input `X` must have the form of 4D-array(`Tensor`).
-
-        ```py
-        X.shape = (batch_size, channels, height, width)
-        ```
-    """
-
+class _ConvBlock2D(Sequential):
     def __init__(
         self,
         in_channels: int,
@@ -259,60 +134,7 @@ class ConvBlock2D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class ConvBlock3D(Sequential):
-    """
-    Convolutional block for 3-dimensional data.
-
-    A convolutional block in a neural network typically consists of a
-    convolutional layer followed by a nonlinear activation function,
-    and a pooling layer to reduce spatial dimensions.
-    This structure extracts and transforms features from input data,
-    applying filters to capture spatial hierarchies and patterns.
-    The pooling layer then reduces the feature dimensionality, helping to
-    decrease computational cost and overfitting.
-
-    Parameters
-    ----------
-    `in_channels` : int
-        Number of input channels
-    `out_channels` : int
-        Number of output channels
-    `filter_size`: tuple of int or int
-        Size of each filter
-    `activation` : FuncType
-        Type of activation function
-    `padding` : tuple of int or int or {"same", "valid"}, default="same"
-        Padding method
-    `optimizer` : Optimizer, optional, default=None
-        Type of optimizer for weight updating
-    `initializer` : InitStr, default=None
-        Type of weight initializer
-    `stride` : int, default=1
-        Step size for filters during convolution
-    `lambda_` : float, default=0.0
-        L2 regularization strength
-    `do_batch_norm` : bool, default=True
-        Whether to perform batch normalization
-    `momentum` : float, default=0.9
-        Momentum for batch normalization
-    `do_pooling` : bool, default=True
-        Whether to perform pooling
-    `pool_filter_size` : int, default=2
-        Filter size for pooling
-    `pool_stride` : int, default=2
-        Step size for pooling process
-    `pool_mode` : {"max", "avg"}, default="max"
-        Pooling strategy
-
-    Notes
-    -----
-    - The input `X` must have the form of 5D-array(`Tensor`).
-
-        ```py
-        X.shape = (batch_size, channels, depth, height, width)
-        ```
-    """
-
+class _ConvBlock3D(Sequential):
     def __init__(
         self,
         in_channels: int,
@@ -376,48 +198,7 @@ class ConvBlock3D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class SeparableConv1D(Sequential):
-    """
-    Depthwise Seperable Convolutional(DSC) block for
-    1-dimensional data.
-
-    Depthwise separable convolution(DSC) splits convolution into
-    depthwise (per-channel) and pointwise (1x1) steps, reducing
-    computation and parameters while preserving performance,
-    often used in efficient models like MobileNet.
-
-    Parameters
-    ----------
-    `in_channels` : int
-        Number of input channels
-    `out_channels` : int
-        Number of output channels
-    `filter_size`: tuple of int or int
-        Size of each filter
-    `padding` : tuple of int or int or {"same", "valid"}, default="same"
-        Padding method
-    `optimizer` : Optimizer, optional, default=None
-        Type of optimizer for weight updating
-    `initializer` : InitStr, default=None
-        Type of weight initializer
-    `stride` : int, default=1
-        Step size for filters during convolution
-    `lambda_` : float, default=0.0
-        L2 regularization strength
-    `do_batch_norm` : bool, default=False
-        Whether to perform batch normalization
-    `momentum` : float, default=0.9
-        Momentum for batch normalization
-
-    Notes
-    -----
-    - The input `X` must have the form of 3D-array(`Tensor`).
-
-        ```py
-        X.shape = (batch_size, channels, width)
-        ```
-    """
-
+class _SeparableConv1D(Sequential):
     def __init__(
         self,
         in_channels: int,
@@ -463,48 +244,7 @@ class SeparableConv1D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class SeparableConv2D(Sequential):
-    """
-    Depthwise Seperable Convolutional(DSC) block for
-    2-dimensional data.
-
-    Depthwise separable convolution(DSC) splits convolution into
-    depthwise (per-channel) and pointwise (1x1) steps, reducing
-    computation and parameters while preserving performance,
-    often used in efficient models like MobileNet.
-
-    Parameters
-    ----------
-    `in_channels` : int
-        Number of input channels
-    `out_channels` : int
-        Number of output channels
-    `filter_size`: tuple of int or int
-        Size of each filter
-    `padding` : tuple of int or int or {"same", "valid"}, default="same"
-        Padding method
-    `optimizer` : Optimizer, optional, default=None
-        Type of optimizer for weight updating
-    `initializer` : InitStr, default=None
-        Type of weight initializer
-    `stride` : int, default=1
-        Step size for filters during convolution
-    `lambda_` : float, default=0.0
-        L2 regularization strength
-    `do_batch_norm` : bool, default=False
-        Whether to perform batch normalization
-    `momentum` : float, default=0.9
-        Momentum for batch normalization
-
-    Notes
-    -----
-    - The input `X` must have the form of 4D-array(`Tensor`).
-
-        ```py
-        X.shape = (batch_size, channels, height, width)
-        ```
-    """
-
+class _SeparableConv2D(Sequential):
     def __init__(
         self,
         in_channels: int,
@@ -550,48 +290,7 @@ class SeparableConv2D(Sequential):
             self.set_optimizer(optimizer)
 
 
-class SeparableConv3D(Sequential):
-    """
-    Depthwise Seperable Convolutional(DSC) block for
-    3-dimensional data.
-
-    Depthwise separable convolution(DSC) splits convolution into
-    depthwise (per-channel) and pointwise (1x1) steps, reducing
-    computation and parameters while preserving performance,
-    often used in efficient models like MobileNet.
-
-    Parameters
-    ----------
-    `in_channels` : int
-        Number of input channels
-    `out_channels` : int
-        Number of output channels
-    `filter_size`: tuple of int or int
-        Size of each filter
-    `padding` : tuple of int or int or {"same", "valid"}, default="same"
-        Padding method
-    `optimizer` : Optimizer, optional, default=None
-        Type of optimizer for weight updating
-    `initializer` : InitStr, default=None
-        Type of weight initializer
-    `stride` : int, default=1
-        Step size for filters during convolution
-    `lambda_` : float, default=0.0
-        L2 regularization strength
-    `do_batch_norm` : bool, default=False
-        Whether to perform batch normalization
-    `momentum` : float, default=0.9
-        Momentum for batch normalization
-
-    Notes
-    -----
-    - The input `X` must have the form of 5D-array(`Tensor`).
-
-        ```py
-        X.shape = (batch_size, channels, depth, height, width)
-        ```
-    """
-
+class _SeparableConv3D(Sequential):
     def __init__(
         self,
         in_channels: int,
