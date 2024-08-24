@@ -129,7 +129,7 @@ from luma.neural.scheduler import (
     OneCycleLR,
     ReduceLROnPlateau,
 )
-from luma.neural.block import (
+from luma.neural.block_ import (
     ConvBlock1D,
     ConvBlock2D,
     ConvBlock3D,

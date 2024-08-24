@@ -1,3 +1,29 @@
+"""
+This private module is designated for the pre-definitions of 
+various special-purpose classes utilized within other primary 
+implementations of the project. The scripts and classes within 
+this module are intended exclusively for internal use and are 
+not designed for direct interaction by end users.
+
+Usage
+-----
+- This module should not be accessed or modified directly.
+- All interactions should be done through the main implementation 
+  modules that import and utilize these classes.
+
+Warnings
+--------
+- Direct modifications to this module can lead to unexpected 
+  behavior and are strongly discouraged.
+- This module is not intended for end-user access or usage.
+
+Note
+----
+- For detailed implementation and usage, refer to the main 
+  implementation modules that leverage these pre-defined classes.
+
+"""
+
 from dataclasses import dataclass
 from typing import Literal, Tuple, override
 import numpy as np
@@ -7,7 +33,15 @@ from luma.interface.typing import TensorLike, ClassType
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural import _specials
+from luma.neural.block import (
+    incep_v1,
+    incep_v2,
+    incep_v4,
+    incep_res_v1,
+    incep_res_v2,
+    resnet,
+    xception,
+)
 
 
 __all__ = (
@@ -819,28 +853,28 @@ class IncepBlock:
 
     """
 
-    class V1(_specials.incep_v1._Incep_V1_Default):
+    class V1(incep_v1._Incep_V1_Default):
         """
         Inception block for Inception V1 network, a.k.a. GoogLeNet.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeA(_specials.incep_v2._Incep_V2_TypeA):
+    class V2_TypeA(incep_v2._Incep_V2_TypeA):
         """
         Inception block type-A for Inception V2 network.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeB(_specials.incep_v2._Incep_V2_TypeB):
+    class V2_TypeB(incep_v2._Incep_V2_TypeB):
         """
         Inception block type-B for Inception V2 network.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeC(_specials.incep_v2._Incep_V2_TypeC):
+    class V2_TypeC(incep_v2._Incep_V2_TypeC):
         """
         Inception block type-C for Inception V2 network.
 
@@ -848,7 +882,7 @@ class IncepBlock:
 
         """
 
-    class V2_Redux(_specials.incep_v2._Incep_V2_Redux):
+    class V2_Redux(incep_v2._Incep_V2_Redux):
         """
         Inception block for grid reduction for Inception V2 network.
 
@@ -856,7 +890,7 @@ class IncepBlock:
 
         """
 
-    class V4_Stem(_specials.incep_v4._Incep_V4_Stem):
+    class V4_Stem(incep_v4._Incep_V4_Stem):
         """
         Inception block used in Inception V4 network stem part.
 
@@ -872,7 +906,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeA(_specials.incep_v4._Incep_V4_TypeA):
+    class V4_TypeA(incep_v4._Incep_V4_TypeA):
         """
         Inception block type A used in Inception V4 network
 
@@ -888,7 +922,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeB(_specials.incep_v4._Incep_V4_TypeB):
+    class V4_TypeB(incep_v4._Incep_V4_TypeB):
         """
         Inception block type B used in Inception V4 network.
 
@@ -904,7 +938,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeC(_specials.incep_v4._Incep_V4_TypeC):
+    class V4_TypeC(incep_v4._Incep_V4_TypeC):
         """
         Inception block type C used in Inception V4 network.
 
@@ -920,7 +954,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_ReduxA(_specials.incep_v4._Incep_V4_ReduxA):
+    class V4_ReduxA(incep_v4._Incep_V4_ReduxA):
         """
         Inception block type A for grid reduction used in
         Inception V4 network.
@@ -937,7 +971,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_ReduxB(_specials.incep_v4._Incep_V4_ReduxB):
+    class V4_ReduxB(incep_v4._Incep_V4_ReduxB):
         """
         Inception block type B for grid reduction used in
         Inception V4 network.
@@ -971,7 +1005,7 @@ class IncepResBlock:
 
     """
 
-    class V1_Stem(_specials.incep_res_v1._IncepRes_V1_Stem):
+    class V1_Stem(incep_res_v1._IncepRes_V1_Stem):
         """
         Inception block used in Inception-ResNet V1 network
         stem part.
@@ -988,7 +1022,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeA(_specials.incep_res_v1._IncepRes_V1_TypeA):
+    class V1_TypeA(incep_res_v1._IncepRes_V1_TypeA):
         """
         Inception block type A used in Inception-ResNet V1
         network.
@@ -1005,7 +1039,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeB(_specials.incep_res_v1._IncepRes_V1_TypeB):
+    class V1_TypeB(incep_res_v1._IncepRes_V1_TypeB):
         """
         Inception block type B used in Inception-ResNet V1
         network.
@@ -1022,7 +1056,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeC(_specials.incep_res_v1._IncepRes_V1_TypeC):
+    class V1_TypeC(incep_res_v1._IncepRes_V1_TypeC):
         """
         Inception block type C used in Inception-ResNet V1
         network.
@@ -1039,7 +1073,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_Redux(_specials.incep_res_v1._IncepRes_V1_Redux):
+    class V1_Redux(incep_res_v1._IncepRes_V1_Redux):
         """
         Inception block type B for grid reduction used in
         Inception-ResNet V1 network.
@@ -1056,7 +1090,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeA(_specials.incep_res_v2._IncepRes_V2_TypeA):
+    class V2_TypeA(incep_res_v2._IncepRes_V2_TypeA):
         """
         Inception block type A used in Inception-ResNet V2
         network.
@@ -1073,7 +1107,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeB(_specials.incep_res_v2._IncepRes_V2_TypeB):
+    class V2_TypeB(incep_res_v2._IncepRes_V2_TypeB):
         """
         Inception block type B used in Inception-ResNet V2
         network.
@@ -1090,7 +1124,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeC(_specials.incep_res_v2._IncepRes_V2_TypeC):
+    class V2_TypeC(incep_res_v2._IncepRes_V2_TypeC):
         """
         Inception block type C used in Inception-ResNet V2
         network.
@@ -1107,7 +1141,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_Redux(_specials.incep_res_v2._IncepRes_V2_Redux):
+    class V2_Redux(incep_res_v2._IncepRes_V2_Redux):
         """
         Inception block type B for grid reduction used in
         Inception-ResNet V2 network.
@@ -1144,7 +1178,7 @@ class ResNetBlock:
 
     """
 
-    class Basic(_specials.resnet._Basic):
+    class Basic(resnet._Basic):
         """
         Basic convolution block used in `ResNet-18` and `ResNet-34`.
 
@@ -1157,7 +1191,7 @@ class ResNetBlock:
         See [1] also for additional information.
         """
 
-    class Bottleneck(_specials.resnet._Bottleneck):
+    class Bottleneck(resnet._Bottleneck):
         """
         Bottleneck block used in `ResNet-(50, 101, 152)`.
 
@@ -1170,7 +1204,7 @@ class ResNetBlock:
         See [1] also for additional information.
         """
 
-    class PreActBottleneck(_specials.resnet._PreActBottleneck):
+    class PreActBottleneck(resnet._PreActBottleneck):
         """
         Bottleneck block with pre-activation used in
         `ResNet-(200, 269, 1001)`.
@@ -1200,7 +1234,7 @@ class XceptionBlock:
 
     """
 
-    class Entry(_specials.xception._Entry):
+    class Entry(xception._Entry):
         """
         An entry flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1215,7 +1249,7 @@ class XceptionBlock:
             ```
         """
 
-    class Middle(_specials.xception._Middle):
+    class Middle(xception._Middle):
         """
         A middle flow of Xception network mentioned in Fig. 5
         of the original paper[1].
@@ -1230,7 +1264,7 @@ class XceptionBlock:
             ```
         """
 
-    class Exit(_specials.xception._Exit):
+    class Exit(xception._Exit):
         """
         An exit flow of Xception network mentioned in Fig. 5
         of the original paper[1].
