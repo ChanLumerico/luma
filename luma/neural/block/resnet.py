@@ -1,10 +1,9 @@
 from typing import Tuple, override, ClassVar
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Tensor, TensorLike
+from luma.interface.typing import Tensor, TensorLike, LayerLike
 from luma.interface.util import InitUtil
 
-from luma.neural.layer import LayerLike
 from luma.neural.layer import *
 from luma.neural.autoprop import LayerNode, LayerGraph
 

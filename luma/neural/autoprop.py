@@ -2,11 +2,10 @@ from typing import List, Literal, Dict, Self, Any, Tuple
 from collections import deque
 import numpy as np
 
-from luma.interface.typing import TensorLike
+from luma.interface.typing import TensorLike, LayerLike
 from luma.interface.exception import NotFittedError
 from luma.interface.util import Clone
 from luma.core.super import Optimizer
-from luma.neural.layer import LayerLike
 
 
 __all__ = ("LayerNode", "LayerGraph")
@@ -121,7 +120,7 @@ class LayerNode:
         return hash((self.name, self.layer))
 
 
-class LayerGraph:
+class LayerGraph(LayerLike):
     def __init__(
         self,
         graph: Dict[LayerNode, List[LayerNode]] | None = None,
