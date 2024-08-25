@@ -223,6 +223,8 @@ Information Processing Systems, 2012.
 | `MobileNet_V2` | 148 | $(N,3,224,224)$ | 8,418,624 | 19,336 | 8,437,960 | ✅ |
 | `MobileNet_V3` |  |  |  |  |  | ❌ |
 
+### SENet
+
 *Waiting for future updates…🔮*
 
 ---
