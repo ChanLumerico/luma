@@ -32,21 +32,21 @@ Luma is built for an educational purpose, focused on implementing various machin
 
 | Name | Description |
 | --- | --- |
-| luma.classifier | Toolkit for classification models including various algorithms. |
-| luma.clustering | Focuses on unsupervised learning and clustering algorithms. |
-| luma.core | Foundational backbone providing essential data structures and utilities. |
-| luma.ensemble | Ensemble learning methods for improved model performance. |
-| luma.extension | Various extensions for Luma development. Not for end-users. |
-| luma.interface | Protocols and custom data types for internal use within Luma. |
-| luma.metric | Performance metrics for evaluating machine learning models. |
-| luma.migrate | Import and export of machine learning models within Luma. |
-| luma.model_selection | Tools for model selection and hyperparameter tuning. |
-| luma.neural [🔗](https://github.com/ChanLumerico/luma/blob/main/luma/neural/README.md) | Deep learning models and neural network utilities. A dedicated DL package for Luma. |
-| luma.pipe | Creating and managing machine learning pipelines. |
-| luma.preprocessing | Data preprocessing functions for machine learning tasks. |
-| luma.reduction | Dimensionality reduction techniques for high-dimensional datasets. |
-| luma.regressor | Comprehensive range of regression algorithms. |
-| luma.visual | Tools for model visualization and data plotting. |
+| `luma.classifier` | Toolkit for classification models including various algorithms. |
+| `luma.clustering` | Focuses on unsupervised learning and clustering algorithms. |
+| `luma.core` | Foundational backbone providing essential data structures and utilities. |
+| `luma.ensemble` | Ensemble learning methods for improved model performance. |
+| `luma.extension` | Various extensions for Luma development. Not for end-users. |
+| `luma.interface` | Protocols and custom data types for internal use within Luma. |
+| `luma.metric` | Performance metrics for evaluating machine learning models. |
+| `luma.migrate` | Import and export of machine learning models within Luma. |
+| `luma.model_selection` | Tools for model selection and hyperparameter tuning. |
+| `luma.neural` [🔗](https://github.com/ChanLumerico/luma/blob/main/luma/neural/README.md) | Deep learning models and neural network utilities. A dedicated DL package for Luma. |
+| `luma.pipe` | Creating and managing machine learning pipelines. |
+| `luma.preprocessing` | Data preprocessing functions for machine learning tasks. |
+| `luma.reduction` | Dimensionality reduction techniques for high-dimensional datasets. |
+| `luma.regressor` | Comprehensive range of regression algorithms. |
+| `luma.visual` | Tools for model visualization and data plotting. |
 
 ---
 
