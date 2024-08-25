@@ -2899,10 +2899,10 @@ class MobileNet_V1(mobile._Mobile_V1):
 
 class MobileNet_V2(mobile._Mobile_V2):
     """
-    MobileNet-V2 builds on the efficiency of its predecessor by introducing 
-    inverted residuals and linear bottlenecks, further reducing 
-    computational cost and enhancing performance on mobile and embedded 
-    devices. It continues to balance accuracy and efficiency while allowing 
+    MobileNet-V2 builds on the efficiency of its predecessor by introducing
+    inverted residuals and linear bottlenecks, further reducing
+    computational cost and enhancing performance on mobile and embedded
+    devices. It continues to balance accuracy and efficiency while allowing
     for flexible adjustments through width and resolution multipliers.
 
     Structure
@@ -2914,7 +2914,7 @@ class MobileNet_V2(mobile._Mobile_V2):
     Inverted Residual Blocks:
     ```py
     Conv2D(3, 32) -> BatchNorm2D(32) -> ReLU6() ->
-    
+
     1x MobileNetBlock.InvertedRes(32, 16, 1, 1) ->
     2x MobileNetBlock.InvertedRes(16, 24, 2, 6) ->
     3x MobileNetBlock.InvertedRes(24, 32, 2, 6) ->
@@ -2922,7 +2922,7 @@ class MobileNet_V2(mobile._Mobile_V2):
     3x MobileNetBlock.InvertedRes(64, 96, 1, 6) ->
     3x MobileNetBlock.InvertedRes(96, 160, 2, 6) ->
     1x MobileNetBlock.InvertedRes(160, 320, 1, 6) ->
-    
+
     Conv2D(320, 1280) -> BatchNorm2D(1280) -> ReLU6() ->
     GlobalAvgPool2D() ->  # 7x7 avg pool
     Conv2D(1280, 1280, 1) -> BatchNorm2D(1280) -> ReLU6() ->
@@ -2966,12 +2966,12 @@ class MobileNet_V2(mobile._Mobile_V2):
 
     References
     ----------
-    [1] Sandler, Mark, et al. “MobileNetV2: Inverted Residuals and Linear 
-    Bottlenecks.” Proceedings of the IEEE Conference on Computer Vision and 
+    [1] Sandler, Mark, et al. “MobileNetV2: Inverted Residuals and Linear
+    Bottlenecks.” Proceedings of the IEEE Conference on Computer Vision and
     Pattern Recognition (CVPR), 2018, pp. 4510-4520.
 
     """
-    
+
     def __init__(
         self,
         activation: Activation.FuncType = Activation.ReLU6,
