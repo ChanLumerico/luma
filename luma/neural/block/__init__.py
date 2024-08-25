@@ -870,5 +870,22 @@ class XceptionBlock:
 
 @ClassType.non_instantiable()
 class MobileNetBlock:
-    
-    class InvertedRes(mobile._InvertedRes): ...
+    """
+    Container class for building components of MobileNet series.
+
+    References
+    ----------
+    `MobileNet V2` :
+        [1] Howard, Andrew G., et al. “MobileNets: Efficient
+        Convolutional Neural Networks for Mobile Vision Applications.”
+        arXiv, 17 Apr. 2017, arxiv.org/abs/1704.04861.
+
+    """
+
+    class InvertedRes(mobile._InvertedRes):
+        """
+        Inverted Residual Block with depth-wise and point-wise
+        convolutions used in MobileNet V2.
+
+        Refer to the figures shown in the original paper[1].
+        """

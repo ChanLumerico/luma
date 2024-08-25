@@ -1367,7 +1367,7 @@ class Sequential(Layer):
         return in_shape
 
     def __add__(self, other: LayerLike | tuple[str, LayerLike] | None) -> Self:
-        if isinstance(other, (Layer, tuple)):
+        if isinstance(other, (LayerLike, tuple)):
             self.add(other)
         else:
             raise TypeError(
