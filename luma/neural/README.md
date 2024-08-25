@@ -104,6 +104,7 @@ Deep learning models and neural network utilities of Luma
 | `XceptionBlock.Entry` | 42 | $(N,3,299,299)$ | $(N,728,19,19)$ |
 | `XceptionBlock.Middle` | 14 | $(N,728,19,19)$ | $(N,728,19,19)$ |
 | `XceptionBlock.Exit` | 11 | $(N,728,19,19)$ | $(N,1024,9,9)$ |
+| `MobileNetBlock.InvertedRes` | 6~9 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 
 ---
 
@@ -211,10 +212,15 @@ Information Processing Systems, 2012.
 > Howard, Andrew G., et al. “MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications.” arXiv, 17 Apr. 2017, [arxiv.org/abs/1704.04861](http://arxiv.org/abs/1704.04861).
 > 
 
+*MobileNet-v2*
+
+> Sandler, Mark, et al. “MobileNetV2: Inverted Residuals and Linear Bottlenecks.” Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018, pp. 4510-4520.
+> 
+
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
 | `MobileNet_V1` | 31 | $(N,3,224,224)$ | 4,230,976 | 11,944 | 4,242,920 | ✅ |
-| `MobileNet_V2` |  |  |  |  |  | 🚧 |
+| `MobileNet_V2` | 148 | $(N,3,224,224)$ | 8,418,624 | 19,336 | 8,437,960 | ✅ |
 | `MobileNet_V3` |  |  |  |  |  | ❌ |
 
 *Waiting for future updates…🔮*
