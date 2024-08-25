@@ -56,7 +56,7 @@ __all__ = (
 )
 
 
-type LayerLike = Layer | Sequential
+type LayerLike = Layer | Sequential  # NOTE: deprecated
 
 
 class Conv1D(conv._Conv1D):

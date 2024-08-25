@@ -20,6 +20,7 @@ __all__ = (
     "Tensor",
     "Scalar",
     "ClassType",
+    "LayerLike",
 )
 
 
@@ -324,3 +325,6 @@ class ClassType:
             return PrivateClassWrapper
 
         return decorator
+
+
+class LayerLike: ...
