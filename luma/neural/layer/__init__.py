@@ -13,7 +13,7 @@ system to gradually extract and refine features from the data.
 from typing import Any, List, Literal, Self, Tuple, override
 
 from luma.core.super import Optimizer
-from luma.interface.typing import TensorLike
+from luma.interface.typing import TensorLike, LayerLike
 from luma.interface.util import InitUtil, Clone
 from luma.neural.base import Layer
 
@@ -54,9 +54,6 @@ __all__ = (
     "Identity",
     "Sequential",
 )
-
-
-type LayerLike = Layer | Sequential
 
 
 class Conv1D(conv._Conv1D):
@@ -1367,7 +1364,7 @@ class Sequential(Layer):
         return in_shape
 
     def __add__(self, other: LayerLike | tuple[str, LayerLike] | None) -> Self:
-        if isinstance(other, (Layer, tuple)):
+        if isinstance(other, (LayerLike, tuple)):
             self.add(other)
         else:
             raise TypeError(

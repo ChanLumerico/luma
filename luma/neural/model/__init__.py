@@ -2897,7 +2897,114 @@ class MobileNet_V1(mobile._Mobile_V1):
         )
 
 
-class MobileNet_V2(mobile._Mobile_V2): ...
+class MobileNet_V2(mobile._Mobile_V2):
+    """
+    MobileNet-V2 builds on the efficiency of its predecessor by introducing
+    inverted residuals and linear bottlenecks, further reducing
+    computational cost and enhancing performance on mobile and embedded
+    devices. It continues to balance accuracy and efficiency while allowing
+    for flexible adjustments through width and resolution multipliers.
+
+    Structure
+    ---------
+    Input:
+    ```py
+    Tensor[..., 3, 224, 224]
+    ```
+    Inverted Residual Blocks:
+    ```py
+    Conv2D(3, 32) -> BatchNorm2D(32) -> ReLU6() ->
+
+    1x MobileNetBlock.InvertedRes(32, 16, 1, 1) ->
+    2x MobileNetBlock.InvertedRes(16, 24, 2, 6) ->
+    3x MobileNetBlock.InvertedRes(24, 32, 2, 6) ->
+    4x MobileNetBlock.InvertedRes(32, 64, 2, 6) ->
+    3x MobileNetBlock.InvertedRes(64, 96, 1, 6) ->
+    3x MobileNetBlock.InvertedRes(96, 160, 2, 6) ->
+    1x MobileNetBlock.InvertedRes(160, 320, 1, 6) ->
+
+    Conv2D(320, 1280) -> BatchNorm2D(1280) -> ReLU6() ->
+    GlobalAvgPool2D() ->  # 7x7 avg pool
+    Conv2D(1280, 1280, 1) -> BatchNorm2D(1280) -> ReLU6() ->
+    ```
+    Fully Connected Layers:
+    ```py
+    Flatten -> Dense(1280, 1000)
+    ```
+    Output:
+    ```py
+    Matrix[..., 1000]
+    ```
+    Parameter Size:
+    ```txt
+    8,418,624 weights, 19,336 biases -> 8,437,960 params
+    ```
+    Parameters
+    ----------
+    `activation` : FuncType, default=Activation.ReLU6
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `width_param` : float, default=1.0
+        Width parameter(alpha) of the network
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    [1] Sandler, Mark, et al. “MobileNetV2: Inverted Residuals and Linear
+    Bottlenecks.” Proceedings of the IEEE Conference on Computer Vision and
+    Pattern Recognition (CVPR), 2018, pp. 4510-4520.
+
+    """
+
+    def __init__(
+        self,
+        activation: Activation.FuncType = Activation.ReLU6,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0,
+        momentum: float = 0.9,
+        width_param: float = 1.0,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        super(MobileNet_V1, self).__init__(
+            activation,
+            initializer,
+            out_features,
+            batch_size,
+            n_epochs,
+            valid_size,
+            lambda_,
+            momentum,
+            width_param,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
 
 
 class MobileNet_V3(mobile._Mobile_V3): ...

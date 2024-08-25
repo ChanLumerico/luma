@@ -20,6 +20,7 @@ __all__ = (
     "Tensor",
     "Scalar",
     "ClassType",
+    "LayerLike",
 )
 
 
@@ -257,6 +258,7 @@ class Scalar:
     A placeholder class for scalar type.
 
     This class encompasses `int` and `float`.
+
     """
 
     def __new__(cls, value: int | float) -> Self:
@@ -324,3 +326,25 @@ class ClassType:
             return PrivateClassWrapper
 
         return decorator
+
+
+class LayerLike:
+    """
+    Internal class for layer-like neural components which has
+    both feed-forwaring and backpropagating mechanisms implemented.
+
+    This class currently encompasses `Layer`, `Sequential`, and
+    `LayerGraph` of Luma's AutoProp system.
+
+    """
+
+    def forward(self, X: TensorLike, *args) -> TensorLike: ...
+
+    def backward(self, d_out: TensorLike, *args) -> TensorLike: ...
+
+    def update(self, *args) -> TensorLike: ...
+
+    @property
+    def param_size(self) -> tuple[int, int]: ...
+
+    def out_shape(self, in_shape: tuple[int]) -> tuple[int]: ...

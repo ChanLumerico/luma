@@ -7,15 +7,15 @@ from luma.core.base import ModelBase, NeuralBase
 from luma.core.super import Evaluator, Optimizer
 
 from luma.interface.exception import NotFittedError
-from luma.interface.typing import Matrix, Tensor, TensorLike
-from luma.interface.util import InitUtil, TrainProgress, Clone
+from luma.interface.typing import Matrix, Tensor, TensorLike, LayerLike
+from luma.interface.util import InitUtil, TrainProgress
 from luma.model_selection.split import BatchGenerator, TrainTestSplit
 
 
 __all__ = ("Layer", "Loss", "Initializer", "Scheduler", "NeuralModel")
 
 
-class Layer(ABC, ModelBase):
+class Layer(ABC, ModelBase, LayerLike):
     """
     An internal class for layers in neural networks.
 

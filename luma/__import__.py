@@ -17,6 +17,7 @@ from luma.interface.typing import (
     Tensor,
     Scalar,
     ClassType,
+    LayerLike,
 )
 from luma.interface.util import (
     DecisionTreeNode,
@@ -278,7 +279,8 @@ if __name__ == "__main__":
     UnsupportedParameterError, ModelExtensionError,
     InvalidRangeError
 
-    TensorLike, Matrix, Vector, Tensor, Scalar, ClassType
+    TensorLike, Matrix, Vector, Tensor, Scalar, ClassType,
+    LayerLike
 
     DecisionTreeNode, NearestNeighbors,
     SilhouetteUtil, DBUtil, KernelUtil, InitUtil, Clone,
