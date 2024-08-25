@@ -20,7 +20,7 @@ model building, evaluation, and deployment.
 
 ### Purpose
 
-Luma is built for an educational purpose, focused on implementing various machine learning algorithms and models from scratch solely depending on low-level libraries such as `NumPy`.
+Luma is built for an educational purpose, focused on implementing various machine learning algorithms and models **from scratch** solely depending on low-level libraries such as `NumPy`.
 
 ### Key Features
 
