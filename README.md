@@ -7,7 +7,7 @@ A Comprehensive Python Module for Machine Learning and Data Science
 
 <img alt="pypi-version" src="https://img.shields.io/pypi/v/luma-ml?logo=python&logoColor=white&color=blue">
 <img alt="pypi-downloads" src="https://img.shields.io/pypi/dm/luma-ml">
-<img src="https://img.shields.io/badge/total downloads-9.27k-red">
+<img src="https://img.shields.io/badge/total downloads-9.84k-red">
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/ChanLumerico/luma?color=yellow">
 <img alt="Code Style" src="https://img.shields.io/badge/code%20style-black-000000.svg">
 
@@ -110,6 +110,6 @@ Luma is inspired by these libraries:
 
 | | Description |
 | --- | --- |
-| Latest Version | 1.0.12 |
-| Lines of Code | ~30.0K |
+| Latest Version | 1.0.13 |
+| Lines of Code | ~30.4K |
 | Dependencies | NumPy, SciPy, Pandas, Matplotlib, Seaborn, MLX(Optional) |
