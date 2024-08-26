@@ -1,11 +1,13 @@
-from typing import List, Literal, Dict, Self, Any, Tuple
+from typing import List, Dict, Self, Any, Tuple
 from collections import deque
 import numpy as np
 
 from luma.interface.typing import TensorLike, LayerLike
-from luma.interface.exception import NotFittedError
 from luma.interface.util import Clone
+from luma.interface.exception import NotFittedError
 from luma.core.super import Optimizer
+
+from .merge import MergeMode
 
 
 __all__ = ("LayerNode", "LayerGraph")
@@ -15,7 +17,7 @@ class LayerNode:
     def __init__(
         self,
         layer: LayerLike,
-        merge_mode: Literal["chcat", "sum"] = "sum",
+        merge_mode: MergeMode = MergeMode.SUM,
         name: str | None = None,
     ) -> None:
         self.layer: LayerLike = layer
@@ -42,13 +44,8 @@ class LayerNode:
         self.b_queue.append(d_out)
 
     def forward(self, is_train: bool = False) -> TensorLike:
-        match self.merge_mode:
-            case "chcat":
-                X = np.concatenate(self.f_queue, axis=1)
-            case "sum":
-                X = np.sum(self.f_queue, axis=0)
-        out = self.layer(X, is_train)
-        return out
+        X = self.merge_mode.forward(self.f_queue)
+        return self.layer(X, is_train)
 
     def backward(self) -> List[TensorLike]:
         d_cum = np.sum(self.b_queue, axis=0)
@@ -57,17 +54,8 @@ class LayerNode:
             return [d_out]
 
         d_out_arr = []
-        for i in range(self.n_backward):
-            if self.merge_mode == "chcat":
-                d_out_arr.append(
-                    d_out[
-                        :,
-                        self.cum_ch[i] : self.cum_ch[i + 1],
-                        ...,
-                    ]
-                )
-            elif self.merge_mode == "sum":
-                d_out_arr.append(d_out)
+        for i in range(self.n_forward):
+            d_out_arr.append(self.merge_mode.backward(self.f_queue, d_out, i))
 
         return d_out_arr
 
