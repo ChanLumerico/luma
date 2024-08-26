@@ -2989,7 +2989,7 @@ class MobileNet_V2(mobile._Mobile_V2):
         random_state: int | None = None,
         deep_verbose: bool = False,
     ) -> None:
-        super(MobileNet_V1, self).__init__(
+        super(MobileNet_V2, self).__init__(
             activation,
             initializer,
             out_features,
