@@ -27,7 +27,7 @@ __all__ = (
 class _VGGNet_11(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -194,7 +194,7 @@ class _VGGNet_11(Estimator, Supervised, NeuralModel):
 class _VGGNet_13(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -373,7 +373,7 @@ class _VGGNet_13(Estimator, Supervised, NeuralModel):
 class _VGGNet_16(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -564,7 +564,7 @@ class _VGGNet_16(Estimator, Supervised, NeuralModel):
 class _VGGNet_19(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,

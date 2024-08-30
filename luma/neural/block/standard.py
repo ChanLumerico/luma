@@ -14,7 +14,7 @@ class _ConvBlock1D(Sequential):
         in_channels: int,
         out_channels: int,
         filter_size: Tuple[int] | int,
-        activation: Activation.FuncType,
+        activation: callable,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         padding: Tuple[int] | int | Literal["same", "valid"] = "same",
@@ -78,7 +78,7 @@ class _ConvBlock2D(Sequential):
         in_channels: int,
         out_channels: int,
         filter_size: Tuple[int, int] | int,
-        activation: Activation.FuncType,
+        activation: callable,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         padding: Tuple[int, int] | int | Literal["same", "valid"] = "same",
@@ -142,7 +142,7 @@ class _ConvBlock3D(Sequential):
         in_channels: int,
         out_channels: int,
         filter_size: Tuple[int, int, int] | int,
-        activation: Activation.FuncType,
+        activation: callable,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         padding: Tuple[int, int, int] | int | Literal["same", "valid"] = "same",
@@ -343,7 +343,7 @@ class _DenseBlock(Sequential):
         self,
         in_features: int,
         out_features: int,
-        activation: Activation.FuncType,
+        activation: callable,
         optimizer: Optimizer = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -418,3 +418,44 @@ class _DenseBlock(Sequential):
                 continue
             d_out = layer.backward(d_out)
         return d_out
+
+
+class _SEBlock(Sequential):
+    def __init__(
+        self,
+        in_channels: int,
+        reduction: int = 4,
+        activation: callable = Activation.ReLU,
+        optimizer: Optimizer = None,
+        initializer: InitUtil.InitStr = None,
+        lambda_: float = 0.0,
+        random_state: int | None = None,
+    ) -> None:
+        basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_features": ("0<,+inf", int),
+                "reduction": (f"0<,{in_channels}", int),
+                "lambda_": ("0,+inf", None),
+            }
+        )
+        self.check_param_ranges()
+
+        super().__init__(
+            GlobalAvgPool2D(),
+            Flatten(),
+            Dense(in_channels, in_channels // reduction, **basic_args),
+            activation(),
+            Dense(in_channels // reduction, in_channels, **basic_args),
+            Activation.Sigmoid(),
+        )
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)
+
+        # TODO: forward, backward, and out_shape implementations

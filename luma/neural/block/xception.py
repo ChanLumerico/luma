@@ -11,7 +11,7 @@ from luma.neural.autoprop import LayerNode, LayerGraph
 class _Entry(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -149,7 +149,7 @@ class _Entry(LayerGraph):
 class _Middle(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -220,7 +220,7 @@ class _Middle(LayerGraph):
 class _Exit(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,

@@ -19,7 +19,7 @@ InvertedRes = MobileNetBlock.InvertedRes
 class _Mobile_V1(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -159,7 +159,7 @@ class _Mobile_V1(Estimator, Supervised, NeuralModel):
 class _Mobile_V2(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU6,
+        activation: callable = Activation.ReLU6,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,

@@ -42,7 +42,7 @@ __all__ = (
 class _Inception_V1(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -209,7 +209,7 @@ class _Inception_V1(Estimator, Supervised, NeuralModel):
 class _Inception_V2(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -632,7 +632,7 @@ class _Inception_V3(Estimator, Supervised, NeuralModel):
 class _Inception_V4(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -758,7 +758,7 @@ class _Inception_V4(Estimator, Supervised, NeuralModel):
 class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -883,7 +883,7 @@ class _InceptionRes_V1(Estimator, Supervised, NeuralModel):
 class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -1011,7 +1011,7 @@ class _InceptionRes_V2(Estimator, Supervised, NeuralModel):
 class _Xception(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,

@@ -124,7 +124,7 @@ class SimpleMLP(simple._SimpleMLP):
         out_features: int,
         hidden_layers: list[int] | int,
         *,
-        activation: Activation.FuncType,
+        activation: callable,
         initializer: InitUtil.InitStr = None,
         batch_size: int = 100,
         n_epochs: int = 100,
@@ -271,7 +271,7 @@ class SimpleCNN(simple._SimpleCNN):
         out_features: int,
         *,
         filter_size: int,
-        activation: Activation.FuncType,
+        activation: callable,
         initializer: InitUtil.InitStr = None,
         padding: Literal["same", "valid"] = "same",
         stride: int = 1,
@@ -389,7 +389,7 @@ class LeNet_1(lenet._LeNet_1):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.Tanh,
+        activation: callable = Activation.Tanh,
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -478,7 +478,7 @@ class LeNet_4(lenet._LeNet_4):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.Tanh,
+        activation: callable = Activation.Tanh,
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -571,7 +571,7 @@ class LeNet_5(lenet._LeNet_5):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.Tanh,
+        activation: callable = Activation.Tanh,
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -673,7 +673,7 @@ class AlexNet(alex._AlexNet):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -775,7 +775,7 @@ class ZFNet(alex._ZFNet):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -879,7 +879,7 @@ class VGGNet_11(vgg._VGGNet_11):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -986,7 +986,7 @@ class VGGNet_13(vgg._VGGNet_13):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -1096,7 +1096,7 @@ class VGGNet_16(vgg._VGGNet_16):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -1209,7 +1209,7 @@ class VGGNet_19(vgg._VGGNet_19):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 100,
@@ -1323,7 +1323,7 @@ class Inception_V1(incep._Inception_V1):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -1435,7 +1435,7 @@ class Inception_V2(incep._Inception_V2):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -1550,7 +1550,7 @@ class Inception_V3(incep._Inception_V3):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -1657,7 +1657,7 @@ class Inception_V4(incep._Inception_V4):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -1759,7 +1759,7 @@ class InceptionResNet_V1(incep._InceptionRes_V1):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -1860,7 +1860,7 @@ class InceptionResNet_V2(incep._InceptionRes_V2):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -1961,7 +1961,7 @@ class ResNet_18(resnet._ResNet_18):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2060,7 +2060,7 @@ class ResNet_34(resnet._ResNet_34):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2159,7 +2159,7 @@ class ResNet_50(resnet._ResNet_50):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2258,7 +2258,7 @@ class ResNet_101(resnet._ResNet_101):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2357,7 +2357,7 @@ class ResNet_152(resnet._ResNet_152):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2455,7 +2455,7 @@ class ResNet_200(resnet._ResNet_200):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2553,7 +2553,7 @@ class ResNet_269(resnet._ResNet_269):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2657,7 +2657,7 @@ class ResNet_1001(resnet._ResNet_1001):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2759,7 +2759,7 @@ class XceptionNet(incep._Xception):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2864,7 +2864,7 @@ class MobileNet_V1(mobile._Mobile_V1):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -2974,7 +2974,7 @@ class MobileNet_V2(mobile._Mobile_V2):
 
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU6,
+        activation: callable = Activation.ReLU6,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,

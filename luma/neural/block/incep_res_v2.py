@@ -11,7 +11,7 @@ from luma.neural.autoprop import LayerNode, LayerGraph
 class _IncepRes_V2_TypeA(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -117,7 +117,7 @@ class _IncepRes_V2_TypeA(LayerGraph):
 class _IncepRes_V2_TypeB(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -211,7 +211,7 @@ class _IncepRes_V2_TypeB(LayerGraph):
 class _IncepRes_V2_TypeC(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -305,7 +305,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
 class _IncepRes_V2_Redux(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,

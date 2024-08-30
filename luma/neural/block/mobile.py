@@ -15,7 +15,7 @@ class _InvertedRes(LayerGraph):
         out_channels: int,
         stride: int = 1,
         expand: int = 1,
-        activation: Activation.FuncType = Activation.ReLU6,
+        activation: callable = Activation.ReLU6,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,

@@ -23,7 +23,7 @@ __all__ = ("_AlexNet", "_ZFNet")
 class _AlexNet(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,
@@ -231,7 +231,7 @@ class _AlexNet(Estimator, Supervised, NeuralModel):
 class _ZFNet(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         initializer: InitUtil.InitStr = None,
         out_features: int = 1000,
         batch_size: int = 128,

@@ -16,7 +16,7 @@ __all__ = ("_LeNet_1", "_LeNet_4", "_LeNet_5")
 class _LeNet_1(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.Tanh,
+        activation: callable = Activation.Tanh,
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -139,7 +139,7 @@ class _LeNet_1(Estimator, Supervised, NeuralModel):
 class _LeNet_4(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.Tanh,
+        activation: callable = Activation.Tanh,
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,
@@ -273,7 +273,7 @@ class _LeNet_4(Estimator, Supervised, NeuralModel):
 class _LeNet_5(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.Tanh,
+        activation: callable = Activation.Tanh,
         initializer: InitUtil.InitStr = None,
         out_features: int = 10,
         batch_size: int = 100,

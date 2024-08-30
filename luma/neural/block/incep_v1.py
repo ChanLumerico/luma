@@ -18,7 +18,7 @@ class _Incep_V1_Default(Sequential):
         red_5x5: int,
         out_5x5: int,
         out_pool: int,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,

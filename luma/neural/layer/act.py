@@ -10,7 +10,6 @@ __all__ = "_Activation"
 
 @ClassType.non_instantiable()
 class _Activation:
-    type FuncType = Type
 
     @classmethod
     def _out_shape(cls, in_shape: Tuple[int]) -> Tuple[int]:

@@ -1,6 +1,7 @@
 from typing import Tuple
 import numpy as np
 
+from interface.typing import TensorLike
 from luma.core.super import Optimizer
 from luma.interface.typing import Tensor, Matrix
 from luma.interface.util import InitUtil

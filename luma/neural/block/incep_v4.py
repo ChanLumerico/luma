@@ -11,7 +11,7 @@ from luma.neural.autoprop import LayerNode, LayerGraph
 class _Incep_V4_Stem(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -138,7 +138,7 @@ class _Incep_V4_Stem(LayerGraph):
 class _Incep_V4_TypeA(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -241,7 +241,7 @@ class _Incep_V4_TypeA(LayerGraph):
 class _Incep_V4_TypeB(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -353,7 +353,7 @@ class _Incep_V4_TypeB(LayerGraph):
 class _Incep_V4_TypeC(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -493,7 +493,7 @@ class _Incep_V4_ReduxA(LayerGraph):
         self,
         in_channels: int,
         out_channels_arr: tuple[int, int, int, int],
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -581,7 +581,7 @@ class _Incep_V4_ReduxA(LayerGraph):
 class _Incep_V4_ReduxB(LayerGraph):
     def __init__(
         self,
-        activation: Activation.FuncType = Activation.ReLU,
+        activation: callable = Activation.ReLU,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
