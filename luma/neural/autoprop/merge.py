@@ -8,11 +8,11 @@ class MergeMode(Enum):
     CHCAT = "chcat"
     SUM = "sum"
     HADAMARD = "hadamard"
-    AVERAGE = "average"
+    AVG = "avg"
     MAX = "max"
     MIN = "min"
     DOT = "dot"
-    SUBTRACT = "subtract"
+    SUB = "sub"
 
     def forward(self, f_queue: list[TensorLike]) -> TensorLike:
         match self:
@@ -28,7 +28,7 @@ class MergeMode(Enum):
                     X *= tensor
                 return X
 
-            case MergeMode.AVERAGE:
+            case MergeMode.AVG:
                 return np.mean(f_queue, axis=0)
 
             case MergeMode.MAX:
@@ -40,7 +40,7 @@ class MergeMode(Enum):
             case MergeMode.DOT:
                 return np.dot(f_queue[0], f_queue[1])
 
-            case MergeMode.SUBTRACT:
+            case MergeMode.SUB:
                 result = f_queue[0]
                 for tensor in f_queue[1:]:
                     result -= tensor
@@ -66,7 +66,7 @@ class MergeMode(Enum):
                         prod_except_current *= f_queue[j]
                 return d_out * prod_except_current
 
-            case MergeMode.AVERAGE:
+            case MergeMode.AVG:
                 return d_out / len(f_queue)
 
             case MergeMode.MAX | MergeMode.MIN:
@@ -80,5 +80,5 @@ class MergeMode(Enum):
                 elif i == 1:
                     return np.dot(f_queue[0].T, d_out)
 
-            case MergeMode.SUBTRACT:
+            case MergeMode.SUB:
                 return d_out if i == 0 else -d_out
