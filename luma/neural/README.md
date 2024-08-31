@@ -69,6 +69,8 @@ Deep learning models and neural network utilities of Luma
 
 *luma.neural.block 🔗*
 
+### Standard Blocks
+
 | Class | # of Layers | Input Shape | Output Shape |
 | --- | --- | --- | --- |
 | `ConvBlock1D` | 2~3 | $(N,C_{in},W_{in})$ | $(N,C_{out},W_{out})$ |
@@ -78,6 +80,11 @@ Deep learning models and neural network utilities of Luma
 | `SeparableConv2D` | 3~5 | $(N,C_{in},H_{in}, W_{in})$ | $(N,C_{out},H_{out}, W_{out})$ |
 | `SeparableConv3D` | 3~5 | $(N,C_{in},D_{in},H_{in},W_{in})$ | $(N,C_{out},D_{out},H_{out},W_{out})$ |
 | `DenseBlock` | 2~3 | $(N,L_{in})$ | $(N,L_{out})$ |
+
+### Inception Blocks
+
+| Class | # of Layers | Input Shape | Output Shape |
+| --- | --- | --- | --- |
 | `IncepBlock.V1` | 19 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | `IncepBlock.V2_TypeA` | 22 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | `IncepBlock.V2_TypeB` | 31 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
@@ -89,7 +96,11 @@ Deep learning models and neural network utilities of Luma
 | `IncepBlock.V4_TypeC` | 33 | $(N,1536,8,8)$ | $(N,1536,8,8)$ |
 | `IncepBlock.V4_ReduxA` | 15 | $(N,384,35,35)$ | $(N,1024,17,17)$ |
 | `IncepBlock.V4_ReduxB` | 21 | $(N,1024,17,17)$ | $(N,1536,8,8)$ |
-| `IncepResBlock.V1_Stem` | 17 | $(N,3,299,299)$ | $(N,256,35,35)$ |
+
+### Inception-Res Blocks
+
+| Class | # of Layers | Input Shape | Output Shape |
+| --- | --- | --- | --- |
 | `IncepResBlock.V1_TypeA` | 22 | $(N,256,35,35)$ | $(N,256,35,35)$ |
 | `IncepResBlock.V1_TypeB` | 16 | $(N,896,17,17)$ | $(N,896,17,17)$ |
 | `IncepResBlock.V1_TypeC` | 16 | $(N,1792,8,8)$ | $(N,1792,8,8)$ |
@@ -98,13 +109,29 @@ Deep learning models and neural network utilities of Luma
 | `IncepResBlock.V2_TypeB` | 16 | $(N,1280,17,17)$ | $(N,1280,17,17)$ |
 | `IncepResBlock.V2_TypeC` | 16 | $(N,2272,8,8)$ | $(N,2272,8,8)$ |
 | `IncepResBlock.V2_Redux` | 24 | $(N,1280,17,17)$ | $(N,2272,8,8)$ |
+
+### ResNet Blocks
+
+| Class | # of Layers | Input Shape | Output Shape |
+| --- | --- | --- | --- |
 | `ResNetBlock.Basic` | 7~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | `ResNetBlock.Bottleneck` | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | `ResNetBlock.PreActBottleneck` | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+
+### Xception Blocks
+
+| Class | # of Layers | Input Shape | Output Shape |
+| --- | --- | --- | --- |
 | `XceptionBlock.Entry` | 42 | $(N,3,299,299)$ | $(N,728,19,19)$ |
 | `XceptionBlock.Middle` | 14 | $(N,728,19,19)$ | $(N,728,19,19)$ |
 | `XceptionBlock.Exit` | 11 | $(N,728,19,19)$ | $(N,1024,9,9)$ |
+
+### MobileNet Blocks
+
+| Class | # of Layers | Input Shape | Output Shape |
+| --- | --- | --- | --- |
 | `MobileNetBlock.InvertedRes` | 6~9 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `MobileNetBlock.InvertedRes_SE` | 14~17 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 
 ---
 
