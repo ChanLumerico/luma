@@ -7,7 +7,7 @@ from luma.interface.util import InitUtil
 from luma.neural.layer import *
 from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
 
-from luma.neural.block import se
+from .se import _SEBlock2D
 
 
 class _InvertedRes(LayerGraph):
@@ -243,7 +243,7 @@ class _InvertedRes_SE(LayerGraph):
             name="dw_pw_lin",
         )
         self.se_block = LayerNode(
-            se._SEBlock2D(
+            _SEBlock2D(
                 self.out_channels,
                 self.se_reduction,
                 self.activation,
