@@ -7,7 +7,7 @@ from luma.interface.util import InitUtil
 from luma.neural.layer import *
 from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
 
-from .se import _SEBlock2D
+from luma.neural.block import se
 
 
 class _InvertedRes(LayerGraph):
@@ -142,7 +142,7 @@ class _InvertedRes_SE(LayerGraph):
         stride: int = 1,
         expand: int = 1,
         se_reduction: int = 4,
-        activation: callable = Activation.ReLU6,
+        activation: callable = Activation.HardSwish,
         optimizer: Optimizer | None = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -176,7 +176,8 @@ class _InvertedRes_SE(LayerGraph):
         super(_InvertedRes_SE, self).__init__(
             graph={
                 self.rt_: [self.dw_pw_lin],
-                self.dw_pw_lin: [self.se_block, self.scale_],
+                self.dw_pw_lin: [self.se_block, self.tmp_],
+                self.tmp_: [self.scale_],
                 self.se_block: [self.scale_],
                 self.scale_: [self.tm_],
             },
@@ -242,7 +243,7 @@ class _InvertedRes_SE(LayerGraph):
             name="dw_pw_lin",
         )
         self.se_block = LayerNode(
-            _SEBlock2D(
+            se._SEBlock2D(
                 self.out_channels,
                 self.se_reduction,
                 self.activation,
@@ -251,5 +252,24 @@ class _InvertedRes_SE(LayerGraph):
             ),
             name="se_block",
         )
+        self.tmp_ = LayerNode(Identity(), name="tmp_")
         self.scale_ = LayerNode(Identity(), MergeMode.HADAMARD, name="scale_")
         self.tm_ = LayerNode(Identity(), MergeMode.SUM, name="tm_")
+
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
+
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, _, height, width = in_shape
+        return (
+            batch_size,
+            self.out_channels,
+            height // self.stride,
+            width // self.stride,
+        )

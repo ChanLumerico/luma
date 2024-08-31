@@ -5,7 +5,7 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural.autoprop import LayerNode, LayerGraph
+from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
 
 
 class _IncepRes_V2_TypeA(LayerGraph):
@@ -53,7 +53,7 @@ class _IncepRes_V2_TypeA(LayerGraph):
         self.rt_ = LayerNode(Identity(), name="rt_")
         self.res_sum = LayerNode(
             Sequential(Identity(), self.activation()),
-            merge_mode="sum",
+            MergeMode.SUM,
             name="res_sum",
         )
 
@@ -96,7 +96,7 @@ class _IncepRes_V2_TypeA(LayerGraph):
                 Conv2D(128, 384, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(384, self.momentum),
             ),
-            merge_mode="chcat",
+            MergeMode.CHCAT,
             name="br_cat",
         )
 
@@ -158,7 +158,7 @@ class _IncepRes_V2_TypeB(LayerGraph):
         self.rt_ = LayerNode(Identity(), name="rt_")
         self.res_sum = LayerNode(
             Sequential(Identity(), self.activation()),
-            merge_mode="sum",
+            MergeMode.SUM,
             name="res_sum",
         )
 
@@ -190,7 +190,7 @@ class _IncepRes_V2_TypeB(LayerGraph):
                 Conv2D(384, 1280, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(1280, self.momentum),
             ),
-            merge_mode="chcat",
+            MergeMode.CHCAT,
             name="br_cat",
         )
 
@@ -252,7 +252,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
         self.rt_ = LayerNode(Identity(), name="rt_")
         self.res_sum = LayerNode(
             Sequential(Identity(), self.activation()),
-            merge_mode="sum",
+            MergeMode.SUM,
             name="res_sum",
         )
 
@@ -284,7 +284,7 @@ class _IncepRes_V2_TypeC(LayerGraph):
                 Conv2D(448, 2272, 1, 1, "same", **self.basic_args),
                 BatchNorm2D(2272, self.momentum),
             ),
-            merge_mode="chcat",
+            MergeMode.CHCAT,
             name="br_cat",
         )
 
@@ -384,7 +384,7 @@ class _IncepRes_V2_Redux(LayerGraph):
             name="br_d",
         )
 
-        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+        self.cat_ = LayerNode(Identity(), MergeMode.CHCAT, name="cat_")
 
     @Tensor.force_shape((-1, 1280, 17, 17))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:

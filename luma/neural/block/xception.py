@@ -5,7 +5,7 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural.autoprop import LayerNode, LayerGraph
+from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
 
 
 class _Entry(LayerGraph):
@@ -84,7 +84,7 @@ class _Entry(LayerGraph):
             ),
             name="dsc_1",
         )
-        self.sum_1 = LayerNode(Identity(), merge_mode="sum", name="sum_1")
+        self.sum_1 = LayerNode(Identity(), MergeMode.SUM, name="sum_1")
 
         self.res_2 = LayerNode(
             Sequential(
@@ -107,7 +107,7 @@ class _Entry(LayerGraph):
             ),
             name="dsc_2",
         )
-        self.sum_2 = LayerNode(Identity(), merge_mode="sum", name="sum_2")
+        self.sum_2 = LayerNode(Identity(), MergeMode.SUM, name="sum_2")
 
         self.res_3 = LayerNode(
             Sequential(
@@ -130,7 +130,7 @@ class _Entry(LayerGraph):
             ),
             name="dsc_3",
         )
-        self.sum_3 = LayerNode(Identity(), merge_mode="sum", name="sum_3")
+        self.sum_3 = LayerNode(Identity(), MergeMode.SUM, name="sum_3")
 
     @Tensor.force_shape((-1, 3, 299, 299))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -201,7 +201,7 @@ class _Middle(LayerGraph):
             ),
             name="dsc_",
         )
-        self.sum_ = LayerNode(Identity(), merge_mode="sum", name="sum_")
+        self.sum_ = LayerNode(Identity(), MergeMode.SUM, name="sum_")
 
     @Tensor.force_shape((-1, 728, 19, 19))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -269,7 +269,7 @@ class _Exit(LayerGraph):
             ),
             name="dsc_",
         )
-        self.sum_ = LayerNode(Identity(), merge_mode="sum", name="sum_")
+        self.sum_ = LayerNode(Identity(), MergeMode.SUM, name="sum_")
 
     @Tensor.force_shape((-1, 728, 19, 19))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:

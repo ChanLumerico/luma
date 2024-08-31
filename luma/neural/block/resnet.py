@@ -5,7 +5,7 @@ from luma.interface.typing import Tensor, TensorLike, LayerLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural.autoprop import LayerNode, LayerGraph
+from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
 
 
 class _Basic(LayerGraph):
@@ -89,7 +89,7 @@ class _Basic(LayerGraph):
         )
         self.sum_ = LayerNode(
             self.activation(),
-            merge_mode="sum",
+            MergeMode.SUM,
             name="sum_",
         )
 
@@ -190,7 +190,7 @@ class _Bottleneck(LayerGraph):
         )
         self.sum_ = LayerNode(
             self.activation(),
-            merge_mode="sum",
+            MergeMode.SUM,
             name="sum_",
         )
 
@@ -293,7 +293,7 @@ class _PreActBottleneck(LayerGraph):
         )
         self.sum_ = LayerNode(
             Identity(),
-            merge_mode="sum",
+            MergeMode.SUM,
             name="sum_",
         )
 

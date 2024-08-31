@@ -980,6 +980,11 @@ class MobileNetBlock:
         Convolutional Neural Networks for Mobile Vision Applications.”
         arXiv, 17 Apr. 2017, arxiv.org/abs/1704.04861.
 
+    `MobileNet V3` :
+        [2] Howard, Andrew, et al. "Searching for MobileNetV3." Proceedings
+        of the IEEE/CVF International Conference on Computer Vision, 2019,
+        doi:10.1109/ICCV.2019.00140.
+
     """
 
     class InvertedRes(mobile._InvertedRes):
@@ -988,4 +993,12 @@ class MobileNetBlock:
         convolutions used in MobileNet V2.
 
         Refer to the figures shown in the original paper[1].
+        """
+
+    class InvertedRes_SE(mobile._InvertedRes_SE):
+        """
+        Inverted Residual Block with depth-wise and point-wise
+        convolutions and SE-Block attached used in MobileNet V3.
+
+        Refer to the figures shown in the original paper[2].
         """
