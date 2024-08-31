@@ -138,7 +138,9 @@ from luma.neural.block import (
     SeparableConv2D,
     SeparableConv3D,
     DenseBlock,
-    SEBlock,
+    SEBlock1D,
+    SEBlock2D,
+    SEBlock3D,
     IncepBlock,
     IncepResBlock,
     ResNetBlock,
@@ -352,7 +354,7 @@ if __name__ == "__main__":
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D,
     SeparableConv1D, SeparableConv2D, SeparableConv3D,
-    DenseBlock, SEBlock,
+    DenseBlock, SEBlock1D, SEBlock2D, SEBlock3D,
     IncepBlock, IncepResBlock, ResNetBlock, XceptionBlock,
     MobileNetBlock
 

@@ -24,6 +24,7 @@ from luma.neural.block import (
     incep_res_v2,
     mobile,
     resnet,
+    se,
     standard,
     xception,
 )
@@ -37,7 +38,9 @@ __all__ = (
     "SeparableConv2D",
     "SeparableConv3D",
     "DenseBlock",
-    "SEBlock",
+    "SEBlock1D",
+    "SEBlock2D",
+    "SEBlock3D",
     "IncepBlock",
     "IncepResBlock",
     "ResNetBlock",
@@ -409,9 +412,11 @@ class DenseBlock(standard._DenseBlock):
     """
 
 
-class SEBlock(standard._SEBlock):
+class SEBlock1D(se._SEBlock1D):
     """
-    The SEBlock (Squeeze-and-Excitation Block) enhances the representational
+    Squeeze-and-Excitation(SE) block for 1-dimensional data.
+
+    The SE-Block enhances the representational
     power of a network by recalibrating channel-wise feature responses. It
     first squeezes the spatial dimensions using global average pooling, then
     excites the channels with learned weights through fully connected layers
@@ -432,6 +437,73 @@ class SEBlock(standard._SEBlock):
         Type of weight initializer
     `lambda_` : float, default=0.0
         L2 regularization strength
+    `keep_shape` : bool, default=True
+        Whether to maintain the original shape of the input;
+        Transforms 3D-Tensor to 2D-Matrix if set to False.
+
+    """
+
+
+class SEBlock2D(se._SEBlock2D):
+    """
+    Squeeze-and-Excitation(SE) block for 2-dimensional data.
+
+    The SE-Block enhances the representational
+    power of a network by recalibrating channel-wise feature responses. It
+    first squeezes the spatial dimensions using global average pooling, then
+    excites the channels with learned weights through fully connected layers
+    and an activation function. This selectively emphasizes important channels
+    while suppressing less relevant ones.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `reduction`: int, default=4
+        Reducing factor of the 'Squeeze' phase.
+    `activation` : callable, default=Activation.HardSwish
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `keep_shape` : bool, default=True
+        Whether to maintain the original shape of the input;
+        Transforms 4D-Tensor to 2D-Matrix if set to False.
+
+    """
+
+
+class SEBlock3D(se._SEBlock3D):
+    """
+    Squeeze-and-Excitation(SE) block for 3-dimensional data.
+
+    The SE-Block enhances the representational
+    power of a network by recalibrating channel-wise feature responses. It
+    first squeezes the spatial dimensions using global average pooling, then
+    excites the channels with learned weights through fully connected layers
+    and an activation function. This selectively emphasizes important channels
+    while suppressing less relevant ones.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `reduction`: int, default=4
+        Reducing factor of the 'Squeeze' phase.
+    `activation` : callable, default=Activation.HardSwish
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `keep_shape` : bool, default=True
+        Whether to maintain the original shape of the input;
+        Transforms 5D-Tensor to 2D-Matrix if set to False.
 
     """
 

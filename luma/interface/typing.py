@@ -177,8 +177,8 @@ class Tensor(TensorLike, Generic[D]):
                             )
                         if tensor.ndim != n_dim:
                             raise ValueError(
-                                f"'{param_name}' must be {n_dim}D-tensor",
-                                +f" got {tensor.ndim}D-tensor.",
+                                f"'{param_name}' must be {n_dim}D-tensor,"
+                                + f" got {tensor.ndim}D-tensor.",
                             )
 
                 return func(self, *args, **kwargs)
