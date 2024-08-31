@@ -55,7 +55,8 @@ __all__ = (
     "XceptionNet",
     "MobileNet_V1",
     "MobileNet_V2",
-    "MobileNet_V3",
+    "MobileNet_V3_Small",
+    "MobileNet_V3_Large",
 )
 
 MODELS: tuple[str] = __all__
@@ -3007,4 +3008,9 @@ class MobileNet_V2(mobile._Mobile_V2):
         )
 
 
-class MobileNet_V3(mobile._Mobile_V3): ...
+class MobileNet_V3_Small(mobile._Mobile_V3_Small):
+    NotImplemented
+
+
+class MobileNet_V3_Large(mobile._Mobile_V3_Large):
+    NotImplemented
