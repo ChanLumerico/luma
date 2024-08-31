@@ -130,3 +130,6 @@ class _InvertedRes(LayerGraph):
             height // self.stride,
             width // self.stride,
         )
+
+
+class _InvertedRes_SE(LayerGraph): ...
