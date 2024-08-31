@@ -37,6 +37,7 @@ __all__ = (
     "SeparableConv2D",
     "SeparableConv3D",
     "DenseBlock",
+    "SEBlock",
     "IncepBlock",
     "IncepResBlock",
     "ResNetBlock",
@@ -404,6 +405,31 @@ class DenseBlock(standard._DenseBlock):
         Whethter to perform dropout
     `dropout_rate` : float, default=0.5
         Dropout rate
+
+    """
+
+
+class SEBlock(standard._SEBlock):
+    """
+    The SEBlock (Squeeze-and-Excitation Block) enhances the representational
+    power of a network by recalibrating channel-wise feature responses. It
+    first squeezes the spatial dimensions using global average pooling, then
+    excites the channels with learned weights through fully connected layers
+    and an activation function. This selectively emphasizes important channels
+    while suppressing less relevant ones.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `activation` : FuncType
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
 
     """
 

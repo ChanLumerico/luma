@@ -446,7 +446,7 @@ class _SEBlock(Sequential):
         )
         self.check_param_ranges()
 
-        super().__init__(
+        super(_SEBlock, self).__init__(
             GlobalAvgPool2D(),
             Flatten(),
             Dense(in_channels, in_channels // reduction, **basic_args),
@@ -457,5 +457,3 @@ class _SEBlock(Sequential):
 
         if optimizer is not None:
             self.set_optimizer(optimizer)
-
-        # TODO: forward, backward, and out_shape implementations
