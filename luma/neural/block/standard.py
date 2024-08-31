@@ -429,8 +429,10 @@ class _SEBlock(Sequential):
         optimizer: Optimizer = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
+        keep_dims: bool = True,
         random_state: int | None = None,
     ) -> None:
+        self.keep_dims = keep_dims
         basic_args = {
             "initializer": initializer,
             "lambda_": lambda_,
@@ -457,3 +459,30 @@ class _SEBlock(Sequential):
 
         if optimizer is not None:
             self.set_optimizer(optimizer)
+
+    @override
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        out = super().forward(X, is_train)
+        if self.keep_dims:
+            return out[:, :, np.newaxis, np.newaxis]
+        else:
+            return out
+
+    @override
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        if self.keep_dims:
+            d_out_sq = np.squeeze(d_out, axis=(-1, -2))
+        else:
+            d_out_sq = d_out
+        dX = super().backward(d_out_sq)
+        if self.keep_dims:
+            dX = dX[:, :, np.newaxis, np.newaxis]
+
+        return dX
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        if self.keep_dims:
+            return in_shape[:2] + (1, 1)
+        else:
+            return in_shape[:2]
