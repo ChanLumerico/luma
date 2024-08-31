@@ -425,7 +425,7 @@ class _SEBlock(Sequential):
         self,
         in_channels: int,
         reduction: int = 4,
-        activation: callable = Activation.ReLU,
+        activation: callable = Activation.HardSwish,
         optimizer: Optimizer = None,
         initializer: InitUtil.InitStr = None,
         lambda_: float = 0.0,
@@ -450,9 +450,9 @@ class _SEBlock(Sequential):
             GlobalAvgPool2D(),
             Flatten(),
             Dense(in_channels, in_channels // reduction, **basic_args),
-            activation(),
+            Activation.ReLU(),
             Dense(in_channels // reduction, in_channels, **basic_args),
-            Activation.Sigmoid(),
+            activation(),
         )
 
         if optimizer is not None:

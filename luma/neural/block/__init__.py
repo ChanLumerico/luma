@@ -84,7 +84,7 @@ class ConvBlock1D(standard._ConvBlock1D):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
@@ -139,7 +139,7 @@ class ConvBlock2D(standard._ConvBlock2D):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
@@ -194,7 +194,7 @@ class ConvBlock3D(standard._ConvBlock3D):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
@@ -389,7 +389,7 @@ class DenseBlock(standard._DenseBlock):
         Number of input features
     `out_features` : int
         Number of output features
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `optimizer` : Optimizer, optional, default=None
         Type of optimizer for weight update
@@ -422,7 +422,9 @@ class SEBlock(standard._SEBlock):
     ----------
     `in_channels` : int
         Number of input channels
-    `activation` : FuncType
+    `reduction`: int, default=4
+        Reducing factor of the 'Squeeze' phase.
+    `activation` : callable, default=Activation.HardSwish
         Type of activation function
     `optimizer` : Optimizer, optional, default=None
         Type of optimizer for weight update
