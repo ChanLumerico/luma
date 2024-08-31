@@ -1,4 +1,4 @@
-from typing import Any, Self, override, ClassVar
+from typing import Self, override, ClassVar
 
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
@@ -10,10 +10,16 @@ from luma.neural.layer import *
 from luma.neural.block import SeparableConv2D, MobileNetBlock
 
 
-__all__ = ("_Mobile_V1", "_Mobile_V2", "_Mobile_V3")
+__all__ = (
+    "_Mobile_V1",
+    "_Mobile_V2",
+    "_Mobile_V3_Small",
+    "_Mobile_V3_Large",
+)
 
 
 InvertedRes = MobileNetBlock.InvertedRes
+InvertedRes_SE = MobileNetBlock.InvertedRes_SE
 
 
 class _Mobile_V1(Estimator, Supervised, NeuralModel):
@@ -296,4 +302,65 @@ class _Mobile_V2(Estimator, Supervised, NeuralModel):
         return super(_Mobile_V2, self).score_nn(X, y, metric, argmax)
 
 
-class _Mobile_V3(Estimator, Supervised, NeuralModel): ...
+class _Mobile_V3_Small(Estimator, Supervised, NeuralModel):
+    def __init__(
+        self,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        self.initializer = initializer
+        self.out_features = out_features
+        self.lambda_ = lambda_
+        self.momentum = momentum
+        self.shuffle = shuffle
+        self.random_state = random_state
+        self._fitted = False
+
+        super().__init__(
+            batch_size,
+            n_epochs,
+            valid_size,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+        super().init_model()
+        self.model = Sequential()
+
+        self.feature_sizes_ = []
+        self.feature_shapes_ = [
+            self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
+        ]
+
+        self.set_param_ranges(
+            {
+                "out_features": ("0<,+inf", int),
+                "batch_size": ("0<,+inf", int),
+                "n_epochs": ("0<,+inf", int),
+                "valid_size": ("0<,<1", None),
+                "momentum": ("0,1", None),
+                "dropout_rate": ("0,1", None),
+                "lambda_": ("0,+inf", None),
+                "patience": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+        self.build_model()
+
+    def build_model(self) -> None: ...
+
+
+class _Mobile_V3_Large(Estimator, Supervised, NeuralModel):
+    NotImplemented

@@ -5,7 +5,7 @@ from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural.autoprop import LayerNode, LayerGraph
+from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
 
 
 class _Incep_V4_Stem(LayerGraph):
@@ -78,7 +78,7 @@ class _Incep_V4_Stem(LayerGraph):
             ),
             name="br1_r",
         )
-        self.br1_cat = LayerNode(Identity(), merge_mode="chcat", name="br1_cat")
+        self.br1_cat = LayerNode(Identity(), MergeMode.CHCAT, name="br1_cat")
 
         self.br2_l = LayerNode(
             Sequential(
@@ -108,7 +108,7 @@ class _Incep_V4_Stem(LayerGraph):
             ),
             name="br2_r",
         )
-        self.br2_cat = LayerNode(Identity(), merge_mode="chcat", name="br2_cat")
+        self.br2_cat = LayerNode(Identity(), MergeMode.CHCAT, name="br2_cat")
 
         self.br3_l = LayerNode(
             Sequential(
@@ -119,7 +119,7 @@ class _Incep_V4_Stem(LayerGraph):
             name="br3_l",
         )
         self.br3_r = LayerNode(Pool2D(2, 2, "max", "valid"), name="br3_r")
-        self.br3_cat = LayerNode(Identity(), merge_mode="chcat", name="br3_cat")
+        self.br3_cat = LayerNode(Identity(), MergeMode.CHCAT, name="br3_cat")
 
     @Tensor.force_shape((-1, 3, 299, 299))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -222,7 +222,7 @@ class _Incep_V4_TypeA(LayerGraph):
             name="br_d",
         )
 
-        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+        self.cat_ = LayerNode(Identity(), MergeMode.CHCAT, name="cat_")
 
     @Tensor.force_shape((-1, 384, 35, 35))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -334,7 +334,7 @@ class _Incep_V4_TypeB(LayerGraph):
             name="br_d",
         )
 
-        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+        self.cat_ = LayerNode(Identity(), MergeMode.CHCAT, name="cat_")
 
     @Tensor.force_shape((-1, 1024, 17, 17))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -472,7 +472,7 @@ class _Incep_V4_TypeC(LayerGraph):
             name="br_dr",
         )
 
-        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+        self.cat_ = LayerNode(Identity(), MergeMode.CHCAT, name="cat_")
 
     @Tensor.force_shape((-1, 1536, 8, 8))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -560,7 +560,7 @@ class _Incep_V4_ReduxA(LayerGraph):
             name="br_c",
         )
 
-        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+        self.cat_ = LayerNode(Identity(), MergeMode.CHCAT, name="cat_")
 
     @Tensor.force_shape((-1, 384, 35, 35))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
@@ -651,7 +651,7 @@ class _Incep_V4_ReduxB(LayerGraph):
             name="br_c",
         )
 
-        self.cat_ = LayerNode(Identity(), merge_mode="chcat", name="cat_")
+        self.cat_ = LayerNode(Identity(), MergeMode.CHCAT, name="cat_")
 
     @Tensor.force_shape((-1, 1024, 17, 17))
     def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:

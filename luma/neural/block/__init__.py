@@ -24,6 +24,7 @@ from luma.neural.block import (
     incep_res_v2,
     mobile,
     resnet,
+    se,
     standard,
     xception,
 )
@@ -37,7 +38,9 @@ __all__ = (
     "SeparableConv2D",
     "SeparableConv3D",
     "DenseBlock",
-    "SEBlock",
+    "SEBlock1D",
+    "SEBlock2D",
+    "SEBlock3D",
     "IncepBlock",
     "IncepResBlock",
     "ResNetBlock",
@@ -84,7 +87,7 @@ class ConvBlock1D(standard._ConvBlock1D):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
@@ -139,7 +142,7 @@ class ConvBlock2D(standard._ConvBlock2D):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
@@ -194,7 +197,7 @@ class ConvBlock3D(standard._ConvBlock3D):
         Number of output channels
     `filter_size`: tuple of int or int
         Size of each filter
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `padding` : tuple of int or int or {"same", "valid"}, default="same"
         Padding method
@@ -389,7 +392,7 @@ class DenseBlock(standard._DenseBlock):
         Number of input features
     `out_features` : int
         Number of output features
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `optimizer` : Optimizer, optional, default=None
         Type of optimizer for weight update
@@ -409,9 +412,11 @@ class DenseBlock(standard._DenseBlock):
     """
 
 
-class SEBlock(standard._SEBlock):
+class SEBlock1D(se._SEBlock1D):
     """
-    The SEBlock (Squeeze-and-Excitation Block) enhances the representational
+    Squeeze-and-Excitation(SE) block for 1-dimensional data.
+
+    The SE-Block enhances the representational
     power of a network by recalibrating channel-wise feature responses. It
     first squeezes the spatial dimensions using global average pooling, then
     excites the channels with learned weights through fully connected layers
@@ -422,7 +427,9 @@ class SEBlock(standard._SEBlock):
     ----------
     `in_channels` : int
         Number of input channels
-    `activation` : FuncType
+    `reduction`: int, default=4
+        Reducing factor of the 'Squeeze' phase.
+    `activation` : callable, default=Activation.HardSwish
         Type of activation function
     `optimizer` : Optimizer, optional, default=None
         Type of optimizer for weight update
@@ -430,6 +437,73 @@ class SEBlock(standard._SEBlock):
         Type of weight initializer
     `lambda_` : float, default=0.0
         L2 regularization strength
+    `keep_shape` : bool, default=True
+        Whether to maintain the original shape of the input;
+        Transforms 3D-Tensor to 2D-Matrix if set to False.
+
+    """
+
+
+class SEBlock2D(se._SEBlock2D):
+    """
+    Squeeze-and-Excitation(SE) block for 2-dimensional data.
+
+    The SE-Block enhances the representational
+    power of a network by recalibrating channel-wise feature responses. It
+    first squeezes the spatial dimensions using global average pooling, then
+    excites the channels with learned weights through fully connected layers
+    and an activation function. This selectively emphasizes important channels
+    while suppressing less relevant ones.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `reduction`: int, default=4
+        Reducing factor of the 'Squeeze' phase.
+    `activation` : callable, default=Activation.HardSwish
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `keep_shape` : bool, default=True
+        Whether to maintain the original shape of the input;
+        Transforms 4D-Tensor to 2D-Matrix if set to False.
+
+    """
+
+
+class SEBlock3D(se._SEBlock3D):
+    """
+    Squeeze-and-Excitation(SE) block for 3-dimensional data.
+
+    The SE-Block enhances the representational
+    power of a network by recalibrating channel-wise feature responses. It
+    first squeezes the spatial dimensions using global average pooling, then
+    excites the channels with learned weights through fully connected layers
+    and an activation function. This selectively emphasizes important channels
+    while suppressing less relevant ones.
+
+    Parameters
+    ----------
+    `in_channels` : int
+        Number of input channels
+    `reduction`: int, default=4
+        Reducing factor of the 'Squeeze' phase.
+    `activation` : callable, default=Activation.HardSwish
+        Type of activation function
+    `optimizer` : Optimizer, optional, default=None
+        Type of optimizer for weight update
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `keep_shape` : bool, default=True
+        Whether to maintain the original shape of the input;
+        Transforms 5D-Tensor to 2D-Matrix if set to False.
 
     """
 
@@ -906,6 +980,11 @@ class MobileNetBlock:
         Convolutional Neural Networks for Mobile Vision Applications.”
         arXiv, 17 Apr. 2017, arxiv.org/abs/1704.04861.
 
+    `MobileNet V3` :
+        [2] Howard, Andrew, et al. "Searching for MobileNetV3." Proceedings
+        of the IEEE/CVF International Conference on Computer Vision, 2019,
+        doi:10.1109/ICCV.2019.00140.
+
     """
 
     class InvertedRes(mobile._InvertedRes):
@@ -914,4 +993,12 @@ class MobileNetBlock:
         convolutions used in MobileNet V2.
 
         Refer to the figures shown in the original paper[1].
+        """
+
+    class InvertedRes_SE(mobile._InvertedRes_SE):
+        """
+        Inverted Residual Block with depth-wise and point-wise
+        convolutions and SE-Block attached used in MobileNet V3.
+
+        Refer to the figures shown in the original paper[2].
         """

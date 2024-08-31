@@ -55,7 +55,8 @@ __all__ = (
     "XceptionNet",
     "MobileNet_V1",
     "MobileNet_V2",
-    "MobileNet_V3",
+    "MobileNet_V3_Small",
+    "MobileNet_V3_Large",
 )
 
 MODELS: tuple[str] = __all__
@@ -95,7 +96,7 @@ class SimpleMLP(simple._SimpleMLP):
         Fractional size of validation set
     `initializer` : InitStr, default=None
         Type of weight initializer
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `dropout_rate` : float, default=0.5
         Dropout rate
@@ -184,7 +185,7 @@ class SimpleCNN(simple._SimpleCNN):
         Output features for the last dense layer
     `filter_size` : int
         Size of filters for convolution layers
-    `activation` : FuncType
+    `activation` : callable
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer (None for dense layers)
@@ -359,7 +360,7 @@ class LeNet_1(lenet._LeNet_1):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.Tanh
+    `activation` : callable, default=Activation.Tanh
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -449,7 +450,7 @@ class LeNet_4(lenet._LeNet_4):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.Tanh
+    `activation` : callable, default=Activation.Tanh
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -541,7 +542,7 @@ class LeNet_5(lenet._LeNet_5):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.Tanh
+    `activation` : callable, default=Activation.Tanh
         Type of activation function
         Type of loss function
     `initializer` : InitStr, default=None
@@ -642,7 +643,7 @@ class AlexNet(alex._AlexNet):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -745,7 +746,7 @@ class ZFNet(alex._ZFNet):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -850,7 +851,7 @@ class VGGNet_11(vgg._VGGNet_11):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -957,7 +958,7 @@ class VGGNet_13(vgg._VGGNet_13):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1067,7 +1068,7 @@ class VGGNet_16(vgg._VGGNet_16):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1180,7 +1181,7 @@ class VGGNet_19(vgg._VGGNet_19):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1293,7 +1294,7 @@ class Inception_V1(incep._Inception_V1):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1405,7 +1406,7 @@ class Inception_V2(incep._Inception_V2):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1518,7 +1519,7 @@ class Inception_V3(incep._Inception_V3):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1625,7 +1626,7 @@ class Inception_V4(incep._Inception_V4):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1732,7 +1733,7 @@ class InceptionResNet_V1(incep._InceptionRes_V1):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1833,7 +1834,7 @@ class InceptionResNet_V2(incep._InceptionRes_V2):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -1930,7 +1931,7 @@ class ResNet_18(resnet._ResNet_18):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2029,7 +2030,7 @@ class ResNet_34(resnet._ResNet_34):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2128,7 +2129,7 @@ class ResNet_50(resnet._ResNet_50):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2227,7 +2228,7 @@ class ResNet_101(resnet._ResNet_101):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2326,7 +2327,7 @@ class ResNet_152(resnet._ResNet_152):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2425,7 +2426,7 @@ class ResNet_200(resnet._ResNet_200):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2523,7 +2524,7 @@ class ResNet_269(resnet._ResNet_269):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2622,7 +2623,7 @@ class ResNet_1001(resnet._ResNet_1001):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2727,7 +2728,7 @@ class XceptionNet(incep._Xception):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2831,7 +2832,7 @@ class MobileNet_V1(mobile._Mobile_V1):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU
+    `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -2941,7 +2942,7 @@ class MobileNet_V2(mobile._Mobile_V2):
     ```
     Parameters
     ----------
-    `activation` : FuncType, default=Activation.ReLU6
+    `activation` : callable, default=Activation.ReLU6
         Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
@@ -3007,4 +3008,9 @@ class MobileNet_V2(mobile._Mobile_V2):
         )
 
 
-class MobileNet_V3(mobile._Mobile_V3): ...
+class MobileNet_V3_Small(mobile._Mobile_V3_Small):
+    NotImplemented
+
+
+class MobileNet_V3_Large(mobile._Mobile_V3_Large):
+    NotImplemented

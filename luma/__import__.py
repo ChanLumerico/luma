@@ -138,7 +138,9 @@ from luma.neural.block import (
     SeparableConv2D,
     SeparableConv3D,
     DenseBlock,
-    SEBlock,
+    SEBlock1D,
+    SEBlock2D,
+    SEBlock3D,
     IncepBlock,
     IncepResBlock,
     ResNetBlock,
@@ -173,7 +175,8 @@ from luma.neural.model import (
     XceptionNet,
     MobileNet_V1,
     MobileNet_V2,
-    MobileNet_V3,
+    MobileNet_V3_Small,
+    MobileNet_V3_Large,
 )
 from luma.neural.autoprop import LayerNode, LayerGraph
 
@@ -352,7 +355,7 @@ if __name__ == "__main__":
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D,
     SeparableConv1D, SeparableConv2D, SeparableConv3D,
-    DenseBlock, SEBlock,
+    DenseBlock, SEBlock1D, SEBlock2D, SEBlock3D,
     IncepBlock, IncepResBlock, ResNetBlock, XceptionBlock,
     MobileNetBlock
 
@@ -374,7 +377,8 @@ if __name__ == "__main__":
     InceptionResNet_V1, InceptionResNet_V2, XceptionNet,
     ResNet_18, ResNet_34, ResNet_50, ResNet_101, ResNet_152,
     ResNet_200, ResNet_1001,
-    MobileNet_V1, MobileNet_V2, MobileNet_V3
+    MobileNet_V1, MobileNet_V2, MobileNet_V3_Small,
+    MobileNet_V3_Large,
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

@@ -228,3 +228,27 @@ class _Activation:
 
         def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
             return _Activation._out_shape(in_shape)
+
+    class HardSwish(Layer):
+        def __init__(self) -> None:
+            super().__init__()
+            self.relu6 = _Activation.ReLU6()
+
+        def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+            _ = is_train
+            self.input_ = X
+            relu6_output = self.relu6.forward(X + 3)
+
+            self.output_ = X * (relu6_output / 6)
+            return self.output_
+
+        def backward(self, d_out: TensorLike) -> TensorLike:
+            relu6_grad = self.relu6.backward(d_out)
+            self.dX = d_out * (
+                (self.relu6.forward(self.input_ + 3) / 6)
+                + (self.input_ * relu6_grad / 6)
+            )
+            return self.dX
+
+        def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+            return _Activation._out_shape(in_shape)
