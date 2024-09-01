@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/ChanLumerico/luma/main/img/title/nn_dark.png" alt="logo" height="40%" width="40%">
+<img src="https://raw.githubusercontent.com/ChanLumerico/luma/main/img/title/nn_dark.png" alt="logo" height="50%" width="50%">
 
 Deep learning models and neural network utilities of Luma
 
