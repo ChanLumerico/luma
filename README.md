@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/ChanLumerico/luma/main/img/title/dark.png" alt="logo" height="40%" width="40%">
+<img src="https://raw.githubusercontent.com/ChanLumerico/luma/main/img/title/dark.png" alt="logo" height="50%" width="50%">
 
 A Comprehensive Python Module for Machine Learning and Data Science
 
