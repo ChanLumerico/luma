@@ -28,16 +28,16 @@ class LayerNode:
 
         self.f_queue: List[TensorLike] = []
         self.b_queue: List[TensorLike] = []
-        self.n_forward, self.n_backward = 0, 0
 
-        self.cum_ch = [0]
-        self.f_visited: bool = False
-        self.b_visited: bool = False
+        self.n_forward = 0
+        self.n_backward = 0
+
+        self.f_visited: int = 0
+        self.b_visited: int = 0
 
     def for_enqueue(self, X: TensorLike) -> None:
         self.n_forward += 1
         self.f_queue.append(X)
-        self.cum_ch.append(self.cum_ch[-1] + X.shape[1])
 
     def back_enqueue(self, d_out: TensorLike) -> None:
         self.n_backward += 1
@@ -45,6 +45,7 @@ class LayerNode:
 
     def forward(self, is_train: bool = False) -> TensorLike:
         X = self.merge_mode.forward(self.f_queue)
+        self.f_visited = 0
         return self.layer(X, is_train)
 
     def backward(self) -> List[TensorLike]:
@@ -55,8 +56,15 @@ class LayerNode:
 
         d_out_arr = []
         for i in range(self.n_forward):
-            d_out_arr.append(self.merge_mode.backward(self.f_queue, d_out, i))
+            d_out_arr.append(
+                self.merge_mode.backward(self.f_queue, d_out, i),
+            )
+        if not d_out_arr:
+            raise RuntimeError(
+                f"Node '{self}' has no backward output!",
+            )
 
+        self.b_visited = 0
         return d_out_arr
 
     def update(self) -> None:
@@ -74,12 +82,11 @@ class LayerNode:
         self.layer.update_lr(new_lr)
 
     def flush(self) -> None:
-        self.n_forward, self.n_backward = 0, 0
+        self.n_forward = 0
+        self.n_backward = 0
+
         self.f_queue.clear()
         self.b_queue.clear()
-
-        self.f_visited = False
-        self.b_visited = False
 
     @property
     def param_size(self) -> Tuple[int, int]:
@@ -274,12 +281,14 @@ class LayerGraph(LayerLike):
 
         while queue:
             cur = queue.popleft()
+            if cur.f_visited < len(cur.prev_nodes):
+                continue
             X = cur(is_train)
 
             for next in cur.next_nodes:
                 next.for_enqueue(X)
-                if not next.f_visited:
-                    next.f_visited = True
+                if next.f_visited <= len(next.prev_nodes):
+                    next.f_visited += 1
                     queue.append(next)
 
         return X
@@ -291,12 +300,14 @@ class LayerGraph(LayerLike):
 
         while queue:
             cur = queue.popleft()
+            if cur.b_visited < len(cur.next_nodes):
+                continue
             d_out_arr = cur.backward()
 
             for prev, dx in zip(cur.prev_nodes, d_out_arr):
                 prev.back_enqueue(dx)
-                if not prev.b_visited:
-                    prev.b_visited = True
+                if prev.b_visited <= len(prev.next_nodes):
+                    prev.b_visited += 1
                     queue.append(prev)
 
             cur.flush()

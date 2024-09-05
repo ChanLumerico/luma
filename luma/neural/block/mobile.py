@@ -176,8 +176,7 @@ class _InvertedRes_SE(LayerGraph):
         super(_InvertedRes_SE, self).__init__(
             graph={
                 self.rt_: [self.dw_pw_lin],
-                self.dw_pw_lin: [self.se_block, self.tmp_],
-                self.tmp_: [self.scale_],
+                self.dw_pw_lin: [self.se_block, self.scale_],
                 self.se_block: [self.scale_],
                 self.scale_: [self.tm_],
             },
@@ -252,7 +251,6 @@ class _InvertedRes_SE(LayerGraph):
             ),
             name="se_block",
         )
-        self.tmp_ = LayerNode(Identity(), name="tmp_")
         self.scale_ = LayerNode(Identity(), MergeMode.HADAMARD, name="scale_")
         self.tm_ = LayerNode(Identity(), MergeMode.SUM, name="tm_")
 
