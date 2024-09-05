@@ -303,7 +303,6 @@ class LayerGraph(LayerLike):
             if cur.b_visited < len(cur.next_nodes):
                 continue
             d_out_arr = cur.backward()
-            print(cur)
 
             for prev, dx in zip(cur.prev_nodes, d_out_arr):
                 prev.back_enqueue(dx)
