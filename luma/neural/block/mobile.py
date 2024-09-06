@@ -15,6 +15,7 @@ class _InvertedRes(LayerGraph):
         self,
         in_channels: int,
         out_channels: int,
+        filter_size: Tuple[int, int] | int = 3,
         stride: int = 1,
         expand: int = 1,
         activation: callable = Activation.ReLU6,
@@ -27,6 +28,7 @@ class _InvertedRes(LayerGraph):
     ) -> None:
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.filter_size = filter_size
         self.stride = stride
         self.expand = expand
         self.activation = activation
@@ -92,7 +94,7 @@ class _InvertedRes(LayerGraph):
             Sequential(
                 DepthConv2D(
                     self.hid_channels,
-                    3,
+                    self.filter_size,
                     self.stride,
                     padding="valid" if self.stride == 2 else "same",
                     **self.basic_args,
@@ -139,6 +141,7 @@ class _InvertedRes_SE(LayerGraph):
         self,
         in_channels: int,
         out_channels: int,
+        filter_size: Tuple[int, int] | int = 3,
         stride: int = 1,
         expand: int = 1,
         se_reduction: int = 4,
@@ -152,6 +155,7 @@ class _InvertedRes_SE(LayerGraph):
     ) -> None:
         self.in_channels = in_channels
         self.out_channels = out_channels
+        self.filter_size = filter_size
         self.stride = stride
         self.expand = expand
         self.activation = activation
@@ -220,7 +224,7 @@ class _InvertedRes_SE(LayerGraph):
             Sequential(
                 DepthConv2D(
                     self.hid_channels,
-                    3,
+                    self.filter_size,
                     self.stride,
                     padding="valid" if self.stride == 2 else "same",
                     **self.basic_args,
