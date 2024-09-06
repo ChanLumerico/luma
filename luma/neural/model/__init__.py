@@ -336,23 +336,11 @@ class LeNet_1(lenet._LeNet_1):
     laying the groundwork for more complex architectures in image
     processing.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 1, 28, 28]
-    ```
-    Convolution Layers:
-    ```py
-    ConvBlock2D(1, 4) -> ConvBlock2D(4, 8)
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(8 * 4 * 4, 10)
-    ```
-    Output:
-    ```py
-    Matrix[..., 10]
+    Tensor[-1, 1, 28, 28] -> Matrix[-1, 10]
     ```
     Parameter Size:
     ```txt
@@ -426,23 +414,11 @@ class LeNet_4(lenet._LeNet_4):
     This version incorporates several layers of convolutions and pooling,
     followed by fully connected layers leading to the output for classification.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 1, 32, 32]
-    ```
-    Convolution Layers:
-    ```py
-    ConvBlock2D(1, 4) -> ConvBlock2D(4, 16)
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> DenseBlock(16 * 5 * 5, 120) -> Dense(10)
-    ```
-    Output:
-    ```py
-    Matrix[..., 10]
+    Tensor[-1, 1, 32, 32] -> Matrix[-1, 10]
     ```
     Parameter Size:
     ```txt
@@ -517,24 +493,11 @@ class LeNet_5(lenet._LeNet_5):
     This version incorporates several layers of convolutions and pooling,
     followed by fully connected layers leading to the output for classification.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 1, 32, 32]
-    ```
-    Convolution Layers:
-    ```py
-    ConvBlock2D(1, 6) -> ConvBlock2D(6, 16)
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten ->
-    DenseBlock(16 * 5 * 5, 120) -> DenseBlock(120, 84) -> Dense(84, 10)
-    ```
-    Output:
-    ```py
-    Matrix[..., 10]
+    Tensor[-1, 1, 32, 32] -> Matrix[-1, 10]
     ```
     Parameter Size:
     ```txt
@@ -611,35 +574,21 @@ class AlexNet(alex._AlexNet):
     max pooling, dropout, and fully connected layers leading to a classification
     output.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 227, 227]
-    ```
-    Convolutional Blocks:
-    ```py
-    ConvBlock2D(3, 96) -> LocalResponseNorm(5) ->  # Conv_1
-    ConvBlock2D(96, 256) -> LocalResponseNorm(5) ->  # Conv_2
-
-    ConvBlock2D(256, 384, do_pooling=False) -> LocalResponseNorm(5) ->  # Conv_3
-    ConvBlock2D(384, 384, do_pooling=False) -> LocalResponseNorm(5) ->  # Conv_4
-
-    ConvBlock2D(384, 256) -> LocalResponseNorm(5) ->  # Conv_5
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten ->
-    DenseBlock(256 * 6 * 6, 4096) -> DenseBlock(4096, 4096) ->
-    Dense(4096, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
     62,367,776 weights, 10,568 biases -> 62,378,344 params
+    ```
+    Components
+    ----------
+    Blocks Used:
+    ```py
+    ConvBlock2D(), DenseBlock()
     ```
     Parameters
     ----------
@@ -714,31 +663,11 @@ class ZFNet(alex._ZFNet):
     that enhanced visualization of intermediate activations, aiding in understanding
     the functioning of deep convolutional networks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 227, 227]
-    ```
-    Convolutional Blocks:
-    ```py
-    ConvBlock2D(3, 96) -> LocalResponseNorm(5) ->  # Conv_1
-    ConvBlock2D(96, 256) -> LocalResponseNorm(5) ->  # Conv_2
-
-    ConvBlock2D(256, 384, do_pooling=False) -> LocalResponseNorm(5) ->  # Conv_3
-    ConvBlock2D(384, 384, do_pooling=False) -> LocalResponseNorm(5) ->  # Conv_4
-
-    ConvBlock2D(384, 256) -> LocalResponseNorm(5) ->  # Conv_5
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten ->
-    DenseBlock(256 * 6 * 6, 4096) -> DenseBlock(4096, 4096) ->
-    Dense(4096, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 227, 227] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
