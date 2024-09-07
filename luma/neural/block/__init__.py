@@ -906,6 +906,8 @@ class ResNetBlock:
 
         See [2] also for additional information.
         """
+    
+    class Bottleneck_SE(resnet._Bottleneck_SE): ...
 
 
 @ClassType.non_instantiable()
