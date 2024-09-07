@@ -346,8 +346,8 @@ class LeNet_1(lenet._LeNet_1):
     ```txt
     2,180 weights, 22 biases -> 2,202 params
     ```
-    Parameters
-    ----------
+    Arguments
+    ---------
     `activation` : callable, default=Activation.Tanh
         Type of activation function
     `initializer` : InitStr, default=None
@@ -424,8 +424,8 @@ class LeNet_4(lenet._LeNet_4):
     ```txt
     50,902 weights, 150 biases -> 51,052 params
     ```
-    Parameters
-    ----------
+    Arguments
+    ---------
     `activation` : callable, default=Activation.Tanh
         Type of activation function
     `initializer` : InitStr, default=None
@@ -503,8 +503,8 @@ class LeNet_5(lenet._LeNet_5):
     ```txt
     61,474 weights, 236 biases -> 61,710 params
     ```
-    Parameters
-    ----------
+    Arguments
+    ---------
     `activation` : callable, default=Activation.Tanh
         Type of activation function
         Type of loss function
@@ -590,8 +590,8 @@ class AlexNet(alex._AlexNet):
     ```py
     ConvBlock2D(), DenseBlock()
     ```
-    Parameters
-    ----------
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -673,8 +673,14 @@ class ZFNet(alex._ZFNet):
     ```txt
     58,292,000 weights, 9,578 biases -> 58,301,578 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ConvBlock2D(), DenseBlock()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -744,42 +750,23 @@ class VGGNet_11(vgg._VGGNet_11):
     Zisserman in their paper and is notable for its simplicity and effectiveness
     in image classification tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Convolutional Blocks:
-    ```py
-    ConvBlock2D(3, 64) -> Pool2D(2, 2, "max") ->  # Conv_1
-    ConvBlock2D(64, 128) -> Pool2D(2, 2, "max") ->  # Conv_2
-
-    ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_3
-    ConvBlock2D(256, 256) -> Pool2D(2, 2, "max") ->  # Conv_4
-
-    ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_5
-    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_6
-
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_7
-    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_8
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten ->
-    DenseBlock(512 * 7 * 7, 4096) -> DenseBlock(4096, 4096) ->
-    Dense(4096, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
     132,851,392 weights, 11,944 biases -> 132,863,336 params
     ```
-    Parameters
+    Components
     ----------
+    ```py
+    ConvBlock2D(), DenseBlock()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -848,45 +835,18 @@ class VGGNet_13(vgg._VGGNet_13):
     Zisserman in their paper and is notable for its simplicity and effectiveness
     in image classification tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Convolutional Blocks:
-    ```py
-    ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
-    ConvBlock2D(64, 64) -> Pool2D(2, 2, "max") ->  # Conv_2
-
-    ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
-    ConvBlock2D(128, 128) -> Pool2D(2, 2, "max") ->  # Conv_4
-
-    ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
-    ConvBlock2D(256, 256) -> Pool2D(2, 2, "max") ->  # Conv_6
-
-    ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_7
-    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_8
-
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_9
-    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_10
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten ->
-    DenseBlock(512 * 7 * 7, 4096) -> DenseBlock(4096, 4096) ->
-    Dense(4096, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
     133,035,712 weights, 12,136 biases -> 133,047,848 params
     ```
-    Parameters
-    ----------
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -955,48 +915,23 @@ class VGGNet_16(vgg._VGGNet_16):
     Zisserman in their paper and is notable for its simplicity and effectiveness
     in image classification tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Convolutional Blocks:
-    ```py
-    ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
-    ConvBlock2D(64, 64) -> Pool2D(2, 2, "max") ->  # Conv_2
-
-    ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
-    ConvBlock2D(128, 128) -> Pool2D(2, 2, "max") ->  # Conv_4
-
-    ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
-    ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_6
-    ConvBlock2D(256, 256) -> Pool2D(2, 2, "max") ->  # Conv_7
-
-    ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_8
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_9
-    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_10
-
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_11
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_12
-    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_13
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten ->
-    DenseBlock(512 * 7 * 7, 4096) -> DenseBlock(4096, 4096) ->
-    Dense(4096, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
     138,344,128 weights, 13,416 biases -> 138,357,544 params
     ```
-    Parameters
+    Components
     ----------
+    ```py
+    ConvBlock2D(), DenseBlock()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1065,51 +1000,23 @@ class VGGNet_19(vgg._VGGNet_19):
     Zisserman in their paper and is notable for its simplicity and effectiveness
     in image classification tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Convolutional Blocks:
-    ```py
-    ConvBlock2D(3, 64, do_pooling=False) ->  # Conv_1
-    ConvBlock2D(64, 64) -> Pool2D(2, 2, "max") ->  # Conv_2
-
-    ConvBlock2D(64, 128, do_pooling=False) ->  # Conv_3
-    ConvBlock2D(128, 128) -> Pool2D(2, 2, "max") ->  # Conv_4
-
-    ConvBlock2D(128, 256, do_pooling=False) ->  # Conv_5
-    ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_6
-    ConvBlock2D(256, 256, do_pooling=False) ->  # Conv_7
-    ConvBlock2D(256, 256) -> Pool2D(2, 2, "max") ->  # Conv_8
-
-    ConvBlock2D(256, 512, do_pooling=False) ->  # Conv_9
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_10
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_11
-    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_12
-
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_13
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_14
-    ConvBlock2D(512, 512, do_pooling=False) ->  # Conv_15
-    ConvBlock2D(512, 512) -> Pool2D(2, 2, "max") ->  # Conv_16
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten ->
-    DenseBlock(512 * 7 * 7, 4096) -> DenseBlock(4096, 4096) ->
-    Dense(4096, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
     143,652,544 weights, 14,696 biases -> 143,667,240 params
     ```
-    Parameters
+    Components
     ----------
+    ```py
+    ConvBlock2D(), DenseBlock()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1180,49 +1087,18 @@ class Inception_V1(incep._Inception_V1):
     of input channels. Inception v1 achieved state-of-the-art results on the
     ImageNet Large Scale Visual Recognition Challenge (ILSVRC) 2014.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Introductory Convolutions:
-    ```py
-    ConvBlock2D(3, 64, filter_size=7, pool_mode="max") ->
-    ConvBlock2D(64, 64, filter_size=1, do_pooling=False) ->
-    ConvBlock2D(64, 192, filter_size=3, pool_mode="max") ->
-    ```
-    Inception Blocks:
-    ```py
-    IncepBlock.V1(192) ->  # Inception_3a
-    IncepBlock.V1(256) ->  # Inception_3b
-    Pool2D(3, 2, mode="max") ->
-
-    IncepBlock.V1(480) ->  # Inception_4a
-    IncepBlock.V1(512) ->  # Inception_4b
-    IncepBlock.V1(512) ->  # Inception_4c
-    IncepBlock.V1(512) ->  # Inception_4d
-    IncepBlock.V1(528) ->  # Inception_4e
-    Pool2D(3, 2, mode="max") ->
-
-    IncepBlock.V1(832) ->  # Inception_5a
-    IncepBlock.V1(832) ->  # Inception_5b
-    GlobalAvgPool2D() ->
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(1024, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
     6,990,272 weights, 8,280 biases -> 6,998,552 params
     ```
-    Parameters
-    ----------
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
