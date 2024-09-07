@@ -1110,7 +1110,7 @@ class Inception_V1(incep._Inception_V1):
     ----------
     Blocks Used:
     ```py
-    InceptionBlock.V1()
+    IncepBlock.V1()
     ```
     Arguments
     ---------
@@ -1194,8 +1194,17 @@ class Inception_V2(incep._Inception_V2):
     ```txt
     24,974,688 weights, 20,136 biases -> 24,994,824 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    IncepBlock.V2_TypeA(),
+    IncepBlock.V2_TypeB(),
+    IncepBlock.V2_TypeC(),
+    IncepBlock.V2_Redux()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1277,8 +1286,17 @@ class Inception_V3(incep._Inception_V3):
     ```txt
     25,012,960 weights, 20,136 biases -> 25,033,096 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    IncepBlock.V2_TypeA(),
+    IncepBlock.V2_TypeB(),
+    IncepBlock.V2_TypeC(),
+    IncepBlock.V2_Redux()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1362,8 +1380,19 @@ class Inception_V4(incep._Inception_V4):
     ```txt
     42,641,952 weights, 32,584 biases -> 42,674,536 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    IncepBlock.V4_Stem(),
+    IncepBlock.V4_TypeA(),
+    IncepBlock.V4_TypeB(),
+    IncepBlock.V4_TypeC(),
+    IncepBlock.V4_ReduxA(),
+    IncepBlock.V4_ReduxB()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1447,8 +1476,20 @@ class InceptionResNet_V1(incep._InceptionRes_V1):
     ```txt
     21,611,648 weights, 33,720 biases -> 21,645,368 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    IncepResBlock.V1_Stem(),
+    IncepResBlock.V1_TypeA(),
+    IncepResBlock.V1_TypeB(),
+    IncepResBlock.V1_TypeC(),
+    IncepResBlock.V1_Redux(),
+    
+    IncepBlock.V4_ReduxA()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1526,8 +1567,20 @@ class InceptionResNet_V2(incep._InceptionRes_V2):
     ```txt
     34,112,608 weights, 43,562 biases -> 34,156,170 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    IncepResBlock.V2_TypeA(),
+    IncepResBlock.V2_TypeB(),
+    IncepResBlock.V2_TypeC(),
+    IncepResBlock.V2_Redux(),
+    
+    IncepBlock.V4_Stem(),
+    IncepBlock.V4_ReduxA()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1604,8 +1657,14 @@ class ResNet_18(resnet._ResNet_18):
     ```txt
     11,688,512 weights, 5,800 biases -> 11,694,312 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.Basic()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1684,8 +1743,14 @@ class ResNet_34(resnet._ResNet_34):
     ```txt
     21,796,672 weights, 9,512 biases -> 21,806,184 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.Basic()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1764,8 +1829,14 @@ class ResNet_50(resnet._ResNet_50):
     ```txt
     25,556,032 weights, 27,560 biases -> 25,583,592 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.Bottleneck()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1844,8 +1915,14 @@ class ResNet_101(resnet._ResNet_101):
     ```txt
     44,548,160 weights, 53,672 biases -> 44,601,832 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.Bottleneck()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -1924,8 +2001,14 @@ class ResNet_152(resnet._ResNet_152):
     ```txt
     60,191,808 weights, 76,712 biases -> 60,268,520 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.Bottleneck()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -2004,8 +2087,14 @@ class ResNet_200(resnet._ResNet_200):
     ```txt
     64,668,864 weights, 89,000 biases -> 64,757,864 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.PreActBottleneck()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -2083,8 +2172,14 @@ class ResNet_269(resnet._ResNet_269):
     ```txt
     102,068,416 weights, 127,400 biases -> 102,195,816 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.PreActBottleneck()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -2163,8 +2258,14 @@ class ResNet_1001(resnet._ResNet_1001):
     ```txt
     159,884,992 weights, 208,040 biases -> 160,093,032 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.PreActBottleneck()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -2249,8 +2350,18 @@ class XceptionNet(incep._Xception):
     ```txt
     22,113,984 weights, 50,288 biases -> 22,164,272 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    XceptionBlock.Entry(),
+    XceptionBlock.Middle(),
+    XceptionBlock.Exit(),
+    
+    SeparableConv2D()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -2332,8 +2443,14 @@ class MobileNet_V1(mobile._Mobile_V1):
     ```txt
     4,230,976 weights, 11,944 biases -> 4,242,920 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    SeparableConv2D()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU
         Type of activation function
     `initializer` : InitStr, default=None
@@ -2418,8 +2535,14 @@ class MobileNet_V2(mobile._Mobile_V2):
     ```txt
     8,418,624 weights, 19,336 biases -> 8,437,960 params
     ```
-    Parameters
+    Components
     ----------
+    Blocks Used:
+    ```py
+    MobileNetBlock.InvertedRes()
+    ```
+    Arguments
+    ---------
     `activation` : callable, default=Activation.ReLU6
         Type of activation function
     `initializer` : InitStr, default=None
