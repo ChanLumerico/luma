@@ -10,11 +10,7 @@ and improving performance over time through training.
 
 """
 
-from typing import Literal
 
-from luma.interface.util import InitUtil
-
-from luma.neural.layer import Activation
 from luma.neural.model import (
     alex,
     incep,
@@ -1641,7 +1637,61 @@ class MobileNet_V2(mobile._Mobile_V2):
 
 
 class MobileNet_V3_Small(mobile._Mobile_V3_Small):
-    NotImplemented
+    """
+    MobileNet-V3 improves on its predecessors by adding squeeze-and-
+    excitation(SE) modules and the hard-swish activation, further reducing 
+    computational cost and enhancing performance on mobile devices. 
+    It maintains a balance of accuracy and efficiency, with flexible width and 
+    resolution adjustments.
+
+    Specs
+    -----
+    Input/Output Shapes:
+    ```py
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
+    ```
+    Parameter Size:
+    ```txt
+    8,418,624 weights, 19,336 biases -> 8,437,960 params
+    ```
+    Components
+    ----------
+    Blocks Used:
+    ```py
+    MobileNetBlock.InvertedRes()
+    ```
+    Arguments
+    ---------
+    `activation` : callable, default=Activation.ReLU6
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `width_param` : float, default=1.0
+        Width parameter(alpha) of the network
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    [1] Howard, Andrew, et al. “Searching for MobileNetV3.” Proceedings 
+    of the IEEE/CVF International Conference on Computer Vision (ICCV), 
+    2019, pp. 1314-1324.
+
+    """
 
 
 class MobileNet_V3_Large(mobile._Mobile_V3_Large):
