@@ -762,6 +762,7 @@ class VGGNet_11(vgg._VGGNet_11):
     ```
     Components
     ----------
+    Blocks Used:
     ```py
     ConvBlock2D(), DenseBlock()
     ```
@@ -845,6 +846,12 @@ class VGGNet_13(vgg._VGGNet_13):
     ```txt
     133,035,712 weights, 12,136 biases -> 133,047,848 params
     ```
+    Components
+    ----------
+    Blocks Used:
+    ```py
+    ConvBlock2D(), DenseBlock()
+    ```
     Arguments
     ---------
     `activation` : callable, default=Activation.ReLU
@@ -927,6 +934,7 @@ class VGGNet_16(vgg._VGGNet_16):
     ```
     Components
     ----------
+    Blocks Used:
     ```py
     ConvBlock2D(), DenseBlock()
     ```
@@ -1012,6 +1020,7 @@ class VGGNet_19(vgg._VGGNet_19):
     ```
     Components
     ----------
+    Blocks Used:
     ```py
     ConvBlock2D(), DenseBlock()
     ```
@@ -1097,6 +1106,12 @@ class Inception_V1(incep._Inception_V1):
     ```txt
     6,990,272 weights, 8,280 biases -> 6,998,552 params
     ```
+    Components
+    ----------
+    Blocks Used:
+    ```py
+    InceptionBlock.V1()
+    ```
     Arguments
     ---------
     `activation` : callable, default=Activation.ReLU
@@ -1169,41 +1184,11 @@ class Inception_V2(incep._Inception_V2):
     training stability. These modifications allow for deeper and more
     complex neural networks with improved performance.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 299, 299]
-    ```
-    Introductory Convolutions:
-    ```py
-    ConvBlock2D(3, 32, filter_size=3, stride=2) ->
-    ConvBlock2D(32, 32, filter_size=3, stride=1) ->
-    ConvBlock2D(32, 64, filter_size=3, stride=1) ->
-    Pool2D(3, 2, mode="max") ->
-
-    ConvBlock2D(64, 80, filter_size=3, stride=1) ->
-    ConvBlock2D(80, 192, filter_size=3, stride=2) ->
-    ConvBlock2D(192, 288, filter_size=3, stride=1) ->
-    ```
-    Inception Blocks:
-    ```py
-    3x IncepBlock.V2_TypeA(288) ->  # Inception_3
-    IncepBlock.V2_Redux(288) ->  # Inception_Rx1
-
-    5x IncepBlock.V2_TypeB(768) ->  # Inception_4
-    IncepBlock.V2_Redux(768) ->  # Inception_Rx2
-
-    2x IncepBlock.V2_TypeC([1280, 2048]) ->  # Inception_5
-    GlobalAvgPool2D() ->
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(2048, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 299, 299] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -1282,41 +1267,11 @@ class Inception_V3(incep._Inception_V3):
     deeper and more complex neural networks with significantly
     enhanced performance and robustness.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 299, 299]
-    ```
-    Introductory Convolutions:
-    ```py
-    ConvBlock2D(3, 32, filter_size=3, stride=2) ->
-    ConvBlock2D(32, 32, filter_size=3, stride=1) ->
-    ConvBlock2D(32, 64, filter_size=3, stride=1) ->
-    Pool2D(3, 2, mode="max") ->
-
-    ConvBlock2D(64, 80, filter_size=3, stride=1) ->
-    ConvBlock2D(80, 192, filter_size=3, stride=2) ->
-    ConvBlock2D(192, 288, filter_size=3, stride=1) ->
-    ```
-    Inception Blocks:
-    ```py
-    3x IncepBlock.V2_TypeA(288) ->  # Inception_3
-    IncepBlock.V2_Redux(288) ->  # Inception_Rx1
-
-    5x IncepBlock.V2_TypeB(768) ->  # Inception_4
-    IncepBlock.V2_Redux(768) ->  # Inception_Rx2
-
-    2x IncepBlock.V2_TypeC([1280, 2048]) ->  # Inception_5
-    GlobalAvgPool2D() ->
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(2048, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 299, 299] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -1397,33 +1352,11 @@ class Inception_V4(incep._Inception_V4):
     Normalization, and label smoothing. These advancements enable deeper
     and more robust neural networks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 299, 299]
-    ```
-    Overall:
-    ```py
-    IncepBlock.V4_Stem() ->  # Stem
-
-    4x IncepBlock.V4_TypeA() ->  # Type A
-    IncepBlock.V4_ReduxA(384, (192, 224, 256, 384)) ->  # Redux Type A
-
-    7x IncepBlock.V4_TypeB() ->  # Type B
-    IncepBlock.V4_ReduxB() ->  # Redux Type B
-
-    3x IncepBlock.V4_TypeC() ->  # Type C
-    GlobalAvgPool2D() ->
-    Dropout(0.8) ->
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten() -> Dense(1536, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 299, 299] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -1504,33 +1437,11 @@ class InceptionResNet_V1(incep._InceptionRes_V1):
     Batch Normalization, and label smoothing, resulting in deeper and more
     robust neural networks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 299, 299]
-    ```
-    Overall:
-    ```py
-    IncepResBlock.V1_Stem() ->  # Stem
-
-    5x IncepResBlock.V1_TypeA() ->  # Type A
-    IncepBlock.V4_ReduxA(256, (192, 192, 256, 384)) ->  # Redux Type A
-
-    10x IncepResBlock.V1_TypeB() ->  # Type B
-    IncepResBlock.V1_Redux() ->  # Redux Type B
-
-    5x IncepResBlock.V1_TypeC() ->  # Type C
-    GlobalAvgPool2D() ->
-    Dropout(0.8) ->
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten() -> Dense(1792, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 299, 299] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -1605,33 +1516,11 @@ class InceptionResNet_V2(incep._InceptionRes_V2):
     convolution factorization, more extensive Batch Normalization, and
     advanced grid size reduction.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 299, 299]
-    ```
-    Overall:
-    ```py
-    IncepBlock.V4_Stem() ->  # Stem
-
-    5x IncepResBlock.V2_TypeA() ->  # Type A
-    IncepBlock.V4_ReduxA(384, (256, 256, 384, 384)) ->  # Redux Type A
-
-    10x IncepResBlock.V2_TypeB() ->  # Type B
-    IncepResBlock.V2_Redux() ->  # Redux Type B
-
-    5x IncepResBlock.V2_TypeC() ->  # Type C
-    GlobalAvgPool2D() ->
-    Dropout(0.8) ->
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten() -> Dense(2272, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 299, 299] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -1705,30 +1594,11 @@ class ResNet_18(resnet._ResNet_18):
     to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Residual Blocks:
-    ```py
-    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
-
-    2x ResNetBlock.Basic(64, 64) ->  # conv2
-    2x ResNetBlock.Basic(128, 128, stride=2) ->  # conv3
-    2x ResNetBlock.Basic(256, 256, stride=2) ->  # conv4
-    2x ResNetBlock.Basic(512, 512, stride=2) ->  # conv5
-
-    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(512, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -1804,30 +1674,11 @@ class ResNet_34(resnet._ResNet_34):
     to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Residual Blocks:
-    ```py
-    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
-
-    3x ResNetBlock.Basic(64, 64) ->  # conv2
-    4x ResNetBlock.Basic(128, 128, stride=2) ->  # conv3
-    6x ResNetBlock.Basic(256, 256, stride=2) ->  # conv4
-    3x ResNetBlock.Basic(512, 512, stride=2) ->  # conv5
-
-    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(512, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -1903,30 +1754,11 @@ class ResNet_50(resnet._ResNet_50):
     to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Residual Blocks:
-    ```py
-    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
-
-    3x ResNetBlock.Bottleneck(64, 64) ->  # conv2
-    4x ResNetBlock.Bottleneck(128, 128, stride=2) ->  # conv3
-    6x ResNetBlock.Bottleneck(256, 256, stride=2) ->  # conv4
-    3x ResNetBlock.Bottleneck(512, 512, stride=2) ->  # conv5
-
-    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(512 * 4, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -2002,30 +1834,11 @@ class ResNet_101(resnet._ResNet_101):
     to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Residual Blocks:
-    ```py
-    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
-
-    3x ResNetBlock.Bottleneck(64, 64) ->  # conv2
-    4x ResNetBlock.Bottleneck(128, 128, stride=2) ->  # conv3
-    23x ResNetBlock.Bottleneck(256, 256, stride=2) ->  # conv4
-    3x ResNetBlock.Bottleneck(512, 512, stride=2) ->  # conv5
-
-    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(512 * 4, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -2101,30 +1914,11 @@ class ResNet_152(resnet._ResNet_152):
     to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Residual Blocks:
-    ```py
-    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
-
-    3x ResNetBlock.Bottleneck(64, 64) ->  # conv2
-    8x ResNetBlock.Bottleneck(128, 128, stride=2) ->  # conv3
-    36x ResNetBlock.Bottleneck(256, 256, stride=2) ->  # conv4
-    3x ResNetBlock.Bottleneck(512, 512, stride=2) ->  # conv5
-
-    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(512 * 4, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -2200,30 +1994,11 @@ class ResNet_200(resnet._ResNet_200):
     to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Residual Blocks:
-    ```py
-    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
-
-    3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
-    24x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
-    36x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
-    3x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
-
-    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(512 * 4, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -2298,30 +2073,11 @@ class ResNet_269(resnet._ResNet_269):
     to improve training by learning residuals, helping prevent vanishing
     gradients and enabling better performance in image recognition tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Residual Blocks:
-    ```py
-    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
-
-    3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
-    30x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
-    48x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
-    8x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
-
-    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(512 * 4, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -2397,30 +2153,11 @@ class ResNet_1001(resnet._ResNet_1001):
     vanishing gradients and enabling better performance in image
     recognition tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Residual Blocks:
-    ```py
-    Conv2D(3, 64, filter_size=7, stride=2) ->  # conv1
-
-    3x ResNetBlock.PreActBottleneck(64, 64) ->  # conv2
-    33x ResNetBlock.PreActBottleneck(128, 128, stride=2) ->  # conv3
-    99x ResNetBlock.PreActBottleneck(256, 256, stride=2) ->  # conv4
-    3x ResNetBlock.PreActBottleneck(512, 512, stride=2) ->  # conv5
-
-    AdaptiveAvgPool2D((1, 1)) ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(512 * 4, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -2502,30 +2239,11 @@ class XceptionNet(incep._Xception):
     the number of parameters and computations while maintaining or
     improving model accuracy on complex tasks.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 299, 299]
-    ```
-    Separable Convolutions:
-    ```py
-    XceptionBlock.EntryFlow() ->  # entry flow
-    8x XceptionBlock.MiddleFlow() ->  # middle flow
-    XceptionBlock.ExitFlow() ->  # exit flow
-
-    SeparableConv2D(1024, 1536, 3) -> Activation.ReLU() ->
-    SeparableConv2D(1536, 2048, 3) -> Activation.ReLU() ->
-
-    GlobalAvgPool2D() ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(2048, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 299, 299] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -2604,32 +2322,11 @@ class MobileNet_V1(mobile._Mobile_V1):
     accuracy and efficiency through adjustable width and resolution
     multipliers.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Separable Convolutions:
-    ```py
-    Conv2D(3, 32) ->
-    SeparableConv2D(32, 64) ->
-    SeparableConv2D(64, 128) -> SeparableConv2D(128, 128) ->
-    SeparableConv2D(128, 256) -> SeparableConv2D(256, 256) ->
-    SeparableConv2D(256, 512) ->
-
-    5x SeparableConv2D(512, 512) ->
-    SeparableConv2D(512, 1024) -> SeparableConv2D(1024, 1024) ->
-
-    GlobalAvgPool2D() ->  # avg pool
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(1024, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
@@ -2711,35 +2408,11 @@ class MobileNet_V2(mobile._Mobile_V2):
     devices. It continues to balance accuracy and efficiency while allowing
     for flexible adjustments through width and resolution multipliers.
 
-    Structure
-    ---------
-    Input:
+    Specs
+    -----
+    Input/Output Shapes:
     ```py
-    Tensor[..., 3, 224, 224]
-    ```
-    Inverted Residual Blocks:
-    ```py
-    Conv2D(3, 32) -> BatchNorm2D(32) -> ReLU6() ->
-
-    1x MobileNetBlock.InvertedRes(32, 16, 1, 1) ->
-    2x MobileNetBlock.InvertedRes(16, 24, 2, 6) ->
-    3x MobileNetBlock.InvertedRes(24, 32, 2, 6) ->
-    4x MobileNetBlock.InvertedRes(32, 64, 2, 6) ->
-    3x MobileNetBlock.InvertedRes(64, 96, 1, 6) ->
-    3x MobileNetBlock.InvertedRes(96, 160, 2, 6) ->
-    1x MobileNetBlock.InvertedRes(160, 320, 1, 6) ->
-
-    Conv2D(320, 1280) -> BatchNorm2D(1280) -> ReLU6() ->
-    GlobalAvgPool2D() ->  # 7x7 avg pool
-    Conv2D(1280, 1280, 1) -> BatchNorm2D(1280) -> ReLU6() ->
-    ```
-    Fully Connected Layers:
-    ```py
-    Flatten -> Dense(1280, 1000)
-    ```
-    Output:
-    ```py
-    Matrix[..., 1000]
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
     ```
     Parameter Size:
     ```txt
