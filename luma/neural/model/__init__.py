@@ -10,7 +10,6 @@ and improving performance over time through training.
 
 """
 
-
 from luma.neural.model import (
     alex,
     incep,
@@ -936,7 +935,7 @@ class InceptionResNet_V1(incep._InceptionRes_V1):
     IncepResBlock.V1_TypeB(),
     IncepResBlock.V1_TypeC(),
     IncepResBlock.V1_Redux(),
-    
+
     IncepBlock.V4_ReduxA()
     ```
     Arguments
@@ -992,7 +991,7 @@ class InceptionResNet_V2(incep._InceptionRes_V2):
     IncepResBlock.V2_TypeB(),
     IncepResBlock.V2_TypeC(),
     IncepResBlock.V2_Redux(),
-    
+
     IncepBlock.V4_Stem(),
     IncepBlock.V4_ReduxA()
     ```
@@ -1484,7 +1483,7 @@ class XceptionNet(incep._Xception):
     XceptionBlock.Entry(),
     XceptionBlock.Middle(),
     XceptionBlock.Exit(),
-    
+
     SeparableConv2D()
     ```
     Arguments
@@ -1639,9 +1638,9 @@ class MobileNet_V2(mobile._Mobile_V2):
 class MobileNet_V3_Small(mobile._Mobile_V3_Small):
     """
     MobileNet-V3 improves on its predecessors by adding squeeze-and-
-    excitation(SE) modules and the hard-swish activation, further reducing 
-    computational cost and enhancing performance on mobile devices. 
-    It maintains a balance of accuracy and efficiency, with flexible width and 
+    excitation(SE) modules and the hard-swish activation, further reducing
+    computational cost and enhancing performance on mobile devices.
+    It maintains a balance of accuracy and efficiency, with flexible width and
     resolution adjustments.
 
     Specs
@@ -1687,8 +1686,8 @@ class MobileNet_V3_Small(mobile._Mobile_V3_Small):
 
     References
     ----------
-    [1] Howard, Andrew, et al. “Searching for MobileNetV3.” Proceedings 
-    of the IEEE/CVF International Conference on Computer Vision (ICCV), 
+    [1] Howard, Andrew, et al. “Searching for MobileNetV3.” Proceedings
+    of the IEEE/CVF International Conference on Computer Vision (ICCV),
     2019, pp. 1314-1324.
 
     """
