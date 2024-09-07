@@ -1,4 +1,4 @@
-from typing import Self, override, ClassVar
+from typing import Self, override, ClassVar, List
 
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
@@ -362,7 +362,7 @@ class _Mobile_V3_Small(Estimator, Supervised, NeuralModel):
         self.build_model()
 
     def build_model(self) -> None:
-        inverted_res_config: list[list] = [
+        inverted_res_config: List[list] = [
             [3, 16, 16, True, "RE", 2],
             [3, 72, 24, False, "RE", 2],
             [3, 88, 24, False, "RE", 1],
@@ -436,4 +436,80 @@ class _Mobile_V3_Small(Estimator, Supervised, NeuralModel):
 
 
 class _Mobile_V3_Large(Estimator, Supervised, NeuralModel):
-    NotImplemented
+    def __init__(
+        self,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        dropout_rate: float = 0.2,
+        momentum: float = 0.9,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        self.initializer = initializer
+        self.out_features = out_features
+        self.lambda_ = lambda_
+        self.dropout_rate = dropout_rate
+        self.momentum = momentum
+        self.shuffle = shuffle
+        self.random_state = random_state
+        self._fitted = False
+
+        super().__init__(
+            batch_size,
+            n_epochs,
+            valid_size,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+        super().init_model()
+        self.model = Sequential()
+
+        self.feature_sizes_ = []
+        self.feature_shapes_ = [
+            self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
+        ]
+
+        self.set_param_ranges(
+            {
+                "out_features": ("0<,+inf", int),
+                "batch_size": ("0<,+inf", int),
+                "n_epochs": ("0<,+inf", int),
+                "valid_size": ("0<,<1", None),
+                "momentum": ("0,1", None),
+                "dropout_rate": ("0,1", None),
+                "lambda_": ("0,+inf", None),
+                "patience": ("0<,+inf", int),
+            }
+        )
+        self.check_param_ranges()
+        self.build_model()
+    
+    def build_model(self) -> None:
+        inverted_res_config: List[list] = [
+            [3, 16, 16, False, "RE", 1],
+            [3, 64, 24, False, "RE", 2],
+            [3, 72, 24, False, "RE", 1],
+            [5, 72, 40, True, "RE", 2],
+            [5, 120, 40, True, "RE", 1],
+            [5, 120, 40, True, "RE", 1],
+            [3, 240, 80, False, "HS", 2],
+            [3, 200, 80, False, "HS", 1],
+            [3, 184, 80, False, "HS", 1],
+            [3, 184, 80, False, "HS", 1],
+            [3, 480, 112, True, "HS", 1],
+            [3, 672, 112, True, "HS", 1],
+            [3, 672, 160, True, "HS", 2],
+            [5, 960, 160, True, "HS", 1],
+            [5, 960, 160, True, "HS", 1],
+        ]
+
