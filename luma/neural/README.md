@@ -244,11 +244,17 @@ Information Processing Systems, 2012.
 > Sandler, Mark, et al. “MobileNetV2: Inverted Residuals and Linear Bottlenecks.” Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018, pp. 4510-4520.
 > 
 
+*MobileNet-v3 Small, Large*
+
+> Howard, Andrew, et al. “Searching for MobileNetV3.” Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV), 2019, pp. 1314-1324.
+> 
+
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
 | `MobileNet_V1` | 31 | $(N,3,224,224)$ | 4,230,976 | 11,944 | 4,242,920 | ✅ |
 | `MobileNet_V2` | 148 | $(N,3,224,224)$ | 8,418,624 | 19,336 | 8,437,960 | ✅ |
-| `MobileNet_V3` |  |  |  |  |  | ❌ |
+| `MobileNet_V3_Small` | 161 | $(N,3,224,224)$ | 32,455,856 | 326,138 | 32,781,994 | ✅ |
+| `MobileNet_V3_Large` | 180 | $(N,3,224,224)$ | 167,606,960 | 1,136,502 | 168,743,462 | ✅ |
 
 ### SENet Series
 
