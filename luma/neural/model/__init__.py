@@ -1637,11 +1637,12 @@ class MobileNet_V2(mobile._Mobile_V2):
 
 class MobileNet_V3_Small(mobile._Mobile_V3_Small):
     """
-    MobileNet-V3 improves on its predecessors by adding squeeze-and-
-    excitation(SE) modules and the hard-swish activation, further reducing
-    computational cost and enhancing performance on mobile devices.
-    It maintains a balance of accuracy and efficiency, with flexible width and
-    resolution adjustments.
+    MobileNet-V3-Small improves on its predecessors by incorporating
+    squeeze-and-excitation (SE) modules and the hard-swish activation,
+    specifically designed to further reduce computational cost and optimize
+    performance on resource-constrained mobile devices. It strikes a balance
+    between accuracy and efficiency, with flexible width and resolution
+    adjustments tailored for smaller models.
 
     Specs
     -----
@@ -1658,6 +1659,7 @@ class MobileNet_V3_Small(mobile._Mobile_V3_Small):
     Blocks Used:
     ```py
     MobileNetBlock.InvertedRes()
+    MobileNetBlock.InvertedRes_SE()
     ```
     Arguments
     ---------
@@ -1692,4 +1694,58 @@ class MobileNet_V3_Small(mobile._Mobile_V3_Small):
 
 
 class MobileNet_V3_Large(mobile._Mobile_V3_Large):
-    NotImplemented
+    """
+    MobileNet-V3-Large enhances its predecessors by integrating
+    squeeze-and-excitation(SE) modules and the hard-swish activation,
+    designed to boost performance while minimizing computational cost
+    on mobile devices. It provides a balance of accuracy and efficiency,
+    with flexible width and resolution adjustments optimized for larger,
+    more powerful models.
+
+    Specs
+    -----
+    Input/Output Shapes:
+    ```py
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
+    ```
+    Parameter Size:
+    ```txt
+    167,606,960 weights, 1,136,502 biases -> 168,743,462 params
+    ```
+    Components
+    ----------
+    Blocks Used:
+    ```py
+    MobileNetBlock.InvertedRes()
+    MobileNetBlock.InvertedRes_SE()
+    ```
+    Arguments
+    ---------
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `dropout_rate` : float, default=0.2
+        Dropout rate
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    [1] Howard, Andrew, et al. “Searching for MobileNetV3.” Proceedings
+    of the IEEE/CVF International Conference on Computer Vision (ICCV),
+    2019, pp. 1314-1324.
+
+    """
