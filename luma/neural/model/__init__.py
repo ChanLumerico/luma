@@ -119,43 +119,6 @@ class SimpleMLP(simple._SimpleMLP):
 
     """
 
-    def __init__(
-        self,
-        in_features: int,
-        out_features: int,
-        hidden_layers: list[int] | int,
-        *,
-        activation: callable,
-        initializer: InitUtil.InitStr = None,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        dropout_rate: float = 0.5,
-        lambda_: float = 0,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False
-    ) -> None:
-        super(SimpleMLP, self).__init__(
-            in_features,
-            out_features,
-            hidden_layers,
-            activation,
-            initializer,
-            batch_size,
-            n_epochs,
-            valid_size,
-            dropout_rate,
-            lambda_,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class SimpleCNN(simple._SimpleCNN):
     """
@@ -231,97 +194,7 @@ class SimpleCNN(simple._SimpleCNN):
     - For classification tasks, the target vector `y` must be
         one-hot encoded.
 
-    Examples
-    --------
-    ```py
-    model = SimpleCNN(
-        in_channels_list=[1, 6],
-        in_features_list=[96, 16],
-        out_channels=12,
-        out_features=10,
-        activation=Activation.ReLU,
-        ...,
-    )
-    ```
-    This model has the same structure with:
-    ```py
-    model = Sequential(
-        Convolution(1, 6),  # First convolution block
-        Activation.ReLU,
-        Pooling(),
-
-        Convolution(6, 12),  # Second convolution block
-        Activation.ReLU,
-        Pooling(),
-
-        Flatten(),
-        Dense(96, 16),  # Dense block
-        Activation.ReLU,
-        Dropout(),
-
-        Dense(16, 10),  # Final dense layer
-    )
-    ```
     """
-
-    def __init__(
-        self,
-        in_channels_list: list[int] | int,
-        in_features_list: list[int] | int,
-        out_channels: int,
-        out_features: int,
-        *,
-        filter_size: int,
-        activation: callable,
-        initializer: InitUtil.InitStr = None,
-        padding: Literal["same", "valid"] = "same",
-        stride: int = 1,
-        do_batch_norm: bool = True,
-        momentum: float = 0.9,
-        do_pooling: bool = True,
-        pool_filter_size: int = 2,
-        pool_stride: int = 2,
-        pool_mode: Literal["max", "avg"] = "max",
-        do_dropout: bool = True,
-        dropout_rate: float = 0.5,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False
-    ) -> None:
-        super(SimpleCNN, self).__init__(
-            in_channels_list,
-            in_features_list,
-            out_channels,
-            out_features,
-            filter_size,
-            activation,
-            initializer,
-            padding,
-            stride,
-            do_batch_norm,
-            momentum,
-            do_pooling,
-            pool_filter_size,
-            pool_stride,
-            pool_mode,
-            do_dropout,
-            dropout_rate,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class LeNet_1(lenet._LeNet_1):
@@ -376,36 +249,6 @@ class LeNet_1(lenet._LeNet_1):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.Tanh,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 10,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(LeNet_1, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class LeNet_4(lenet._LeNet_4):
     """
@@ -452,38 +295,6 @@ class LeNet_4(lenet._LeNet_4):
     1. LeCun, Yann, et al. "Backpropagation Applied to Handwritten Zip
     Code Recognition." Neural Computation, vol. 1, no. 4, 1989, pp. 541-551.
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.Tanh,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 10,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        dropout_rate: float = 0.5,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(LeNet_4, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class LeNet_5(lenet._LeNet_5):
@@ -532,38 +343,6 @@ class LeNet_5(lenet._LeNet_5):
     1. LeCun, Yann, et al. "Backpropagation Applied to Handwritten Zip
     Code Recognition." Neural Computation, vol. 1, no. 4, 1989, pp. 541-551.
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.Tanh,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 10,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        dropout_rate: float = 0.5,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(LeNet_5, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class AlexNet(alex._AlexNet):
@@ -621,38 +400,6 @@ class AlexNet(alex._AlexNet):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        dropout_rate: float = 0.5,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(AlexNet, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class ZFNet(alex._ZFNet):
     """
@@ -709,38 +456,6 @@ class ZFNet(alex._ZFNet):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        dropout_rate: float = 0.5,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ZFNet, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class VGGNet_11(vgg._VGGNet_11):
     """
@@ -794,38 +509,6 @@ class VGGNet_11(vgg._VGGNet_11):
     1. Simonyan, Karen, and Andrew Zisserman. "Very Deep Convolutional Networks for
     Large-Scale Image Recognition." arXiv preprint arXiv:1409.1556, 2014.
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        dropout_rate: float = 0.5,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(VGGNet_11, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class VGGNet_13(vgg._VGGNet_13):
@@ -881,38 +564,6 @@ class VGGNet_13(vgg._VGGNet_13):
     Large-Scale Image Recognition." arXiv preprint arXiv:1409.1556, 2014.
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        dropout_rate: float = 0.5,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(VGGNet_13, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class VGGNet_16(vgg._VGGNet_16):
     """
@@ -967,38 +618,6 @@ class VGGNet_16(vgg._VGGNet_16):
     Large-Scale Image Recognition." arXiv preprint arXiv:1409.1556, 2014.
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        dropout_rate: float = 0.5,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(VGGNet_16, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class VGGNet_19(vgg._VGGNet_19):
     """
@@ -1052,38 +671,6 @@ class VGGNet_19(vgg._VGGNet_19):
     1. Simonyan, Karen, and Andrew Zisserman. "Very Deep Convolutional Networks for
     Large-Scale Image Recognition." arXiv preprint arXiv:1409.1556, 2014.
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 100,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        dropout_rate: float = 0.5,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(VGGNet_19, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class Inception_V1(incep._Inception_V1):
@@ -1141,38 +728,6 @@ class Inception_V1(incep._Inception_V1):
     of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR),
     2015, pp. 1-9.
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0.0,
-        dropout_rate: float = 0.4,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(Inception_V1, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class Inception_V2(incep._Inception_V2):
@@ -1232,38 +787,6 @@ class Inception_V2(incep._Inception_V2):
     of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR),
     2015, pp. 1-9.
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0.0,
-        dropout_rate: float = 0.4,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(Inception_V2, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class Inception_V3(incep._Inception_V3):
@@ -1327,40 +850,6 @@ class Inception_V3(incep._Inception_V3):
     2015, pp. 1-9.
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0.0,
-        dropout_rate: float = 0.4,
-        smoothing: float = 0.1,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(Inception_V3, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            smoothing,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class Inception_V4(incep._Inception_V4):
     """
@@ -1423,40 +912,6 @@ class Inception_V4(incep._Inception_V4):
     AAAI Conference on Artificial Intelligence, 2017, pp. 4278-4284.
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0.0,
-        dropout_rate: float = 0.4,
-        smoothing: float = 0.1,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(Inception_V4, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            smoothing,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class InceptionResNet_V1(incep._InceptionRes_V1):
     """
@@ -1515,40 +970,6 @@ class InceptionResNet_V1(incep._InceptionRes_V1):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0.0,
-        dropout_rate: float = 0.4,
-        smoothing: float = 0.1,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(InceptionResNet_V1, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            smoothing,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class InceptionResNet_V2(incep._InceptionRes_V2):
     """
@@ -1606,40 +1027,6 @@ class InceptionResNet_V2(incep._InceptionRes_V2):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0.0,
-        dropout_rate: float = 0.4,
-        smoothing: float = 0.1,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(InceptionResNet_V2, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            dropout_rate,
-            smoothing,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class ResNet_18(resnet._ResNet_18):
     """
@@ -1693,38 +1080,6 @@ class ResNet_18(resnet._ResNet_18):
     (CVPR), 2016, pp. 770-778.
 
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ResNet_18, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class ResNet_34(resnet._ResNet_34):
@@ -1780,38 +1135,6 @@ class ResNet_34(resnet._ResNet_34):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ResNet_34, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class ResNet_50(resnet._ResNet_50):
     """
@@ -1865,38 +1188,6 @@ class ResNet_50(resnet._ResNet_50):
     (CVPR), 2016, pp. 770-778.
 
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ResNet_50, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class ResNet_101(resnet._ResNet_101):
@@ -1952,38 +1243,6 @@ class ResNet_101(resnet._ResNet_101):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ResNet_101, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class ResNet_152(resnet._ResNet_152):
     """
@@ -2038,38 +1297,6 @@ class ResNet_152(resnet._ResNet_152):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ResNet_152, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class ResNet_200(resnet._ResNet_200):
     """
@@ -2123,38 +1350,6 @@ class ResNet_200(resnet._ResNet_200):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ResNet_200, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class ResNet_269(resnet._ResNet_269):
     """
@@ -2207,38 +1402,6 @@ class ResNet_269(resnet._ResNet_269):
     European Conference on Computer Vision (ECCV), 2016, pp. 630-645.
 
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ResNet_269, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class ResNet_1001(resnet._ResNet_1001):
@@ -2298,38 +1461,6 @@ class ResNet_1001(resnet._ResNet_1001):
     European Conference on Computer Vision (ECCV), 2016, pp. 630-645.
 
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(ResNet_1001, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class XceptionNet(incep._Xception):
@@ -2392,38 +1523,6 @@ class XceptionNet(incep._Xception):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(XceptionNet, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class MobileNet_V1(mobile._Mobile_V1):
     """
@@ -2482,40 +1581,6 @@ class MobileNet_V1(mobile._Mobile_V1):
 
     """
 
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        width_param: float = 1.0,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(MobileNet_V1, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            width_param,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
-
 
 class MobileNet_V2(mobile._Mobile_V2):
     """
@@ -2573,40 +1638,6 @@ class MobileNet_V2(mobile._Mobile_V2):
     Pattern Recognition (CVPR), 2018, pp. 4510-4520.
 
     """
-
-    def __init__(
-        self,
-        activation: callable = Activation.ReLU6,
-        initializer: InitUtil.InitStr = None,
-        out_features: int = 1000,
-        batch_size: int = 128,
-        n_epochs: int = 100,
-        valid_size: float = 0.1,
-        lambda_: float = 0,
-        momentum: float = 0.9,
-        width_param: float = 1.0,
-        early_stopping: bool = False,
-        patience: int = 10,
-        shuffle: bool = True,
-        random_state: int | None = None,
-        deep_verbose: bool = False,
-    ) -> None:
-        super(MobileNet_V2, self).__init__(
-            activation,
-            initializer,
-            out_features,
-            batch_size,
-            n_epochs,
-            valid_size,
-            lambda_,
-            momentum,
-            width_param,
-            early_stopping,
-            patience,
-            shuffle,
-            random_state,
-            deep_verbose,
-        )
 
 
 class MobileNet_V3_Small(mobile._Mobile_V3_Small):
