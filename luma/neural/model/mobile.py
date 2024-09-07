@@ -311,6 +311,7 @@ class _Mobile_V3_Small(Estimator, Supervised, NeuralModel):
         n_epochs: int = 100,
         valid_size: float = 0.1,
         lambda_: float = 0.0,
+        dropout_rate: float = 0.2,
         momentum: float = 0.9,
         early_stopping: bool = False,
         patience: int = 10,
@@ -321,6 +322,7 @@ class _Mobile_V3_Small(Estimator, Supervised, NeuralModel):
         self.initializer = initializer
         self.out_features = out_features
         self.lambda_ = lambda_
+        self.dropout_rate = dropout_rate
         self.momentum = momentum
         self.shuffle = shuffle
         self.random_state = random_state
@@ -359,7 +361,78 @@ class _Mobile_V3_Small(Estimator, Supervised, NeuralModel):
         self.check_param_ranges()
         self.build_model()
 
-    def build_model(self) -> None: ...
+    def build_model(self) -> None:
+        inverted_res_config: list[list] = [
+            [3, 16, 16, True, "RE", 2],
+            [3, 72, 24, False, "RE", 2],
+            [3, 88, 24, False, "RE", 1],
+            [5, 96, 40, True, "HS", 2],
+            [5, 240, 40, True, "HS", 1],
+            [5, 240, 40, True, "HS", 1],
+            [5, 120, 48, True, "HS", 1],
+            [5, 144, 48, True, "HS", 1],
+            [5, 288, 96, True, "HS", 2],
+            [5, 576, 96, True, "HS", 1],
+            [5, 576, 96, True, "HS", 1],
+        ]
+        base_args = {
+            "initializer": self.initializer,
+            "lambda_": self.lambda_,
+            "random_state": self.random_state,
+        }
+
+        self.model.extend(
+            Conv2D(3, 16, 3, 2, **base_args),
+            BatchNorm2D(16, self.momentum),
+            Activation.HardSwish(),
+        )
+        in_ = 16
+        for i, (f, exp, out, b, a, s) in enumerate(inverted_res_config):
+            block = InvertedRes_SE if b else InvertedRes
+            act = Activation.HardSwish if a == "HS" else Activation.ReLU
+            self.model += (
+                f"InvRes_{i + 1}",
+                block(in_, out, f, s, exp, activation=act, **base_args),
+            )
+            in_ = out
+
+        self.model.extend(
+            Conv2D(96, 576, 1, 1, **base_args),
+            BatchNorm2D(576, self.momentum),
+            Activation.HardSwish(),
+        )
+        self.model.extend(
+            GlobalAvgPool2D(),
+            Conv2D(576, 1024, 1, 1, **base_args),
+            Activation.HardSwish(),
+        )
+        self.model.extend(
+            Flatten(),
+            Dropout(self.dropout_rate),
+            Dense(1024, self.out_features, **base_args),
+        )
+
+    input_shape: ClassVar[int] = (-1, 3, 224, 224)
+
+    @Tensor.force_shape(input_shape)
+    def fit(self, X: Tensor, y: Matrix) -> Self:
+        return super(_Mobile_V3_Small, self).fit_nn(X, y)
+
+    @override
+    @Tensor.force_shape(input_shape)
+    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
+        return super(_Mobile_V3_Small, self).predict_nn(X, argmax)
+
+    @override
+    @Tensor.force_shape(input_shape)
+    def score(
+        self,
+        X: Tensor,
+        y: Matrix,
+        metric: Evaluator = Accuracy,
+        argmax: bool = True,
+    ) -> float:
+        return super(_Mobile_V3_Small, self).score_nn(X, y, metric, argmax)
 
 
 class _Mobile_V3_Large(Estimator, Supervised, NeuralModel):
