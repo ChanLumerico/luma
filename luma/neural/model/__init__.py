@@ -1651,7 +1651,7 @@ class MobileNet_V3_Small(mobile._Mobile_V3_Small):
     ```
     Parameter Size:
     ```txt
-    8,418,624 weights, 19,336 biases -> 8,437,960 params
+    32,455,856 weights, 326,138 biases -> 32,781,994 params
     ```
     Components
     ----------
