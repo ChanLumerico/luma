@@ -1661,8 +1661,6 @@ class MobileNet_V3_Small(mobile._Mobile_V3_Small):
     ```
     Arguments
     ---------
-    `activation` : callable, default=Activation.ReLU6
-        Type of activation function
     `initializer` : InitStr, default=None
         Type of weight initializer
     `out_features` : int, default=1000
@@ -1675,8 +1673,8 @@ class MobileNet_V3_Small(mobile._Mobile_V3_Small):
         Fractional size of validation set
     `lambda_` : float, default=0.0
         L2 regularization strength
-    `width_param` : float, default=1.0
-        Width parameter(alpha) of the network
+    `dropout_rate` : float, default=0.2
+        Dropout rate
     `early_stopping` : bool, default=False
         Whether to early-stop the training when the valid score stagnates
     `patience` : int, default=10
