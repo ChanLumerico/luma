@@ -18,6 +18,7 @@ from luma.neural.layer import (
     Flatten,
     Sequential,
 )
+from luma.neural import functional as F
 
 BasicBlock = ResNetBlock.Basic
 Bottleneck = ResNetBlock.Bottleneck
@@ -108,16 +109,16 @@ class _ResNet_18(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pool2D(3, 2, "max", "same"),
         )
-        self.layer_2, in_channels = _make_layer(
+        self.layer_2, in_channels = F.make_res_layers(
             64, 64, BasicBlock, 2, 2, base_args, res_args
         )
-        self.layer_3, in_channels = _make_layer(
+        self.layer_3, in_channels = F.make_res_layers(
             in_channels, 128, BasicBlock, 2, 3, base_args, res_args, stride=2
         )
-        self.layer_4, in_channels = _make_layer(
+        self.layer_4, in_channels = F.make_res_layers(
             in_channels, 256, BasicBlock, 2, 4, base_args, res_args, stride=2
         )
-        self.layer_5, in_channels = _make_layer(
+        self.layer_5, in_channels = F.make_res_layers(
             in_channels, 512, BasicBlock, 2, 5, base_args, res_args, stride=2
         )
 
@@ -241,16 +242,16 @@ class _ResNet_34(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pool2D(3, 2, "max", "same"),
         )
-        self.layer_2, in_channels = _make_layer(
+        self.layer_2, in_channels = F.make_res_layers(
             64, 64, BasicBlock, 3, 2, base_args, res_args
         )
-        self.layer_3, in_channels = _make_layer(
+        self.layer_3, in_channels = F.make_res_layers(
             in_channels, 128, BasicBlock, 4, 3, base_args, res_args, stride=2
         )
-        self.layer_4, in_channels = _make_layer(
+        self.layer_4, in_channels = F.make_res_layers(
             in_channels, 256, BasicBlock, 6, 4, base_args, res_args, stride=2
         )
-        self.layer_5, in_channels = _make_layer(
+        self.layer_5, in_channels = F.make_res_layers(
             in_channels, 512, BasicBlock, 3, 5, base_args, res_args, stride=2
         )
 
@@ -374,16 +375,16 @@ class _ResNet_50(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pool2D(3, 2, "max", "same"),
         )
-        self.layer_2, in_channels = _make_layer(
+        self.layer_2, in_channels = F.make_res_layers(
             64, 64, Bottleneck, 3, 2, base_args, res_args
         )
-        self.layer_3, in_channels = _make_layer(
+        self.layer_3, in_channels = F.make_res_layers(
             in_channels, 128, Bottleneck, 4, 3, base_args, res_args, stride=2
         )
-        self.layer_4, in_channels = _make_layer(
+        self.layer_4, in_channels = F.make_res_layers(
             in_channels, 256, Bottleneck, 6, 4, base_args, res_args, stride=2
         )
-        self.layer_5, in_channels = _make_layer(
+        self.layer_5, in_channels = F.make_res_layers(
             in_channels, 512, Bottleneck, 3, 5, base_args, res_args, stride=2
         )
 
@@ -507,16 +508,16 @@ class _ResNet_101(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pool2D(3, 2, "max", "same"),
         )
-        self.layer_2, in_channels = _make_layer(
+        self.layer_2, in_channels = F.make_res_layers(
             64, 64, Bottleneck, 3, 2, base_args, res_args
         )
-        self.layer_3, in_channels = _make_layer(
+        self.layer_3, in_channels = F.make_res_layers(
             in_channels, 128, Bottleneck, 4, 3, base_args, res_args, stride=2
         )
-        self.layer_4, in_channels = _make_layer(
+        self.layer_4, in_channels = F.make_res_layers(
             in_channels, 256, Bottleneck, 23, 4, base_args, res_args, stride=2
         )
-        self.layer_5, in_channels = _make_layer(
+        self.layer_5, in_channels = F.make_res_layers(
             in_channels, 512, Bottleneck, 3, 5, base_args, res_args, stride=2
         )
 
@@ -640,16 +641,16 @@ class _ResNet_152(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pool2D(3, 2, "max", "same"),
         )
-        self.layer_2, in_channels = _make_layer(
+        self.layer_2, in_channels = F.make_res_layers(
             64, 64, Bottleneck, 3, 2, base_args, res_args
         )
-        self.layer_3, in_channels = _make_layer(
+        self.layer_3, in_channels = F.make_res_layers(
             in_channels, 128, Bottleneck, 8, 3, base_args, res_args, stride=2
         )
-        self.layer_4, in_channels = _make_layer(
+        self.layer_4, in_channels = F.make_res_layers(
             in_channels, 256, Bottleneck, 36, 4, base_args, res_args, stride=2
         )
-        self.layer_5, in_channels = _make_layer(
+        self.layer_5, in_channels = F.make_res_layers(
             in_channels, 512, Bottleneck, 3, 5, base_args, res_args, stride=2
         )
 
@@ -773,16 +774,16 @@ class _ResNet_200(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pool2D(3, 2, "max", "same"),
         )
-        self.layer_2, in_channels = _make_layer(
+        self.layer_2, in_channels = F.make_res_layers(
             64, 64, PreActBottle, 3, 2, base_args, res_args
         )
-        self.layer_3, in_channels = _make_layer(
+        self.layer_3, in_channels = F.make_res_layers(
             in_channels, 128, PreActBottle, 24, 3, base_args, res_args, stride=2
         )
-        self.layer_4, in_channels = _make_layer(
+        self.layer_4, in_channels = F.make_res_layers(
             in_channels, 256, PreActBottle, 36, 4, base_args, res_args, stride=2
         )
-        self.layer_5, in_channels = _make_layer(
+        self.layer_5, in_channels = F.make_res_layers(
             in_channels, 512, PreActBottle, 3, 5, base_args, res_args, stride=2
         )
 
@@ -910,16 +911,16 @@ class _ResNet_269(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pool2D(3, 2, "max", "same"),
         )
-        self.layer_2, in_channels = _make_layer(
+        self.layer_2, in_channels = F.make_res_layers(
             64, 64, PreActBottle, 3, 2, base_args, res_args
         )
-        self.layer_3, in_channels = _make_layer(
+        self.layer_3, in_channels = F.make_res_layers(
             in_channels, 128, PreActBottle, 30, 3, base_args, res_args, stride=2
         )
-        self.layer_4, in_channels = _make_layer(
+        self.layer_4, in_channels = F.make_res_layers(
             in_channels, 256, PreActBottle, 48, 4, base_args, res_args, stride=2
         )
-        self.layer_5, in_channels = _make_layer(
+        self.layer_5, in_channels = F.make_res_layers(
             in_channels, 512, PreActBottle, 8, 5, base_args, res_args, stride=2
         )
 
@@ -1047,16 +1048,16 @@ class _ResNet_1001(Estimator, Supervised, NeuralModel):
             self.activation(),
             Pool2D(3, 2, "max", "same"),
         )
-        self.layer_2, in_channels = _make_layer(
+        self.layer_2, in_channels = F.make_res_layers(
             64, 64, PreActBottle, 3, 2, base_args, res_args
         )
-        self.layer_3, in_channels = _make_layer(
+        self.layer_3, in_channels = F.make_res_layers(
             in_channels, 128, PreActBottle, 33, 3, base_args, res_args, stride=2
         )
-        self.layer_4, in_channels = _make_layer(
+        self.layer_4, in_channels = F.make_res_layers(
             in_channels, 256, PreActBottle, 99, 4, base_args, res_args, stride=2
         )
-        self.layer_5, in_channels = _make_layer(
+        self.layer_5, in_channels = F.make_res_layers(
             in_channels, 512, PreActBottle, 8, 5, base_args, res_args, stride=2
         )
 
