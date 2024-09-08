@@ -131,9 +131,9 @@ Deep learning models and neural network utilities of Luma
 
 | Class | # of Layers | Input Shape | Output Shape |
 | --- | --- | --- | --- |
-| `SEBlock1D` | 6 | $(N,C,W)$ | $(N,C,W)~\text{or}~(N,C)$ |
-| `SEBlock2D` | 6 | $(N,C,H,W)$ | $(N,C,H,W)~\text{or}~(N,C)$ |
-| `SEBlock3D` | 6 | $(N,C,D,H,W)$ | $(N,C,D,H,W)~\text{or}~(N,C)$ |
+| `SEBlock1D` | 6 | $(N,C,W)$ | $(N,C,W)\text{ or }(N,C)$ |
+| `SEBlock2D` | 6 | $(N,C,H,W)$ | $(N,C,H,W)\text{ or }(N,C)$ |
+| `SEBlock3D` | 6 | $(N,C,D,H,W)$ | $(N,C,D,H,W)\text{ or }(N,C)$ |
 
 ### MobileNet Blocks
 
