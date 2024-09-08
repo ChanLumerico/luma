@@ -117,6 +117,7 @@ Deep learning models and neural network utilities of Luma
 | `ResNetBlock.Basic` | 7~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | `ResNetBlock.Bottleneck` | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | `ResNetBlock.PreActBottleneck` | 10~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `Bottleneck_SE` | 16~ | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 
 ### Xception Blocks
 
@@ -125,6 +126,14 @@ Deep learning models and neural network utilities of Luma
 | `XceptionBlock.Entry` | 42 | $(N,3,299,299)$ | $(N,728,19,19)$ |
 | `XceptionBlock.Middle` | 14 | $(N,728,19,19)$ | $(N,728,19,19)$ |
 | `XceptionBlock.Exit` | 11 | $(N,728,19,19)$ | $(N,1024,9,9)$ |
+
+### SE Blocks
+
+| Class | # of Layers | Input Shape | Output Shape |
+| --- | --- | --- | --- |
+| `SEBlock1D` | 6 | $(N,C,W)$ | $(N,C,W)~\text{or}~(N,C)$ |
+| `SEBlock2D` | 6 | $(N,C,H,W)$ | $(N,C,H,W)~\text{or}~(N,C)$ |
+| `SEBlock3D` | 6 | $(N,C,D,H,W)$ | $(N,C,D,H,W)~\text{or}~(N,C)$ |
 
 ### MobileNet Blocks
 
@@ -257,6 +266,14 @@ Information Processing Systems, 2012.
 | `MobileNet_V3_Large` | 180 | $(N,3,224,224)$ | 167,606,960 | 1,136,502 | 168,743,462 | ✅ |
 
 ### SENet Series
+
+> Hu, Jie, et al. “Squeeze-and-Excitation Networks.” Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR), 2018, pp. 7132-7141.
+> 
+
+| Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
+| --- | --- | --- | --- | --- | --- | --- |
+| `SE_ResNet` | 263 | $(N,3,224,224)$ | 35,615,808 | 46,440 | 35,662,248 | ✅ |
+| `SE_InceptionNet` |  |  |  |  |  | 🚧 |
 
 *Waiting for future updates…🔮*
 
