@@ -42,7 +42,11 @@ def make_res_layers(
     for i in range(1, n_blocks):
         new_block = (
             f"{layer_label}{layer_num}_{i + 1}",
-            block(in_channels, out_channels, **asdict(res_base_args_dc)),
+            block(
+                in_channels,
+                out_channels,
+                **asdict(res_base_args_dc),
+            ),
         )
         layers.append(new_block)
 
