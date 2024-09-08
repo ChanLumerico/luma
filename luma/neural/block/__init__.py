@@ -46,6 +46,7 @@ __all__ = (
     "ResNetBlock",
     "XceptionBlock",
     "MobileNetBlock",
+    "SENetBlock",
 )
 
 
@@ -906,6 +907,21 @@ class ResNetBlock:
         See [2] also for additional information.
         """
 
+    class Bottleneck_SE(resnet._Bottleneck_SE):
+        """
+        Bottleneck block with squeeze-and-excitation(SE)
+        used in `SE-ResNet`.
+
+        Parameters
+        ----------
+        `se_reduction` : float, default=4
+            Reduction factor for SE block
+        `downsampling` : LayerLike, optional
+            An additional layer to the input signal which reduces
+            its grid size to perform a downsampling
+
+        """
+
 
 @ClassType.non_instantiable()
 class XceptionBlock:
@@ -999,6 +1015,11 @@ class MobileNetBlock:
         """
         Inverted Residual Block with depth-wise and point-wise
         convolutions and SE-Block attached used in MobileNet V3.
+
+        Parameters
+        ----------
+        `se_reduction` : float, default=4
+            Reduction factor for SE block
 
         Refer to the figures shown in the original paper[2].
         """
