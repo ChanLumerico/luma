@@ -273,7 +273,7 @@ Information Processing Systems, 2012.
 | Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
 | --- | --- | --- | --- | --- | --- | --- |
 | `SE_ResNet` | 263 | $(N,3,224,224)$ | 35,615,808 | 46,440 | 35,662,248 | ✅ |
-| `SE_InceptionNet` |  |  |  |  |  | 🚧 |
+| `SE_Inception` |  |  |  |  |  | 🚧 |
 
 *Waiting for future updates…🔮*
 

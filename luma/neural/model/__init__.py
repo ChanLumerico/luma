@@ -53,6 +53,7 @@ __all__ = (
     "MobileNet_V3_Small",
     "MobileNet_V3_Large",
     "SE_ResNet",
+    "SE_Inception",
 )
 
 MODELS: tuple[str] = __all__
@@ -1808,3 +1809,7 @@ class SE_ResNet(resnet._SE_ResNet):
     Pattern Recognition (CVPR), 2018, pp. 7132-7141.
 
     """
+
+
+class SE_Inception(incep._SE_Inception):
+    NotImplemented
