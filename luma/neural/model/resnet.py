@@ -1,5 +1,4 @@
-from typing import Any, Self, override, Optional, ClassVar
-from dataclasses import asdict, dataclass
+from typing import Any, Self, override, ClassVar
 
 from luma.core.super import Estimator, Evaluator, Supervised
 from luma.interface.typing import Matrix, Tensor, Vector
@@ -23,6 +22,7 @@ from luma.neural import functional as F
 BasicBlock = ResNetBlock.Basic
 Bottleneck = ResNetBlock.Bottleneck
 PreActBottle = ResNetBlock.PreActBottleneck
+Bottleneck_SE = ResNetBlock.Bottleneck_SE
 
 
 class _ResNet_18(Estimator, Supervised, NeuralModel):
@@ -1099,3 +1099,6 @@ class _ResNet_1001(Estimator, Supervised, NeuralModel):
         argmax: bool = True,
     ) -> float:
         return super(_ResNet_1001, self).score_nn(X, y, metric, argmax)
+
+
+class _SE_ResNet(Estimator, Supervised, NeuralModel): ...

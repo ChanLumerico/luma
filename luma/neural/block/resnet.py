@@ -5,8 +5,9 @@ from luma.interface.typing import Tensor, TensorLike, LayerLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
-from luma.neural.block import SEBlock2D
 from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
+
+from .se import _SEBlock2D
 
 
 class _Basic(LayerGraph):
@@ -394,7 +395,7 @@ class _Bottleneck_SE(LayerGraph):
             name="conv_",
         )
         self.se_ = LayerNode(
-            SEBlock2D(
+            _SEBlock2D(
                 self.out_channels * _Bottleneck_SE.expansion,
                 self.se_reduction,
                 **self.basic_args,

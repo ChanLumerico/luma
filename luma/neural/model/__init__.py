@@ -52,6 +52,7 @@ __all__ = (
     "MobileNet_V2",
     "MobileNet_V3_Small",
     "MobileNet_V3_Large",
+    "SE_ResNet",
 )
 
 MODELS: tuple[str] = __all__
@@ -1749,3 +1750,6 @@ class MobileNet_V3_Large(mobile._Mobile_V3_Large):
     2019, pp. 1314-1324.
 
     """
+
+
+class SE_ResNet(resnet._SE_ResNet): ...
