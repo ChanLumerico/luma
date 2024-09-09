@@ -54,7 +54,7 @@ __all__ = (
     "MobileNet_V3_Large",
     "SE_ResNet_50",
     "SE_ResNet_152",
-    "SE_Inception",
+    "SE_InceptionRes_V2",
 )
 
 MODELS: tuple[str] = __all__
@@ -1870,5 +1870,5 @@ class SE_ResNet_152(resnet._SE_ResNet_152):
     """
 
 
-class SE_Inception(incep._SE_Inception):
+class SE_InceptionRes_V2(incep._SE_InceptionRes_V2):
     NotImplemented

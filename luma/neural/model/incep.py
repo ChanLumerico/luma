@@ -36,7 +36,7 @@ __all__ = (
     "_InceptionRes_V1",
     "_InceptionRes_V2",
     "_Xception",
-    "_SE_Inception",
+    "_SE_InceptionRes_V2",
 )
 
 
@@ -1117,5 +1117,5 @@ class _Xception(Estimator, Supervised, NeuralModel):
         return super(_Xception, self).score_nn(X, y, metric, argmax)
 
 
-class _SE_Inception(Estimator, Supervised, NeuralModel):
+class _SE_InceptionRes_V2(Estimator, Supervised, NeuralModel):
     NotImplemented
