@@ -52,7 +52,8 @@ __all__ = (
     "MobileNet_V2",
     "MobileNet_V3_Small",
     "MobileNet_V3_Large",
-    "SE_ResNet",
+    "SE_ResNet_50",
+    "SE_ResNet_152",
     "SE_Inception",
 )
 
@@ -1753,7 +1754,7 @@ class MobileNet_V3_Large(mobile._Mobile_V3_Large):
     """
 
 
-class SE_ResNet(resnet._SE_ResNet):
+class SE_ResNet_50(resnet._SE_ResNet_50):
     """
     SE-ResNet is a deep neural network that extends the ResNet
     architecture by integrating Squeeze-and-Excitation blocks.
@@ -1772,6 +1773,64 @@ class SE_ResNet(resnet._SE_ResNet):
     Parameter Size:
     ```
     35,615,808 weights, 46,440 biases -> 35,662,248 params
+    ```
+    Components
+    ----------
+    Blocks Used:
+    ```py
+    ResNetBlock.Bottleneck_SE()
+    ```
+    Arguments
+    ---------
+    `activation` : callable, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    [1] Hu, Jie, et al. “Squeeze-and-Excitation Networks.”
+    Proceedings of the IEEE Conference on Computer Vision and
+    Pattern Recognition (CVPR), 2018, pp. 7132-7141.
+
+    """
+
+
+class SE_ResNet_152(resnet._SE_ResNet_152):
+    """
+    SE-ResNet is a deep neural network that extends the ResNet
+    architecture by integrating Squeeze-and-Excitation blocks.
+    These blocks enhance the network's ability to model channel-wise
+    interdependencies, improving the representational power of the
+    network.
+
+    ResNet-152 is the base network for this SE-augmented version.
+
+    Specs
+    -----
+    Input/Output Shapes:
+    ```py
+    Tensor[-1, 3, 224, 224] -> Matrix[-1, 1000]
+    ```
+    Parameter Size:
+    ```
+    86,504,512 weights, 136,552 biases -> 86,641,064 params
     ```
     Components
     ----------
