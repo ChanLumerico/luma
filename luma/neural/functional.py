@@ -51,3 +51,8 @@ def make_res_layers(
         layers.append(new_block)
 
     return Sequential(*layers), in_channels
+
+
+def attach_se_block(self) -> ...:
+    # Test commit for ChanROKA
+    NotImplemented
