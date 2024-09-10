@@ -8,6 +8,7 @@ from luma.metric.classification import Accuracy
 from luma.preprocessing.encoder import LabelSmoothing
 
 from luma.neural.base import NeuralModel
+from luma.neural import functional as F
 from luma.neural.block import (
     BaseBlockArgs,
     IncepBlock,
@@ -36,7 +37,7 @@ __all__ = (
     "_InceptionRes_V1",
     "_InceptionRes_V2",
     "_Xception",
-    "_SE_Inception",
+    "_SE_InceptionRes_V2",
 )
 
 
@@ -1117,5 +1118,132 @@ class _Xception(Estimator, Supervised, NeuralModel):
         return super(_Xception, self).score_nn(X, y, metric, argmax)
 
 
-class _SE_Inception(Estimator, Supervised, NeuralModel):
-    NotImplemented
+class _SE_InceptionRes_V2(Estimator, Supervised, NeuralModel):  # NOTE: Work In Progress
+    def __init__(
+        self,
+        activation: callable = Activation.ReLU,
+        initializer: InitUtil.InitStr = None,
+        out_features: int = 1000,
+        batch_size: int = 128,
+        n_epochs: int = 100,
+        valid_size: float = 0.1,
+        lambda_: float = 0.0,
+        dropout_rate: float = 0.2,
+        smoothing: float = 0.1,
+        early_stopping: bool = False,
+        patience: int = 10,
+        shuffle: bool = True,
+        random_state: int | None = None,
+        deep_verbose: bool = False,
+    ) -> None:
+        self.activation = activation
+        self.initializer = initializer
+        self.out_features = out_features
+        self.lambda_ = lambda_
+        self.dropout_rate = dropout_rate
+        self.smoothing = smoothing
+        self.shuffle = shuffle
+        self.random_state = random_state
+        self._fitted = False
+
+        super().__init__(
+            batch_size,
+            n_epochs,
+            valid_size,
+            early_stopping,
+            patience,
+            shuffle,
+            random_state,
+            deep_verbose,
+        )
+        super().init_model()
+        self.model = Sequential()
+
+        self.feature_sizes_ = []
+        self.feature_shapes_ = [
+            self._get_feature_shapes(sizes) for sizes in self.feature_sizes_
+        ]
+
+        self.set_param_ranges(
+            {
+                "out_features": ("0<,+inf", int),
+                "batch_size": ("0<,+inf", int),
+                "n_epochs": ("0<,+inf", int),
+                "valid_size": ("0<,<1", None),
+                "dropout_rate": ("0,1", None),
+                "lambda_": ("0,+inf", None),
+                "patience": ("0<,+inf", int),
+                "smoothing": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+        self.build_model()
+
+    def attach_se(self) -> None:
+        self.v4_stem_se = F.attach_se_block(...)  # TODO: Begin from here
+
+    def build_model(self) -> None:
+        incep_args = BaseBlockArgs(
+            activation=self.activation,
+            initializer=self.initializer,
+            lambda_=self.lambda_,
+            random_state=self.random_state,
+        )
+
+        self.model.add(
+            ("Stem", IncepBlock.V4_Stem(**asdict(incep_args))),
+        )
+        for i in range(1, 6):
+            self.model.add(
+                (f"IncepRes_A{i}", IncepResBlock.V2_TypeA(**asdict(incep_args))),
+            )
+        self.model.add(
+            (
+                "IncepRes_RA",
+                IncepBlock.V4_ReduxA(384, (256, 256, 384, 384), **asdict(incep_args)),
+            ),
+        )
+
+        for i in range(1, 11):
+            self.model.add(
+                (f"IncepRes_B{i}", IncepResBlock.V2_TypeB(**asdict(incep_args))),
+            )
+        self.model.add(
+            ("IncepRes_RB", IncepResBlock.V2_Redux(**asdict(incep_args))),
+        )
+
+        for i in range(1, 6):
+            self.model.add(
+                (f"IncepRes_C{i}", IncepResBlock.V2_TypeC(**asdict(incep_args))),
+            )
+
+        self.model.extend(
+            GlobalAvgPool2D(),
+            Flatten(),
+            Dropout(self.dropout_rate, self.random_state),
+            Dense(2272, self.out_features),
+        )
+
+    input_shape: ClassVar[tuple] = (-1, 3, 299, 299)
+
+    @Tensor.force_shape(input_shape)
+    def fit(self, X: Tensor, y: Matrix) -> Self:
+        ls = LabelSmoothing(smoothing=self.smoothing)
+        y_ls = ls.fit_transform(y)
+        return super(_InceptionRes_V2, self).fit_nn(X, y_ls)
+
+    @override
+    @Tensor.force_shape(input_shape)
+    def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
+        return super(_InceptionRes_V2, self).predict_nn(X, argmax)
+
+    @override
+    @Tensor.force_shape(input_shape)
+    def score(
+        self,
+        X: Tensor,
+        y: Matrix,
+        metric: Evaluator = Accuracy,
+        argmax: bool = True,
+    ) -> float:
+        return super(_InceptionRes_V2, self).score_nn(X, y, metric, argmax)

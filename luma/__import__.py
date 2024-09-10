@@ -177,7 +177,7 @@ from luma.neural.model import (
     MobileNet_V2,
     MobileNet_V3_Small,
     MobileNet_V3_Large,
-    SE_ResNet,
+    SE_ResNet_50,
 )
 from luma.neural.autoprop import LayerNode, LayerGraph
 
@@ -380,7 +380,7 @@ if __name__ == "__main__":
     ResNet_200, ResNet_1001,
     MobileNet_V1, MobileNet_V2, MobileNet_V3_Small,
     MobileNet_V3_Large,
-    SE_ResNet,
+    SE_ResNet_50,
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 
 from luma.interface.typing import LayerLike
 from luma.neural.layer import *
+from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
 
 
 def make_res_layers(
@@ -51,3 +52,8 @@ def make_res_layers(
         layers.append(new_block)
 
     return Sequential(*layers), in_channels
+
+
+def attach_se_block() -> Any:
+    # TODO: Finish implementing this function
+    NotImplemented
