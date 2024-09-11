@@ -178,6 +178,8 @@ from luma.neural.model import (
     MobileNet_V3_Small,
     MobileNet_V3_Large,
     SE_ResNet_50,
+    SE_ResNet_152,
+    SE_InceptionRes_V2,
 )
 from luma.neural.autoprop import LayerNode, LayerGraph
 
@@ -375,12 +377,13 @@ if __name__ == "__main__":
     AlexNet, ZFNet,
     VGGNet_11, VGGNet_13, VGGNet_16, VGGNet_19,
     Inception_V1, Inception_V2, Inception_V3, Inception_V4,
-    InceptionRes_V1, InceptionRes_V2, XceptionNet,
+    InceptionRes_V1, InceptionRes_V2,
     ResNet_18, ResNet_34, ResNet_50, ResNet_101, ResNet_152,
     ResNet_200, ResNet_1001,
+    XceptionNet,
     MobileNet_V1, MobileNet_V2, MobileNet_V3_Small,
     MobileNet_V3_Large,
-    SE_ResNet_50,
+    SE_ResNet_50, SE_ResNet_152, SE_InceptionRes_V2
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity

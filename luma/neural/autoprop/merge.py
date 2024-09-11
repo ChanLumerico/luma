@@ -5,14 +5,14 @@ from luma.interface.typing import TensorLike
 
 
 class MergeMode(Enum):
-    CHCAT = "chcat"
-    SUM = "sum"
-    HADAMARD = "hadamard"
-    AVG = "avg"
-    MAX = "max"
-    MIN = "min"
-    DOT = "dot"
-    SUB = "sub"
+    CHCAT: str = "chcat"
+    SUM: str = "sum"
+    HADAMARD: str = "hadamard"
+    AVG: str = "avg"
+    MAX: str = "max"
+    MIN: str = "min"
+    DOT: str = "dot"
+    SUB: str = "sub"
 
     def forward(self, f_queue: list[TensorLike]) -> TensorLike:
         match self:

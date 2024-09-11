@@ -15,6 +15,7 @@ from luma.neural.block import (
     IncepResBlock,
     XceptionBlock,
     SeparableConv2D,
+    SEBlock2D,
 )
 from luma.neural.layer import (
     Conv2D,
@@ -1118,7 +1119,7 @@ class _Xception(Estimator, Supervised, NeuralModel):
         return super(_Xception, self).score_nn(X, y, metric, argmax)
 
 
-class _SE_InceptionRes_V2(Estimator, Supervised, NeuralModel):  # NOTE: Work In Progress
+class _SE_InceptionRes_V2(Estimator, Supervised, NeuralModel):
     def __init__(
         self,
         activation: callable = Activation.ReLU,
@@ -1179,9 +1180,6 @@ class _SE_InceptionRes_V2(Estimator, Supervised, NeuralModel):  # NOTE: Work In 
         self.check_param_ranges()
         self.build_model()
 
-    def attach_se(self) -> None:
-        self.v4_stem_se = F.attach_se_block(...)  # TODO: Begin from here
-
     def build_model(self) -> None:
         incep_args = BaseBlockArgs(
             activation=self.activation,
@@ -1190,31 +1188,68 @@ class _SE_InceptionRes_V2(Estimator, Supervised, NeuralModel):  # NOTE: Work In 
             random_state=self.random_state,
         )
 
-        self.model.add(
-            ("Stem", IncepBlock.V4_Stem(**asdict(incep_args))),
+        self.model += (
+            "Stem_SE",
+            F.attach_se_block(
+                IncepBlock.V4_Stem,
+                SEBlock2D,
+                asdict(incep_args),
+                {"in_channels": 384},
+            ),
         )
         for i in range(1, 6):
-            self.model.add(
-                (f"IncepRes_A{i}", IncepResBlock.V2_TypeA(**asdict(incep_args))),
+            self.model += (
+                f"IncepRes_A_SE{i}",
+                F.attach_se_block(
+                    IncepResBlock.V2_TypeA,
+                    SEBlock2D,
+                    asdict(incep_args),
+                    {"in_channels": 384},
+                ),
             )
-        self.model.add(
-            (
-                "IncepRes_RA",
-                IncepBlock.V4_ReduxA(384, (256, 256, 384, 384), **asdict(incep_args)),
+        self.model += (
+            "IncepRes_RA_SE",
+            F.attach_se_block(
+                IncepBlock.V4_ReduxA,
+                SEBlock2D,
+                {
+                    "in_channels": 384,
+                    "out_channels_arr": (256, 256, 384, 384),
+                    **asdict(incep_args),
+                },
+                {"in_channels": 1024},
             ),
         )
 
         for i in range(1, 11):
-            self.model.add(
-                (f"IncepRes_B{i}", IncepResBlock.V2_TypeB(**asdict(incep_args))),
+            self.model += (
+                f"IncepRes_B_SE{i}",
+                F.attach_se_block(
+                    IncepResBlock.V2_TypeB,
+                    SEBlock2D,
+                    asdict(incep_args),
+                    {"in_channels": 1280},
+                ),
             )
-        self.model.add(
-            ("IncepRes_RB", IncepResBlock.V2_Redux(**asdict(incep_args))),
+        self.model += (
+            "IncepRes_RB_SE",
+            F.attach_se_block(
+                IncepResBlock.V2_Redux,
+                SEBlock2D,
+                asdict(incep_args),
+                {"in_channels": 2272},
+            ),
         )
 
         for i in range(1, 6):
-            self.model.add(
-                (f"IncepRes_C{i}", IncepResBlock.V2_TypeC(**asdict(incep_args))),
+            self.model += (
+                f"IncepRes_C_SE{i}",
+                F.attach_se_block(
+                    IncepResBlock.V2_TypeC,
+                    SEBlock2D,
+                    asdict(incep_args),
+                    {"in_channels": 2272},
+                ),
             )
 
         self.model.extend(
@@ -1230,12 +1265,12 @@ class _SE_InceptionRes_V2(Estimator, Supervised, NeuralModel):  # NOTE: Work In 
     def fit(self, X: Tensor, y: Matrix) -> Self:
         ls = LabelSmoothing(smoothing=self.smoothing)
         y_ls = ls.fit_transform(y)
-        return super(_InceptionRes_V2, self).fit_nn(X, y_ls)
+        return super(_SE_InceptionRes_V2, self).fit_nn(X, y_ls)
 
     @override
     @Tensor.force_shape(input_shape)
     def predict(self, X: Tensor, argmax: bool = True) -> Matrix | Vector:
-        return super(_InceptionRes_V2, self).predict_nn(X, argmax)
+        return super(_SE_InceptionRes_V2, self).predict_nn(X, argmax)
 
     @override
     @Tensor.force_shape(input_shape)
@@ -1246,4 +1281,4 @@ class _SE_InceptionRes_V2(Estimator, Supervised, NeuralModel):  # NOTE: Work In 
         metric: Evaluator = Accuracy,
         argmax: bool = True,
     ) -> float:
-        return super(_InceptionRes_V2, self).score_nn(X, y, metric, argmax)
+        return super(_SE_InceptionRes_V2, self).score_nn(X, y, metric, argmax)

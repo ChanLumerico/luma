@@ -277,7 +277,7 @@ class LayerGraph(LayerLike):
     def _forward_bfs(self, X: TensorLike, is_train: bool) -> TensorLike:
         queue = deque([self.root])
         self.root.for_enqueue(X)
-        self.root.f_visited = True
+        self.root.f_visited = 1
 
         while queue:
             cur = queue.popleft()
@@ -287,7 +287,7 @@ class LayerGraph(LayerLike):
 
             for next in cur.next_nodes:
                 next.for_enqueue(X)
-                if next.f_visited <= len(next.prev_nodes):
+                if next.f_visited < len(next.prev_nodes):
                     next.f_visited += 1
                     queue.append(next)
 
@@ -296,7 +296,7 @@ class LayerGraph(LayerLike):
     def _backward_bfs(self, d_out: TensorLike) -> TensorLike:
         queue = deque([self.term])
         self.term.back_enqueue(d_out)
-        self.term.b_visited = True
+        self.term.b_visited = 1
 
         while queue:
             cur = queue.popleft()
@@ -306,7 +306,7 @@ class LayerGraph(LayerLike):
 
             for prev, dx in zip(cur.prev_nodes, d_out_arr):
                 prev.back_enqueue(dx)
-                if prev.b_visited <= len(prev.next_nodes):
+                if prev.b_visited < len(prev.next_nodes):
                     prev.b_visited += 1
                     queue.append(prev)
 

@@ -1871,4 +1871,63 @@ class SE_ResNet_152(resnet._SE_ResNet_152):
 
 
 class SE_InceptionRes_V2(incep._SE_InceptionRes_V2):
-    NotImplemented
+    """
+    TODO: Fill in this description
+
+    Inception-ResNet v2 is the base network for this SE-augmented version.
+
+    Specs
+    -----
+    Input/Output Shapes:
+    ```py
+    Tensor[-1, 3, 299, 299] -> Matrix[-1, 1000]
+    ```
+    Parameter Size:
+    ```
+    58,794,080 weights, 80,762 biases -> 58,874,842 params
+    ```
+    Components
+    ----------
+    Blocks Used:
+    ```py
+    # These blocks are SE-augmented
+    IncepResBlock.V2_TypeA(),
+    IncepResBlock.V2_TypeB(),
+    IncepResBlock.V2_TypeC(),
+    IncepResBlock.V2_Redux(),
+
+    IncepBlock.V4_Stem(),
+    IncepBlock.V4_ReduxA()
+    ```
+    Arguments
+    ---------
+    `activation` : callable, default=Activation.ReLU
+        Type of activation function
+    `initializer` : InitStr, default=None
+        Type of weight initializer
+    `out_features` : int, default=1000
+        Number of output features
+    `batch_size` : int, default=100
+        Size of a single mini-batch
+    `n_epochs` : int, default=100
+        Number of epochs for training
+    `valid_size` : float, default=0.1
+        Fractional size of validation set
+    `lambda_` : float, default=0.0
+        L2 regularization strength
+    `smoothing` : float, default=0.1
+        Label smoothing factor
+    `early_stopping` : bool, default=False
+        Whether to early-stop the training when the valid score stagnates
+    `patience` : int, default=10
+        Number of epochs to wait until early-stopping
+    `shuffle` : bool, default=True
+        Whethter to shuffle the data at the beginning of every epoch
+
+    References
+    ----------
+    [1] Hu, Jie, et al. “Squeeze-and-Excitation Networks.”
+    Proceedings of the IEEE Conference on Computer Vision and
+    Pattern Recognition (CVPR), 2018, pp. 7132-7141.
+
+    """
