@@ -56,7 +56,7 @@ class MergeMode(Enum):
                 cum_ch = [0]
                 for tensor in f_queue:
                     cum_ch.append(cum_ch[-1] + tensor.shape[1])
-                return d_out[:, cum_ch[i]:cum_ch[i + 1], ...]
+                return d_out[:, cum_ch[i] : cum_ch[i + 1], ...]
 
             case MergeMode.SUM:
                 return d_out
@@ -72,28 +72,28 @@ class MergeMode(Enum):
             case MergeMode.MAX:
                 stacked = np.stack(f_queue, axis=0)
                 merged = np.max(stacked, axis=0)
-                mask = (f_queue[i] == merged)
-                
+                mask = f_queue[i] == merged
+
                 total_mask = np.sum(
-                    [tensor == merged for tensor in f_queue], 
+                    [tensor == merged for tensor in f_queue],
                     axis=0,
                 )
                 total_mask = np.clip(total_mask, a_min=1, a_max=None)
-                
+
                 grad = (d_out * mask / total_mask).astype(d_out.dtype)
                 return grad
 
             case MergeMode.MIN:
                 stacked = np.stack(f_queue, axis=0)
                 merged = np.min(stacked, axis=0)
-                mask = (f_queue[i] == merged)
-                
+                mask = f_queue[i] == merged
+
                 total_mask = np.sum(
-                    [tensor == merged for tensor in f_queue], 
+                    [tensor == merged for tensor in f_queue],
                     axis=0,
                 )
                 total_mask = np.clip(total_mask, a_min=1, a_max=None)
-                
+
                 grad = (d_out * mask / total_mask).astype(d_out.dtype)
                 return grad
 
