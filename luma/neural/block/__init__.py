@@ -47,6 +47,7 @@ __all__ = (
     "XceptionBlock",
     "MobileNetBlock",
     "SENetBlock",
+    "DenseNetBlock",
 )
 
 
@@ -1003,7 +1004,7 @@ class MobileNetBlock:
 
     """
 
-    class InvertedRes(mobile._InvertedRes):
+    class InvRes(mobile._InvRes):
         """
         Inverted Residual Block with depth-wise and point-wise
         convolutions used in MobileNet V2.
@@ -1011,7 +1012,7 @@ class MobileNetBlock:
         Refer to the figures shown in the original paper[1].
         """
 
-    class InvertedRes_SE(mobile._InvertedRes_SE):
+    class InvRes_SE(mobile._InvRes_SE):
         """
         Inverted Residual Block with depth-wise and point-wise
         convolutions and SE-Block attached used in MobileNet V3.
@@ -1023,3 +1024,13 @@ class MobileNetBlock:
 
         Refer to the figures shown in the original paper[2].
         """
+
+
+@ClassType.non_instantiable()
+class DenseNetBlock:
+
+    class Composite: ...
+
+    class Transition: ...
+
+    class Dense: ...

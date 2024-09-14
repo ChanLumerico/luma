@@ -1602,7 +1602,7 @@ class MobileNet_V2(mobile._Mobile_V2):
     ----------
     Blocks Used:
     ```py
-    MobileNetBlock.InvertedRes()
+    MobileNetBlock.InvRes()
     ```
     Arguments
     ---------
@@ -1661,8 +1661,8 @@ class MobileNet_V3_Small(mobile._Mobile_V3_Small):
     ----------
     Blocks Used:
     ```py
-    MobileNetBlock.InvertedRes()
-    MobileNetBlock.InvertedRes_SE()
+    MobileNetBlock.InvRes()
+    MobileNetBlock.InvRes_SE()
     ```
     Arguments
     ---------
@@ -1719,8 +1719,8 @@ class MobileNet_V3_Large(mobile._Mobile_V3_Large):
     ----------
     Blocks Used:
     ```py
-    MobileNetBlock.InvertedRes()
-    MobileNetBlock.InvertedRes_SE()
+    MobileNetBlock.InvRes()
+    MobileNetBlock.InvRes_SE()
     ```
     Arguments
     ---------
@@ -1872,9 +1872,11 @@ class SE_ResNet_152(resnet._SE_ResNet_152):
 
 class SE_InceptionRes_V2(incep._SE_InceptionRes_V2):
     """
-    TODO: Fill in this description
-
-    Inception-ResNet v2 is the base network for this SE-augmented version.
+    SE-InceptionResNet v2 is a deep neural network that extends the
+    Inception-ResNet v2 architecture by integrating Squeeze-and-Excitation (SE)
+    blocks. These SE blocks enhance the network's ability to model channel-wise
+    interdependencies, improving the representational power of the network by
+    adaptively recalibrating the channel-wise feature responses.
 
     Specs
     -----

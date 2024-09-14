@@ -18,8 +18,8 @@ __all__ = (
 )
 
 
-InvertedRes = MobileNetBlock.InvertedRes
-InvertedRes_SE = MobileNetBlock.InvertedRes_SE
+InvRes = MobileNetBlock.InvRes
+InvRes_SE = MobileNetBlock.InvRes_SE
 
 
 class _Mobile_V1(Estimator, Supervised, NeuralModel):
@@ -252,7 +252,7 @@ class _Mobile_V2(Estimator, Supervised, NeuralModel):
             c = int(round(c * wp))
             for i in range(n):
                 s_ = s if i == 0 else 1
-                self.model += InvertedRes(in_, c, s_, t, **invres_args)
+                self.model += InvRes(in_, c, s_, t, **invres_args)
                 in_ = c
 
         last_channels = int(1280 * wp)
@@ -388,7 +388,7 @@ class _Mobile_V3_Small(Estimator, Supervised, NeuralModel):
         )
         in_ = 16
         for i, (f, exp, out, b, a, s) in enumerate(inverted_res_config):
-            block = InvertedRes_SE if b else InvertedRes
+            block = InvRes_SE if b else InvRes
             act = Activation.HardSwish if a == "HS" else Activation.ReLU
             self.model += (
                 f"InvRes_{i + 1}",
@@ -525,7 +525,7 @@ class _Mobile_V3_Large(Estimator, Supervised, NeuralModel):
         )
         in_ = 16
         for i, (f, exp, out, b, a, s) in enumerate(inverted_res_config):
-            block = InvertedRes_SE if b else InvertedRes
+            block = InvRes_SE if b else InvRes
             act = Activation.HardSwish if a == "HS" else Activation.ReLU
             self.model += (
                 f"InvRes_{i + 1}",
