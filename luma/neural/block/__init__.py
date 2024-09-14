@@ -17,6 +17,7 @@ from luma.interface.typing import ClassType
 from luma.interface.util import InitUtil
 
 from luma.neural.block import (
+    dense,
     incep_v1,
     incep_v2,
     incep_v4,
@@ -46,7 +47,6 @@ __all__ = (
     "ResNetBlock",
     "XceptionBlock",
     "MobileNetBlock",
-    "SENetBlock",
     "DenseNetBlock",
 )
 
@@ -1029,8 +1029,8 @@ class MobileNetBlock:
 @ClassType.non_instantiable()
 class DenseNetBlock:
 
-    class Composite: ...
+    class Composite(dense._Composite): ...
 
-    class Transition: ...
+    class DenseUnit(dense._DenseUnit): ...
 
-    class Dense: ...
+    class Transition(dense._Transition): ...

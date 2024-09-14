@@ -29,7 +29,7 @@ class _SEBlock1D(Sequential):
 
         self.set_param_ranges(
             {
-                "in_features": ("0<,+inf", int),
+                "in_channels": ("0<,+inf", int),
                 "reduction": (f"0<,{in_channels}", int),
                 "lambda_": ("0,+inf", None),
             }
@@ -91,7 +91,7 @@ class _SEBlock2D(Sequential):
 
         self.set_param_ranges(
             {
-                "in_features": ("0<,+inf", int),
+                "in_channels": ("0<,+inf", int),
                 "reduction": (f"0<,{in_channels}", int),
                 "lambda_": ("0,+inf", None),
             }
@@ -153,7 +153,7 @@ class _SEBlock3D(Sequential):
 
         self.set_param_ranges(
             {
-                "in_features": ("0<,+inf", int),
+                "in_channels": ("0<,+inf", int),
                 "reduction": (f"0<,{in_channels}", int),
                 "lambda_": ("0,+inf", None),
             }
