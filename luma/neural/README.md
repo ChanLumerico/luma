@@ -139,8 +139,8 @@ Deep learning models and neural network utilities of Luma
 
 | Class | # of Layers | Input Shape | Output Shape |
 | --- | --- | --- | --- |
-| `MobileNetBlock.InvertedRes` | 6~9 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
-| `MobileNetBlock.InvertedRes_SE` | 14~17 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `MobileNetBlock.InvRes` | 6~9 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
+| `MobileNetBlock.InvRes_SE` | 14~17 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 
 ---
 
