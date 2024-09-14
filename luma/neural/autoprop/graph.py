@@ -375,7 +375,7 @@ class LayerGraph(LayerLike):
         if self.term in new_graph.graph:
             new_graph[self.term].append(other.root)
         else:
-            new_graph.graph[self.term] = list(other.root)
+            new_graph.graph[self.term] = [other.root]
 
         new_graph.root = self.root
         new_graph.term = other.term

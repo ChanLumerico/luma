@@ -10,7 +10,7 @@ from luma.neural.autoprop import LayerNode, LayerGraph, MergeMode
 from .se import _SEBlock2D
 
 
-class _InvertedRes(LayerGraph):
+class _InvRes(LayerGraph):
     def __init__(
         self,
         in_channels: int,
@@ -49,7 +49,7 @@ class _InvertedRes(LayerGraph):
         self.hid_channels = int(round(in_channels * self.expand))
 
         self.init_nodes()
-        super(_InvertedRes, self).__init__(
+        super(_InvRes, self).__init__(
             graph={
                 self.rt_: [self.dw_pw_lin],
                 self.dw_pw_lin: [self.tm_],
@@ -136,7 +136,7 @@ class _InvertedRes(LayerGraph):
         )
 
 
-class _InvertedRes_SE(LayerGraph):
+class _InvRes_SE(LayerGraph):
     def __init__(
         self,
         in_channels: int,
@@ -177,7 +177,7 @@ class _InvertedRes_SE(LayerGraph):
         self.hid_channels = int(round(in_channels * self.expand))
 
         self.init_nodes()
-        super(_InvertedRes_SE, self).__init__(
+        super(_InvRes_SE, self).__init__(
             graph={
                 self.rt_: [self.dw_pw_lin],
                 self.dw_pw_lin: [self.se_block, self.scale_],
