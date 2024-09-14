@@ -32,10 +32,12 @@ class MergeMode(Enum):
                 return np.mean(f_queue, axis=0)
 
             case MergeMode.MAX:
-                return np.maximum.reduce(f_queue)
+                stacked = np.stack(f_queue, axis=0)
+                return np.max(stacked, axis=0)
 
             case MergeMode.MIN:
-                return np.minimum.reduce(f_queue)
+                stacked = np.stack(f_queue, axis=0)
+                return np.min(stacked, axis=0)
 
             case MergeMode.DOT:
                 return np.dot(f_queue[0], f_queue[1])
@@ -67,10 +69,19 @@ class MergeMode(Enum):
             case MergeMode.AVG:
                 return d_out / len(f_queue)
 
-            case MergeMode.MAX | MergeMode.MIN:
-                return (
-                    d_out * (f_queue[i] == getattr(np, self.value).reduce(f_queue))
-                ).astype(d_out.dtype)
+            case MergeMode.MIN | MergeMode.MAX:
+                stacked = np.stack(f_queue, axis=0)
+                merged = np.max(stacked, axis=0)
+                mask = f_queue[i] == merged
+
+                total_mask = np.sum(
+                    [tensor == merged for tensor in f_queue],
+                    axis=0,
+                )
+                total_mask = np.clip(total_mask, a_min=1, a_max=None)
+
+                grad = (d_out * mask / total_mask).astype(d_out.dtype)
+                return grad
 
             case MergeMode.DOT:
                 if i == 0:
