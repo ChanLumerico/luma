@@ -18,11 +18,8 @@ from luma.interface.util import InitUtil
 
 from luma.neural.block import (
     dense,
-    incep_v1,
-    incep_v2,
-    incep_v4,
-    incep_res_v1,
-    incep_res_v2,
+    incep,
+    incep_res,
     mobile,
     resnet,
     se,
@@ -543,28 +540,28 @@ class IncepBlock:
 
     """
 
-    class V1(incep_v1._Incep_V1_Default):
+    class V1(incep._Incep_V1_Default):
         """
         Inception block for Inception V1 network, a.k.a. GoogLeNet.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeA(incep_v2._Incep_V2_TypeA):
+    class V2_TypeA(incep._Incep_V2_TypeA):
         """
         Inception block type-A for Inception V2 network.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeB(incep_v2._Incep_V2_TypeB):
+    class V2_TypeB(incep._Incep_V2_TypeB):
         """
         Inception block type-B for Inception V2 network.
 
         Refer to the figures shown in the original paper[1].
         """
 
-    class V2_TypeC(incep_v2._Incep_V2_TypeC):
+    class V2_TypeC(incep._Incep_V2_TypeC):
         """
         Inception block type-C for Inception V2 network.
 
@@ -572,7 +569,7 @@ class IncepBlock:
 
         """
 
-    class V2_Redux(incep_v2._Incep_V2_Redux):
+    class V2_Redux(incep._Incep_V2_Redux):
         """
         Inception block for grid reduction for Inception V2 network.
 
@@ -580,7 +577,7 @@ class IncepBlock:
 
         """
 
-    class V4_Stem(incep_v4._Incep_V4_Stem):
+    class V4_Stem(incep._Incep_V4_Stem):
         """
         Inception block used in Inception V4 network stem part.
 
@@ -596,7 +593,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeA(incep_v4._Incep_V4_TypeA):
+    class V4_TypeA(incep._Incep_V4_TypeA):
         """
         Inception block type A used in Inception V4 network
 
@@ -612,7 +609,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeB(incep_v4._Incep_V4_TypeB):
+    class V4_TypeB(incep._Incep_V4_TypeB):
         """
         Inception block type B used in Inception V4 network.
 
@@ -628,7 +625,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_TypeC(incep_v4._Incep_V4_TypeC):
+    class V4_TypeC(incep._Incep_V4_TypeC):
         """
         Inception block type C used in Inception V4 network.
 
@@ -644,7 +641,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_ReduxA(incep_v4._Incep_V4_ReduxA):
+    class V4_ReduxA(incep._Incep_V4_ReduxA):
         """
         Inception block type A for grid reduction used in
         Inception V4 network.
@@ -661,7 +658,7 @@ class IncepBlock:
             ```
         """
 
-    class V4_ReduxB(incep_v4._Incep_V4_ReduxB):
+    class V4_ReduxB(incep._Incep_V4_ReduxB):
         """
         Inception block type B for grid reduction used in
         Inception V4 network.
@@ -695,7 +692,7 @@ class IncepResBlock:
 
     """
 
-    class V1_Stem(incep_res_v1._IncepRes_V1_Stem):
+    class V1_Stem(incep_res._IncepRes_V1_Stem):
         """
         Inception block used in Inception-ResNet V1 network
         stem part.
@@ -712,7 +709,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeA(incep_res_v1._IncepRes_V1_TypeA):
+    class V1_TypeA(incep_res._IncepRes_V1_TypeA):
         """
         Inception block type A used in Inception-ResNet V1
         network.
@@ -729,7 +726,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeB(incep_res_v1._IncepRes_V1_TypeB):
+    class V1_TypeB(incep_res._IncepRes_V1_TypeB):
         """
         Inception block type B used in Inception-ResNet V1
         network.
@@ -746,7 +743,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_TypeC(incep_res_v1._IncepRes_V1_TypeC):
+    class V1_TypeC(incep_res._IncepRes_V1_TypeC):
         """
         Inception block type C used in Inception-ResNet V1
         network.
@@ -763,7 +760,7 @@ class IncepResBlock:
             ```
         """
 
-    class V1_Redux(incep_res_v1._IncepRes_V1_Redux):
+    class V1_Redux(incep_res._IncepRes_V1_Redux):
         """
         Inception block type B for grid reduction used in
         Inception-ResNet V1 network.
@@ -780,7 +777,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeA(incep_res_v2._IncepRes_V2_TypeA):
+    class V2_TypeA(incep_res._IncepRes_V2_TypeA):
         """
         Inception block type A used in Inception-ResNet V2
         network.
@@ -797,7 +794,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeB(incep_res_v2._IncepRes_V2_TypeB):
+    class V2_TypeB(incep_res._IncepRes_V2_TypeB):
         """
         Inception block type B used in Inception-ResNet V2
         network.
@@ -814,7 +811,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_TypeC(incep_res_v2._IncepRes_V2_TypeC):
+    class V2_TypeC(incep_res._IncepRes_V2_TypeC):
         """
         Inception block type C used in Inception-ResNet V2
         network.
@@ -831,7 +828,7 @@ class IncepResBlock:
             ```
         """
 
-    class V2_Redux(incep_res_v2._IncepRes_V2_Redux):
+    class V2_Redux(incep_res._IncepRes_V2_Redux):
         """
         Inception block type B for grid reduction used in
         Inception-ResNet V2 network.

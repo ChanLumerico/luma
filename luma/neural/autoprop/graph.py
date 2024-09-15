@@ -82,7 +82,7 @@ class LayerNode:
     def flush(self) -> None:
         self.n_forward = 0
         self.n_backward = 0
-        
+
         self.f_visited = 0
         self.b_visited = 0
 
