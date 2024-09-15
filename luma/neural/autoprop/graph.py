@@ -45,7 +45,6 @@ class LayerNode:
 
     def forward(self, is_train: bool = False) -> TensorLike:
         X = self.merge_mode.forward(self.f_queue)
-        self.f_visited = 0
         return self.layer(X, is_train)
 
     def backward(self) -> List[TensorLike]:
@@ -64,7 +63,6 @@ class LayerNode:
                 f"Node '{self}' has no backward output!",
             )
 
-        self.b_visited = 0
         return d_out_arr
 
     def update(self) -> None:
@@ -84,6 +82,9 @@ class LayerNode:
     def flush(self) -> None:
         self.n_forward = 0
         self.n_backward = 0
+        
+        self.f_visited = 0
+        self.b_visited = 0
 
         self.f_queue.clear()
         self.b_queue.clear()
@@ -287,8 +288,8 @@ class LayerGraph(LayerLike):
 
             for next in cur.next_nodes:
                 next.for_enqueue(X)
-                if next.f_visited < len(next.prev_nodes):
-                    next.f_visited += 1
+                next.f_visited += 1
+                if next.f_visited == len(next.prev_nodes):
                     queue.append(next)
 
         return X
@@ -306,8 +307,8 @@ class LayerGraph(LayerLike):
 
             for prev, dx in zip(cur.prev_nodes, d_out_arr):
                 prev.back_enqueue(dx)
-                if prev.b_visited < len(prev.next_nodes):
-                    prev.b_visited += 1
+                prev.b_visited += 1
+                if prev.b_visited == len(prev.next_nodes):
                     queue.append(prev)
 
             cur.flush()
