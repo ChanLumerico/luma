@@ -142,6 +142,14 @@ Deep learning models and neural network utilities of Luma
 | `MobileNetBlock.InvRes` | 6~9 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 | `MobileNetBlock.InvRes_SE` | 14~17 | $(N,C_{in},H_{in},W_{in})$ | $(N,C_{out},H_{out},W_{out})$ |
 
+### DenseNet Blocks
+
+| Class | # of Layers | Input Shape | Output Shape |
+| --- | --- | --- | --- |
+| `DenseNetBlock.Composite` | 6 | $(N,C,H,W)$ | $(N,C_{growth},H,W)$ |
+| `DenseNetBlock.DenseUnit` | $6\times l$ |  |  |
+| `DenseNetBlock.Transition` | 4 |  |  |
+
 ---
 
 ## Neural Models
@@ -275,6 +283,18 @@ Information Processing Systems, 2012.
 | `SE_ResNet_50` | 263 | $(N,3,224,224)$ | 35,615,808 | 46,440 | 35,662,248 | ✅ |
 | `SE_ResNet_152` | 803 | $(N,3,224,224)$ | 86,504,512 | 136,552 | 86,641,064 | ✅ |
 | `SE_InceptionRes_V2` | 569 | $(N,3,299,299)$ | 58,794,080 | 80,762 | 58,874,842 | ✅ |
+
+### DenseNet Series
+
+> Huang, Gao, et al. "Densely Connected Convolutional Networks." Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 2017, pp. 4700-4708.
+> 
+
+| Class | # of Layers | Input Shape | Weights | Biases | Total Param. | Implemented |
+| --- | --- | --- | --- | --- | --- | --- |
+| `DenseNet_121` |  | $(N,3,224,224)$ | 7,977,856 | 11,240 | 7,989,096 | ✅ |
+| `DenseNet_169` |  | $(N,3,224,224)$ | 14,148,480 | 15,208 | 14,163,688 | ✅ |
+| `DenseNet_201` |  | $(N,3,299,299)$ | 20,012,928 | 18,024 | 20,030,952 | ✅ |
+| `DenseNet_264` |  | $(N,3,299,299)$ | 33,336,704 | 23,400 | 33,360,104 | ✅ |
 
 *Waiting for future updates…🔮*
 
