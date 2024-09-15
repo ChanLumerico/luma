@@ -367,7 +367,8 @@ class LayerGraph(LayerLike):
 
         for node, edges in other.graph.items():
             if node in merged_graph:
-                merged_graph[node].extend(edges)
+                existing_edges = set(merged_graph[node])
+                merged_graph[node] = list(existing_edges.union(edges))
             else:
                 merged_graph[node] = edges
 
