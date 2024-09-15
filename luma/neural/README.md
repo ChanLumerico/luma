@@ -146,9 +146,9 @@ Deep learning models and neural network utilities of Luma
 
 | Class | # of Layers | Input Shape | Output Shape |
 | --- | --- | --- | --- |
-| `DenseNetBlock.Composite` | 6 | $(N,C,H,W)$ | $(N,C_{growth},H,W)$ |
-| `DenseNetBlock.DenseUnit` | $6\times l$ |  |  |
-| `DenseNetBlock.Transition` | 4 |  |  |
+| `DenseNetBlock.Composite` | 6 | $(N,C,H,W)$ | $(N,G,H,W)$ |
+| `DenseNetBlock.DenseUnit` | $6\times l$ | $(N,C,H,W)$ | $(N,C+L\times G,H,W)$ |
+| `DenseNetBlock.Transition` | 4 | $(N,C,H,W)$ | $(N,\floor{\theta\times C},\floor{H/2},\floor{W/2})$ |
 
 ---
 
