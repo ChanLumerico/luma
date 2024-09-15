@@ -1,8 +1,7 @@
-from typing import List, Tuple, override
-import numpy as np
+from typing import Tuple, override
 
 from luma.core.super import Optimizer
-from luma.interface.typing import Tensor, TensorLike, LayerLike
+from luma.interface.typing import Tensor, TensorLike
 from luma.interface.util import InitUtil
 
 from luma.neural.layer import *
@@ -111,5 +110,61 @@ class _DenseUnit(LayerGraph):
                 name=f"comp_{i + 1}",
             )
 
+    @Tensor.force_dim(4)
+    def forward(self, X: TensorLike, is_train: bool = False) -> TensorLike:
+        return super().forward(X, is_train)
 
-class _Transition: ...
+    @Tensor.force_dim(4)
+    def backward(self, d_out: TensorLike) -> TensorLike:
+        return super().backward(d_out)
+
+    @override
+    def out_shape(self, in_shape: Tuple[int]) -> Tuple[int]:
+        batch_size, in_channels, height, width = in_shape
+        return (
+            batch_size,
+            in_channels + self.n_layers * self.growth_rate,
+            height,
+            width,
+        )
+
+
+class _Transition(Sequential):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        compression: float = 1.0,
+        activation: callable = Activation.ReLU,
+        optimizer: Optimizer = None,
+        initializer: InitUtil.InitStr = None,
+        momentum: float = 0.9,
+        lambda_: float = 0.0,
+        random_state: int | None = None,
+    ) -> None:
+        out_channels = int(out_channels * compression)
+        basic_args = {
+            "initializer": initializer,
+            "lambda_": lambda_,
+            "random_state": random_state,
+        }
+
+        self.set_param_ranges(
+            {
+                "in_channels": ("0<,+inf", int),
+                "out_channels": ("0<,+inf", int),
+                "lambda_": ("0,+inf", None),
+                "momentum": ("0,1", None),
+            }
+        )
+        self.check_param_ranges()
+
+        super(_Transition, self).__init__(
+            BatchNorm2D(in_channels, momentum),
+            activation(),
+            Conv2D(in_channels, out_channels, 1, 1, "valid", **basic_args),
+            Pool2D(2, 2, "avg"),
+        )
+
+        if optimizer is not None:
+            self.set_optimizer(optimizer)

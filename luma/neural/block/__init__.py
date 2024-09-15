@@ -1025,9 +1025,56 @@ class MobileNetBlock:
 
 @ClassType.non_instantiable()
 class DenseNetBlock:
+    """
+    Container class for building components of DenseNet series.
 
-    class Composite(dense._Composite): ...
+    References
+    ----------
+    `DenseNet-(121, 169, 201, 264)` :
+        [1] Huang, Gao, et al. "Densely Connected Convolutional Networks."
+        Proceedings of the IEEE Conference on Computer Vision and Pattern
+        Recognition, 2017, pp. 4700-4708.
 
-    class DenseUnit(dense._DenseUnit): ...
+    """
 
-    class Transition(dense._Transition): ...
+    class Composite(dense._Composite):
+        """
+        Composite function(H) used in DenseNet architecture.
+
+        Parameters
+        ----------
+        `growth_rate` : int
+            Growth rate of the channels
+        `bn_size` : int, default=4
+            Bottleneck size
+
+        Refer to the figures shown in the original paper[1].
+        """
+
+    class DenseUnit(dense._DenseUnit):
+        """
+        Dense layer used as a unit component of DenseNet architecture.
+
+        Parameters
+        ----------
+        `n_layers` : int
+            Number of densely connected layers
+        `growth_rate` : int
+            Growth rate of the channels
+        `bn_size` : int, default=4
+            Bottleneck size
+
+        Refer to the figures shown in the original paper[1].
+        """
+
+    class Transition(dense._Transition):
+        """
+        Transition layer used in DenseNet architecture.
+
+        Parameters
+        ----------
+        `compression` : float, default=1.0
+            Compression rate of the output channels
+
+        Refer to the figures shown in the original paper[1].
+        """
