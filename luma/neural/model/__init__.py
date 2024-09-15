@@ -12,6 +12,7 @@ and improving performance over time through training.
 
 from luma.neural.model import (
     alex,
+    dense,
     incep,
     lenet,
     mobile,
@@ -55,6 +56,10 @@ __all__ = (
     "SE_ResNet_50",
     "SE_ResNet_152",
     "SE_InceptionRes_V2",
+    "DenseNet_121",
+    "DenseNet_169",
+    "DenseNet_201",
+    "DenseNet_264",
 )
 
 MODELS: tuple[str] = __all__
@@ -1933,3 +1938,15 @@ class SE_InceptionRes_V2(incep._SE_InceptionRes_V2):
     Pattern Recognition (CVPR), 2018, pp. 7132-7141.
 
     """
+
+
+class DenseNet_121(dense._DenseNet_121): ...
+
+
+class DenseNet_169(dense._DenseNet_169): ...
+
+
+class DenseNet_201(dense._DenseNet_201): ...
+
+
+class DenseNet_264(dense._DenseNet_264): ...
