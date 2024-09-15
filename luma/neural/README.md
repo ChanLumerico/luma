@@ -148,7 +148,7 @@ Deep learning models and neural network utilities of Luma
 | --- | --- | --- | --- |
 | `DenseNetBlock.Composite` | 6 | $(N,C,H,W)$ | $(N,G,H,W)$ |
 | `DenseNetBlock.DenseUnit` | $6\times l$ | $(N,C,H,W)$ | $(N,C+L\times G,H,W)$ |
-| `DenseNetBlock.Transition` | 4 | $(N,C,H,W)$ | $(N,\floor{\theta\times C},\floor{H/2},\floor{W/2})$ |
+| `DenseNetBlock.Transition` | 4 | $(N,C,H,W)$ | $(N,\lfloor\theta\times C\rfloor,\lfloor H/2\rfloor,\lfloor W/2\rfloor)$ |
 
 ---
 
