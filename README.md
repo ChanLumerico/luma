@@ -38,7 +38,7 @@ Luma is built for an educational purpose, focused on implementing various machin
 | `luma.metric` | Performance metrics for evaluating machine learning models. |
 | `luma.migrate` | Import and export of machine learning models within Luma. |
 | `luma.model_selection` | Tools for model selection and hyperparameter tuning. |
-| `luma.neural` [🔗](https://github.com/ChanLumerico/luma/blob/main/luma/neural/README.md) | Deep learning models and neural network utilities. A dedicated DL package for Luma. |
+| `luma.neural` [🔗](https://github.com/ChanLumerico/luma-neural) | Deep learning models and neural network utilities. A dedicated DL package for Luma. |
 | `luma.pipe` | Creating and managing machine learning pipelines. |
 | `luma.preprocessing` | Data preprocessing functions for machine learning tasks. |
 | `luma.reduction` | Dimensionality reduction techniques for high-dimensional datasets. |
