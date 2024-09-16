@@ -1,0 +1,3 @@
+[submodule "luma/neural"]
+	path = luma/neural
+	url = https://github.com/ChanLumerico/luma-neural.git
