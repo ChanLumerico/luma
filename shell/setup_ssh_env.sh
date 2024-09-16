@@ -22,11 +22,8 @@ echo "Git remote URL for luma:"
 git remote -v
 
 echo "Git remote URL for submodule (luma-neural):"
-cd luma/luma/neural
-git remote -v
-
 cd luma/neural
-git push --dry-run
+git remote -v
 
 # Now you're ready to commit and push changes
 echo "Setup complete! You can now commit and push changes to submodules or the main repo."
