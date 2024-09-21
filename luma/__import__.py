@@ -185,6 +185,14 @@ from luma.neural.model import (
     DenseNet_169,
     DenseNet_201,
     DenseNet_264,
+    EfficientNet_B0,
+    EfficientNet_B1,
+    EfficientNet_B2,
+    EfficientNet_B3,
+    EfficientNet_B4,
+    EfficientNet_B5,
+    EfficientNet_B6,
+    EfficientNet_B7,
 )
 from luma.neural.autoprop import LayerNode, LayerGraph
 
@@ -389,7 +397,10 @@ if __name__ == "__main__":
     MobileNet_V1, MobileNet_V2, MobileNet_V3_Small,
     MobileNet_V3_Large,
     SE_ResNet_50, SE_ResNet_152, SE_InceptionRes_V2,
-    DenseNet_121, DenseNet_169, DenseNet_201, DenseNet_264
+    DenseNet_121, DenseNet_169, DenseNet_201, DenseNet_264,
+    EfficientNet_B0, EfficientNet_B1, EfficientNet_B2,
+    EfficientNet_B3, EfficientNet_B4, EfficientNet_B5,
+    EfficientNet_B6, EfficientNet_B7
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity
