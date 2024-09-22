@@ -25,5 +25,9 @@ twine check dist/*
 echo "Uploading the package to PyPI..."
 twine upload dist/*
 
+rm -rf dist/
+rm -rf build/
+rm -rf *.egg-info/
+
 # Confirmation message
 echo "Package has been successfully uploaded to PyPI!"
