@@ -198,6 +198,8 @@ from luma.neural.model import (
     EfficientNet_V2_Medium,
     EfficientNet_V2_Large,
     EfficientNet_V2_XLarge,
+    ResNeXt_50,
+    ResNeXt_101,
 )
 from luma.neural.autoprop import LayerNode, LayerGraph
 
@@ -407,7 +409,8 @@ if __name__ == "__main__":
     EfficientNet_B3, EfficientNet_B4, EfficientNet_B5,
     EfficientNet_B6, EfficientNet_B7,
     EfficientNet_V2_Small, EfficientNet_V2_Medium,
-    EfficientNet_V2_Large, EfficientNet_V2_XLarge
+    EfficientNet_V2_Large, EfficientNet_V2_XLarge,
+    ResNeXt_50, ResNeXt_101
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity
