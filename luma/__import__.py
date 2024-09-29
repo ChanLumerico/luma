@@ -99,6 +99,8 @@ from luma.neural.layer import (
     Dropout2D,
     Dropout3D,
     Flatten,
+    Reshape,
+    Transpose,
     Activation,
     BatchNorm1D,
     BatchNorm2D,
@@ -373,7 +375,7 @@ if __name__ == "__main__":
     Dropout, Dropout1D, Dropout2D, Dropout3D,
     BatchNorm1D, BatchNorm2D, BatchNorm3D,
     LocalResponseNorm, LayerNorm,
-    Dense, Flatten, Activation, Identity,
+    Dense, Flatten, Reshape, Transpose, Activation, Identity,
     Sequential
 
     ConvBlock1D, ConvBlock2D, ConvBlock3D,
