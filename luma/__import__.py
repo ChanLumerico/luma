@@ -98,6 +98,9 @@ from luma.neural.layer import (
     Dropout1D,
     Dropout2D,
     Dropout3D,
+    DropBlock1D,
+    DropBlock2D,
+    DropBlock3D,
     Flatten,
     Reshape,
     Transpose,
@@ -150,6 +153,7 @@ from luma.neural.block import (
     MobileNetBlock,
     DenseNetBlock,
     EfficientBlock,
+    ResNeStBlock,
 )
 from luma.neural.model import (
     SimpleMLP,
@@ -202,6 +206,14 @@ from luma.neural.model import (
     EfficientNet_V2_XLarge,
     ResNeXt_50,
     ResNeXt_101,
+    SK_ResNet_50,
+    SK_ResNet_101,
+    SK_ResNeXt_50,
+    SK_ResNeXt_101,
+    ResNeSt_50,
+    ResNeSt_101,
+    ResNeSt_200,
+    ResNeSt_269,
 )
 from luma.neural.autoprop import LayerNode, LayerGraph
 
@@ -412,7 +424,9 @@ if __name__ == "__main__":
     EfficientNet_B6, EfficientNet_B7,
     EfficientNet_V2_Small, EfficientNet_V2_Medium,
     EfficientNet_V2_Large, EfficientNet_V2_XLarge,
-    ResNeXt_50, ResNeXt_101
+    ResNeXt_50, ResNeXt_101,
+    SK_ResNet_50, SK_ResNet_101, SK_ResNeXt_50, SK_ResNeXt_101,
+    ResNeSt_50, ResNeSt_101, ResNeSt_200, ResNeSt_269,
 
     # ------------------- [ luma.metric ] ----------------------
     Accuracy, Precision, Recall, F1Score, Specificity
