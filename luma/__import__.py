@@ -183,8 +183,8 @@ from luma.neural.model import (
     Xception,
     MobileNet_V1,
     MobileNet_V2,
-    MobileNet_V3_Small,
-    MobileNet_V3_Large,
+    MobileNet_V3_S,
+    MobileNet_V3_L,
     SE_ResNet_50,
     SE_ResNet_152,
     SE_Inception_ResNet_V2,
@@ -298,9 +298,13 @@ from luma.visual.eval import (
     ClusterPlot,
     ROCCurve,
     PrecisionRecallCurve,
+    ConfusionMatrix,
+    ResidualPlot,
+    LearningCurve,
+    ValidationCurve,
+    InertiaPlot,
 )
-from luma.visual.eval import ConfusionMatrix, ResidualPlot, LearningCurve
-from luma.visual.eval import ValidationCurve, InertiaPlot
+from luma.visual.neural import ModelScatterPlot
 
 from luma.migrate.port import ModelPorter
 
@@ -415,8 +419,8 @@ if __name__ == "__main__":
     ResNet_18, ResNet_34, ResNet_50, ResNet_101, ResNet_152,
     ResNet_200, ResNet_1001,
     Xception,
-    MobileNet_V1, MobileNet_V2, MobileNet_V3_Small,
-    MobileNet_V3_Large,
+    MobileNet_V1, MobileNet_V2, MobileNet_V3_S,
+    MobileNet_V3_L,
     SE_ResNet_50, SE_ResNet_152, SE_Inception_ResNet_V2,
     DenseNet_121, DenseNet_169, DenseNet_201, DenseNet_264,
     EfficientNet_B0, EfficientNet_B1, EfficientNet_B2,
@@ -501,6 +505,8 @@ if __name__ == "__main__":
     DecisionRegion, ClusterPlot, ROCCurve, PrecisionRecallCurve,
     ConfusionMatrix, ResidualPlot, LearningCurve,
     ValidationCurve, InertiaPlot
+
+    ModelScatterPlot
 
     # ------------------ [ luma.migrate ] ----------------------
     ModelPorter
