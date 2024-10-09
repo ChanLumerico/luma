@@ -304,7 +304,7 @@ from luma.visual.eval import (
     ValidationCurve,
     InertiaPlot,
 )
-from luma.visual.neural import ModelScatterPlot
+from luma.visual.neural import ModelScatterPlot, ModelFamilyPlot
 
 from luma.migrate.port import ModelPorter
 
@@ -506,7 +506,7 @@ if __name__ == "__main__":
     ConfusionMatrix, ResidualPlot, LearningCurve,
     ValidationCurve, InertiaPlot
 
-    ModelScatterPlot
+    ModelScatterPlot, ModelFamilyPlot
 
     # ------------------ [ luma.migrate ] ----------------------
     ModelPorter

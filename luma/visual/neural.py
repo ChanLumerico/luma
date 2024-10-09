@@ -1,6 +1,5 @@
-from typing import Any, List, Literal, Optional, Type
+from typing import Any, List, Optional, Type
 import matplotlib.pyplot as plt
-import numpy as np
 
 from luma.core.super import Visualizer
 from luma.neural.base import NeuralModel
@@ -233,7 +232,7 @@ class ModelFamilyPlot(Visualizer):
                     va="center",
                 )
 
-        ax.legend()
+        ax.legend(fontsize="x-small")
         ax.set_xscale(x_scale)
         ax.set_yscale(y_scale)
 
@@ -248,6 +247,5 @@ class ModelFamilyPlot(Visualizer):
         ax.figure.tight_layout()
         if show:
             plt.show()
-            plt.savefig("test")  # Remove this later
 
         return ax
