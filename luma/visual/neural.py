@@ -151,6 +151,7 @@ class ModelScatterPlot(Visualizer):
         ax.figure.tight_layout()
         if show:
             plt.show()
+
         return ax
 
 
@@ -161,6 +162,7 @@ class ModelFamilyPlot(Visualizer):
         x_axis: FormattedKey,
         y_axis: FormattedKey,
     ) -> None:
+        self.families = families
         self.x_axis = x_axis
         self.y_axis = y_axis
 
@@ -195,5 +197,57 @@ class ModelFamilyPlot(Visualizer):
             self.x_data_arr.append(x_data)
             self.y_data_arr.append(y_data)
 
-    def plot(self, *args) -> None:
-        return super().plot(*args)
+    def plot(
+        self,
+        ax: Optional[plt.Axes] = None,
+        x_scale: str = "linear",
+        y_scale: str = "linear",
+        grid: bool = True,
+        title: Optional[str] = None,
+        show: bool = False,
+    ) -> plt.Axes:
+        if ax is None:
+            _, ax = plt.subplots()
+            show = True
+
+        markers = ["o", "d", "s", "x", "v", ">", "<"]
+        for i, (x_data, y_data, reg_arr) in enumerate(
+            zip(self.x_data_arr, self.y_data_arr, self.model_families)
+        ):
+            label = reg_arr[0]["family"] + " Family"
+            ax.plot(
+                x_data,
+                y_data,
+                marker=markers[i % len(markers)],
+                alpha=0.8,
+                label=label,
+            )
+            for x, y, reg in zip(x_data, y_data, reg_arr):
+                ax.text(
+                    x,
+                    y,
+                    reg["name"],
+                    fontsize="x-small" if len(self.families) < 4 else "xx-small",
+                    alpha=0.8,
+                    ha="center",
+                    va="center",
+                )
+
+        ax.legend()
+        ax.set_xscale(x_scale)
+        ax.set_yscale(y_scale)
+
+        ax.set_xlabel(self.x_axis.split(":")[0])
+        ax.set_ylabel(self.y_axis.split(":")[0])
+        if title is not None:
+            ax.set_title(title)
+
+        if grid:
+            ax.grid(alpha=0.2)
+
+        ax.figure.tight_layout()
+        if show:
+            plt.show()
+            plt.savefig("test")  # Remove this later
+
+        return ax
