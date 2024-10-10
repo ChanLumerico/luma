@@ -20,8 +20,8 @@ def _get_key_value(reg: dict, key: FormattedKey) -> Any:
     return value
 
 
-def _scale(data: list[int | float]) -> list[int | float]:
-    return [d / min(data) * 20 for d in data]
+def _scale(data: list[int | float], scale: int = 25) -> list[int | float]:
+    return [d / min(data) * scale for d in data]
 
 
 def _format_number(num: float, decimals: int = 1) -> str:
@@ -92,6 +92,7 @@ class ModelScatterPlot(Visualizer):
         y_scale: str = "linear",
         cmap: str = "viridis",
         scale_size: bool = False,
+        scale_factor: int = 25,
         grid: bool = True,
         title: Optional[str] = None,
         show: bool = False,
@@ -104,7 +105,7 @@ class ModelScatterPlot(Visualizer):
         sc = ax.scatter(
             self.x_data,
             self.y_data,
-            s=_scale(size_arr) if scale_size else size_arr,
+            s=_scale(size_arr, scale_factor) if scale_size else size_arr,
             c=size_arr if size_arr else self.y_data,
             marker="o",
             cmap=cmap,
@@ -150,6 +151,7 @@ class ModelScatterPlot(Visualizer):
         ax.figure.tight_layout()
         if show:
             plt.show()
+            plt.savefig(title)
 
         return ax
 
