@@ -151,7 +151,6 @@ class ModelScatterPlot(Visualizer):
         ax.figure.tight_layout()
         if show:
             plt.show()
-            plt.savefig(title)
 
         return ax
 

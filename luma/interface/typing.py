@@ -188,13 +188,16 @@ class Tensor(TensorLike, Generic[D]):
         return decorator
 
     @classmethod
-    def force_shape(cls, *shape_consts: tuple[int]) -> Callable:
+    def force_shape(cls, *shape_consts: tuple[int] | None) -> Callable:
 
         def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
             @wraps(func)
             def wrapper(self, *args: Any, **kwargs: Any) -> Any:
                 arg_names = func.__code__.co_varnames
                 all_args = {**dict(zip(arg_names, (self,) + args)), **kwargs}
+
+                if shape_consts is None:
+                    return func(self, *args, **kwargs)
 
                 mismatch_dict = defaultdict(lambda: np.empty((0, 3)))
                 for i, shape in enumerate(shape_consts):
@@ -221,7 +224,7 @@ class Tensor(TensorLike, Generic[D]):
                                     (mismatch_dict[param_name], [axis, s, ts])
                                 )
 
-                def _tuplize(vec: Vector):
+                def _tuplize(vec: Vector) -> tuple:
                     return tuple(int(v) for v in vec)
 
                 if len(mismatch_dict):
