@@ -107,6 +107,6 @@ Luma is inspired by these libraries:
 
 | | Description |
 | --- | --- |
-| Latest Version | 1.2.3 |
+| Latest Version | 1.2.4 |
 | Lines of Code | ~39.3K |
 | Dependencies | NumPy, SciPy, Pandas, Matplotlib, Seaborn, MLX(Optional) |
